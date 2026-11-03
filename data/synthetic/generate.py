@@ -5,11 +5,16 @@ on-site care, nearby programs, a stale program, a website conflict, and a
 school with no after-care data. Random schools keep the sample's missing-data
 rates. Jacksonville middle schools in the random set never have both STEM and
 on-site care, so they cannot crowd the demo ranking.
+
+Every generated school and program is then moved to the nearest real street
+point from street_points.json (OpenStreetMap, no bridges), so no pin lands in
+water. That step uses no random numbers, so every other field stays the same.
 """
 
 from __future__ import annotations
 
 import json
+import math
 import random
 from pathlib import Path
 
@@ -19,6 +24,11 @@ PROGRAM_SAMPLE = ROOT / "Sample Data" / "programs_sample.json"
 OUT_SCHOOLS = Path(__file__).resolve().parent / "schools.json"
 OUT_PROGRAMS = Path(__file__).resolve().parent / "programs.json"
 WEB = Path(__file__).resolve().parent / "websites"
+STREETS = Path(__file__).resolve().parent / "street_points.json"
+
+# Random programs start on top of their school; move them this far away first
+# so the two pins don't overlap. Well inside the plan's 1-mile program rule.
+PROGRAM_OFFSET_MILES = (0.3, 0.6)
 
 TARGET = 300
 LEAP_POINT = (30.42, -81.78)
@@ -43,11 +53,72 @@ def main() -> None:
     random_schools, random_programs = _random(len(sample) + len(demo))
     schools = demo + random_schools
     programs = demo_programs + random_programs
+    moves = _place_on_streets(schools, programs, {p["id"] for p in random_programs})
     OUT_SCHOOLS.write_text(json.dumps(schools, indent=2))
     OUT_PROGRAMS.write_text(json.dumps(programs, indent=2))
     _websites(schools)
     print(f"sample {len(sample)} + synthetic {len(schools)} = {len(sample) + len(schools)} schools")
     print(f"synthetic programs {len(programs)}")
+    for kind, miles in moves.items():
+        miles = sorted(miles)
+        print(
+            f"{kind} moved to a street: median {miles[len(miles) // 2]:.2f} mi, max {miles[-1]:.2f} mi, "
+            f"{sum(m > 0.2 for m in miles)} of {len(miles)} more than 0.2 mi"
+        )
+
+
+def _miles(a: tuple[float, float], b: tuple[float, float]) -> float:
+    lat1, lon1, lat2, lon2 = map(math.radians, (a[0], a[1], b[0], b[1]))
+    hav = math.sin((lat2 - lat1) / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin((lon2 - lon1) / 2) ** 2
+    return 3958.7613 * 2 * math.asin(math.sqrt(hav))
+
+
+def _nearest(points: list[list], lat: float, lon: float, used: set[int]) -> int:
+    """Index of the closest street point not already taken by another pin."""
+    scale = math.cos(math.radians(lat))
+    best, best_d2 = -1, float("inf")
+    for index, (plat, plon, _) in enumerate(points):
+        if index in used:
+            continue
+        d2 = (plat - lat) ** 2 + ((plon - lon) * scale) ** 2
+        if d2 < best_d2:
+            best, best_d2 = index, d2
+    return best
+
+
+def _offset(lat: float, lon: float, seed: str) -> tuple[float, float]:
+    # Its own random stream, so the main generator's draws are untouched.
+    rng = random.Random(seed)
+    bearing = rng.uniform(0, 2 * math.pi)
+    miles = rng.uniform(*PROGRAM_OFFSET_MILES)
+    dlat = miles / 69.0 * math.cos(bearing)
+    dlon = miles / (69.0 * math.cos(math.radians(lat))) * math.sin(bearing)
+    return lat + dlat, lon + dlon
+
+
+def _place_on_streets(schools: list[dict], programs: list[dict], offset_ids: set[str]) -> dict[str, list[float]]:
+    """Move every generated pin onto a real street and give it that street's name.
+
+    Schools go first, then programs. No two pins share a street point. Returns how
+    far each pin moved, in miles, for the summary line.
+    """
+    metros = json.loads(STREETS.read_text())["metros"]
+    used: dict[str, set[int]] = {city: set() for city in metros}
+    moves: dict[str, list[float]] = {"schools": [], "programs": []}
+    for kind, records in (("schools", schools), ("programs", programs)):
+        for record in records:
+            metro = metros[record["city"]]
+            lat, lon = (float(x) for x in record["latlon"].split(","))
+            if record["id"] in offset_ids:
+                lat, lon = _offset(lat, lon, f"program-offset-{record['id']}")
+            index = _nearest(metro["points"], lat, lon, used[record["city"]])
+            used[record["city"]].add(index)
+            plat, plon, street = metro["points"][index]
+            moves[kind].append(_miles((lat, lon), (plat, plon)))
+            record["latlon"] = f"{plat}, {plon}"
+            number = record.get("school_id") or record.get("program_id")
+            record["street"] = f"{100 + (number * 7919) % 9800} {metro['streets'][street]}"
+    return moves
 
 
 def _demo() -> tuple[list[dict], list[dict]]:
