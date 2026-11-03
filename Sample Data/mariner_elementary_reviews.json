@@ -1,0 +1,252 @@
+{
+  "id": "School fl-95390",
+  "school_id": 95390,
+  "name": "Mariner Elementary School",
+  "city": "Jacksonville",
+  "state": "FL",
+  "avg_review_rating": 2.5,
+  "sentiment_stats": {
+    "sentiment_by_topic": {
+      "Leadership": {
+        "negative": 1,
+        "total": 1,
+        "neutral": 0,
+        "positive": 0
+      },
+      "ELL": {
+        "negative": 0,
+        "total": 0,
+        "neutral": 0,
+        "positive": 0
+      },
+      "Belonging / Inclusion": {
+        "negative": 0,
+        "total": 0,
+        "neutral": 0,
+        "positive": 0
+      },
+      "Gifted / Advanced Learning": {
+        "negative": 0,
+        "total": 0,
+        "neutral": 0,
+        "positive": 0
+      },
+      "Teachers / Staff": {
+        "negative": 5,
+        "total": 7,
+        "neutral": 0,
+        "positive": 2
+      },
+      "Homework / Assignments": {
+        "negative": 0,
+        "total": 1,
+        "neutral": 0,
+        "positive": 1
+      },
+      "Mental Health": {
+        "negative": 0,
+        "total": 0,
+        "neutral": 0,
+        "positive": 0
+      },
+      "Special Ed / IEP": {
+        "negative": 0,
+        "total": 0,
+        "neutral": 0,
+        "positive": 0
+      },
+      "Bullying / Safety": {
+        "negative": 1,
+        "total": 1,
+        "neutral": 0,
+        "positive": 0
+      },
+      "Other": {
+        "negative": 3,
+        "total": 3,
+        "neutral": 0,
+        "positive": 0
+      },
+      "Sports": {
+        "negative": 0,
+        "total": 0,
+        "neutral": 0,
+        "positive": 0
+      },
+      "STEM / Coding": {
+        "negative": 0,
+        "total": 0,
+        "neutral": 0,
+        "positive": 0
+      }
+    },
+    "negative_sentiment_count": 10,
+    "total_reviews": 10,
+    "positive_sentiment_count": 3,
+    "total_sentiment_count": 26,
+    "neutral_sentiment_count": 0
+  },
+  "reviews_full": [
+    {
+      "sentiments": [
+        {
+          "topic": "Teachers / Staff",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9995"
+        }
+      ],
+      "text": "Unfortunately this school has not worked out for us. There were long stretches with substitutes instead of a regular teacher. Problems get brought up at meetings but nothing changes. It feels like parent concerns are not taken seriously. Calls and emails often go unanswered. Think carefully before choosing this school.",
+      "created_date": "2010-02-26T00:00:00-08:00",
+      "overall_rating": -0.9995
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Teachers / Staff",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9995"
+        }
+      ],
+      "text": "We are looking at other options for next year. There were long stretches with substitutes instead of a regular teacher. The school feels understaffed. Several families we know have already left. Calls and emails often go unanswered. Parents should visit and ask a lot of questions before enrolling.",
+      "created_date": "2010-10-19T00:00:00-07:00",
+      "overall_rating": -0.9995
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Teachers / Staff",
+          "sentiment_enum": "positive",
+          "sentiment_polarity": "0.9989"
+        }
+      ],
+      "text": "This school has been a good fit for my child. The staff are patient, kind and very professional. We appreciate how much effort everyone puts in. Pickup and drop-off are well organized. The campus is clean and well maintained. We have seen real growth in our child's confidence this year. There are plenty of events that bring families together. Communication with families is clear and regular. Parents are welcome to volunteer and get involved. The front office is friendly and helpful. My child looks forward to going to school every morning. Our child has made good friends here. Thank you to everyone who makes this school what it is.",
+      "created_date": "2011-05-25T00:00:00-07:00",
+      "overall_rating": 0.9989
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Other",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9995"
+        }
+      ],
+      "text": "We have had a lot of problems here. Traffic around the school is a constant problem. Pickup and drop-off are chaotic most days. It feels like parent concerns are not taken seriously. Parents should visit and ask a lot of questions before enrolling.",
+      "created_date": "2012-12-27T00:00:00-08:00",
+      "overall_rating": -0.9995
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Bullying / Safety",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9994"
+        },
+        {
+          "topic": "Teachers / Staff",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9995"
+        }
+      ],
+      "text": "Unfortunately this school has not worked out for us. Bullying was reported several times and nothing was done. A few staff members were dismissive when we raised concerns. Calls and emails often go unanswered. We have had to push hard just to get basic information. Several families we know have already left. Our child has started dreading going to school. Problems get brought up at meetings but nothing changes. Rules seem to be applied differently depending on the day. I hope things improve, but I am not optimistic.",
+      "created_date": "2013-04-14T00:00:00-07:00",
+      "overall_rating": -0.9994
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Teachers / Staff",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9932"
+        }
+      ],
+      "text": "We have had a lot of problems here. The teachers do not seem to have enough support to manage their classes. Several families we know have already left. It feels like parent concerns are not taken seriously. The school feels understaffed. Our child has started dreading going to school. We have had to push hard just to get basic information. Rules seem to be applied differently depending on the day. There is a lot of turnover from year to year. Pickup and drop-off are chaotic most days. Problems get brought up at meetings but nothing changes. Calls and emails often go unanswered.",
+      "created_date": "2013-07-15T00:00:00-07:00",
+      "overall_rating": -0.9932
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Teachers / Staff",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9994"
+        },
+        {
+          "topic": "Leadership",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9994"
+        }
+      ],
+      "text": "I would not recommend this school right now. A few staff members were dismissive when we raised concerns. Leadership has changed several times and the school feels unstable. The school feels understaffed. Several families we know have already left. Pickup and drop-off are chaotic most days. Calls and emails often go unanswered. There is a lot of turnover from year to year. Rules seem to be applied differently depending on the day. Our child has started dreading going to school. We have had to push hard just to get basic information. Problems get brought up at meetings but nothing changes.",
+      "created_date": "2013-08-26T00:00:00-07:00",
+      "overall_rating": -0.9994
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Other",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9995"
+        }
+      ],
+      "text": "I wanted to like this school, but it has been frustrating. The cafeteria food is poor and portions are small. There is a lot of turnover from year to year. Several families we know have already left. Our child has started dreading going to school. It feels like parent concerns are not taken seriously. We have had to push hard just to get basic information. Problems get brought up at meetings but nothing changes. I hope things improve, but I am not optimistic.",
+      "created_date": "2013-10-17T00:00:00-07:00",
+      "overall_rating": -0.9995
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Other",
+          "sentiment_enum": "negative",
+          "sentiment_polarity": "-0.9974"
+        }
+      ],
+      "text": "Our experience at this school has been disappointing. The facilities are old and need repairs. We have had to push hard just to get basic information. Pickup and drop-off are chaotic most days. It feels like parent concerns are not taken seriously. The school feels understaffed. Several families we know have already left. Problems get brought up at meetings but nothing changes.",
+      "created_date": "2014-04-09T00:00:00-07:00",
+      "overall_rating": -0.9974
+    },
+    {
+      "sentiments": [
+        {
+          "topic": "Homework / Assignments",
+          "sentiment_enum": "positive",
+          "sentiment_polarity": "0.9989"
+        },
+        {
+          "topic": "Teachers / Staff",
+          "sentiment_enum": "positive",
+          "sentiment_polarity": "0.9988"
+        }
+      ],
+      "text": "We have been really happy with this school. Teachers explain homework clearly so kids can work on their own. The teachers keep parents updated on progress and are easy to reach. The front office is friendly and helpful. We have seen real growth in our child's confidence this year. Parents are welcome to volunteer and get involved. Pickup and drop-off are well organized. Our child has made good friends here. Highly recommended.",
+      "created_date": "2014-07-11T00:00:00-07:00",
+      "overall_rating": 0.9989
+    }
+  ],
+  "reviews_text": [
+    "Unfortunately this school has not worked out for us. There were long stretches with substitutes instead of a regular teacher. Problems get brought up at meetings but nothing changes. It feels like parent concerns are not taken seriously. Calls and emails often go unanswered. Think carefully before choosing this school.",
+    "We are looking at other options for next year. There were long stretches with substitutes instead of a regular teacher. The school feels understaffed. Several families we know have already left. Calls and emails often go unanswered. Parents should visit and ask a lot of questions before enrolling.",
+    "This school has been a good fit for my child. The staff are patient, kind and very professional. We appreciate how much effort everyone puts in. Pickup and drop-off are well organized. The campus is clean and well maintained. We have seen real growth in our child's confidence this year. There are plenty of events that bring families together. Communication with families is clear and regular. Parents are welcome to volunteer and get involved. The front office is friendly and helpful. My child looks forward to going to school every morning. Our child has made good friends here. Thank you to everyone who makes this school what it is.",
+    "We have had a lot of problems here. Traffic around the school is a constant problem. Pickup and drop-off are chaotic most days. It feels like parent concerns are not taken seriously. Parents should visit and ask a lot of questions before enrolling.",
+    "Unfortunately this school has not worked out for us. Bullying was reported several times and nothing was done. A few staff members were dismissive when we raised concerns. Calls and emails often go unanswered. We have had to push hard just to get basic information. Several families we know have already left. Our child has started dreading going to school. Problems get brought up at meetings but nothing changes. Rules seem to be applied differently depending on the day. I hope things improve, but I am not optimistic.",
+    "We have had a lot of problems here. The teachers do not seem to have enough support to manage their classes. Several families we know have already left. It feels like parent concerns are not taken seriously. The school feels understaffed. Our child has started dreading going to school. We have had to push hard just to get basic information. Rules seem to be applied differently depending on the day. There is a lot of turnover from year to year. Pickup and drop-off are chaotic most days. Problems get brought up at meetings but nothing changes. Calls and emails often go unanswered.",
+    "I would not recommend this school right now. A few staff members were dismissive when we raised concerns. Leadership has changed several times and the school feels unstable. The school feels understaffed. Several families we know have already left. Pickup and drop-off are chaotic most days. Calls and emails often go unanswered. There is a lot of turnover from year to year. Rules seem to be applied differently depending on the day. Our child has started dreading going to school. We have had to push hard just to get basic information. Problems get brought up at meetings but nothing changes.",
+    "I wanted to like this school, but it has been frustrating. The cafeteria food is poor and portions are small. There is a lot of turnover from year to year. Several families we know have already left. Our child has started dreading going to school. It feels like parent concerns are not taken seriously. We have had to push hard just to get basic information. Problems get brought up at meetings but nothing changes. I hope things improve, but I am not optimistic.",
+    "Our experience at this school has been disappointing. The facilities are old and need repairs. We have had to push hard just to get basic information. Pickup and drop-off are chaotic most days. It feels like parent concerns are not taken seriously. The school feels understaffed. Several families we know have already left. Problems get brought up at meetings but nothing changes.",
+    "We have been really happy with this school. Teachers explain homework clearly so kids can work on their own. The teachers keep parents updated on progress and are easy to reach. The front office is friendly and helpful. We have seen real growth in our child's confidence this year. Parents are welcome to volunteer and get involved. Pickup and drop-off are well organized. Our child has made good friends here. Highly recommended."
+  ],
+  "reviews_positive": [
+    "This school has been a good fit for my child. The staff are patient, kind and very professional. We appreciate how much effort everyone puts in. Pickup and drop-off are well organized. The campus is clean and well maintained. We have seen real growth in our child's confidence this year. There are plenty of events that bring families together. Communication with families is clear and regular. Parents are welcome to volunteer and get involved. The front office is friendly and helpful. My child looks forward to going to school every morning. Our child has made good friends here. Thank you to everyone who makes this school what it is.",
+    "We have been really happy with this school. Teachers explain homework clearly so kids can work on their own. The teachers keep parents updated on progress and are easy to reach. The front office is friendly and helpful. We have seen real growth in our child's confidence this year. Parents are welcome to volunteer and get involved. Pickup and drop-off are well organized. Our child has made good friends here. Highly recommended."
+  ],
+  "reviews_negative": [
+    "Unfortunately this school has not worked out for us. There were long stretches with substitutes instead of a regular teacher. Problems get brought up at meetings but nothing changes. It feels like parent concerns are not taken seriously. Calls and emails often go unanswered. Think carefully before choosing this school.",
+    "We are looking at other options for next year. There were long stretches with substitutes instead of a regular teacher. The school feels understaffed. Several families we know have already left. Calls and emails often go unanswered. Parents should visit and ask a lot of questions before enrolling.",
+    "We have had a lot of problems here. Traffic around the school is a constant problem. Pickup and drop-off are chaotic most days. It feels like parent concerns are not taken seriously. Parents should visit and ask a lot of questions before enrolling.",
+    "Unfortunately this school has not worked out for us. Bullying was reported several times and nothing was done. A few staff members were dismissive when we raised concerns. Calls and emails often go unanswered. We have had to push hard just to get basic information. Several families we know have already left. Our child has started dreading going to school. Problems get brought up at meetings but nothing changes. Rules seem to be applied differently depending on the day. I hope things improve, but I am not optimistic.",
+    "We have had a lot of problems here. The teachers do not seem to have enough support to manage their classes. Several families we know have already left. It feels like parent concerns are not taken seriously. The school feels understaffed. Our child has started dreading going to school. We have had to push hard just to get basic information. Rules seem to be applied differently depending on the day. There is a lot of turnover from year to year. Pickup and drop-off are chaotic most days. Problems get brought up at meetings but nothing changes. Calls and emails often go unanswered.",
+    "I would not recommend this school right now. A few staff members were dismissive when we raised concerns. Leadership has changed several times and the school feels unstable. The school feels understaffed. Several families we know have already left. Pickup and drop-off are chaotic most days. Calls and emails often go unanswered. There is a lot of turnover from year to year. Rules seem to be applied differently depending on the day. Our child has started dreading going to school. We have had to push hard just to get basic information. Problems get brought up at meetings but nothing changes.",
+    "I wanted to like this school, but it has been frustrating. The cafeteria food is poor and portions are small. There is a lot of turnover from year to year. Several families we know have already left. Our child has started dreading going to school. It feels like parent concerns are not taken seriously. We have had to push hard just to get basic information. Problems get brought up at meetings but nothing changes. I hope things improve, but I am not optimistic.",
+    "Our experience at this school has been disappointing. The facilities are old and need repairs. We have had to push hard just to get basic information. Pickup and drop-off are chaotic most days. It feels like parent concerns are not taken seriously. The school feels understaffed. Several families we know have already left. Problems get brought up at meetings but nothing changes."
+  ]
+}
