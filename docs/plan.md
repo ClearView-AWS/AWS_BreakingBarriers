@@ -63,7 +63,8 @@ These are decisions, so every track can build against them without checking in.
 - Reviews and community posts can support a criterion. They never confirm one. Only data or the school's own answer confirms.
 - Nothing is posted to the community without the parent's tap on the draft, and every post passes a personal-information check first.
 - Schools hear from us in one digest, not once per parent.
-- The map never holds information on its own. The agent's message says in words what the map shows.
+- Results always open as a list. The parent switches to Grid or Map with a toggle; the agent can suggest the map but never switches views on its own.
+- The map never holds information on its own. Distances and nearby programs also appear on the list cards.
 - We keep only a zip code or a rounded point for the parent's location, never a home address.
 - We store a parent's phone number only if they opt in to texts, use it only to text them, and delete it when they reply STOP.
 - Synthetic data keeps GreatSchools' document schema, so their real documents can replace it later. Every synthetic record, including seed posts, is marked `_synthetic: true`.
@@ -92,7 +93,7 @@ A conversation has two phases. **LLM** = Bedrock call. **Code** = deterministic,
 | 7 | Evidence | Code | For each school and criterion: status, value, source type, date and citation. Sources include data, reviews, community posts and the school's own answers. |
 | 8 | Score | Code | Match score from statuses and weights. Coverage computed separately. |
 | 9 | Explain | LLM | Write card text from the evidence JSON. A validator drops any sentence that doesn't cite an evidence record. |
-| 10 | Render | UI | Show the blocks the agent chose: message, brief, cards, grid, map, comparison, community threads. |
+| 10 | Render | UI | Show the blocks the agent chose: message, brief, results, comparison, community threads. Results open as a list, with a toggle to Grid and Map. |
 
 **Tools the agent can call on any turn:**
 
@@ -223,7 +224,7 @@ The saved list puts schools in deadline order, with days left, and shows scholar
 
 ## Map View
 
-Results can show on a map as well as in a list or grid. The map is part of the conversation: the agent chooses when to show it, and what the parent does on it becomes the next turn.
+Results open as a list. A **List / Grid / Map** toggle above them lets the parent switch views, and the choice sticks for the rest of the session. The map is part of the conversation: what the parent does on it becomes the next turn.
 
 ### What the parent sees
 
@@ -246,12 +247,12 @@ Results can show on a map as well as in a list or grid. The map is part of the c
 
 *Sketch only; the school name is made up.*
 
-- **Layout.** On a computer, chat on the left and a results panel on the right with List, Grid and Map tabs. On a phone, the map appears as a small card in the chat and opens full screen when tapped. Design for the phone first: many of the families this is for rely on one.
+- **Layout.** On a computer, chat on the left and a results panel on the right with the List / Grid / Map toggle, set to List at first. On a phone, the map appears as a small card in the chat and opens full screen when tapped. Design for the phone first: many of the families this is for rely on one.
 - **School pins** are numbered by rank, matching the list, and colored by match. Schools in "Missed a must-have" are hollow pins, so they stay visible.
 - **Program pins** (◆) appear only when a program fills a gap at a school on the map, with a dashed line to that school.
 - **"You" marker** is the parent's search point, from a zip code or a dropped pin. The parent can drag it. Distance rings show how far each school is.
 - **Tapping a pin** opens a small card: match, distance, a status for each criterion, demand counts, and Save, Compare and Ask the school.
-- **The agent says it in words too** ("the 3 closest are north of the river"), so screen readers and parents who don't read maps get the same information.
+- **Nothing lives only on the map.** Every card in the list shows its distance and any nearby program, so screen readers and parents who don't read maps get the same information.
 
 ### Map events
 
@@ -290,7 +291,7 @@ Agent:  Two quick questions:
 ```
 
 - Short replies ("Y B", "GO", "OK") are parsed in code into the same events as taps (`answers_submitted`, `skip_to_results`, `brief_approved`), so they skip the router.
-- Results show the top three, with a status emoji for each criterion and a link to the web card and map. The map rule still holds: the message says in words what the map shows.
+- Results show the top three, with a status emoji for each criterion and a link to the web card and map. The map rule still holds: anything the map would show is also in the text.
 - A 👍 or 👎 tapback on a result counts as thumbs feedback.
 - Citations and the Guardrails check apply exactly as they do on the web.
 
@@ -451,6 +452,8 @@ An approved brief returns results:
 // other block types: comparison, school_detail, definition, cost, community_threads, post_draft
 ```
 
+`results`, `evidence_grid` and `map` always arrive together. The frontend shows the list first, and the toggle switches between them without a new request.
+
 ### UI event (taps on questions, the brief and the map)
 
 ```jsonc
@@ -522,13 +525,14 @@ Before the first search, check these in order and ask up to three:
 
 If none apply, skip the questions and show the brief with results. Every question has a default, which "Just show me results" uses and the brief states. After the brief is approved, a refining turn asks at most one question, from rules 2 or 4.
 
-### When to show the map
+### Results view
 
-1. The parent asks for it or opens the Map tab.
-2. A criterion is about place: "near me," "on my way to work," "within 15 minutes," or distance itself.
-3. The top 10 results are spread over more than 10 miles.
+Results always open as a list. The parent switches to Grid or Map with the toggle, and the choice holds until they change it. The agent never switches views on its own, but it offers a **[Show on map]** chip when:
 
-Otherwise the agent shows the list and grid, and the Map tab stays one tap away.
+1. A criterion is about place: "near me," "on my way to work," "within 15 minutes," or distance itself.
+2. The top 10 results are spread over more than 10 miles.
+
+If the parent asks for the map ("show me on a map"), the agent switches to it.
 
 - Pin color comes from the match score. Schools in "Missed a must-have" are hollow.
 - A program pin appears only if it is within 1 mile of a school on the map and covers a criterion that is unknown or needs attention there. Programs whose only sessions are in the past don't appear.
@@ -582,13 +586,13 @@ Build in this order. Each stop point is a complete demo, so if time runs out we 
 - Inferred needs ("I work until 5").
 - Vague requests such as "how liberal" turned into concrete chips.
 - Thumbs up / down, with reason chips that refine the search.
-- Map view: numbered pins colored by match, tap a pin for its card, a "you" marker from the parent's zip code.
+- List / Map toggle, set to List at first. Map: numbered pins colored by match, tap a pin for its card, a "you" marker from the parent's zip code.
 
 **Stop point: meets every success criterion in the vision**
 
 ### M3 · Compare and explain *(P2–P4)*
 
-- Evidence grid and two-school comparison with source labels.
+- Grid joins the toggle (List / Grid / Map), and two-school comparison with source labels.
 - School detail view, including admissions details, and term definitions ("What is CTE?", "How does a charter lottery work?").
 - Review topics with counts, both sides and dates.
 - Getting in on every card, grid and comparison: how admission works and by when, from `enrollment_rules.yaml` and school data. "Is this your zoned school?" on public school cards.
@@ -640,8 +644,8 @@ Five tracks that can run in parallel once the contracts are agreed. With fewer p
 |---|---|
 | **A · Data and search** | Synthetic generator · Index mappings and indexer · Query builder from `needs.yaml` to OpenSearch · `funding_rules.yaml` and `enrollment_rules.yaml` with official links · Admissions fields in the generator · `geo_point` mapping, distance filter and plausible coordinates |
 | **B · Agent** | Router and extractor prompts and tool definitions · Need matcher with embeddings · Question, brief and explanation wording · Answers about getting in that explain without predicting · Citation validator · Events from questions, brief and map · Evaluation runner |
-| **C · Evidence and ranking** | `needs.yaml` and evidence rules · Review and post analysis with recency · Scorer and question rules · Cost estimator · Getting in status and deadline math · When to show the map, pin rules, distance evidence |
-| **D · Frontend** | Block renderer, chat, questions and brief · Result cards and evidence grid · Getting in line and zoned-school buttons · Map view and phone layout · Saved list in deadline order · Feedback controls |
+| **C · Evidence and ranking** | `needs.yaml` and evidence rules · Review and post analysis with recency · Scorer and question rules · Cost estimator · Getting in status and deadline math · When to offer the map, pin rules, distance evidence |
+| **D · Frontend** | Block renderer, chat, questions and brief · Result cards and evidence grid · Getting in line and zoned-school buttons · List / Grid / Map toggle, map view and phone layout · Saved list in deadline order · Feedback controls |
 | **E · Community** | Community pages, threads, replies, votes, need tags · Persona switcher · Seed posts · Guardrails check · Ask the school (including open seats) and ask the community, demand counts, SES digest, school answers |
 
 ---
@@ -653,7 +657,7 @@ About seven minutes. Each step shows one thing from the vision's success criteri
 1. The parent types *"Looking for a middle school in Jacksonville. My son loves robotics and I work until 5. Money is tight."* The agent asks two quick questions with tap-to-answer chips: is STEM a must-have, and does after-school care need to be at the school. It asks because the answers change the top schools. "Just show me results" sits underneath.
 2. The parent answers "Must-have" and "A nearby program is fine." The brief appears: *must have middle school, Jacksonville, STEM, after-school care until 5:30; nice to have low cost.* The parent didn't say 5:30; the agent inferred it from "I work until 5." The parent taps "Looks right."
 3. Cards show Confirmed / Partial / Needs attention / Unknown for each criterion, with sources. One card has after-school care unknown, "14 parents asked about this," and an "Ask the school" button. Every card also says how to get in; that one reads *Lottery · apply by Jan 15 (73 days left)*.
-4. The parent opens the map. The agent says the three closest schools are north of the river. Next to the school with unknown after-care, a program pin 0.4 miles away covers 3–6 pm, with a dashed line to the school.
+4. Results open as a list. Because they're spread out, the agent offers **[Show on map]**, and the parent taps it. Next to the school with unknown after-care, a program pin 0.4 miles away covers 3–6 pm, with a dashed line to the school.
 5. The parent asks *"How liberal are these schools?"* The agent says it doesn't rate schools on politics and offers chips it can back with data: inclusion, cultural responsiveness, restorative discipline, non-religious.
 6. The parent opens a school's community page. The robotics club thread has 17 upvotes, and the card had linked it as "Parents say" evidence. The parent drafts a question that includes their son's name; the check catches it and asks them to rephrase.
 7. The parent selects two pins and compares them. The evidence grid shows each answer's source and date. The private school shows likely cost after scholarship, with the official link.
@@ -666,7 +670,7 @@ About seven minutes. Each step shows one thing from the vision's success criteri
 
 ## Evaluation
 
-A file of about 40 parent queries, each with the expected criteria, strengths, which questions (if any) should be asked, and whether the map should show. A second file of about 20 draft posts, some with names or contact details, checks the safety filter. About 10 of the queries ask about getting in ("Will my son get into Bayview?") and must be answered without odds or promises. Run both before every merge and put the latest numbers in the README. The targets are ours to adjust.
+A file of about 40 parent queries, each with the expected criteria, strengths, which questions (if any) should be asked, and whether the agent should offer the map. A second file of about 20 draft posts, some with names or contact details, checks the safety filter. About 10 of the queries ask about getting in ("Will my son get into Bayview?") and must be answered without odds or promises. Run both before every merge and put the latest numbers in the README. The targets are ours to adjust.
 
 | Check | Target |
 |---|---|
@@ -674,7 +678,7 @@ A file of about 40 parent queries, each with the expected criteria, strengths, w
 | Criteria correct (precision) | 85%+ |
 | Require / prefer / avoid correct | 85%+ |
 | Questions asked when needed and skipped when not | 80%+ |
-| Show-map decision correct | 85%+ |
+| Map-offer decision correct | 85%+ |
 | Claims with a valid citation | 100%, required |
 | Schools dropped for missing data | 0, required |
 | Draft posts with personal info that get published | 0, required |
