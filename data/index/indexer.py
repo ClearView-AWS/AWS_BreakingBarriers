@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
 
-from runtime_config import INDEX_DIR, OPENSEARCH_URL
+from runtime_config import AWS_REGION, INDEX_DIR, OPENSEARCH_URL
 from search.corpus import clear_corpus_cache, load_programs, load_schools
 from search.engine import search_text_for
 from mapping.embedder import embed_hash
@@ -44,9 +44,17 @@ def main() -> None:
     if not OPENSEARCH_URL:
         print("OPENSEARCH_URL is not set; skipped the cluster.")
         return
-    from opensearchpy import OpenSearch
+    import boto3
+    from opensearchpy import AWSV4SignerAuth, OpenSearch, RequestsHttpConnection
 
-    client = OpenSearch(OPENSEARCH_URL)
+    auth = AWSV4SignerAuth(boto3.Session().get_credentials(), AWS_REGION, "es")
+    client = OpenSearch(
+        hosts=[OPENSEARCH_URL],
+        http_auth=auth,
+        use_ssl=True,
+        verify_certs=True,
+        connection_class=RequestsHttpConnection,
+    )
     mappings = json.loads((INDEX_DIR / "mappings.json").read_text())
     for name, body in mappings.items():
         if client.indices.exists(index=name):
