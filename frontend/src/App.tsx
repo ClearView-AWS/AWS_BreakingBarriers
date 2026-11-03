@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { BriefCard, MAX_QUESTIONS, QuestionChips } from "./Brief";
+import { HighlightAssistant } from "./Assistant";
 import { CommunityPage, PersonaSwitcher } from "./Community";
 import { DEMO_QUERY, type Block, type Card, type Criterion, type Evidence, type Turn } from "./types";
 import { MapView, ViewToggle, type ResultsView } from "./Views";
@@ -393,6 +394,7 @@ export function App() {
         )}
         {view === "inbox" && <Inbox items={inbox} onAnswered={() => void openInbox().then(() => run({ action: "refresh" }))} />}
       </main>
+      <HighlightAssistant sessionId={sessionId} rootSelector="main.wrap" />
     </div>
   );
 }
@@ -484,7 +486,7 @@ function SchoolCard({
   const selected = picked.includes(card.id);
   const levels = (card.level_codes ?? []).map((code) => LEVEL[code] ?? code).join(", ");
   return (
-    <article className={selected ? "card compare-on" : "card"}>
+    <article className={selected ? "card compare-on" : "card"} data-school-id={card.id}>
       <header>
         <div>
           <h3><button onClick={() => onOpen(card.id)}>{card.name}</button></h3>
@@ -574,7 +576,7 @@ function CommunityLine({ card, onCommunity }: { card: Card; onCommunity: (target
 function EvidenceRow({ row, label, onAsk, onAskParents }: { row: Evidence; label: string; onAsk?: () => void; onAskParents?: () => void }) {
   const source = row.source;
   return (
-    <div className="ev">
+    <div className="ev" data-criterion-id={row.criterion_id}>
       <div>
         <span className={`pill ${row.status}`}>{STATUS_LABEL[row.status] ?? row.status}</span>
         <div>{label}</div>
@@ -622,12 +624,12 @@ function Grid({ payload }: { payload: Record<string, unknown> }) {
           </thead>
           <tbody>
             {schools.map((school) => (
-              <tr key={school.id}>
+              <tr key={school.id} data-school-id={school.id}>
                 <th>{school.name}</th>
                 {criteria.map((column) => {
                   const cell = cells[school.id]?.[column.id];
                   return (
-                    <td key={column.id}>
+                    <td key={column.id} data-criterion-id={column.id}>
                       {cell ? (
                         <>
                           <span className={`pill ${cell.status}`}>{STATUS_LABEL[cell.status]}</span>
@@ -702,7 +704,7 @@ function Panel({ turn, onClose }: { turn: Turn; onClose: () => void }) {
           };
           const school = payload.school;
           return (
-            <div key={index}>
+            <div key={index} data-school-id={String(school.id)}>
               <h2>{String(school.name)}</h2>
               <p className="meta">{String(school.street ?? "")} {String(school.city ?? "")} {String(school.state ?? "")}</p>
               <p>

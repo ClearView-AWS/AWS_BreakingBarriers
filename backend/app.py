@@ -234,3 +234,36 @@ def community_digest(school_id: str) -> dict:
         return {"error": "unknown school"}
     with State() as state:
         return community.digest(state, school)
+
+
+# ---------- Highlight assistant ----------
+
+from agent.assistant import assist  # noqa: E402
+from contracts import Criterion as _Criterion  # noqa: E402
+
+
+class AssistIn(BaseModel):
+    session_id: str | None = None
+    text: str = Field(default="", max_length=2000)
+    question: str = Field(default="", max_length=1000)
+    school_id: str | None = None
+    criterion_id: str | None = None
+
+
+@app.post("/api/assist")
+def post_assist(body: AssistIn) -> dict:
+    """Explain highlighted text from the school's own evidence. Read-only: it never changes the session."""
+    from pipeline import _score_school, _stamp_distances
+    from search.corpus import load_programs
+
+    with State() as state:
+        session = state["sessions"].get(body.session_id or "") or {}
+        criteria = [_Criterion(**row) for row in session.get("criteria") or []]
+        card = None
+        if body.school_id:
+            schools = load_schools()
+            _stamp_distances(schools, criteria)
+            school = next((row for row in schools if row["id"] == body.school_id), None)
+            if school:
+                card = _score_school(school, criteria, load_programs(), state, session)
+        return assist(body.text, body.question, card, criteria, body.criterion_id)

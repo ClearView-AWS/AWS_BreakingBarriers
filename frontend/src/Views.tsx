@@ -186,7 +186,7 @@ export function MapView(props: {
         <li><span className="dot hollow" /> missed a must-have</li>
       </ul>
       {chosen && (
-        <article className="pin-card" aria-live="polite">
+        <article className="pin-card" aria-live="polite" data-school-id={chosen.card.id}>
           <header>
             <h3>
               {chosen.rank ? `${chosen.rank}. ` : ""}

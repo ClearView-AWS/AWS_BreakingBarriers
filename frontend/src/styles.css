@@ -614,3 +614,101 @@ tbody th { font-weight: 600; color: var(--ink); }
   .persona { margin-left: 0; }
   .thread { grid-template-columns: 44px 1fr; padding: var(--space-3); }
 }
+
+/* ---------- Highlight assistant ---------- */
+.assist-bubble {
+  position: fixed;
+  z-index: 1200;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--ledger);
+  background: var(--ledger);
+  color: var(--on-ledger);
+  box-shadow: var(--glow-signal);
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .assist-bubble { animation: assist-pop 150ms cubic-bezier(0.2, 0, 0, 1); }
+}
+@keyframes assist-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.assist-panel {
+  position: fixed;
+  z-index: 1200;
+  max-height: min(460px, calc(100vh - 16px));
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--ledger);
+  border-radius: var(--radius-3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  outline: none;
+}
+.assist-panel header { display: flex; justify-content: space-between; align-items: start; gap: var(--space-2); }
+.assist-panel header > div { display: grid; gap: 2px; }
+.assist-eyebrow {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ledger);
+}
+.assist-school { font-weight: 600; }
+.assist-quote {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-left: 2px solid var(--ledger);
+  background: var(--ledger-soft);
+  border-radius: var(--radius-1);
+  font-size: 0.875rem;
+  color: var(--ink);
+}
+.assist-thread { overflow-y: auto; display: grid; gap: var(--space-3); align-content: start; min-height: 48px; }
+.assist-turn { display: grid; gap: var(--space-2); }
+.assist-question {
+  justify-self: end; margin: 0; max-width: 85%;
+  padding: var(--space-1) var(--space-3); border: 1px solid var(--control); border-radius: var(--radius-2);
+  font-size: 0.875rem;
+}
+.assist-sentence { margin: 0; font-size: 0.9375rem; line-height: 1.5; }
+.assist-cite {
+  display: inline-block; margin-left: var(--space-2); padding: 0 var(--space-1);
+  font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.02em; color: var(--ink-muted);
+  border: 1px solid var(--rule); border-radius: var(--radius-1); vertical-align: 1px;
+}
+.assist-next {
+  margin: 0; padding: var(--space-2) var(--space-3); font-size: 0.875rem;
+  color: var(--ink); background: var(--caution-soft); border: 1px solid var(--caution); border-radius: var(--radius-2);
+}
+.assist-mode { margin: 0; font-size: 0.75rem; color: var(--ink-muted); }
+.assist-loading { display: flex; gap: 6px; padding: var(--space-2) 0; }
+.assist-loading span { width: 6px; height: 6px; border-radius: 50%; background: var(--ledger); opacity: 0.4; }
+@media (prefers-reduced-motion: no-preference) {
+  .assist-loading span { animation: assist-dot 900ms infinite ease-in-out; }
+  .assist-loading span:nth-child(2) { animation-delay: 150ms; }
+  .assist-loading span:nth-child(3) { animation-delay: 300ms; }
+}
+@keyframes assist-dot { 50% { opacity: 1; } }
+.assist-followups { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.assist-followups button {
+  min-height: 32px; padding: 0 var(--space-3); font-size: 0.8125rem;
+  color: var(--ledger); background: transparent; border: 1px solid var(--rule); border-radius: var(--radius-2);
+}
+.assist-followups button:hover { border-color: var(--ledger); }
+.assist-form { display: grid; grid-template-columns: 1fr auto; gap: var(--space-2); }
+.assist-form input {
+  min-height: 40px; padding: 0 var(--space-3); border: 1px solid var(--control); border-radius: var(--radius-2);
+  background: var(--paper); color: var(--ink);
+}
+.assist-form input:focus { outline: none; border-color: var(--ledger); }
+.assist-form .primary { min-height: 40px; }
+
+@media (max-width: 720px) {
+  /* On a phone the panel is a bottom sheet. */
+  .assist-panel {
+    left: 0 !important; right: 0; bottom: 0; top: auto !important; width: auto !important;
+    max-height: 70vh; border-radius: var(--radius-3) var(--radius-3) 0 0; border-bottom: 0;
+  }
+}
