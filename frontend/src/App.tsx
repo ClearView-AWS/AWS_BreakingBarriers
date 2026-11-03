@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { BriefCard, MAX_QUESTIONS, QuestionChips } from "./Brief";
 import { DEMO_QUERY, type Block, type Card, type Criterion, type Evidence, type Turn } from "./types";
 import { MapView, ViewToggle, type ResultsView } from "./Views";
@@ -50,6 +50,17 @@ export function App() {
   const [phase, setPhase] = useState<Phase>("results");
   const [step, setStep] = useState(1);
   const [resultsView, setResultsView] = useState<ResultsView>("list");
+  const [theme, setTheme] = useState<Theme>(savedTheme);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "light" ? "#f4f6f3" : "#050807");
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      // Storage can be blocked; the theme still applies for this visit.
+    }
+  }, [theme]);
 
   const criteria = turn?.criteria ?? [];
   const blocks = turn?.blocks ?? [];
@@ -168,6 +179,13 @@ export function App() {
             Saved ({saved.length})
           </button>
           <button aria-pressed={view === "inbox"} onClick={() => void openInbox()}>School inbox</button>
+          <button
+            className="theme-switch"
+            aria-label={`Theme: ${theme === "light" ? "Light" : "Midnight"}. Switch theme`}
+            onClick={() => setTheme(theme === "light" ? "midnight" : "light")}
+          >
+            {theme === "light" ? "Light" : "Midnight"}
+          </button>
         </nav>
       </header>
       <main className="wrap">
@@ -340,6 +358,17 @@ export function App() {
       </main>
     </div>
   );
+}
+
+type Theme = "midnight" | "light";
+
+// Midnight is the default for everyone; Light is the alternative.
+function savedTheme(): Theme {
+  try {
+    return localStorage.getItem("theme") === "light" ? "light" : "midnight";
+  } catch {
+    return "midnight";
+  }
 }
 
 function hasQuestion(turn: Turn) {
