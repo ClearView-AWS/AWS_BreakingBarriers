@@ -132,7 +132,7 @@ The indexer writes to a new versioned index and moves the `schools` and `program
 | Route, extract, tag posts | Claude Haiku (small, fast) | Converse with tool use |
 | Explain, compare, word questions and the brief | Claude Sonnet (stronger) | ConverseStream |
 | Need matching, vector search | Titan Text Embeddings V2 or Cohere Embed Multilingual (chosen with the eval set) | InvokeModel |
-| Check community posts for personal information (M3) | Bedrock Guardrails, sensitive-information filter | ApplyGuardrail |
+| Check community posts for personal information (M4) | Bedrock Guardrails, sensitive-information filter | ApplyGuardrail |
 | Grounding check (M6 stretch) | Bedrock Guardrails, contextual grounding | ApplyGuardrail |
 
 - Request model access on day 0. Model availability in the sandbox is an open question in the plan.

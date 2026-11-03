@@ -468,7 +468,7 @@ Otherwise the agent shows the list and grid, and the Map tab stays one tap away.
 
 ## Milestones
 
-Build in this order. Each stop point is a complete demo, so if time runs out we stop at the last one finished.
+Build in this order. Each stop point is a complete demo, so if time runs out we stop at the last one finished. M1–M3 follow GreatSchools' ranked priorities (P1–P4) in their order; everything after M3 is ours.
 
 ### D0 · Lead-time setup *(first hours)*
 
@@ -496,23 +496,23 @@ Build in this order. Each stop point is a complete demo, so if time runs out we 
 
 **Stop point: meets every success criterion in the vision**
 
-### M3 · Parent community
+### M3 · Compare and explain *(P2–P4)*
+
+- Evidence grid and two-school comparison with source labels.
+- School detail view and term definitions ("What is CTE?").
+- Review topics with counts, both sides and dates.
+- On the map: select two pins to compare, tap a hollow pin for its detail, drag "you" or search this area to refine.
+
+**Stop point: all four of GreatSchools' priorities done**
+
+### M4 · Parent community *(beyond the vision)*
 
 - School community pages: threads, replies, upvotes, need tags, persona switcher.
 - Seed posts loaded.
 - Guardrails check on every post.
-- Community posts as evidence, linked from cards ("3 parents discussed after-care here").
+- Community posts as evidence, linked from cards ("3 parents discussed after-care here"), and counted beside reviews in the school detail.
 
 **Stop point: the agent and the community work as one platform**
-
-### M4 · Compare and explain *(P2–P4)*
-
-- Evidence grid and two-school comparison with source labels.
-- School detail view and term definitions ("What is CTE?").
-- Review and post topics with counts, both sides and dates.
-- On the map: select two pins to compare, tap a hollow pin for its detail, drag "you" or search this area to refine.
-
-**Stop point: all four priorities done**
 
 ### M5 · Ask the school and show cost *(differentiators)*
 
@@ -539,7 +539,7 @@ Build in this order. Each stop point is a complete demo, so if time runs out we 
 
 ## Workstreams
 
-Five tracks that can run in parallel once the contracts are agreed. With fewer people, merge A with C and B with D, and start E once M2 is done.
+Five tracks that can run in parallel once the contracts are agreed. With fewer people, merge A with C and B with D, and start E once M3 is done.
 
 | Track | Owns |
 |---|---|
