@@ -53,6 +53,7 @@ def test_clock_time_without_meridiem_reads_both_ways():
 
 # Sonnet-written card summaries, end to end through the turn. No AWS calls.
 import json
+import re
 
 import pytest
 
@@ -84,27 +85,38 @@ def cards(monkeypatch):
     return run
 
 
-def _care_value(card):
-    return next(row for row in card["evidence"] if (row.get("source") or {}).get("path") == "osp.after_school_until")["value"]
-
-
-def _clock(value: str) -> str:
-    hour, minute = map(int, value.split(":"))
-    return f"{(hour - 1) % 12 + 1}:{minute:02d} {'PM' if hour >= 12 else 'AM'}"
+def _care_note(card: dict) -> str:
+    return next(row["note"] for row in card["evidence"] if (row.get("source") or {}).get("path") == "osp.after_school_until")
 
 
 def test_true_model_sentence_replaces_code_summary(cards):
-    def explain(cards):
+    def explain(inputs):
         out = {}
-        for card in cards:
-            row = next(r for r in card["evidence"] if r["cite"] == "osp.after_school_until")
-            out[card["id"]] = f"Care runs until {_clock(row['value'])}, and you need 6 PM [[cite:osp.after_school_until]]."
+        for card in inputs:
+            note = next(r["note"] for r in card["evidence"] if r["cite"] == "osp.after_school_until")
+            time = re.search(r"\d{1,2}:\d{2} [AP]M", note).group(0)
+            out[card["id"]] = f"Care runs until {time}, and you need 6 PM [[cite:osp.after_school_until]]."
         return json.dumps(out)
 
     shown, engine = cards(explain)
     assert engine["explain"] == "bedrock"
     for card in shown:
-        assert card["summary"] == f"Care runs until {_clock(_care_value(card))}, and you need 6 PM."
+        time = re.search(r"\d{1,2}:\d{2} [AP]M", _care_note(card)).group(0)
+        assert card["summary"] == f"Care runs until {time}, and you need 6 PM."
+
+
+def test_unknown_must_have_stays_on_the_card(cards):
+    from pipeline import turn
+    from store import _empty
+
+    response = turn(_empty(), {"message": QUERY + " and strong STEM"}).model_dump()
+    results = next(b for b in response["blocks"] if b["type"] == "results")["payload"]
+    unknown = [c for c in results["schools"] if any(r["status"] == "unknown" for r in c["evidence"])]
+    assert unknown, "the demo query has schools with unknown after-school care"
+    for card in unknown:
+        row = next(r for r in card["evidence"] if r["status"] == "unknown")
+        assert row["source"] is None and row["missing_paths"] == ["osp.after_school_until"]
+        assert "After-school care is unknown" in card["summary"]
 
 
 def test_fabricated_time_keeps_the_code_summary(cards):

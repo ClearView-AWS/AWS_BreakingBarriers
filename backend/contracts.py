@@ -81,6 +81,8 @@ class EvidenceRecord(BaseModel):
     note: str = ""
     conflict: Conflict | None = None
     review_ids: list[str] = Field(default_factory=list)
+    # Fields that were checked and empty. An "unknown" sentence cites these; they are not a source.
+    missing_paths: list[str] = Field(default_factory=list)
 
 
 class SchoolResult(BaseModel):

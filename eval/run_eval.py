@@ -179,6 +179,9 @@ def _citations() -> tuple[int, int]:
                 if source:
                     defended.add(source)
                 defended.update(row.get("review_ids") or [])
+                if row.get("status") == "unknown":
+                    # An "unknown" claim may cite a field only if that field really is empty.
+                    defended.update(p for p in row.get("missing_paths") or [] if get_path(school, p) is None)
                 for token in allowed:
                     if token.startswith(("funding.", "glossary.", "programs/", "reviews_full[")):
                         defended.add(token)

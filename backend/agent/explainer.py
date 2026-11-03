@@ -68,8 +68,7 @@ def _card_input(card: dict, criteria: list[Criterion]) -> dict:
             {
                 "criterion": by_id[row["criterion_id"]].text if row["criterion_id"] in by_id else row["criterion_id"],
                 "status": row["status"],
-                "value": row["value"],
-                "cite": (row.get("source") or {}).get("path"),
+                "cite": (row.get("source") or {}).get("path") or next(iter(row.get("missing_paths") or []), None),
                 "note": row["note"],
             }
             for row in card["evidence"]

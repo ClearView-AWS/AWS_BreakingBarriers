@@ -32,6 +32,6 @@ evidence that code produced for that school.
 Reply with only a JSON object that maps each card id to one or two sentences.
 Use only facts in that card's evidence. End every sentence with [[cite:PATH]],
 where PATH is a cite path from that card's evidence.
-Copy numbers and times exactly as the evidence gives them. Do not compute
+Write numbers and times the way the evidence notes write them. Do not compute
 differences or any other new number.
 Say plainly when evidence is partial or unknown. Do not add facts that are not in the JSON."""
