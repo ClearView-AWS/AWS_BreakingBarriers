@@ -17,7 +17,7 @@ from gaps.ses_mailer import send_school_question
 from mapping.mapper import normalize
 from search.corpus import known_cities, load_programs, load_schools
 from search.engine import search_schools
-from search.geo import distance_from_city
+from search.geo import CITY_CENTROIDS, distance_from_city
 
 _LEVELS = {"p": "pre-k", "e": "elementary", "m": "middle", "h": "high"}
 
@@ -327,6 +327,8 @@ def _search_response(session, criteria, schools, programs, state, message: str) 
                 "missed": missed,
                 "gaps": gaps,
                 "matched_count": len(scored_rows),
+                # The searched city's center, for the map's "you" marker. Never a home address.
+                "center": list(CITY_CENTROIDS[city.value.casefold()]) if city and str(city.value).casefold() in CITY_CENTROIDS else None,
             },
         )
     )

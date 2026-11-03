@@ -9,6 +9,8 @@ export type Criterion = {
   kind: string;
   value?: string | null;
   resolved_reading?: string | null;
+  // Set when the parent implied the need ("I work until 5") rather than said it.
+  inferred_from?: string | null;
   ambiguities?: { question?: string; options: string[]; option_ids: string[]; default?: string }[];
 };
 
@@ -34,6 +36,8 @@ export type Card = {
   distance_miles?: number | null;
   evidence: Evidence[];
   missed_must?: boolean;
+  lat?: number | null;
+  lon?: number | null;
 };
 
 export type Block = { type: string; payload: Record<string, unknown> };

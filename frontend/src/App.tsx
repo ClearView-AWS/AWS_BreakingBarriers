@@ -1,7 +1,12 @@
 import { FormEvent, useMemo, useState } from "react";
+import { BriefCard, MAX_QUESTIONS, QuestionChips } from "./Brief";
 import { DEMO_QUERY, type Block, type Card, type Criterion, type Evidence, type Turn } from "./types";
+import { MapView, ViewToggle, type ResultsView } from "./Views";
 
 type View = "search" | "saved" | "inbox";
+// asking: up to three questions before any results. brief: the parent reviews what
+// we understood. results: the brief is approved and the schools show.
+type Phase = "asking" | "brief" | "results";
 
 const STATUS_LABEL: Record<string, string> = {
   confirmed: "Confirmed",
@@ -42,6 +47,9 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<string[]>([]);
   const [why, setWhy] = useState("");
+  const [phase, setPhase] = useState<Phase>("results");
+  const [step, setStep] = useState(1);
+  const [resultsView, setResultsView] = useState<ResultsView>("list");
 
   const criteria = turn?.criteria ?? [];
   const blocks = turn?.blocks ?? [];
@@ -73,7 +81,38 @@ export function App() {
     setQuery(message);
     setView("search");
     setPicked([]);
-    await run({ message });
+    setResultsView("list");
+    const data = await run({ message });
+    if (!data) return;
+    // A thin first request gets questions first. A specific one goes straight to the brief
+    // with results. A refining turn keeps the results on screen and asks at most one question.
+    if (data.route === "new_search" && hasQuestion(data)) {
+      setPhase("asking");
+      setStep(1);
+    } else {
+      setPhase("results");
+    }
+  }
+
+  function startOver() {
+    setSessionId(null);
+    setTurn(null);
+    setPanel(null);
+    setPicked([]);
+    setQuery("");
+    setPhase("results");
+    setResultsView("list");
+  }
+
+  async function onAnswer(questionId: unknown, optionId: string) {
+    const data = await run({ action: "refresh", answer: { question_id: questionId, option_id: optionId } });
+    if (!data || phase !== "asking") return;
+    if (hasQuestion(data) && step < MAX_QUESTIONS) setStep(step + 1);
+    else setPhase("brief");
+  }
+
+  async function onBriefChange(next: Criterion[]) {
+    await run({ action: "refresh", criteria: next });
   }
 
   async function refreshSaved(nextSession = sessionId) {
@@ -95,6 +134,20 @@ export function App() {
   const grid = blockOf(blocks, "evidence_grid");
   const question = blockOf(blocks, "question");
   const message = blockOf(blocks, "message");
+  const showResults = phase === "results";
+  const mainCards = (results?.schools as Card[]) ?? [];
+  const gapCards = (results?.gaps as Card[]) ?? [];
+  const missedCards = (results?.missed as Card[]) ?? [];
+  const center = (results?.center as [number, number] | null | undefined) ?? null;
+  const cityLabel = criteria.find((item) => item.kind === "location")?.text ?? null;
+  const lead =
+    phase === "asking"
+      ? MAX_QUESTIONS > 1 && step === 1
+        ? "A quick question so I search for the right things:"
+        : "One more question:"
+      : phase === "brief"
+        ? "Here's what I understood. Check it, then I'll show the schools."
+        : String(message?.text ?? "");
 
   return (
     <div className="app">
@@ -136,74 +189,119 @@ export function App() {
               </p>
             )}
             {error && <p className="error">{error}</p>}
-            {criteria.length > 0 && (
-              <ChipRow
-                criteria={criteria}
-                onChange={(next) => void run({ action: "refresh", criteria: next })}
+            {turn && (
+              <p className="hint">
+                Typing again refines this search.{" "}
+                <button type="button" onClick={startOver}>Start a new search</button>
+              </p>
+            )}
+            {turn && <p className="lead">{lead}</p>}
+            {question && (phase === "asking" || showResults) && (
+              <QuestionChips
+                payload={question}
+                step={step}
+                gated={phase === "asking"}
+                busy={busy}
+                onPick={(optionId) => void onAnswer(question.id, optionId)}
+                onSkip={() => setPhase("results")}
               />
             )}
-            {message && <p className="lead">{String(message.text ?? "")}</p>}
-            {question && (
-              <Question
-                payload={question}
-                onPick={(optionId) => void run({ action: "refresh", answer: { question_id: question.id, option_id: optionId } })}
+            {criteria.length > 0 && phase !== "asking" && (
+              <BriefCard
+                criteria={criteria}
+                approved={showResults}
+                assumption={showResults ? turn?.assumption : null}
+                busy={busy}
+                onApprove={() => setPhase("results")}
+                onChange={(next) => void onBriefChange(next)}
               />
             )}
             {panel && <Panel turn={panel} onClose={() => setPanel(null)} />}
-            <CardList
-              title="Matches"
-              cards={(results?.schools as Card[]) ?? []}
-              criteria={criteria}
-              picked={picked}
-              onPick={setPicked}
-              onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
-              onSave={async (id) => {
-                const data = await run({ action: "save", school_ids: [id] }, "keep");
-                if (data) await refreshSaved(data.session_id);
-              }}
-              onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
-              onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
-              onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
-            />
-            <CardList
-              title="Missing a fact we can ask about"
-              cards={(results?.gaps as Card[]) ?? []}
-              criteria={criteria}
-              picked={picked}
-              onPick={setPicked}
-              onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
-              onSave={async (id) => {
-                const data = await run({ action: "save", school_ids: [id] }, "keep");
-                if (data) await refreshSaved(data.session_id);
-              }}
-              onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
-              onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
-              onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
-            />
-            <CardList
-              title="Missed a must-have"
-              cards={(results?.missed as Card[]) ?? []}
-              criteria={criteria}
-              picked={picked}
-              onPick={setPicked}
-              onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
-              onSave={async (id) => {
-                const data = await run({ action: "save", school_ids: [id] }, "keep");
-                if (data) await refreshSaved(data.session_id);
-              }}
-              onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
-              onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
-              onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
-            />
-            {grid && <Grid payload={grid} />}
-            {picked.length === 2 && (
+            {showResults && turn && (
+              <ViewToggle
+                view={resultsView}
+                onChange={setResultsView}
+                cards={[...mainCards, ...gapCards]}
+                criteria={criteria}
+              >
+                {{
+                  list: (
+                    <>
+                    <CardList
+                      title="Matches"
+                      cards={(results?.schools as Card[]) ?? []}
+                      criteria={criteria}
+                      picked={picked}
+                      onPick={setPicked}
+                      onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
+                      onSave={async (id) => {
+                        const data = await run({ action: "save", school_ids: [id] }, "keep");
+                        if (data) await refreshSaved(data.session_id);
+                      }}
+                      onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
+                      onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
+                      onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+                    />
+                    <CardList
+                      title="Missing a fact we can ask about"
+                      cards={(results?.gaps as Card[]) ?? []}
+                      criteria={criteria}
+                      picked={picked}
+                      onPick={setPicked}
+                      onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
+                      onSave={async (id) => {
+                        const data = await run({ action: "save", school_ids: [id] }, "keep");
+                        if (data) await refreshSaved(data.session_id);
+                      }}
+                      onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
+                      onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
+                      onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+                    />
+                    <CardList
+                      title="Missed a must-have"
+                      cards={(results?.missed as Card[]) ?? []}
+                      criteria={criteria}
+                      picked={picked}
+                      onPick={setPicked}
+                      onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
+                      onSave={async (id) => {
+                        const data = await run({ action: "save", school_ids: [id] }, "keep");
+                        if (data) await refreshSaved(data.session_id);
+                      }}
+                      onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
+                      onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
+                      onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+                    />
+                    </>
+                  ),
+                  grid: grid ? <Grid payload={grid} /> : <p className="meta">No schools to compare yet.</p>,
+                  map: (
+                    <MapView
+                      cards={[...mainCards, ...gapCards]}
+                      missed={missedCards}
+                      criteria={criteria}
+                      center={center}
+                      cityLabel={cityLabel}
+                      picked={picked}
+                      onPick={setPicked}
+                      onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
+                      onSave={async (id) => {
+                        const data = await run({ action: "save", school_ids: [id] }, "keep");
+                        if (data) await refreshSaved(data.session_id);
+                      }}
+                    />
+                  ),
+                }}
+              </ViewToggle>
+            )}
+            {showResults && picked.length === 2 && (
               <p className="hint">
                 <button type="button" className="primary" onClick={() => void run({ action: "compare", school_ids: picked }, "panel")}>
                   Compare these two
                 </button>
               </p>
             )}
-            {turn && (
+            {showResults && turn && (
               <form
                 className="search"
                 onSubmit={(event) => {
@@ -244,46 +342,12 @@ export function App() {
   );
 }
 
+function hasQuestion(turn: Turn) {
+  return turn.blocks.some((block) => block.type === "question");
+}
+
 function blockOf(blocks: Block[], type: string) {
   return blocks.find((block) => block.type === type)?.payload ?? null;
-}
-
-function ChipRow({ criteria, onChange }: { criteria: Criterion[]; onChange: (next: Criterion[]) => void }) {
-  const cycle: Record<string, Criterion["strength"]> = { require: "prefer", prefer: "avoid", avoid: "require" };
-  return (
-    <div className="chips" aria-label="Criteria">
-      {criteria.map((item) => (
-        <span className="chip" key={item.id}>
-          <b>{item.text}</b>
-          {item.kind === "need" || item.kind === "distance" ? (
-            <button
-              className={`strength-${item.strength}`}
-              onClick={() => onChange(criteria.map((row) => (row.id === item.id ? { ...row, strength: cycle[row.strength] } : row)))}
-            >
-              {item.strength}
-            </button>
-          ) : (
-            <span>{item.kind === "grade" ? "grade" : item.kind === "location" ? "city" : "type"}</span>
-          )}
-          <button aria-label={`Remove ${item.text}`} onClick={() => onChange(criteria.filter((row) => row.id !== item.id))}>×</button>
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function Question({ payload, onPick }: { payload: Record<string, unknown>; onPick: (id: string) => void }) {
-  const options = (payload.options as { id: string; label: string }[]) ?? [];
-  return (
-    <section className="question">
-      <p>{String(payload.text)}</p>
-      <div className="options">
-        {options.map((option) => (
-          <button key={option.id} onClick={() => onPick(option.id)}>{option.label}</button>
-        ))}
-      </div>
-    </section>
-  );
 }
 
 function CardList(props: {
