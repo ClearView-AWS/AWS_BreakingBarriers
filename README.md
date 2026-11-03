@@ -25,9 +25,11 @@ Open http://127.0.0.1:5173. The demo query is:
 Then: answer the care question, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
 
 ```bash
-.venv/bin/python -m pytest backend/tests -q
+cd backend && ../.venv/bin/python -m pytest tests -q && cd ..
 .venv/bin/python eval/run_eval.py
 ```
+
+Run the tests from `backend/`. From the repo root, Python can't find the `agent` package.
 
 Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25 sample schools in `Sample Data/` stay unchanged. The generator writes 275 more schools, nearby programs, and one static page per generated school.
 
@@ -61,9 +63,26 @@ GreatSchools can add or change a need by editing `needs.yaml`. A need has phrase
 
 Region `us-east-1`. Leave the flags off and the rules engine, the local index, the JSON session file, and the HTML pages stand in.
 
+### Run with Bedrock in the sandbox
+
+Log in with the team's AWS setup guide, then save the Workshop Studio credentials to a profile so every terminal can use them:
+
+```bash
+aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile hackathon
+aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile hackathon
+aws configure set aws_session_token "$AWS_SESSION_TOKEN" --profile hackathon
+aws configure set region us-east-1 --profile hackathon
+
+cd backend && BEDROCK_ENABLED=1 AWS_PROFILE=hackathon ../.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8000
+```
+
+The credentials expire after a few hours; repeat the login and the four `configure set` lines when they do. Never put keys in this repo.
+
+Model ids must be the `us.` inference profiles (`us.anthropic.claude-haiku-5-5`, `us.anthropic.claude-sonnet-5-5`). The bare model ids fail in the sandbox.
+
 | Flag | What it turns on |
 |---|---|
-| `BEDROCK_ENABLED=1` | Converse for routing, extraction, and explanations, using the ids in `models.yaml`. A failed parse falls back to the rules engine. Embeddings use Titan Text Embeddings V2; otherwise a fixed hash embedder keeps mapping repeatable. |
+| `BEDROCK_ENABLED=1` | Converse with the fast model (Haiku 5.5) for routing and extraction, using the ids in `models.yaml`. The rules still find place, grade and school type; the model adds needs the rules miss ("I work until 5" → after-school care until 5:30), and code maps each one to `needs.yaml`. Any failure falls back to the rules engine. Explanations are still templates, and `strong_model` is not called yet. Embeddings use Titan Text Embeddings V2; otherwise a fixed hash embedder keeps mapping repeatable. |
 | `OPENSEARCH_URL` | `data/index/indexer.py` pushes the `schools` and `programs` documents. Search still builds the hybrid DSL (keyword plus vector, hard filters only on city, level, and type) and applies it locally when the domain is absent. |
 | `SES_ENABLED=1` plus `SES_SOURCE` and `SES_VERIFIED_TO` | The inbox records a message and also sends it through SES in sandbox mode. |
 
@@ -71,16 +90,16 @@ Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/sta
 
 ## Evaluation
 
-`eval/queries.jsonl` has 42 parent queries, including "how liberal", a city name used in more than one state, Spanish, negations, and "a good school". The latest run is the rules engine with Bedrock off.
+`eval/queries.jsonl` has 42 parent queries, including "how liberal", a city name used in more than one state, Spanish, negations, and "a good school". Latest runs, Nov 3, 2026:
 
-| Check | Result | Target |
-|---|---|---|
-| Criteria found (recall) | 100% (110/110) | 90%+ |
-| Criteria correct (precision) | 100% (110/110) | 85%+ |
-| Require / prefer / avoid correct | 100% (39/39) | 85%+ |
-| Ask-or-not decision correct | 100% (39/39) | 80%+ |
-| Claims with a valid citation | 30/30 | 100%, required |
-| Schools dropped for missing data | 0 | 0, required |
-| Turn time, median | 0.02 s | under 6 s |
+| Check | Rules only | With Bedrock (Haiku 5.5) | Target |
+|---|---|---|---|
+| Criteria found (recall) | 100% (110/110) | 100% (110/110) | 90%+ |
+| Criteria correct (precision) | 100% (110/110) | 98.2% (110/112) | 85%+ |
+| Require / prefer / avoid correct | 100% (39/39) | 100% (39/39) | 85%+ |
+| Ask-or-not decision correct | 100% (39/39) | 94.9% (37/39) | 80%+ |
+| Claims with a valid citation | 30/30 | 30/30 | 100%, required |
+| Schools dropped for missing data | 0 | 0 | 0, required |
+| Turn time, median | 0.02 s | 4.48 s | under 6 s |
 
-These numbers measure the deterministic extractor and the evidence rules, not a live model.
+The rules-only column measures the deterministic extractor, which was written alongside these queries. With Bedrock on, the model added two needs the queries don't expect (q27 small classes, q34 after-school care), and two queries (q32, q37) skipped a question they should have asked.

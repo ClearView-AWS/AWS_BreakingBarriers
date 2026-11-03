@@ -6,7 +6,7 @@ import re
 
 from catalog import needs
 from contracts import Ambiguity, Criterion, MappingInfo
-from mapping.mapper import map_phrase, normalize
+from mapping.mapper import map_phrase, mapping_is_ambiguous, normalize
 
 AMBIGUOUS_CITIES = {
     "springfield",
@@ -53,10 +53,45 @@ _UNTIL = re.compile(r"\buntil (\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b")
 def extract(text: str, cities: list[str] | None = None) -> list[Criterion]:
     from agent.bedrock_client import maybe_bedrock_criteria
 
+    found = _rules(text, cities or [])
     drafted = maybe_bedrock_criteria(text)
-    if drafted is not None:
-        return _with_ids(drafted)
-    return _with_ids(_rules(text, cities or []))
+    if drafted:
+        found = _add_drafted_needs(found, drafted)
+    return _with_ids(found)
+
+
+_HHMM = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
+
+
+def _add_drafted_needs(found: list[Criterion], drafted: list[Criterion]) -> list[Criterion]:
+    """Add needs the model found that the phrase rules missed ("loves robotics" -> STEM).
+
+    Code still decides: location, grade and school type come only from the rules;
+    each drafted phrase is mapped to needs.yaml here; a phrase that maps to no need,
+    or only ambiguously, is dropped; and when both found the same need, the rules'
+    criterion (with its parameters and ambiguities) is kept.
+    """
+    have = {c.need for c in found if c.kind == "need" and c.need}
+    added: list[Criterion] = []
+    for item in drafted:
+        hit = map_phrase(item.text)
+        if not hit.need or hit.need in have or mapping_is_ambiguous(hit):
+            continue
+        have.add(hit.need)
+        until = (item.params or {}).get("until")
+        params = {"until": until} if isinstance(until, str) and _HHMM.match(until) else {}
+        added.append(
+            Criterion(
+                id=hit.need,
+                text=item.text,
+                need=hit.need,
+                strength=item.strength,
+                params=params,
+                kind="need",
+                mapping=MappingInfo(score=hit.score, runner_up=hit.runner_up, margin=hit.margin),
+            )
+        )
+    return found + added
 
 
 def _with_ids(criteria: list[Criterion]) -> list[Criterion]:
