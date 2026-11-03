@@ -13,6 +13,7 @@ SourceType = Literal[
     "school_reported",
     "school_website",
     "parent_reviews",
+    "community",
     "program",
     "funding_rule",
     "glossary",
@@ -81,6 +82,8 @@ class EvidenceRecord(BaseModel):
     note: str = ""
     conflict: Conflict | None = None
     review_ids: list[str] = Field(default_factory=list)
+    # Community posts that support this criterion. They never confirm it.
+    post_ids: list[str] = Field(default_factory=list)
 
 
 class SchoolResult(BaseModel):

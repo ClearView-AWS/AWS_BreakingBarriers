@@ -20,6 +20,7 @@ export type Evidence = {
   source?: { type: string; path: string; as_of?: string | null; confidence?: string | null } | null;
   conflict?: { website_value?: string; profile_value?: string; path?: string } | null;
   review_ids?: string[];
+  post_ids?: string[];
 };
 
 export type Card = {
@@ -34,6 +35,11 @@ export type Card = {
   distance_miles?: number | null;
   evidence: Evidence[];
   missed_must?: boolean;
+  community?: {
+    threads: number;
+    discussed: { need: string; label: string; parents: number; threads: number; thread_ids: string[] }[];
+    demand: { need: string; label: string; count: number }[];
+  };
 };
 
 export type Block = { type: string; payload: Record<string, unknown> };

@@ -7,6 +7,8 @@ from agent.explainer import public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
 from clarify.clarifier import choose_question
+from community.evidence import apply_community
+from community.service import card_summary, record_ask
 from contracts import Block, Criterion, TurnResponse
 from evidence.engine import evaluate_criterion
 from evidence.scorer import score_school
@@ -234,6 +236,7 @@ def _score_school(school, criteria, programs, state) -> dict | None:
         if criterion.kind not in {"need", "distance"}:
             continue
         record = evaluate_criterion(school, criterion, programs, _overlays_for(state, school["id"]))
+        record = apply_community(record, school, criterion, state)
         records.append(record)
         rows.append((criterion.strength, record))
     if not rows and not any(c.kind in {"location", "grade", "school_type"} for c in criteria):
@@ -258,6 +261,7 @@ def _score_school(school, criteria, programs, state) -> dict | None:
         "evidence": [record.model_dump() for record in records],
         "tuition": (school.get("osp") or {}).get("tuition"),
         "saved": False,
+        "community": card_summary(state, school["id"], [c.need for c in criteria if c.kind == "need" and c.need]),
     }
 
 
@@ -375,6 +379,7 @@ def _ask_unknowns(session, cards, state) -> None:
             question = needs().get(need_id, {}).get("visit_question") or f"Can you confirm {criterion.get('text')}?"
             item = add_question(state, school, need_id, question, session["id"])
             item["email"] = send_school_question(item)
+            record_ask(state, school["id"], need_id, session["id"], "agent")
 
 
 def _compare(session, criteria, schools, programs, state, payload, message) -> TurnResponse:
@@ -522,11 +527,12 @@ def _ask(session, criteria, schools, programs, state, payload) -> TurnResponse:
     question = needs().get(need_id, {}).get("visit_question") or f"Can you tell us about {need_id}?"
     item = add_question(state, school, need_id, question, session["id"])
     item["email"] = send_school_question(item)
+    item["parent_count"] = record_ask(state, school["id"], need_id, session["id"], "agent")
     blocks = [
         Block(
             type="message",
             payload={
-                "text": f"I grouped that question for {school['name']}. It is waiting in the school inbox ({item['parent_count']} parent{'s' if item['parent_count'] != 1 else ''})."
+                "text": f"I grouped that question for {school['name']}. {item['parent_count']} parent{'s' if item['parent_count'] != 1 else ''} asked about {needs().get(need_id, {}).get('label', need_id).lower()} this month, so the school gets one request."
             },
         )
     ]

@@ -1,7 +1,9 @@
 import { FormEvent, useMemo, useState } from "react";
+import { CommunityPage, PersonaSwitcher } from "./Community";
 import { DEMO_QUERY, type Block, type Card, type Criterion, type Evidence, type Turn } from "./types";
 
-type View = "search" | "saved" | "inbox";
+type View = "search" | "saved" | "inbox" | "community";
+type CommunityTarget = { schoolId: string; draftNeed?: string | null; filterNeed?: string | null };
 
 const STATUS_LABEL: Record<string, string> = {
   confirmed: "Confirmed",
@@ -14,6 +16,7 @@ const SOURCE_LABEL: Record<string, string> = {
   school_reported: "School-reported",
   school_website: "School website",
   parent_reviews: "Parent reviews",
+  community: "Parents say",
   program: "Nearby program",
   funding_rule: "Scholarship rule",
 };
@@ -42,6 +45,21 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<string[]>([]);
   const [why, setWhy] = useState("");
+  const [persona, setPersona] = useState("parent_a");
+  const [community, setCommunity] = useState<CommunityTarget | null>(null);
+
+  function openCommunity(target: CommunityTarget) {
+    setCommunity(target);
+    setView("community");
+    window.scrollTo({ top: 0 });
+  }
+
+  async function backToResults() {
+    setView("search");
+    setCommunity(null);
+    // A school answer in the community can change a card, so rerun the search.
+    if (turn) await run({ action: "refresh" });
+  }
 
   const criteria = turn?.criteria ?? [];
   const blocks = turn?.blocks ?? [];
@@ -115,6 +133,7 @@ export function App() {
             Saved ({saved.length})
           </button>
           <button aria-pressed={view === "inbox"} onClick={() => void openInbox()}>School inbox</button>
+          <PersonaSwitcher value={persona} onChange={setPersona} />
         </nav>
       </header>
       <main className="wrap">
@@ -164,6 +183,7 @@ export function App() {
               onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
               onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
               onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+              onCommunity={openCommunity}
             />
             <CardList
               title="Missing a fact we can ask about"
@@ -179,6 +199,7 @@ export function App() {
               onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
               onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
               onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+              onCommunity={openCommunity}
             />
             <CardList
               title="Missed a must-have"
@@ -194,6 +215,7 @@ export function App() {
               onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
               onFeedback={(id, vote, reason) => void run({ action: "feedback", feedback: { school_id: id, vote, reason } })}
               onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+              onCommunity={openCommunity}
             />
             {grid && <Grid payload={grid} />}
             {picked.length === 2 && (
@@ -237,6 +259,17 @@ export function App() {
               </>
             )}
           </section>
+        )}
+        {view === "community" && community && (
+          <CommunityPage
+            key={`${community.schoolId}-${community.draftNeed ?? ""}-${community.filterNeed ?? ""}`}
+            schoolId={community.schoolId}
+            persona={persona}
+            sessionId={sessionId}
+            draftNeed={community.draftNeed}
+            filterNeed={community.filterNeed}
+            onBack={() => void backToResults()}
+          />
         )}
         {view === "inbox" && <Inbox items={inbox} onAnswered={() => void openInbox().then(() => run({ action: "refresh" }))} />}
       </main>
@@ -297,6 +330,7 @@ function CardList(props: {
   onAsk: (id: string, need: string) => void;
   onFeedback: (id: string, vote: string, reason?: string) => void;
   onCost: (id: string) => void;
+  onCommunity: (target: CommunityTarget) => void;
 }) {
   const { title, cards } = props;
   if (!cards.length) return null;
@@ -316,6 +350,7 @@ function CardList(props: {
             onAsk={props.onAsk}
             onFeedback={props.onFeedback}
             onCost={props.onCost}
+            onCommunity={props.onCommunity}
           />
         ))}
       </div>
@@ -333,6 +368,7 @@ function SchoolCard({
   onAsk,
   onFeedback,
   onCost,
+  onCommunity,
 }: {
   card: Card;
   criteria: Criterion[];
@@ -343,6 +379,7 @@ function SchoolCard({
   onAsk: (id: string, need: string) => void;
   onFeedback: (id: string, vote: string, reason?: string) => void;
   onCost: (id: string) => void;
+  onCommunity: (target: CommunityTarget) => void;
 }) {
   const [reasons, setReasons] = useState(false);
   const labels = useMemo(() => new Map(criteria.map((item) => [item.id, item.text])), [criteria]);
@@ -376,9 +413,15 @@ function SchoolCard({
                 ? () => onAsk(card.id, needs.get(row.criterion_id) as string)
                 : undefined
             }
+            onAskParents={
+              row.status === "unknown" && needs.get(row.criterion_id)
+                ? () => onCommunity({ schoolId: card.id, draftNeed: needs.get(row.criterion_id) as string })
+                : undefined
+            }
           />
         ))}
       </div>
+      <CommunityLine card={card} onCommunity={onCommunity} />
       <div className="row-actions">
         <button onClick={() => onSave(card.id)}>Save</button>
         <button
@@ -388,6 +431,9 @@ function SchoolCard({
           {selected ? "Selected" : "Compare"}
         </button>
         {card.entity_type === "private" && <button onClick={() => onCost(card.id)}>Cost after scholarships</button>}
+        <button onClick={() => onCommunity({ schoolId: card.id })}>
+          Community{card.community?.threads ? ` (${card.community.threads})` : ""}
+        </button>
         <button onClick={() => onFeedback(card.id, "up")}>Thumbs up</button>
         <button onClick={() => setReasons((open) => !open)}>Thumbs down</button>
       </div>
@@ -407,7 +453,27 @@ function SchoolCard({
   );
 }
 
-function EvidenceRow({ row, label, onAsk }: { row: Evidence; label: string; onAsk?: () => void }) {
+function CommunityLine({ card, onCommunity }: { card: Card; onCommunity: (target: CommunityTarget) => void }) {
+  const info = card.community;
+  if (!info || (!info.discussed.length && !info.demand.length)) return null;
+  const topDemand = info.demand[0];
+  return (
+    <div className="community-line">
+      {info.discussed.map((row) => (
+        <button key={row.need} className="texty" onClick={() => onCommunity({ schoolId: card.id, filterNeed: row.need })}>
+          {row.parents} parent{row.parents === 1 ? "" : "s"} discussed {row.label.toLowerCase()} here
+        </button>
+      ))}
+      {topDemand && (
+        <span className="meta">
+          {topDemand.count} parent{topDemand.count === 1 ? "" : "s"} asked about {topDemand.label.toLowerCase()} this month
+        </span>
+      )}
+    </div>
+  );
+}
+
+function EvidenceRow({ row, label, onAsk, onAskParents }: { row: Evidence; label: string; onAsk?: () => void; onAskParents?: () => void }) {
   const source = row.source;
   return (
     <div className="ev">
@@ -429,7 +495,12 @@ function EvidenceRow({ row, label, onAsk }: { row: Evidence; label: string; onAs
             Website says {String(row.conflict.website_value)}; the profile says {String(row.conflict.profile_value)}.
           </div>
         )}
-        {onAsk && <button onClick={onAsk}>Ask the school</button>}
+        {(onAsk || onAskParents) && (
+          <div className="ask-row">
+            {onAsk && <button onClick={onAsk}>Ask the school</button>}
+            {onAskParents && <button onClick={onAskParents}>Ask parents at this school</button>}
+          </div>
+        )}
       </div>
     </div>
   );

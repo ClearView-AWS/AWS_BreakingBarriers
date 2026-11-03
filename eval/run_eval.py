@@ -24,6 +24,7 @@ from search.engine import passes_hard_filters, search_schools
 from store import State
 
 QUERIES = ROOT / "eval" / "queries.jsonl"
+POST_DRAFTS = ROOT / "eval" / "post_drafts.jsonl"
 
 
 def main() -> None:
@@ -148,11 +149,35 @@ def main() -> None:
     print(f"cited claims kept: {citation_ok}/{citation_total}")
     print(f"schools dropped for missing data: {dropped}")
     print(f"median turn: {median:.2f}s")
+    leaked, blocked_clean, total_pii, total_clean = _post_safety()
+    print(f"draft posts with personal info published: {leaked}/{total_pii} target 0")
+    print(f"clean draft posts wrongly blocked: {blocked_clean}/{total_clean}")
+    if leaked:
+        failures.append(f"{leaked} draft posts with personal info passed the safety check")
     if failures:
         print("failures:")
         for line in failures:
             print(" -", line)
         sys.exit(1)
+
+
+def _post_safety() -> tuple[int, int, int, int]:
+    """Personal info that would be published, and clean posts that were blocked."""
+    from community.safety import check_post
+
+    leaked = blocked_clean = total_pii = total_clean = 0
+    for line in POST_DRAFTS.read_text().splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        ok = check_post(row["text"])["ok"]
+        if row["pii"]:
+            total_pii += 1
+            leaked += int(ok)
+        else:
+            total_clean += 1
+            blocked_clean += int(not ok)
+    return leaked, blocked_clean, total_pii, total_clean
 
 
 def _citations() -> tuple[int, int]:
@@ -179,6 +204,7 @@ def _citations() -> tuple[int, int]:
                 if source:
                     defended.add(source)
                 defended.update(row.get("review_ids") or [])
+                defended.update(row.get("post_ids") or [])
                 for token in allowed:
                     if token.startswith(("funding.", "glossary.", "programs/", "reviews_full[")):
                         defended.add(token)

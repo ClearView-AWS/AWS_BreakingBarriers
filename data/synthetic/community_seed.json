@@ -1,0 +1,1265 @@
+{
+  "posts": [
+    {
+      "post_id": "p_1",
+      "thread_id": "p_1",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_1",
+        "role": "parent"
+      },
+      "kind": "question",
+      "needs": [
+        "after_care"
+      ],
+      "text": "Does after-care run past 5:30? I work until 5 and the drive takes a while.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-11-01",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_2",
+      "thread_id": "p_1",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_2",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "after_care"
+      ],
+      "text": "I think it ends around 5:30 but the times changed last year, so I'm not sure.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-11-01",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_3",
+      "thread_id": "p_1",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_3",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "after_care"
+      ],
+      "text": "We use the YMCA program a few blocks away instead. It goes until 6.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-11-02",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_4",
+      "thread_id": "p_1",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_4",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "after_care"
+      ],
+      "text": "Same question here. The front office told us to check back in January.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-11-02",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_5",
+      "thread_id": "p_5",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_5",
+        "role": "parent"
+      },
+      "kind": "question",
+      "needs": [
+        "stem"
+      ],
+      "text": "How is the robotics club? Is it worth signing up in sixth grade?",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-24",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_6",
+      "thread_id": "p_5",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_6",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "stem"
+      ],
+      "text": "My kid loves it. They meet twice a week and went to a regional competition last spring.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-25",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_7",
+      "thread_id": "p_5",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_7",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "stem"
+      ],
+      "text": "Great club. The coaches are supportive and beginners are welcome.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-26",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_8",
+      "thread_id": "p_5",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_8",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "stem"
+      ],
+      "text": "There is a waitlist some years, so sign up early in August.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-28",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_9",
+      "thread_id": "p_9",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_9",
+        "role": "parent"
+      },
+      "kind": "experience",
+      "needs": [
+        "special_education"
+      ],
+      "text": "Our experience with the IEP process here has been good. The team met with us twice in the first month and actually followed the plan.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-12",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_10",
+      "thread_id": "p_9",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_10",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "special_education"
+      ],
+      "text": "Same for us. The resource room teacher is very helpful.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-14",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_11",
+      "thread_id": "p_11",
+      "school_id": "School fl-180019",
+      "author": {
+        "persona": "seed_parent_11",
+        "role": "parent"
+      },
+      "kind": "question",
+      "needs": [
+        "transportation"
+      ],
+      "text": "Does the bus route cover the neighborhoods south of Beach Blvd?",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-11-02",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_12",
+      "thread_id": "p_12",
+      "school_id": "School fl-180100",
+      "author": {
+        "persona": "seed_parent_12",
+        "role": "parent"
+      },
+      "kind": "experience",
+      "needs": [
+        "after_care"
+      ],
+      "text": "After-care here has been great for us. Homework time first, then outside, and pickup is easy.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-20",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_13",
+      "thread_id": "p_12",
+      "school_id": "School fl-180100",
+      "author": {
+        "persona": "seed_parent_13",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "after_care"
+      ],
+      "text": "Agree, the after-care staff are wonderful and it runs late enough for my shift.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-21",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_14",
+      "thread_id": "p_12",
+      "school_id": "School fl-180100",
+      "author": {
+        "persona": "seed_parent_14",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "after_care"
+      ],
+      "text": "Is there a waitlist this year?",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-23",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_15",
+      "thread_id": "p_15",
+      "school_id": "School fl-180100",
+      "author": {
+        "persona": "seed_parent_15",
+        "role": "parent"
+      },
+      "kind": "question",
+      "needs": [
+        "clubs"
+      ],
+      "text": "What clubs are running this semester?",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-30",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_16",
+      "thread_id": "p_15",
+      "school_id": "School fl-180100",
+      "author": {
+        "persona": "seed_parent_16",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "clubs"
+      ],
+      "text": "Chess, yearbook, and a coding club that started in September.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-31",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_17",
+      "thread_id": "p_17",
+      "school_id": "School fl-180003",
+      "author": {
+        "persona": "seed_parent_17",
+        "role": "parent"
+      },
+      "kind": "experience",
+      "needs": [
+        "stem"
+      ],
+      "text": "The STEM labs are excellent. Projects every week and the science fair is a big deal here.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-05",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_18",
+      "thread_id": "p_17",
+      "school_id": "School fl-180003",
+      "author": {
+        "persona": "seed_parent_18",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "stem"
+      ],
+      "text": "Happy with it too. Homework load is reasonable.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-06",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_19",
+      "thread_id": "p_19",
+      "school_id": "School fl-180003",
+      "author": {
+        "persona": "seed_parent_19",
+        "role": "parent"
+      },
+      "kind": "question",
+      "needs": [
+        "sports"
+      ],
+      "text": "Do middle schoolers get to play on a team, or is it intramural only?",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-28",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_20",
+      "thread_id": "p_19",
+      "school_id": "School fl-180003",
+      "author": {
+        "persona": "seed_parent_20",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "sports"
+      ],
+      "text": "There is flag football and volleyball, plus intramurals at lunch.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-29",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_21",
+      "thread_id": "p_21",
+      "school_id": "School fl-180001",
+      "author": {
+        "persona": "seed_parent_21",
+        "role": "parent"
+      },
+      "kind": "question",
+      "needs": [
+        "after_care"
+      ],
+      "text": "Is after-care on campus or do they bus kids somewhere else?",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-11-03",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_22",
+      "thread_id": "p_22",
+      "school_id": "School fl-180001",
+      "author": {
+        "persona": "seed_parent_22",
+        "role": "parent"
+      },
+      "kind": "experience",
+      "needs": [
+        "family_engagement"
+      ],
+      "text": "The family nights are fun and the teachers reply to emails within a day.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-18",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_23",
+      "thread_id": "p_23",
+      "school_id": "School fl-180005",
+      "author": {
+        "persona": "seed_parent_23",
+        "role": "parent"
+      },
+      "kind": "question",
+      "needs": [
+        "low_cost"
+      ],
+      "text": "Has anyone used the Florida scholarship here? How long did approval take?",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-27",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_24",
+      "thread_id": "p_23",
+      "school_id": "School fl-180005",
+      "author": {
+        "persona": "seed_parent_24",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "low_cost"
+      ],
+      "text": "It took about six weeks for us. Apply as early as the window opens.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-28",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_25",
+      "thread_id": "p_25",
+      "school_id": "School fl-180021",
+      "author": {
+        "persona": "seed_parent_25",
+        "role": "parent"
+      },
+      "kind": "experience",
+      "needs": [
+        "arts"
+      ],
+      "text": "The music program is wonderful. The spring concert was the best one we've been to.",
+      "stance": "positive",
+      "origin": "community",
+      "created_at": "2026-10-09",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_26",
+      "thread_id": "p_26",
+      "school_id": "School fl-180004",
+      "author": {
+        "persona": "seed_parent_26",
+        "role": "parent"
+      },
+      "kind": "question",
+      "needs": [
+        "safety"
+      ],
+      "text": "How does pickup work? The line looked long when we toured.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-22",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_27",
+      "thread_id": "p_26",
+      "school_id": "School fl-180004",
+      "author": {
+        "persona": "seed_parent_27",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "safety"
+      ],
+      "text": "It moves faster after the first two weeks. Get there by 3:10.",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-22",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_28",
+      "thread_id": "p_28",
+      "school_id": "School fl-95390",
+      "author": {
+        "persona": "seed_parent_28",
+        "role": "parent"
+      },
+      "kind": "experience",
+      "needs": [
+        "teacher_stability"
+      ],
+      "text": "We had long stretches with substitutes last year. Frustrating for our kid and hard to keep up with homework.",
+      "stance": "negative",
+      "origin": "community",
+      "created_at": "2026-10-03",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_29",
+      "thread_id": "p_28",
+      "school_id": "School fl-95390",
+      "author": {
+        "persona": "seed_parent_29",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "teacher_stability"
+      ],
+      "text": "Same. Three different teachers in one year and communication was poor.",
+      "stance": "negative",
+      "origin": "community",
+      "created_at": "2026-10-04",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_30",
+      "thread_id": "p_28",
+      "school_id": "School fl-95390",
+      "author": {
+        "persona": "seed_parent_30",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "teacher_stability"
+      ],
+      "text": "We were disappointed too. It felt chaotic until spring.",
+      "stance": "negative",
+      "origin": "community",
+      "created_at": "2026-10-06",
+      "_synthetic": true
+    },
+    {
+      "post_id": "p_31",
+      "thread_id": "p_28",
+      "school_id": "School fl-95390",
+      "author": {
+        "persona": "seed_parent_31",
+        "role": "parent"
+      },
+      "kind": "reply",
+      "needs": [
+        "teacher_stability"
+      ],
+      "text": "I heard they hired more full-time staff this fall. Has anyone seen a change?",
+      "stance": "neutral",
+      "origin": "community",
+      "created_at": "2026-10-08",
+      "_synthetic": true
+    }
+  ],
+  "votes": {
+    "p_1": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7",
+      "seed_voter_8",
+      "seed_voter_9",
+      "seed_voter_10",
+      "seed_voter_11",
+      "seed_voter_12",
+      "seed_voter_13",
+      "seed_voter_14",
+      "seed_voter_15",
+      "seed_voter_16",
+      "seed_voter_17",
+      "seed_voter_18",
+      "seed_voter_19",
+      "seed_voter_20",
+      "seed_voter_21",
+      "seed_voter_22",
+      "seed_voter_23"
+    ],
+    "p_2": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5"
+    ],
+    "p_3": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5"
+    ],
+    "p_4": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5"
+    ],
+    "p_5": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7",
+      "seed_voter_8",
+      "seed_voter_9",
+      "seed_voter_10",
+      "seed_voter_11",
+      "seed_voter_12",
+      "seed_voter_13",
+      "seed_voter_14",
+      "seed_voter_15",
+      "seed_voter_16",
+      "seed_voter_17"
+    ],
+    "p_6": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4"
+    ],
+    "p_7": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4"
+    ],
+    "p_8": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4"
+    ],
+    "p_9": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7",
+      "seed_voter_8",
+      "seed_voter_9"
+    ],
+    "p_10": [
+      "seed_voter_1",
+      "seed_voter_2"
+    ],
+    "p_11": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4"
+    ],
+    "p_12": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7",
+      "seed_voter_8",
+      "seed_voter_9",
+      "seed_voter_10",
+      "seed_voter_11"
+    ],
+    "p_13": [
+      "seed_voter_1",
+      "seed_voter_2"
+    ],
+    "p_14": [
+      "seed_voter_1",
+      "seed_voter_2"
+    ],
+    "p_15": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3"
+    ],
+    "p_16": [
+      "seed_voter_1"
+    ],
+    "p_17": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7",
+      "seed_voter_8",
+      "seed_voter_9",
+      "seed_voter_10",
+      "seed_voter_11",
+      "seed_voter_12",
+      "seed_voter_13",
+      "seed_voter_14"
+    ],
+    "p_18": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3"
+    ],
+    "p_19": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5"
+    ],
+    "p_20": [
+      "seed_voter_1"
+    ],
+    "p_21": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6"
+    ],
+    "p_22": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7",
+      "seed_voter_8"
+    ],
+    "p_23": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7",
+      "seed_voter_8",
+      "seed_voter_9",
+      "seed_voter_10",
+      "seed_voter_11",
+      "seed_voter_12"
+    ],
+    "p_24": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3"
+    ],
+    "p_25": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4"
+    ],
+    "p_26": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7"
+    ],
+    "p_27": [
+      "seed_voter_1"
+    ],
+    "p_28": [
+      "seed_voter_1",
+      "seed_voter_2",
+      "seed_voter_3",
+      "seed_voter_4",
+      "seed_voter_5",
+      "seed_voter_6",
+      "seed_voter_7",
+      "seed_voter_8",
+      "seed_voter_9",
+      "seed_voter_10"
+    ],
+    "p_29": [
+      "seed_voter_1",
+      "seed_voter_2"
+    ],
+    "p_30": [
+      "seed_voter_1",
+      "seed_voter_2"
+    ],
+    "p_31": [
+      "seed_voter_1",
+      "seed_voter_2"
+    ]
+  },
+  "asks": [
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_3",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_4",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_5",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_6",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_7",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_8",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_9",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_10",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_11",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_12",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-10",
+      "asker": "seed_asker_after_care_old_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-10",
+      "asker": "seed_asker_after_care_old_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-10",
+      "asker": "seed_asker_after_care_old_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "after_care",
+      "month": "2026-10",
+      "asker": "seed_asker_after_care_old_3",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "stem",
+      "month": "2026-11",
+      "asker": "seed_asker_stem_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "stem",
+      "month": "2026-11",
+      "asker": "seed_asker_stem_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "stem",
+      "month": "2026-11",
+      "asker": "seed_asker_stem_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "stem",
+      "month": "2026-11",
+      "asker": "seed_asker_stem_3",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "stem",
+      "month": "2026-11",
+      "asker": "seed_asker_stem_4",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "stem",
+      "month": "2026-11",
+      "asker": "seed_asker_stem_5",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "stem",
+      "month": "2026-10",
+      "asker": "seed_asker_stem_old_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "stem",
+      "month": "2026-10",
+      "asker": "seed_asker_stem_old_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "transportation",
+      "month": "2026-11",
+      "asker": "seed_asker_transportation_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "transportation",
+      "month": "2026-11",
+      "asker": "seed_asker_transportation_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "transportation",
+      "month": "2026-11",
+      "asker": "seed_asker_transportation_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180019",
+      "need": "transportation",
+      "month": "2026-10",
+      "asker": "seed_asker_transportation_old_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180100",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180100",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180100",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180100",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_3",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180100",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_4",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180100",
+      "need": "after_care",
+      "month": "2026-10",
+      "asker": "seed_asker_after_care_old_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180100",
+      "need": "after_care",
+      "month": "2026-10",
+      "asker": "seed_asker_after_care_old_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180001",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180001",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180001",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180001",
+      "need": "after_care",
+      "month": "2026-11",
+      "asker": "seed_asker_after_care_3",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180001",
+      "need": "after_care",
+      "month": "2026-10",
+      "asker": "seed_asker_after_care_old_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180003",
+      "need": "sports",
+      "month": "2026-11",
+      "asker": "seed_asker_sports_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180003",
+      "need": "sports",
+      "month": "2026-11",
+      "asker": "seed_asker_sports_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-11",
+      "asker": "seed_asker_low_cost_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-11",
+      "asker": "seed_asker_low_cost_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-11",
+      "asker": "seed_asker_low_cost_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-11",
+      "asker": "seed_asker_low_cost_3",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-11",
+      "asker": "seed_asker_low_cost_4",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-11",
+      "asker": "seed_asker_low_cost_5",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-11",
+      "asker": "seed_asker_low_cost_6",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-10",
+      "asker": "seed_asker_low_cost_old_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-10",
+      "asker": "seed_asker_low_cost_old_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180005",
+      "need": "low_cost",
+      "month": "2026-10",
+      "asker": "seed_asker_low_cost_old_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180004",
+      "need": "safety",
+      "month": "2026-11",
+      "asker": "seed_asker_safety_0",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180004",
+      "need": "safety",
+      "month": "2026-11",
+      "asker": "seed_asker_safety_1",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180004",
+      "need": "safety",
+      "month": "2026-11",
+      "asker": "seed_asker_safety_2",
+      "origin": "seed",
+      "_synthetic": true
+    },
+    {
+      "school_id": "School fl-180004",
+      "need": "safety",
+      "month": "2026-10",
+      "asker": "seed_asker_safety_old_0",
+      "origin": "seed",
+      "_synthetic": true
+    }
+  ]
+}

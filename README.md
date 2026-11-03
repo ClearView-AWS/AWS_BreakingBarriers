@@ -25,9 +25,11 @@ Open http://127.0.0.1:5173. The demo query is:
 Then: answer the care question, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
 
 ```bash
-.venv/bin/python -m pytest backend/tests -q
+.venv/bin/python -m pytest -q
 .venv/bin/python eval/run_eval.py
 ```
+
+Parent community demo: on the Beauclerc STEM Middle card, tap "Ask parents at this school". Try posting with a child's name (it is blocked), then post without it. Switch "Viewing as" to School staff, tap "Send digest", and answer the after-care thread. Switch back to Parent A and go back to results. After-school care is now Confirmed, school-reported. See `docs/community.md`.
 
 Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25 sample schools in `Sample Data/` stay unchanged. The generator writes 275 more schools, nearby programs, and one static page per generated school.
 
@@ -53,6 +55,7 @@ Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25
 | Route, extract, cite, explain | `backend/agent/` |
 | Search (local hybrid, OpenSearch DSL) | `backend/search/` |
 | Website, inbox, SES | `backend/gaps/` |
+| Parent community, safety check, demand counts | `backend/community/` (see `docs/community.md`) |
 | Blocks the browser renders | `frontend/src/App.tsx` |
 
 GreatSchools can add or change a need by editing `needs.yaml`. A need has phrases (including Spanish), the field conditions for confirmed and partial, search boosts, and the question to ask on a visit. The mapper matches a parent's phrase to those entries. Unmapped phrases such as "how liberal" offer the needs marked `offer_when_unmapped`: inclusion, cultural responsiveness, restorative discipline, and non-religious.
@@ -80,6 +83,7 @@ Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/sta
 | Require / prefer / avoid correct | 100% (39/39) | 85%+ |
 | Ask-or-not decision correct | 100% (39/39) | 80%+ |
 | Claims with a valid citation | 30/30 | 100%, required |
+| Draft posts with personal info that get published | 0/10 | 0, required |
 | Schools dropped for missing data | 0 | 0, required |
 | Turn time, median | 0.02 s | under 6 s |
 
