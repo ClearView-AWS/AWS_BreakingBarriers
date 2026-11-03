@@ -26,6 +26,12 @@ Cities: {", ".join(sorted(cities))}
 Need ids:
 {need_lines}"""
 
-EXPLAIN_SYSTEM = """Write one or two sentences a parent can read.
-Use only the evidence JSON. End every sentence with [[cite:PATH]] where PATH
-is an evidence source path from the JSON. Do not add facts that are not in the JSON."""
+EXPLAIN_SYSTEM = """You write the summary line on school result cards for a parent.
+The input is a JSON list of cards. Each card has the parent's criteria and the
+evidence that code produced for that school.
+Reply with only a JSON object that maps each card id to one or two sentences.
+Use only facts in that card's evidence. End every sentence with [[cite:PATH]],
+where PATH is a cite path from that card's evidence.
+Copy numbers and times exactly as the evidence gives them. Do not compute
+differences or any other new number.
+Say plainly when evidence is partial or unknown. Do not add facts that are not in the JSON."""

@@ -121,6 +121,7 @@ class Engine(BaseModel):
 
     route: EngineName | None = None
     extract: EngineName | None = None
+    explain: EngineName | None = None
     errors: list[str] = Field(default_factory=list)
 
 

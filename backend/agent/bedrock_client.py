@@ -70,6 +70,29 @@ def maybe_bedrock_route(text: str, has_session: bool) -> tuple[str | None, Engin
     return None, _step(False, error)
 
 
+def maybe_bedrock_explanations(cards: list[dict]) -> tuple[dict[str, str] | None, EngineStep]:
+    """Return the model's draft summary per card id, or None to keep the code summaries.
+
+    The text is untrusted. The explainer fact-checks every sentence.
+    """
+    if not enabled():
+        return None, _step(False, None)
+    try:
+        from catalog import models
+        from agent.prompts import EXPLAIN_SYSTEM
+
+        raw = converse(models()["strong_model"], EXPLAIN_SYSTEM, json.dumps(cards))
+        start, end = raw.find("{"), raw.rfind("}")
+        if start < 0 or end < 0:
+            return None, _step(False, f"bedrock explain returned no JSON object: {raw[:200]!r}")
+        payload = json.loads(raw[start : end + 1])
+        if not isinstance(payload, dict):
+            return None, _step(False, f"bedrock explain returned {type(payload).__name__}, not an object")
+        return {str(key): str(value) for key, value in payload.items()}, _step(True, None)
+    except Exception as exc:
+        return None, _step(False, f"bedrock explain failed: {exc}")
+
+
 def maybe_bedrock_criteria(text: str, cities: list[str]) -> tuple[list[dict] | None, EngineStep]:
     """Return the model's raw draft items, or None to use the rules extractor.
 

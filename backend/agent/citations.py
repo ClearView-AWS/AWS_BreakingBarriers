@@ -60,3 +60,69 @@ def strip_cites(text: str) -> str:
     cleaned = re.sub(r"\s+([.,;:!?])", r"\1", cleaned)
     cleaned = re.sub(r"\s{2,}", " ", cleaned)
     return cleaned.strip()
+
+
+# Fact check for model-written text. Citations prove where a sentence came from;
+# this proves its numbers and times are in that source.
+_TIME_MERIDIEM = re.compile(r"\b(\d{1,2})(?::(\d{2}))?\s*([ap])\.?\s?m\b\.?", re.IGNORECASE)
+_TIME_CLOCK = re.compile(r"\b(\d{1,2}):(\d{2})\b")
+_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def _time(hour: int, minute: int) -> str:
+    return f"t:{hour % 24:02d}:{minute:02d}"
+
+
+def number_claims(text: str) -> list[set[str]]:
+    """Each number or time in the text, as the set of readings it could mean."""
+    rest = _CITE.sub(" ", str(text))
+    claims: list[set[str]] = []
+
+    def meridiem(match: re.Match) -> str:
+        hour, minute = int(match.group(1)) % 12, int(match.group(2) or 0)
+        if match.group(3).lower() == "p":
+            hour += 12
+        claims.append({_time(hour, minute)})
+        return " "
+
+    def clock(match: re.Match) -> str:
+        hour, minute = int(match.group(1)), int(match.group(2))
+        claims.append({_time(hour, minute), _time(hour + 12, minute)} if hour < 12 else {_time(hour, minute)})
+        return " "
+
+    rest = _TIME_MERIDIEM.sub(meridiem, rest)
+    rest = _TIME_CLOCK.sub(clock, rest)
+    for token in _NUMBER.findall(rest):
+        claims.append({f"n:{float(token.replace(',', '')):g}"})
+    return claims
+
+
+def known_numbers(values: list) -> set[str]:
+    """Every reading of every number or time that appears in trusted values."""
+    known: set[str] = set()
+    for value in values:
+        if value is None:
+            continue
+        items = value if isinstance(value, list) else [value]
+        for item in items:
+            for claim in number_claims(str(item)):
+                known |= claim
+    return known
+
+
+def validate_model_text(text: str, facts: dict[str, set[str]], extra: set[str]) -> str:
+    """Keep sentences whose citations exist and whose numbers appear in what they cite.
+
+    `facts` maps each citable path to the number readings in its trusted values.
+    `extra` holds readings any sentence may use, such as the parent's own criteria.
+    """
+    kept = []
+    for sentence in _SENTENCE.split(validate_text(text, set(facts))):
+        if not sentence:
+            continue
+        allowed = set(extra)
+        for cite in citations_in(sentence):
+            allowed |= facts[cite]
+        if all(claim & allowed for claim in number_claims(sentence)):
+            kept.append(sentence)
+    return " ".join(kept)

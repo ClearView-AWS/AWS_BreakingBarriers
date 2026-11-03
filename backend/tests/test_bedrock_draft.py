@@ -100,15 +100,25 @@ def _turn(message: str) -> dict:
 
 
 def test_engine_rules_when_bedrock_is_off():
-    assert _turn(QUERY) == {"route": "rules", "extract": "rules", "errors": []}
+    assert _turn(QUERY) == {"route": "rules", "extract": "rules", "explain": "rules", "errors": []}
 
 
 def test_engine_bedrock_when_claude_answers(monkeypatch):
-    draft = _fenced([{"kind": "grade", "value": "e", "text": "elementary"}])
-    monkeypatch.setattr(bc, "enabled", lambda: True)
-    monkeypatch.setattr(bc, "converse", lambda m, system, u: "new_search" if "route" in system else draft)
+    from agent.prompts import EXPLAIN_SYSTEM, ROUTER_SYSTEM
 
-    assert _turn(QUERY) == {"route": "bedrock", "extract": "bedrock", "errors": []}
+    draft = _fenced([{"kind": "grade", "value": "e", "text": "elementary"}])
+
+    def answer(model_id, system, user):
+        if system == ROUTER_SYSTEM:
+            return "new_search"
+        if system == EXPLAIN_SYSTEM:
+            return json.dumps({card["id"]: f"Grade fits [[cite:level_codes]]." for card in json.loads(user)})
+        return draft
+
+    monkeypatch.setattr(bc, "enabled", lambda: True)
+    monkeypatch.setattr(bc, "converse", answer)
+
+    assert _turn(QUERY) == {"route": "bedrock", "extract": "bedrock", "explain": "bedrock", "errors": []}
 
 
 def test_engine_shows_fallback_and_reason(monkeypatch):
@@ -121,7 +131,12 @@ def test_engine_shows_fallback_and_reason(monkeypatch):
     assert _turn(QUERY) == {
         "route": "rules_fallback",
         "extract": "rules_fallback",
-        "errors": ["bedrock route failed: ExpiredToken", "bedrock extract failed: ExpiredToken"],
+        "explain": "rules_fallback",
+        "errors": [
+            "bedrock route failed: ExpiredToken",
+            "bedrock extract failed: ExpiredToken",
+            "bedrock explain failed: ExpiredToken",
+        ],
     }
 
 
