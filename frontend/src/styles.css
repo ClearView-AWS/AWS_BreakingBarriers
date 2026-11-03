@@ -1,4 +1,4 @@
-/* Arshia Terminal design system v2: Midnight is the default theme, Light the alternative.
+/* Dark green theme: Midnight is the default, Light the alternative.
    One signal green (ledger) for actions and confirmed facts, hairline rules, small radii,
    no drop shadows. Status always comes with a word, never colour alone. */
 :root,
@@ -36,7 +36,7 @@
   --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
-  /* Names the components already use, mapped onto the Arshia tokens. */
+  /* Names the components already use, mapped onto the theme tokens. */
   --bg: var(--paper);
   --card: var(--panel);
   --line: var(--rule);
