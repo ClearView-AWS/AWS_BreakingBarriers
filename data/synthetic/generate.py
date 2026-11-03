@@ -5,11 +5,22 @@ on-site care, nearby programs, a stale program, a website conflict, and a
 school with no after-care data. Random schools keep the sample's missing-data
 rates. Jacksonville middle schools in the random set never have both STEM and
 on-site care, so they cannot crowd the demo ranking.
+
+Every generated school and program is then moved to the nearest real street
+point from street_points.json (OpenStreetMap, no bridges), so no pin lands in
+water. That step uses no random numbers, so every other field stays the same.
+
+Last, every generated school gets admissions fields in osp: admission_type on
+all of them, and deadlines, links, requirements and seat counts at about the
+sample's low rates. Demo schools get hand-set values that cover every Getting
+in status. Each school draws these from its own random stream, so the fields
+above never change. The 25 sample schools are not touched.
 """
 
 from __future__ import annotations
 
 import json
+import math
 import random
 from pathlib import Path
 
@@ -19,6 +30,59 @@ PROGRAM_SAMPLE = ROOT / "Sample Data" / "programs_sample.json"
 OUT_SCHOOLS = Path(__file__).resolve().parent / "schools.json"
 OUT_PROGRAMS = Path(__file__).resolve().parent / "programs.json"
 WEB = Path(__file__).resolve().parent / "websites"
+STREETS = Path(__file__).resolve().parent / "street_points.json"
+
+# Random programs start on top of their school; move them this far away first
+# so the two pins don't overlap. Well inside the plan's 1-mile program rule.
+PROGRAM_OFFSET_MILES = (0.3, 0.6)
+
+# Admissions. The sample fills admissions_url for 3 of 25 schools,
+# application_requirements for 2 and application_deadline_date for 1, so the
+# generated schools use about the same rates. Dates follow the sample's M/D/YYYY.
+ADMISSION_TYPES = ("zoned", "choice", "lottery", "application")
+URL_RATE = 0.12
+REQUIREMENTS_RATE = 0.08
+DEADLINE_RATE = 0.05
+SEATS_RATE = 0.04
+APPLICANTS_RATE = 0.04
+# Ahead of the app's clock (Nov 3, 2026), already passed, and more than a year old.
+DEADLINES = ["1/15/2027", "2/1/2027", "3/1/2027", "10/1/2026", "1/15/2025"]
+REPORTED_ON = ["2026-03-15", "2026-08-20", "2026-09-15", "2026-10-05"]
+ENTRY_GRADE = {"p": "PK", "e": "K", "m": "6", "h": "9"}
+
+# Hand-set for the Jacksonville middle-school demo so each Getting in status shows up:
+# apply by a date, open seats, deadline passed, waitlist only, and a stale deadline.
+DEMO_ADMISSIONS = {
+    "Beauclerc STEM Middle": {
+        # A district magnet lottery, so the demo's "after-care unknown" card also reads
+        # "Lottery · apply by Jan 15".
+        "admission_type": ["lottery"],
+        "application_deadline_date": ["1/15/2027"],
+        "application_requirements": ["application"],
+        "applicants_last_year": [{"grade": "6", "applicants": 210, "seats": 90, "as_of": "2026-03-15"}],
+    },
+    "Riverside Preparatory Middle": {
+        "admission_type": ["application"],
+        "application_deadline_date": ["2/1/2027"],
+        "application_requirements": ["application", "interview"],
+    },
+    "Tidewater STEM Charter": {
+        "admission_type": ["lottery"],
+        "seats_by_grade": [{"grade": "6", "open_seats": 12, "waitlist": False, "as_of": "2026-09-15"}],
+    },
+    "Arlington STEM Academy": {
+        "admission_type": ["lottery"],
+        "application_deadline_date": ["10/1/2026"],
+    },
+    "Northside STEM Middle": {
+        "admission_type": ["lottery"],
+        "seats_by_grade": [{"grade": "6", "open_seats": 0, "waitlist": True, "as_of": "2026-10-01"}],
+    },
+    "Landmark Christian Middle": {
+        "admission_type": ["application"],
+        "application_deadline_date": ["1/15/2025"],
+    },
+}
 
 TARGET = 300
 LEAP_POINT = (30.42, -81.78)
@@ -43,11 +107,126 @@ def main() -> None:
     random_schools, random_programs = _random(len(sample) + len(demo))
     schools = demo + random_schools
     programs = demo_programs + random_programs
+    moves = _place_on_streets(schools, programs, {p["id"] for p in random_programs})
+    for school in schools:
+        _add_admissions(school)
     OUT_SCHOOLS.write_text(json.dumps(schools, indent=2))
     OUT_PROGRAMS.write_text(json.dumps(programs, indent=2))
     _websites(schools)
     print(f"sample {len(sample)} + synthetic {len(schools)} = {len(sample) + len(schools)} schools")
     print(f"synthetic programs {len(programs)}")
+    for kind, miles in moves.items():
+        miles = sorted(miles)
+        print(
+            f"{kind} moved to a street: median {miles[len(miles) // 2]:.2f} mi, max {miles[-1]:.2f} mi, "
+            f"{sum(m > 0.2 for m in miles)} of {len(miles)} more than 0.2 mi"
+        )
+    types = {kind: sum(s["osp"]["admission_type"] == [kind] for s in schools) for kind in ADMISSION_TYPES}
+    filled = {
+        key: sum(key in s["osp"] for s in schools)
+        for key in ("application_deadline_date", "admissions_url", "application_requirements", "seats_by_grade", "applicants_last_year")
+    }
+    print(f"admission types: {types}")
+    print(f"admissions fields filled (of {len(schools)}): {filled}")
+
+
+def _add_admissions(school: dict) -> None:
+    """Add osp admissions fields to one generated school.
+
+    Demo schools take hand-set values, or the plain default for their type.
+    Random schools draw from their own stream, so no other field changes.
+    """
+    osp = school["osp"]
+    entity = school["entity_type"]
+    default = {"public": "zoned", "charter": "lottery", "private": "application"}[entity]
+    if school.get("_demo_role") != "random":
+        osp.update(DEMO_ADMISSIONS.get(school["name"], {"admission_type": [default]}))
+        return
+    rng = random.Random(f"admissions-{school['id']}")
+    roll = rng.random()
+    if entity == "public":
+        kind = "choice" if roll < 0.15 else "zoned"
+    elif entity == "charter":
+        kind = "application" if roll < 0.15 else "lottery"
+    else:
+        kind = "application"
+    osp["admission_type"] = [kind]
+    slug = school["name"].casefold().replace(" ", "-")
+    # Draw every roll for every school, so changing one rate doesn't reshuffle the rest.
+    rolls = {key: rng.random() for key in ("url", "requirements", "deadline", "seats", "applicants")}
+    deadline = rng.choice(DEADLINES)
+    reported = rng.choice(REPORTED_ON)
+    grade = ENTRY_GRADE[school["level_codes"][0]]
+    open_seats = rng.choice([0, 0, 4, 8, 15])
+    applicants = rng.choice([60, 120, 180, 240])
+    seats = rng.choice([40, 60, 90])
+    if rolls["url"] < URL_RATE:
+        osp["admissions_url"] = [f"https://www.example.org/{slug}/admissions"]
+    if kind == "zoned":
+        # A zoned school takes the children who live in its zone; no deadline or lottery.
+        return
+    if rolls["requirements"] < REQUIREMENTS_RATE:
+        osp["application_requirements"] = ["application", "interview"] if kind == "application" and entity == "private" else ["application"]
+    if rolls["deadline"] < DEADLINE_RATE:
+        osp["application_deadline_date"] = [deadline]
+    if rolls["seats"] < SEATS_RATE:
+        osp["seats_by_grade"] = [{"grade": grade, "open_seats": open_seats, "waitlist": open_seats == 0, "as_of": reported}]
+    if rolls["applicants"] < APPLICANTS_RATE:
+        osp["applicants_last_year"] = [{"grade": grade, "applicants": applicants, "seats": seats, "as_of": "2026-03-15"}]
+
+
+def _miles(a: tuple[float, float], b: tuple[float, float]) -> float:
+    lat1, lon1, lat2, lon2 = map(math.radians, (a[0], a[1], b[0], b[1]))
+    hav = math.sin((lat2 - lat1) / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin((lon2 - lon1) / 2) ** 2
+    return 3958.7613 * 2 * math.asin(math.sqrt(hav))
+
+
+def _nearest(points: list[list], lat: float, lon: float, used: set[int]) -> int:
+    """Index of the closest street point not already taken by another pin."""
+    scale = math.cos(math.radians(lat))
+    best, best_d2 = -1, float("inf")
+    for index, (plat, plon, _) in enumerate(points):
+        if index in used:
+            continue
+        d2 = (plat - lat) ** 2 + ((plon - lon) * scale) ** 2
+        if d2 < best_d2:
+            best, best_d2 = index, d2
+    return best
+
+
+def _offset(lat: float, lon: float, seed: str) -> tuple[float, float]:
+    # Its own random stream, so the main generator's draws are untouched.
+    rng = random.Random(seed)
+    bearing = rng.uniform(0, 2 * math.pi)
+    miles = rng.uniform(*PROGRAM_OFFSET_MILES)
+    dlat = miles / 69.0 * math.cos(bearing)
+    dlon = miles / (69.0 * math.cos(math.radians(lat))) * math.sin(bearing)
+    return lat + dlat, lon + dlon
+
+
+def _place_on_streets(schools: list[dict], programs: list[dict], offset_ids: set[str]) -> dict[str, list[float]]:
+    """Move every generated pin onto a real street and give it that street's name.
+
+    Schools go first, then programs. No two pins share a street point. Returns how
+    far each pin moved, in miles, for the summary line.
+    """
+    metros = json.loads(STREETS.read_text())["metros"]
+    used: dict[str, set[int]] = {city: set() for city in metros}
+    moves: dict[str, list[float]] = {"schools": [], "programs": []}
+    for kind, records in (("schools", schools), ("programs", programs)):
+        for record in records:
+            metro = metros[record["city"]]
+            lat, lon = (float(x) for x in record["latlon"].split(","))
+            if record["id"] in offset_ids:
+                lat, lon = _offset(lat, lon, f"program-offset-{record['id']}")
+            index = _nearest(metro["points"], lat, lon, used[record["city"]])
+            used[record["city"]].add(index)
+            plat, plon, street = metro["points"][index]
+            moves[kind].append(_miles((lat, lon), (plat, plon)))
+            record["latlon"] = f"{plat}, {plon}"
+            number = record.get("school_id") or record.get("program_id")
+            record["street"] = f"{100 + (number * 7919) % 9800} {metro['streets'][street]}"
+    return moves
 
 
 def _demo() -> tuple[list[dict], list[dict]]:

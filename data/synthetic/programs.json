@@ -9,7 +9,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.42, -81.78",
+    "latlon": "30.41997, -81.78006",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -31,7 +31,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "6819 Fox Tail Lane"
   },
   {
     "id": "Program fl-880002",
@@ -43,7 +44,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.430000000000003, -81.79",
+    "latlon": "30.42456, -81.78504",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -65,7 +66,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "4938 Micki Lane"
   },
   {
     "id": "Program fl-880003",
@@ -77,7 +79,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.15, -81.5",
+    "latlon": "30.14426, -81.50939",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -99,7 +101,8 @@
         "end_time": "17:30"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3057 Rudin Street"
   },
   {
     "id": "Program fl-880104",
@@ -111,7 +114,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.249534471341857, -81.57687024676996",
+    "latlon": "30.2518, -81.58436",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -133,7 +136,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "9076 Belfort Road"
   },
   {
     "id": "Program fl-880112",
@@ -145,7 +149,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.42034683674809, -81.34145944395082",
+    "latlon": "28.42553, -81.34201",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -167,7 +171,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3828 Oceanus Drive"
   },
   {
     "id": "Program fl-880117",
@@ -179,7 +184,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.27396176258988, -81.68006517037396",
+    "latlon": "30.27764, -81.69856",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -201,7 +206,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "4223 Holly Avenue"
   },
   {
     "id": "Program fl-880121",
@@ -213,7 +219,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.71101395197488, -80.21354039363348",
+    "latlon": "25.73571, -80.22373",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -235,7 +241,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "6499 Crystal View Court"
   },
   {
     "id": "Program fl-880128",
@@ -247,7 +254,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.806237636326642, -80.1610253016887",
+    "latlon": "25.79347, -80.15961",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -269,7 +276,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3132 7th Di Lido Terrace"
   },
   {
     "id": "Program fl-880131",
@@ -281,7 +289,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.568800889310577, -81.44446793526788",
+    "latlon": "28.56843, -81.44192",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -303,7 +311,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "7289 San Jose Boulevard"
   },
   {
     "id": "Program fl-880133",
@@ -315,7 +324,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.91304926323723, -80.23530222145743",
+    "latlon": "25.914, -80.24083",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -337,7 +346,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3527 Northwest 153rd Street"
   },
   {
     "id": "Program fl-880137",
@@ -349,7 +359,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.754883843985827, -80.14455864809831",
+    "latlon": "25.7578, -80.13982",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -371,7 +381,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "5803 Fisher Island Drive"
   },
   {
     "id": "Program fl-880140",
@@ -383,7 +394,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.473775478700354, -81.49477102781394",
+    "latlon": "28.47636, -81.48694",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -405,7 +416,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "160 Sand Pines Estates Boulevard"
   },
   {
     "id": "Program fl-880146",
@@ -417,7 +429,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.492763549309608, -81.43974876300058",
+    "latlon": "28.49384, -81.43395",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -439,7 +451,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "8474 Conroy Road"
   },
   {
     "id": "Program fl-880155",
@@ -451,7 +464,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.279723439416646, -81.60729936159494",
+    "latlon": "30.27408, -81.60678",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -473,7 +486,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "1345 5800-4 Barnes Ap"
   },
   {
     "id": "Program fl-880156",
@@ -485,7 +499,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.892127003483196, -80.13780360146022",
+    "latlon": "25.90097, -80.14364",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -507,7 +521,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "9264 Northeast 135th Street"
   },
   {
     "id": "Program fl-880163",
@@ -519,7 +534,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.231272834296153, -81.56802792360654",
+    "latlon": "30.23353, -81.56696",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -541,7 +556,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "5897 Baymeadows Circle West"
   },
   {
     "id": "Program fl-880164",
@@ -553,7 +569,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.834944984159122, -80.23349898290297",
+    "latlon": "25.83365, -80.2382",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -575,7 +591,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "4016 Northwest 65th Street"
   },
   {
     "id": "Program fl-880168",
@@ -587,7 +604,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.85390959781497, -80.20311828574283",
+    "latlon": "25.84796, -80.20925",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -609,7 +626,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "6292 Northwest 80th Street"
   },
   {
     "id": "Program fl-880174",
@@ -621,7 +639,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.915778374464473, -80.18862143355564",
+    "latlon": "25.90915, -80.18971",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -643,7 +661,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "4806 Northeast 146th Street"
   },
   {
     "id": "Program fl-880175",
@@ -655,7 +674,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.71025369107852, -80.22911568645948",
+    "latlon": "25.72904, -80.2354",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -677,7 +696,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "2925 Pan American Drive"
   },
   {
     "id": "Program fl-880180",
@@ -689,7 +709,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.833422709332527, -80.14104352288858",
+    "latlon": "25.82374, -80.13599",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -711,7 +731,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3320 North Bay Road"
   },
   {
     "id": "Program fl-880191",
@@ -723,7 +744,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.534904351908207, -81.43807934904852",
+    "latlon": "28.53984, -81.43186",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -745,7 +766,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "2229 West Jackson Street"
   },
   {
     "id": "Program fl-880193",
@@ -757,7 +779,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.259658562644702, -81.67378252979073",
+    "latlon": "30.26966, -81.6524",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -779,7 +801,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "8267 Jean Court"
   },
   {
     "id": "Program fl-880197",
@@ -791,7 +814,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.91408887776944, -80.14865762864285",
+    "latlon": "25.914, -80.14064",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -813,7 +836,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "743 Northeast 147th Street"
   },
   {
     "id": "Program fl-880204",
@@ -825,7 +849,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.296597065559606, -81.77821978284781",
+    "latlon": "30.28829, -81.78039",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -847,7 +871,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "7176 Dubois Drive"
   },
   {
     "id": "Program fl-880205",
@@ -859,7 +884,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.27992141919727, -81.64505525522672",
+    "latlon": "30.27701, -81.63998",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -881,7 +906,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "5295 Jernigan Road"
   },
   {
     "id": "Program fl-880206",
@@ -893,7 +919,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.305305263625566, -81.61288159654242",
+    "latlon": "30.30367, -81.60846",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -915,7 +941,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3414 Martha Ann Drive"
   },
   {
     "id": "Program fl-880215",
@@ -927,7 +954,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.69122284676302, -80.10475434979611",
+    "latlon": "25.69895, -80.15833",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -949,7 +976,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "6085 Ocean Lane Drive"
   },
   {
     "id": "Program fl-880232",
@@ -961,7 +989,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.751340871365556, -80.22577106862397",
+    "latlon": "25.7574, -80.23023",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -983,7 +1011,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3508 Southwest 16th Terrace"
   },
   {
     "id": "Program fl-880235",
@@ -995,7 +1024,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.897450943521548, -80.31655250397624",
+    "latlon": "25.89863, -80.32279",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1017,7 +1046,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "7665 West 19th Court"
   },
   {
     "id": "Program fl-880242",
@@ -1029,7 +1059,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.79733031682384, -80.23578231545387",
+    "latlon": "25.797, -80.24193",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1051,7 +1081,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "4298 Northwest 22nd Street"
   },
   {
     "id": "Program fl-880244",
@@ -1063,7 +1094,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.69385329849944, -80.31426334518157",
+    "latlon": "25.69403, -80.30929",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1085,7 +1116,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "536 Southwest 72nd Avenue"
   },
   {
     "id": "Program fl-880245",
@@ -1097,7 +1129,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.689586341710097, -80.23451936874497",
+    "latlon": "25.69152, -80.25012",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1119,7 +1151,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "8455 Casuarina Concourse"
   },
   {
     "id": "Program fl-880250",
@@ -1131,7 +1164,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.550382729752048, -81.26950897862625",
+    "latlon": "28.55774, -81.27368",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1153,7 +1186,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "8850 Troutman Street"
   },
   {
     "id": "Program fl-880254",
@@ -1165,7 +1199,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.266858942915214, -81.61948777921302",
+    "latlon": "30.26961, -81.6252",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1187,7 +1221,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "1326 Mercury Road South"
   },
   {
     "id": "Program fl-880263",
@@ -1199,7 +1234,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.436818367822216, -81.26446572494226",
+    "latlon": "28.44294, -81.26041",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1221,7 +1256,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3997 Academy Drive"
   },
   {
     "id": "Program fl-880264",
@@ -1233,7 +1269,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.48699971345173, -81.26251396185951",
+    "latlon": "28.49505, -81.2575",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1255,7 +1291,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "2116 Mahogany Bend Lane"
   },
   {
     "id": "Program fl-880268",
@@ -1267,7 +1304,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.692510693459855, -80.15227834723625",
+    "latlon": "25.69591, -80.15963",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1289,7 +1326,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "4392 Atlantic Road"
   },
   {
     "id": "Program fl-880293",
@@ -1301,7 +1339,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.727451140791448, -80.24310756405242",
+    "latlon": "25.72367, -80.24629",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1323,7 +1361,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "6367 Royal Road"
   },
   {
     "id": "Program fl-880295",
@@ -1335,7 +1374,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.26655476054698, -81.60628510200294",
+    "latlon": "30.26412, -81.61189",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1357,7 +1396,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "2605 Richard Street"
   },
   {
     "id": "Program fl-880305",
@@ -1369,7 +1409,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.771316654371606, -80.1088745516993",
+    "latlon": "25.77557, -80.1317",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1391,7 +1431,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3395 6th Street"
   },
   {
     "id": "Program fl-880310",
@@ -1403,7 +1444,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.73113272667896, -80.17634264755377",
+    "latlon": "25.73744, -80.16302",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1425,7 +1466,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3790 Arthur Lamb Jr Road"
   },
   {
     "id": "Program fl-880313",
@@ -1437,7 +1479,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "28.409505281218046, -81.30142602896527",
+    "latlon": "28.39932, -81.29652",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1459,7 +1501,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "7947 Heintzelman Boulevard"
   },
   {
     "id": "Program fl-880330",
@@ -1471,7 +1514,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.71994399611468, -80.11246157751198",
+    "latlon": "25.73976, -80.14993",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1493,7 +1536,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "5370 Arthur Lamb Jr Road"
   },
   {
     "id": "Program fl-880331",
@@ -1505,7 +1549,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.282143753538783, -81.65001002666301",
+    "latlon": "30.27933, -81.64375",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1527,7 +1571,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3489 Caljon Road"
   },
   {
     "id": "Program fl-880333",
@@ -1539,7 +1584,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.714478254582986, -80.31669544666373",
+    "latlon": "25.71255, -80.31003",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1561,7 +1606,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "9527 Southwest 62nd Street"
   },
   {
     "id": "Program fl-880337",
@@ -1573,7 +1619,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "Duval County",
-    "latlon": "30.203890839602558, -81.5578942161161",
+    "latlon": "30.2091, -81.56286",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1595,7 +1641,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "2003 Western Way"
   },
   {
     "id": "Program fl-880346",
@@ -1607,7 +1654,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.91303145147649, -80.20978977011004",
+    "latlon": "25.90884, -80.20125",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1629,7 +1676,8 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "4674 Garden Drive"
   },
   {
     "id": "Program fl-880352",
@@ -1641,7 +1689,7 @@
     "state": "FL",
     "geo_state": "FL",
     "county": "",
-    "latlon": "25.87551548522337, -80.19061242504122",
+    "latlon": "25.87875, -80.18519",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1663,6 +1711,7 @@
         "end_time": "18:00"
       }
     ],
-    "_synthetic": true
+    "_synthetic": true,
+    "street": "3188 Griffing Boulevard"
   }
 ]
