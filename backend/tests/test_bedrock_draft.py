@@ -34,7 +34,7 @@ def _hits(criteria) -> list[dict]:
 
 
 def test_valid_draft_matches_rules_results(bedrock):
-    rules_hits = _hits(extract(QUERY, known_cities()))
+    rules_hits = _hits(extract(QUERY, known_cities())[0])
 
     bedrock(
         _fenced(
@@ -45,7 +45,7 @@ def test_valid_draft_matches_rules_results(bedrock):
             ]
         )
     )
-    criteria = extract("my kid is 7, we live in Jax, I can't pick up before 6", known_cities())
+    criteria, _ = extract("my kid is 7, we live in Jax, I can't pick up before 6", known_cities())
 
     by_kind = {c.kind: c for c in criteria}
     assert by_kind["grade"].value == "e"
@@ -70,7 +70,7 @@ def test_values_outside_the_catalog_are_dropped(bedrock):
             ]
         )
     )
-    criteria = extract("anything", known_cities())
+    criteria, _ = extract("anything", known_cities())
 
     assert [(c.kind, c.need, c.params) for c in criteria] == [
         ("need", "stem", {}),
@@ -80,13 +80,54 @@ def test_values_outside_the_catalog_are_dropped(bedrock):
 
 def test_need_null_becomes_unmapped(bedrock):
     bedrock(_fenced([{"kind": "need", "need": None, "strength": "prefer", "text": "how liberal"}]))
-    criteria = extract("how liberal is it", known_cities())
+    criteria, _ = extract("how liberal is it", known_cities())
 
     assert [(c.id, c.need, c.text) for c in criteria] == [("c1", None, "how liberal")]
 
 
 def test_reply_without_json_uses_rules(bedrock):
     bedrock("Sorry, I can't help with that.")
-    criteria = extract(QUERY, known_cities())
+    criteria, _ = extract(QUERY, known_cities())
 
     assert {c.kind for c in criteria} == {"grade", "location", "need"}
+
+
+def _turn(message: str) -> dict:
+    from pipeline import turn
+    from store import _empty
+
+    return turn(_empty(), {"message": message}).model_dump()["engine"]
+
+
+def test_engine_rules_when_bedrock_is_off():
+    assert _turn(QUERY) == {"route": "rules", "extract": "rules", "errors": []}
+
+
+def test_engine_bedrock_when_claude_answers(monkeypatch):
+    draft = _fenced([{"kind": "grade", "value": "e", "text": "elementary"}])
+    monkeypatch.setattr(bc, "enabled", lambda: True)
+    monkeypatch.setattr(bc, "converse", lambda m, system, u: "new_search" if "route" in system else draft)
+
+    assert _turn(QUERY) == {"route": "bedrock", "extract": "bedrock", "errors": []}
+
+
+def test_engine_shows_fallback_and_reason(monkeypatch):
+    def expired(model_id, system, user):
+        raise RuntimeError("ExpiredToken")
+
+    monkeypatch.setattr(bc, "enabled", lambda: True)
+    monkeypatch.setattr(bc, "converse", expired)
+
+    assert _turn(QUERY) == {
+        "route": "rules_fallback",
+        "extract": "rules_fallback",
+        "errors": ["bedrock route failed: ExpiredToken", "bedrock extract failed: ExpiredToken"],
+    }
+
+
+def test_engine_route_answer_outside_the_list(bedrock):
+    bedrock("maybe_search")
+    engine = _turn(QUERY)
+
+    assert engine["route"] == "rules_fallback"
+    assert engine["errors"][0] == "bedrock route answer not allowed: 'maybe_search'"

@@ -4,15 +4,18 @@ from __future__ import annotations
 
 import re
 
+from contracts import EngineStep
 from mapping.mapper import normalize
 
 
-def route_message(text: str, has_session: bool) -> str:
+def route_message(text: str, has_session: bool) -> tuple[str, EngineStep]:
     from agent.bedrock_client import maybe_bedrock_route
 
-    drafted = maybe_bedrock_route(text, has_session)
-    if drafted:
-        return drafted
+    drafted, step = maybe_bedrock_route(text, has_session)
+    return drafted or _rules_route(text, has_session), step
+
+
+def _rules_route(text: str, has_session: bool) -> str:
     normalized = normalize(text)
     if re.search(r"\bwhy isn t\b|\bwhy isnt\b|\bwhy not\b|\bhow come\b", normalized):
         return "why_not"

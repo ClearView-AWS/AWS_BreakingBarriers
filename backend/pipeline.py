@@ -7,7 +7,7 @@ from agent.explainer import public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
 from clarify.clarifier import choose_question
-from contracts import Block, Criterion, TurnResponse
+from contracts import Block, Criterion, Engine, EngineStep, TurnResponse
 from evidence.engine import evaluate_criterion
 from evidence.scorer import score_school
 from evidence.why_not import explain_absence
@@ -23,15 +23,32 @@ _LEVELS = {"p": "pre-k", "e": "elementary", "m": "middle", "h": "high"}
 
 
 def turn(state: dict, payload: dict) -> TurnResponse:
+    engine = Engine()
+    response = _turn(state, payload, engine)
+    return response.model_copy(update={"engine": engine})
+
+
+def _record(engine: Engine, step_name: str, step: EngineStep) -> None:
+    setattr(engine, step_name, step.engine)
+    if step.error:
+        engine.errors.append(step.error)
+
+
+def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     session = _session(state, payload.get("session_id"))
     message = (payload.get("message") or "").strip()
-    action = payload.get("action") or (route_message(message, bool(session["criteria"])) if message else "refresh")
+    action = payload.get("action")
+    if not action and message:
+        action, step = route_message(message, bool(session["criteria"]))
+        _record(engine, "route", step)
+    action = action or "refresh"
 
     if payload.get("criteria") is not None:
         session["criteria"] = payload["criteria"]
 
     if action in {"new_search", "refine"} and message:
-        incoming = extract(message, known_cities())
+        incoming, step = extract(message, known_cities())
+        _record(engine, "extract", step)
         if action == "new_search" and not session["criteria"]:
             session["criteria"] = [item.model_dump() for item in incoming]
         else:

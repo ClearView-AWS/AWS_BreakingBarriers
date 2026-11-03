@@ -38,12 +38,12 @@ def main() -> None:
 
     for row in rows:
         if row.get("route"):
-            got = route_message(row["query"], has_session=True)
+            got, _ = route_message(row["query"], has_session=True)
             if got != row["route"]:
                 failures.append(f"{row['id']} route {got} != {row['route']}")
             continue
         started = time.perf_counter()
-        found = extract(row["query"], cities)
+        found, _ = extract(row["query"], cities)
         expected = row.get("needs") or {}
         got_needs = {item.need: item.strength for item in found if item.need}
         for need, strength in expected.items():
@@ -109,7 +109,7 @@ def main() -> None:
     for row in rows:
         if row.get("route"):
             continue
-        found = extract(row["query"], cities)
+        found, _ = extract(row["query"], cities)
         expected = row.get("needs") or {}
         for item in found:
             if item.kind == "need" and item.need:

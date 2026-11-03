@@ -106,9 +106,28 @@ class Block(BaseModel):
     payload: dict[str, Any] = Field(default_factory=dict)
 
 
+EngineName = Literal["bedrock", "rules", "rules_fallback"]
+
+
+class EngineStep(BaseModel):
+    """Who answered one step: Bedrock, the rules (Bedrock off), or the rules after Bedrock failed."""
+
+    engine: EngineName
+    error: str | None = None
+
+
+class Engine(BaseModel):
+    """Per-turn record of who answered each step. None means the step did not run."""
+
+    route: EngineName | None = None
+    extract: EngineName | None = None
+    errors: list[str] = Field(default_factory=list)
+
+
 class TurnResponse(BaseModel):
     session_id: str
     route: Route
     criteria: list[Criterion] = Field(default_factory=list)
     blocks: list[Block] = Field(default_factory=list)
     assumption: str | None = None
+    engine: Engine = Field(default_factory=Engine)

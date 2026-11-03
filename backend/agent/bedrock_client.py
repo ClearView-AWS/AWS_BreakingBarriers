@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 
+from contracts import EngineStep
 from runtime_config import BEDROCK_ENABLED
 
 log = logging.getLogger(__name__)
@@ -29,9 +30,18 @@ def converse(model_id: str, system: str, user: str) -> str:
     return "".join(block.get("text", "") for block in blocks)
 
 
-def maybe_bedrock_route(text: str, has_session: bool) -> str | None:
+def _step(answered: bool, error: str | None) -> EngineStep:
+    if answered:
+        return EngineStep(engine="bedrock")
     if not enabled():
-        return None
+        return EngineStep(engine="rules")
+    log.warning("%s", error)
+    return EngineStep(engine="rules_fallback", error=error)
+
+
+def maybe_bedrock_route(text: str, has_session: bool) -> tuple[str | None, EngineStep]:
+    if not enabled():
+        return None, _step(False, None)
     try:
         from catalog import models
         from agent.prompts import ROUTER_SYSTEM
@@ -52,20 +62,22 @@ def maybe_bedrock_route(text: str, has_session: bool) -> str | None:
             "save",
             "feedback",
         }
-        return raw if raw in allowed else None
+        if raw in allowed:
+            return raw, _step(True, None)
+        error = f"bedrock route answer not allowed: {raw!r}"
     except Exception as exc:
-        log.warning("bedrock route failed: %s", exc)
-        return None
+        error = f"bedrock route failed: {exc}"
+    return None, _step(False, error)
 
 
-def maybe_bedrock_criteria(text: str, cities: list[str]) -> list[dict] | None:
+def maybe_bedrock_criteria(text: str, cities: list[str]) -> tuple[list[dict] | None, EngineStep]:
     """Return the model's raw draft items, or None to use the rules extractor.
 
     The items are untrusted. The extractor validates each one against the
     catalog and builds the criteria in code.
     """
     if not enabled():
-        return None
+        return None, _step(False, None)
     try:
         from catalog import models
         from agent.prompts import extract_system
@@ -73,13 +85,10 @@ def maybe_bedrock_criteria(text: str, cities: list[str]) -> list[dict] | None:
         raw = converse(models()["fast_model"], extract_system(cities), text)
         start, end = raw.find("["), raw.rfind("]")
         if start < 0 or end < 0:
-            log.warning("bedrock extract returned no JSON array: %r", raw[:200])
-            return None
+            return None, _step(False, f"bedrock extract returned no JSON array: {raw[:200]!r}")
         payload = json.loads(raw[start : end + 1])
         if not isinstance(payload, list):
-            log.warning("bedrock extract returned %s, not a list", type(payload).__name__)
-            return None
-        return [item for item in payload if isinstance(item, dict)]
+            return None, _step(False, f"bedrock extract returned {type(payload).__name__}, not a list")
+        return [item for item in payload if isinstance(item, dict)], _step(True, None)
     except Exception as exc:
-        log.warning("bedrock extract failed: %s", exc)
-        return None
+        return None, _step(False, f"bedrock extract failed: {exc}")

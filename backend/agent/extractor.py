@@ -6,7 +6,7 @@ import logging
 import re
 
 from catalog import needs
-from contracts import Ambiguity, Criterion, MappingInfo
+from contracts import Ambiguity, Criterion, EngineStep, MappingInfo
 from mapping.mapper import map_phrase, normalize
 
 AMBIGUOUS_CITIES = {
@@ -58,14 +58,14 @@ _TIMED_NEEDS = {"after_care", "extended_day"}
 log = logging.getLogger(__name__)
 
 
-def extract(text: str, cities: list[str] | None = None) -> list[Criterion]:
+def extract(text: str, cities: list[str] | None = None) -> tuple[list[Criterion], EngineStep]:
     from agent.bedrock_client import maybe_bedrock_criteria
 
     cities = cities or []
-    drafted = maybe_bedrock_criteria(text, cities)
+    drafted, step = maybe_bedrock_criteria(text, cities)
     if drafted is not None:
-        return _with_ids(_from_draft(drafted, text, cities))
-    return _with_ids(_rules(text, cities))
+        return _with_ids(_from_draft(drafted, text, cities)), step
+    return _with_ids(_rules(text, cities)), step
 
 
 def _from_draft(items: list[dict], text: str, cities: list[str]) -> list[Criterion]:
