@@ -1,0 +1,1668 @@
+[
+  {
+    "id": "Program fl-880001",
+    "program_id": 880001,
+    "name": "Cedar Creek After School STEM Lab",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.42, -81.78",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880001,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880002",
+    "program_id": 880002,
+    "name": "Mandarin Homework Help Club",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.430000000000003, -81.79",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880002,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880003",
+    "program_id": 880003,
+    "name": "Northside After School Club",
+    "description": "After school homework help until 17:30 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.15, -81.5",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880003,
+        "start_date": "2024-01-08",
+        "end_date": "2024-05-20",
+        "status": "past",
+        "active": false,
+        "start_time": "15:30",
+        "end_time": "17:30"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880104",
+    "program_id": 880104,
+    "name": "Maple Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.249534471341857, -81.57687024676996",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880104,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880112",
+    "program_id": 880112,
+    "name": "Lark Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.42034683674809, -81.34145944395082",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880112,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880117",
+    "program_id": 880117,
+    "name": "Heron Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.27396176258988, -81.68006517037396",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880117,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880121",
+    "program_id": 880121,
+    "name": "Maple Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.71101395197488, -80.21354039363348",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880121,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880128",
+    "program_id": 880128,
+    "name": "Dolphin Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.806237636326642, -80.1610253016887",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880128,
+        "start_date": "2024-01-08",
+        "end_date": "2024-05-20",
+        "status": "past",
+        "active": false,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880131",
+    "program_id": 880131,
+    "name": "Dolphin Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.568800889310577, -81.44446793526788",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880131,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880133",
+    "program_id": 880133,
+    "name": "Osprey Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.91304926323723, -80.23530222145743",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880133,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880137",
+    "program_id": 880137,
+    "name": "Citrus Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.754883843985827, -80.14455864809831",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880137,
+        "start_date": "2024-01-08",
+        "end_date": "2024-05-20",
+        "status": "past",
+        "active": false,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880140",
+    "program_id": 880140,
+    "name": "Heron Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.473775478700354, -81.49477102781394",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880140,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880146",
+    "program_id": 880146,
+    "name": "Maple Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.492763549309608, -81.43974876300058",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880146,
+        "start_date": "2024-01-08",
+        "end_date": "2024-05-20",
+        "status": "past",
+        "active": false,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880155",
+    "program_id": 880155,
+    "name": "Pine Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.279723439416646, -81.60729936159494",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880155,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880156",
+    "program_id": 880156,
+    "name": "Marlin Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.892127003483196, -80.13780360146022",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880156,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880163",
+    "program_id": 880163,
+    "name": "Oak Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.231272834296153, -81.56802792360654",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880163,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880164",
+    "program_id": 880164,
+    "name": "Cedar Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.834944984159122, -80.23349898290297",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880164,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880168",
+    "program_id": 880168,
+    "name": "Cypress Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.85390959781497, -80.20311828574283",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880168,
+        "start_date": "2024-01-08",
+        "end_date": "2024-05-20",
+        "status": "past",
+        "active": false,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880174",
+    "program_id": 880174,
+    "name": "Cedar Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.915778374464473, -80.18862143355564",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880174,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880175",
+    "program_id": 880175,
+    "name": "River Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.71025369107852, -80.22911568645948",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880175,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880180",
+    "program_id": 880180,
+    "name": "Sabal Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.833422709332527, -80.14104352288858",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880180,
+        "start_date": "2024-01-08",
+        "end_date": "2024-05-20",
+        "status": "past",
+        "active": false,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880191",
+    "program_id": 880191,
+    "name": "Cedar Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.534904351908207, -81.43807934904852",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880191,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880193",
+    "program_id": 880193,
+    "name": "Maple Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.259658562644702, -81.67378252979073",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880193,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880197",
+    "program_id": 880197,
+    "name": "Pine Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.91408887776944, -80.14865762864285",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880197,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880204",
+    "program_id": 880204,
+    "name": "Osprey Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.296597065559606, -81.77821978284781",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880204,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880205",
+    "program_id": 880205,
+    "name": "Willow Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.27992141919727, -81.64505525522672",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880205,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880206",
+    "program_id": 880206,
+    "name": "Marlin Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.305305263625566, -81.61288159654242",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880206,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880215",
+    "program_id": 880215,
+    "name": "River Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.69122284676302, -80.10475434979611",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880215,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880232",
+    "program_id": 880232,
+    "name": "Dolphin Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.751340871365556, -80.22577106862397",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880232,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880235",
+    "program_id": 880235,
+    "name": "Osprey Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.897450943521548, -80.31655250397624",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880235,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880242",
+    "program_id": 880242,
+    "name": "Maple Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.79733031682384, -80.23578231545387",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880242,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880244",
+    "program_id": 880244,
+    "name": "Marlin Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.69385329849944, -80.31426334518157",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880244,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880245",
+    "program_id": 880245,
+    "name": "Sabal Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.689586341710097, -80.23451936874497",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880245,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880250",
+    "program_id": 880250,
+    "name": "Citrus Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.550382729752048, -81.26950897862625",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880250,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880254",
+    "program_id": 880254,
+    "name": "River Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.266858942915214, -81.61948777921302",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880254,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880263",
+    "program_id": 880263,
+    "name": "Maple Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.436818367822216, -81.26446572494226",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880263,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880264",
+    "program_id": 880264,
+    "name": "Indigo Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.48699971345173, -81.26251396185951",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880264,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880268",
+    "program_id": 880268,
+    "name": "Marlin Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.692510693459855, -80.15227834723625",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880268,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880293",
+    "program_id": 880293,
+    "name": "Oak Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.727451140791448, -80.24310756405242",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880293,
+        "start_date": "2024-01-08",
+        "end_date": "2024-05-20",
+        "status": "past",
+        "active": false,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880295",
+    "program_id": 880295,
+    "name": "Harbor Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.26655476054698, -81.60628510200294",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880295,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880305",
+    "program_id": 880305,
+    "name": "Indigo Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.771316654371606, -80.1088745516993",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880305,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880310",
+    "program_id": 880310,
+    "name": "Marlin Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.73113272667896, -80.17634264755377",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880310,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880313",
+    "program_id": 880313,
+    "name": "Citrus Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Orlando",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "28.409505281218046, -81.30142602896527",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880313,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880330",
+    "program_id": 880330,
+    "name": "Pine Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.71994399611468, -80.11246157751198",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880330,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880331",
+    "program_id": 880331,
+    "name": "Willow Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.282143753538783, -81.65001002666301",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880331,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880333",
+    "program_id": 880333,
+    "name": "Palm Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.714478254582986, -80.31669544666373",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880333,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880337",
+    "program_id": 880337,
+    "name": "Cypress Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Jacksonville",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "Duval County",
+    "latlon": "30.203890839602558, -81.5578942161161",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880337,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880346",
+    "program_id": 880346,
+    "name": "Osprey Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.91303145147649, -80.20978977011004",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880346,
+        "start_date": "2024-01-08",
+        "end_date": "2024-05-20",
+        "status": "past",
+        "active": false,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  },
+  {
+    "id": "Program fl-880352",
+    "program_id": 880352,
+    "name": "Citrus Homework Help",
+    "description": "After school homework help until 18:00 on school days.",
+    "program_type": "after_school",
+    "city": "Miami",
+    "state": "FL",
+    "geo_state": "FL",
+    "county": "",
+    "latlon": "25.87551548522337, -80.19061242504122",
+    "tag_names": [
+      "After School",
+      "Homework Help",
+      "STEM"
+    ],
+    "level_code": [
+      "m"
+    ],
+    "age_min_search": 10,
+    "age_max_search": 14,
+    "instances": [
+      {
+        "id": 880352,
+        "start_date": "2026-11-01",
+        "end_date": "2027-05-20",
+        "status": "upcoming",
+        "active": true,
+        "start_time": "15:30",
+        "end_time": "18:00"
+      }
+    ],
+    "_synthetic": true
+  }
+]

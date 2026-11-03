@@ -1,0 +1,47 @@
+{
+  "schools": {
+    "settings": {
+      "index": {
+        "knn": true,
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+      }
+    },
+    "mappings": {
+      "properties": {
+        "id": { "type": "keyword" },
+        "name": { "type": "text" },
+        "city": { "type": "keyword" },
+        "city_untokenized": { "type": "keyword" },
+        "state": { "type": "keyword" },
+        "entity_type": { "type": "keyword" },
+        "level_codes": { "type": "keyword" },
+        "summary_rating": { "type": "integer" },
+        "search_text": { "type": "text" },
+        "embedding": {
+          "type": "knn_vector",
+          "dimension": 256,
+          "method": { "name": "hnsw", "space_type": "cosinesimil", "engine": "nmslib" }
+        }
+      }
+    }
+  },
+  "programs": {
+    "settings": {
+      "index": { "knn": true, "number_of_shards": 1, "number_of_replicas": 0 }
+    },
+    "mappings": {
+      "properties": {
+        "id": { "type": "keyword" },
+        "name": { "type": "text" },
+        "city": { "type": "keyword" },
+        "search_text": { "type": "text" },
+        "embedding": {
+          "type": "knn_vector",
+          "dimension": 256,
+          "method": { "name": "hnsw", "space_type": "cosinesimil", "engine": "nmslib" }
+        }
+      }
+    }
+  }
+}
