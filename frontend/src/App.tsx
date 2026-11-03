@@ -16,6 +16,7 @@ const SOURCE_LABEL: Record<string, string> = {
   parent_reviews: "Parent reviews",
   program: "Nearby program",
   funding_rule: "Scholarship rule",
+  computed: "Computed from the school's location",
 };
 const LEVEL: Record<string, string> = { p: "Pre-K", e: "Elementary", m: "Middle", h: "High" };
 import { GettingInDetail, GettingInLine, SavedDeadline, onZonedTap, type Access } from "./GettingIn";

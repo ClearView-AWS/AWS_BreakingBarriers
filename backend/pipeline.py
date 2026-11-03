@@ -238,6 +238,15 @@ def _access(school: dict, criteria: list[Criterion], state: dict, session: dict 
     return getting_in(school, grade, zoned, _overlays_for(state, school["id"]))
 
 
+def _rank_key(card: dict) -> tuple:
+    """Rank by match only; ties go in name order so the list is stable.
+
+    Coverage is shown beside the match but never used to order results: breaking
+    ties on it would push down schools whose only fault is missing data.
+    """
+    return (-card["match"], card["name"])
+
+
 def _stamp_distances(schools: list[dict], criteria: list[Criterion]) -> None:
     city = next((c.value for c in criteria if c.kind == "location"), None)
     for school in schools:
@@ -299,7 +308,7 @@ def _search_response(session, criteria, schools, programs, state, message: str) 
         if card:
             card["saved"] = school["id"] in session.get("saved", [])
             scored_rows.append(card)
-    scored_rows.sort(key=lambda row: (-row["match"], -row["coverage"], row["name"]))
+    scored_rows.sort(key=_rank_key)
     main = [row for row in scored_rows if not row["missed_must"]][:8]
     missed = [row for row in scored_rows if row["missed_must"]][:6]
     shown = {row["id"] for row in main}
@@ -443,7 +452,7 @@ def _why_not(session, criteria, schools, programs, state, message) -> TurnRespon
         card = _score_school(item, criteria, programs, state)
         if card:
             ranked.append(card)
-    ranked.sort(key=lambda row: (-row["match"], -row["coverage"], row["name"]))
+    ranked.sort(key=_rank_key)
     # Rank across the full filtered set, missed group included, so the parent
     # can see where a weak school actually sits.
     explanation = explain_absence(

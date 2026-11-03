@@ -460,7 +460,8 @@ def _distance_evidence(school: dict, criterion, today: date) -> EvidenceRecord:
         criterion_id=criterion.id,
         status=status,
         value=round(distance, 1),
-        source=Source(type="state_data", path="latlon", as_of=_as_of(school, today), confidence="high"),
+        # Distance is worked out here from latlon, not reported by anyone.
+        source=Source(type="computed", path="latlon", as_of=_as_of(school, today), confidence="high"),
         note=note,
     )
 
