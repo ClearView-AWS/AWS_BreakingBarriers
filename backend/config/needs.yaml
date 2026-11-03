@@ -1,0 +1,623 @@
+# One need per parent phrase. GreatSchools can add a need by editing this file.
+# confirmed / partial / fails are operators evaluated in code. Reviews never confirm.
+
+high_performing:
+  label: High-performing
+  default_strength: prefer
+  phrases: [top school, best school, best, high rated, high-performing, high performing, a good school, good school, escuela buena, buena escuela, highly rated]
+  offer_when_unmapped: false
+  evidence:
+    - field: summary_rating
+      source: state_data
+      confirmed: ">= 8"
+      partial: "== 7"
+      fails: "<= 6"
+  search_boost:
+    summary_rating: { gte: 8 }
+  review_topics: []
+  ask_if_unknown: "Ratings are missing for {n} of these schools. Keep them in the list?"
+  visit_question: "How did students do on state tests last year?"
+
+stem:
+  label: STEM
+  default_strength: require
+  phrases: [stem, robotics, coding, science and math, science & math, ciencias, stem program, science focus]
+  evidence:
+    - field: osp.school_sub_type
+      source: school_reported
+      confirmed: "contains_any:STEM,stem,science"
+      fails: "nonempty"
+    - field: osp.student_clubs
+      source: school_reported
+      confirmed: "contains_any:science_club,robotics,coding,math_club,stem_club"
+  search_boost:
+    osp.school_sub_type: { terms: [STEM, stem] }
+  review_topics: ["STEM / Coding"]
+  ask_if_unknown: "STEM isn't listed for {n} of these schools. Should I ask them?"
+  visit_question: "What science, technology, or math programs run this year?"
+
+after_care:
+  label: After-school care
+  default_strength: require
+  phrases: [after-school care, after school care, afterschool care, after care, afterschool, cuidado despues de la escuela, cuidado después de la escuela, after-school program]
+  program_fill: true
+  program_match: [after school, after-school, homework help, afterschool, extended care]
+  evidence:
+    - field: osp.after_school_until
+      source: school_reported
+      confirmed: "time_covers"
+      partial: "time_within:30"
+      fails: "time_before"
+  ambiguities:
+    - kind: definition
+      default: on_site
+      question: "Does after-school care need to be at the school, or is a nearby program fine?"
+      options:
+        - { id: on_site, label: At the school }
+        - { id: nearby_ok, label: A nearby program is fine }
+  search_boost:
+    osp.after_school_until: { exists: true }
+  review_topics: []
+  ask_if_unknown: "After-school care is unknown for {n} of these schools. Is it a must-have? I can ask the schools."
+  visit_question: "What time does after-school care end, and is it on campus?"
+
+extended_day:
+  label: Extended day
+  default_strength: prefer
+  phrases: [extended day, extended-day, late pickup, long school day]
+  evidence:
+    - field: osp.end_time
+      source: school_reported
+      confirmed: "time_covers"
+      partial: "time_within:30"
+      fails: "time_before"
+  search_boost:
+    osp.end_time: { exists: true }
+  review_topics: []
+  ask_if_unknown: "The dismissal time is missing for {n} schools. Want me to ask?"
+  visit_question: "What time does the school day end?"
+
+low_cost:
+  label: Low cost
+  default_strength: prefer
+  handler: low_cost
+  phrases: [money is tight, low cost, affordable, inexpensive, cheap, tuition free, tuition-free, beca, low tuition, not expensive]
+  evidence: []
+  search_boost:
+    entity_type: { terms: [public, charter] }
+  review_topics: []
+  ask_if_unknown: "Cost is unknown for {n} of these schools. Should I treat low cost as a must-have?"
+  visit_question: "What does a year cost after any aid you typically see families use?"
+
+small_classes:
+  label: Small classes
+  default_strength: prefer
+  phrases: [small class, small classes, small class size, class size]
+  evidence:
+    - field: class_size.tier
+      source: state_data
+      signal: class_size
+      confirmed: "in:very_small,small"
+      partial: "in:average"
+      fails: "in:large,very_large"
+  search_boost:
+    class_size.tier: { terms: [small, very_small] }
+  review_topics: []
+  ask_if_unknown: "Class size is missing for {n} schools. Keep them in the list?"
+  visit_question: "How many students are in a typical class for this grade?"
+
+low_student_teacher_ratio:
+  label: Low student-teacher ratio
+  default_strength: prefer
+  phrases: [student teacher ratio, student-teacher ratio, small ratio, more teachers]
+  evidence:
+    - field: student_teacher_ratio
+      source: state_data
+      confirmed: "<= 15"
+      partial: "<= 18"
+      fails: "> 18"
+  search_boost:
+    student_teacher_ratio: { lte: 15 }
+  review_topics: []
+  ask_if_unknown: "Student-teacher ratio is missing for {n} schools."
+  visit_question: "How many students are there per teacher?"
+
+high_attendance:
+  label: High attendance
+  default_strength: prefer
+  phrases: [high attendance, good attendance, students show up]
+  evidence:
+    - field: high_attendance.qualifies
+      source: state_data
+      signal: high_attendance
+      confirmed: "== true"
+      fails: "== false"
+  search_boost:
+    high_attendance.qualifies: { eq: true }
+  review_topics: []
+  ask_if_unknown: "Attendance data is missing for {n} schools."
+  visit_question: "What was the average daily attendance last year?"
+
+inclusion:
+  label: Inclusion
+  default_strength: prefer
+  offer_when_unmapped: true
+  phrases: [inclusion, inclusive, belonging, welcoming school]
+  evidence:
+    - field: equity_indicator
+      source: state_data
+      confirmed: "== true"
+      fails: "== false"
+  search_boost:
+    equity_indicator: { eq: true }
+  review_topics: ["Belonging / Inclusion"]
+  ask_if_unknown: "Inclusion data is missing for {n} schools."
+  visit_question: "How does the school make sure every student feels they belong?"
+
+cultural_responsiveness:
+  label: Cultural responsiveness
+  default_strength: prefer
+  offer_when_unmapped: true
+  phrases: [cultural responsiveness, culturally responsive, culture, diverse curriculum]
+  evidence:
+    - field: osp.cultural_responsiveness
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.cultural_responsiveness: { exists: true }
+  review_topics: []
+  ask_if_unknown: "Cultural responsiveness isn't listed for {n} schools."
+  visit_question: "How does the curriculum reflect the families you serve?"
+
+restorative_discipline:
+  label: Restorative discipline
+  default_strength: prefer
+  offer_when_unmapped: true
+  phrases: [restorative, restorative discipline, restorative practices, restorative justice]
+  evidence:
+    - field: osp.mental_health
+      source: school_reported
+      confirmed: "contains_any:restorative_practices,positive_intervention"
+  search_boost:
+    osp.mental_health: { terms: [restorative_practices] }
+  review_topics: []
+  ask_if_unknown: "Discipline practices aren't listed for {n} schools."
+  visit_question: "Do you use restorative practices, and what do they look like day to day?"
+
+non_religious:
+  label: Non-religious
+  default_strength: require
+  handler: non_religious
+  offer_when_unmapped: true
+  phrases: [not religious, non-religious, nonreligious, secular, no religion, not a religious school, no religious, no religiosa]
+  evidence: []
+  search_boost: {}
+  review_topics: []
+  ask_if_unknown: "Religious affiliation is unknown for {n} private schools."
+  visit_question: "Is the school affiliated with a religion?"
+
+gifted:
+  label: Gifted program
+  default_strength: prefer
+  phrases: [gifted, talented, gifted and talented, advanced learners]
+  evidence:
+    - field: gifted_talented
+      source: state_data
+      confirmed: "== true"
+      fails: "== false"
+  search_boost:
+    gifted_talented: { eq: true }
+  review_topics: ["Gifted / Advanced Learning"]
+  ask_if_unknown: "Gifted services aren't listed for {n} schools."
+  visit_question: "How does a student qualify for the gifted program?"
+
+arts:
+  label: Arts
+  default_strength: prefer
+  phrases: [arts, art program, visual arts, performing arts, drama, theater, theatre]
+  evidence:
+    - field: osp.arts_visual
+      source: school_reported
+      confirmed: "nonempty"
+    - field: osp.arts_performing_written
+      source: school_reported
+      confirmed: "nonempty"
+    - field: osp.arts_music
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.arts_visual: { exists: true }
+  review_topics: []
+  ask_if_unknown: "Arts programs aren't listed for {n} schools."
+  visit_question: "Which arts classes meet during the school day?"
+
+music:
+  label: Music
+  default_strength: prefer
+  phrases: [music, band, orchestra, chorus, choir]
+  evidence:
+    - field: osp.arts_music
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.arts_music: { exists: true }
+  review_topics: []
+  ask_if_unknown: "Music isn't listed for {n} schools."
+  visit_question: "Is band or choir offered during the day?"
+
+sports:
+  label: Sports
+  default_strength: prefer
+  phrases: [sports, athletics, teams, soccer, basketball]
+  evidence:
+    - field: osp.boys_sports
+      source: school_reported
+      confirmed: "nonempty"
+    - field: osp.girls_sports
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.boys_sports: { exists: true }
+  review_topics: ["Sports"]
+  ask_if_unknown: "Sports aren't listed for {n} schools."
+  visit_question: "Which teams can a new student join this season?"
+
+safety:
+  label: Safety
+  default_strength: prefer
+  phrases: [safe, safety, bullying, secure campus]
+  evidence: []
+  search_boost: {}
+  review_topics: ["Bullying / Safety"]
+  ask_if_unknown: "Safety information is thin for {n} schools."
+  visit_question: "How does the school handle bullying reports?"
+
+special_education:
+  label: Special education
+  default_strength: prefer
+  phrases: [special education, special ed, iep, students with disabilities, disability services]
+  evidence: []
+  search_boost: {}
+  review_topics: ["Special Ed / IEP"]
+  ask_if_unknown: "Special education detail is missing for {n} schools."
+  visit_question: "How are IEP services delivered in general education classrooms?"
+
+college_prep:
+  label: College prep
+  default_strength: prefer
+  phrases: [college prep, college-prep, college preparation, honors]
+  evidence:
+    - field: osp.school_sub_type
+      source: school_reported
+      confirmed: "contains_any:college_prep,college-prep"
+    - field: osp.college_prep_curriculum
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.college_prep_curriculum: { exists: true }
+  review_topics: []
+  ask_if_unknown: "College-prep coursework isn't listed for {n} schools."
+  visit_question: "Which honors or college-level courses are offered?"
+
+cte:
+  label: CTE
+  default_strength: prefer
+  phrases: [cte, career and technical, career technical, vocational]
+  evidence:
+    - field: osp.college_prep_curriculum
+      source: school_reported
+      confirmed: "contains_any:cte"
+    - field: career_prep
+      source: school_reported
+      confirmed: "truthy"
+    - field: osp.career_prep
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.career_prep: { exists: true }
+  review_topics: []
+  ask_if_unknown: "CTE coursework isn't listed for {n} schools."
+  visit_question: "Which career and technical courses can students take?"
+
+transportation:
+  label: Transportation
+  default_strength: prefer
+  phrases: [bus, bussing, transportation, school bus, the bus]
+  evidence:
+    - field: osp.transportation
+      source: school_reported
+      confirmed: "contains_any:busses,bus,buses"
+  search_boost:
+    osp.transportation: { terms: [busses] }
+  review_topics: []
+  ask_if_unknown: "Bus service isn't listed for {n} schools."
+  visit_question: "Is there bus service to our neighborhood?"
+
+foreign_language:
+  label: Foreign language
+  default_strength: prefer
+  phrases: [foreign language, world language, spanish class, language classes]
+  evidence:
+    - field: osp.foreign_language
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.foreign_language: { exists: true }
+  review_topics: []
+  ask_if_unknown: "World language isn't listed for {n} schools."
+  visit_question: "Which languages are taught, and in which grades?"
+
+mental_health:
+  label: Mental health support
+  default_strength: prefer
+  phrases: [mental health, counselor, counseling, social emotional]
+  evidence:
+    - field: osp.mental_health
+      source: school_reported
+      confirmed: "contains_any:mental_health_specialists,school_counselors,social_workers,social_emotional_learning"
+  search_boost:
+    osp.mental_health: { exists: true }
+  review_topics: ["Mental Health"]
+  ask_if_unknown: "Mental health support isn't listed for {n} schools."
+  visit_question: "Is there a counselor on campus every day?"
+
+family_engagement:
+  label: Family engagement
+  default_strength: prefer
+  phrases: [family engagement, parent involvement, involved parents]
+  evidence:
+    - field: osp.family_engagement
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.family_engagement: { exists: true }
+  review_topics: []
+  ask_if_unknown: "Family engagement isn't listed for {n} schools."
+  visit_question: "How do parents hear about progress during the year?"
+
+uniforms:
+  label: Uniforms
+  default_strength: prefer
+  phrases: [uniform, uniforms, dress code]
+  evidence:
+    - field: osp.dress_code
+      source: school_reported
+      confirmed: "contains_any:uniform"
+      fails: "nonempty"
+  search_boost:
+    osp.dress_code: { terms: [uniform] }
+  review_topics: []
+  ask_if_unknown: "Dress code isn't listed for {n} schools."
+  visit_question: "Is a uniform required?"
+
+before_care:
+  label: Before-school care
+  default_strength: prefer
+  phrases: [before school care, before-school care, morning care, early drop]
+  evidence:
+    - field: osp.before_school_from
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.before_school_from: { exists: true }
+  review_topics: []
+  ask_if_unknown: "Morning care isn't listed for {n} schools."
+  visit_question: "What time does before-school care open?"
+
+dual_language:
+  label: Dual language
+  default_strength: prefer
+  phrases: [dual language, bilingual, two-way immersion, immersion]
+  evidence:
+    - field: osp.foreign_language
+      source: school_reported
+      confirmed: "contains_any:dual,bilingual,immersion"
+    - field: osp.school_sub_type
+      source: school_reported
+      confirmed: "contains_any:dual_language,bilingual"
+  search_boost: {}
+  review_topics: []
+  ask_if_unknown: "Dual language isn't listed for {n} schools."
+  visit_question: "Is the program two-way immersion, and in which language?"
+
+cambridge:
+  label: Cambridge
+  default_strength: prefer
+  phrases: [cambridge, cambridge international]
+  evidence:
+    - field: cambridge_international
+      source: school_reported
+      confirmed: "truthy"
+  search_boost:
+    cambridge_international: { eq: true }
+  review_topics: []
+  ask_if_unknown: "Cambridge isn't listed for {n} schools."
+  visit_question: "Which Cambridge courses are offered?"
+
+ap_courses:
+  label: AP courses
+  default_strength: prefer
+  phrases: [ap courses, advanced placement, ap classes]
+  evidence:
+    - field: ap_courses
+      source: school_reported
+      confirmed: "truthy"
+  search_boost:
+    ap_courses: { eq: true }
+  review_topics: []
+  ask_if_unknown: "AP courses aren't listed for {n} schools."
+  visit_question: "Which AP exams did students take last year?"
+
+graduation:
+  label: High graduation rate
+  default_strength: prefer
+  phrases: [graduation rate, graduates, high graduation]
+  evidence:
+    - field: graduation_rate
+      source: state_data
+      confirmed: ">= 90"
+      partial: ">= 80"
+      fails: "< 80"
+  search_boost:
+    graduation_rate: { gte: 90 }
+  review_topics: []
+  ask_if_unknown: "Graduation rate is missing for {n} schools."
+  visit_question: "What percent of students graduated in four years?"
+
+college_readiness:
+  label: College readiness
+  default_strength: prefer
+  phrases: [college readiness, ready for college, college ready]
+  evidence:
+    - field: college_readiness_rating
+      source: state_data
+      confirmed: ">= 8"
+      partial: "== 7"
+      fails: "<= 6"
+  search_boost:
+    college_readiness_rating: { gte: 8 }
+  review_topics: []
+  ask_if_unknown: "College readiness is missing for {n} schools."
+  visit_question: "What share of graduates enroll in college?"
+
+strong_test_scores:
+  label: Strong test scores
+  default_strength: prefer
+  phrases: [test scores, high test scores, state tests]
+  evidence:
+    - field: test_scores_rating
+      source: state_data
+      confirmed: ">= 8"
+      partial: "== 7"
+      fails: "<= 6"
+  search_boost:
+    test_scores_rating: { gte: 8 }
+  review_topics: []
+  ask_if_unknown: "Test score ratings are missing for {n} schools."
+  visit_question: "How did last year's class score on the state exam?"
+
+student_progress:
+  label: Student progress
+  default_strength: prefer
+  phrases: [student progress, growth, students improve]
+  evidence:
+    - field: student_progress_rating
+      source: state_data
+      confirmed: ">= 8"
+      partial: "== 7"
+      fails: "<= 6"
+  search_boost:
+    student_progress_rating: { gte: 8 }
+  review_topics: []
+  ask_if_unknown: "Progress ratings are missing for {n} schools."
+  visit_question: "Are students growing faster or slower than the state?"
+
+homework_support:
+  label: Homework help
+  default_strength: prefer
+  phrases: [homework help, homework support, tutoring]
+  evidence:
+    - field: osp.student_clubs
+      source: school_reported
+      confirmed: "contains_any:homework_help,tutoring"
+  search_boost: {}
+  review_topics: ["Homework / Assignments"]
+  program_fill: true
+  program_match: [homework, tutoring]
+  ask_if_unknown: "Homework help isn't listed for {n} schools."
+  visit_question: "Is there tutoring after school, and who can attend?"
+
+small_school:
+  label: Small school
+  default_strength: prefer
+  phrases: [small school, small enrollment, intimate]
+  evidence:
+    - field: enrollment
+      source: state_data
+      confirmed: "<= 400"
+      partial: "<= 700"
+      fails: "> 700"
+  search_boost:
+    enrollment: { lte: 400 }
+  review_topics: []
+  ask_if_unknown: "Enrollment is missing for {n} schools."
+  visit_question: "How many students are enrolled this year?"
+
+ell_support:
+  label: English learner support
+  default_strength: prefer
+  phrases: [english learners, ell, esol, english language learners]
+  evidence:
+    - field: ell
+      source: state_data
+      confirmed: "truthy"
+  search_boost: {}
+  review_topics: ["ELL"]
+  ask_if_unknown: "English-learner services aren't listed for {n} schools."
+  visit_question: "What support do English learners get during the day?"
+
+teacher_stability:
+  label: Stable teachers
+  default_strength: prefer
+  phrases: [teacher turnover, stable teachers, teachers stay, low turnover]
+  evidence: []
+  search_boost: {}
+  review_topics: ["Teachers / Staff"]
+  ask_if_unknown: "Teacher stability isn't something the profile states for {n} schools."
+  visit_question: "How long has a typical teacher been at the school?"
+
+leadership:
+  label: Steady leadership
+  default_strength: prefer
+  phrases: [leadership, principal, stable leadership]
+  evidence: []
+  search_boost: {}
+  review_topics: ["Leadership"]
+  ask_if_unknown: "Leadership isn't covered in reviews for {n} schools."
+  visit_question: "How long has the principal been here?"
+
+magnet:
+  label: Magnet program
+  default_strength: prefer
+  phrases: [magnet, magnet program]
+  evidence:
+    - field: osp.school_sub_type
+      source: school_reported
+      confirmed: "contains_any:magnet"
+      fails: "nonempty"
+  search_boost:
+    osp.school_sub_type: { terms: [magnet] }
+  review_topics: []
+  ask_if_unknown: "Magnet status isn't listed for {n} schools."
+  visit_question: "Is there an application or lottery for the magnet?"
+
+career_prep:
+  label: Career preparation
+  default_strength: prefer
+  phrases: [career prep, internships, job shadowing, career readiness]
+  evidence:
+    - field: osp.career_prep
+      source: school_reported
+      confirmed: "nonempty"
+    - field: career_prep
+      source: school_reported
+      confirmed: "truthy"
+  search_boost:
+    osp.career_prep: { exists: true }
+  review_topics: []
+  ask_if_unknown: "Career preparation isn't listed for {n} schools."
+  visit_question: "Do students do internships or job shadowing?"
+
+clubs:
+  label: Clubs
+  default_strength: prefer
+  phrases: [clubs, student clubs, after school clubs]
+  evidence:
+    - field: osp.student_clubs
+      source: school_reported
+      confirmed: "nonempty"
+  search_boost:
+    osp.student_clubs: { exists: true }
+  review_topics: []
+  ask_if_unknown: "Clubs aren't listed for {n} schools."
+  visit_question: "Which clubs meet this semester?"

@@ -1,0 +1,55 @@
+cte:
+  term: CTE
+  title: Career and Technical Education
+  text: >
+    Career and Technical Education (CTE) is coursework aimed at a career field,
+    often with hands-on classes, industry certifications, or internships.
+    In this prototype a school is marked for CTE when its profile lists CTE
+    coursework or career preparation.
+  cite_path: glossary.cte
+
+summary_rating:
+  term: Summary rating
+  title: Summary rating
+  text: >
+    The summary rating is GreatSchools' 1 to 10 rating from state test results
+    and related academic data. A rating of 8 or above is treated as high-performing.
+    A missing rating is unknown. It is not a reason to drop the school.
+  cite_path: glossary.summary_rating
+
+charter:
+  term: Charter school
+  title: Charter school
+  text: >
+    A charter school is a public school that operates under a charter, or contract.
+    Charter schools in this data are tuition-free, the same as district public schools.
+  cite_path: glossary.charter
+
+esa:
+  term: ESA
+  title: Education savings account
+  text: >
+    An education savings account deposits public education funds for a family to
+    spend on approved expenses such as private school tuition, tutoring, or curriculum.
+    Florida's Family Empowerment Scholarship for Students with Unique Abilities
+    is an example. The scholarship funding organization approves the spending.
+  cite_path: glossary.esa
+
+fes:
+  term: FES
+  title: Family Empowerment Scholarship
+  text: >
+    The Family Empowerment Scholarship is a Florida program with two branches:
+    Educational Options, and Students with Unique Abilities. Families apply through
+    an approved scholarship funding organization. See the Florida Department of
+    Education page linked on private-school cost cards.
+  cite_path: glossary.fes
+
+partial:
+  term: Partial
+  title: Partial evidence
+  text: >
+    Partial means the data supports the criterion only in part. The value is close
+    but not quite what you asked for, the source is a review or the school website,
+    or the record is older than 18 months. Partial never counts as confirmed.
+  cite_path: glossary.partial

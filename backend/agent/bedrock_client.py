@@ -1,0 +1,93 @@
+"""Bedrock Converse calls. Disabled unless BEDROCK_ENABLED=1, and never required."""
+
+from __future__ import annotations
+
+import json
+import logging
+
+from runtime_config import BEDROCK_ENABLED
+
+log = logging.getLogger(__name__)
+
+
+def enabled() -> bool:
+    return BEDROCK_ENABLED
+
+
+def converse(model_id: str, system: str, user: str) -> str:
+    import boto3
+
+    from catalog import models
+
+    client = boto3.client("bedrock-runtime", region_name=models().get("region", "us-east-1"))
+    response = client.converse(
+        modelId=model_id,
+        system=[{"text": system}],
+        messages=[{"role": "user", "content": [{"text": user}]}],
+    )
+    blocks = response["output"]["message"]["content"]
+    return "".join(block.get("text", "") for block in blocks)
+
+
+def maybe_bedrock_route(text: str, has_session: bool) -> str | None:
+    if not enabled():
+        return None
+    try:
+        from catalog import models
+        from agent.prompts import ROUTER_SYSTEM
+
+        raw = converse(
+            models()["fast_model"],
+            ROUTER_SYSTEM,
+            f"session={has_session}\nmessage={text}",
+        ).strip().split()[0]
+        allowed = {
+            "new_search",
+            "refine",
+            "compare",
+            "school_detail",
+            "define",
+            "why_not",
+            "cost",
+            "save",
+            "feedback",
+        }
+        return raw if raw in allowed else None
+    except Exception as exc:
+        log.warning("bedrock route failed: %s", exc)
+        return None
+
+
+def maybe_bedrock_criteria(text: str):
+    """Return None so the rules extractor stays the source of truth unless parsing works.
+
+    When Bedrock is on, its JSON is still mapped to needs in code by the caller
+    only if every item has text and strength. On any failure, return None.
+    """
+    if not enabled():
+        return None
+    try:
+        from catalog import models
+        from agent.prompts import EXTRACT_SYSTEM
+        from contracts import Criterion
+
+        raw = converse(models()["fast_model"], EXTRACT_SYSTEM, text)
+        start, end = raw.find("["), raw.rfind("]")
+        if start < 0 or end < 0:
+            return None
+        payload = json.loads(raw[start : end + 1])
+        drafted = []
+        for item in payload:
+            drafted.append(
+                Criterion(
+                    id="draft",
+                    text=str(item.get("text") or ""),
+                    strength=item.get("strength") or "prefer",
+                    params=item.get("params") or {},
+                    kind="need",
+                )
+            )
+        return [row for row in drafted if row.text] or None
+    except Exception as exc:
+        log.warning("bedrock extract failed: %s", exc)
+        return None

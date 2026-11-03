@@ -1,0 +1,38 @@
+# Eligibility language only. Award amounts are set by the scholarship funding
+# organization. Every line keeps the official Florida Department of Education link.
+# Descriptions checked against fldoe.org pages as of 2026.
+
+fes_eo:
+  name: Family Empowerment Scholarship for Educational Options
+  applies_to: [private]
+  wording: You may qualify
+  eligibility: >
+    Florida's Family Empowerment Scholarship for Educational Options is open to
+    K-12 students. Families apply through an approved scholarship funding
+    organization, which decides eligibility and the award.
+  official_url: https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/fes/
+  cite_path: funding.fes_eo
+
+fes_ua:
+  name: Family Empowerment Scholarship for Students with Unique Abilities
+  applies_to: [private]
+  wording: You may qualify if the student has a disability
+  eligibility: >
+    This branch is for students with disabilities, as young as 3. Families can
+    use an education savings account for approved expenses, including private
+    school tuition. An approved scholarship funding organization determines eligibility.
+  official_url: https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/fes/
+  cite_path: funding.fes_ua
+
+ftc:
+  name: Florida Tax Credit Scholarship
+  applies_to: [private]
+  wording: You may qualify
+  eligibility: >
+    The Florida Tax Credit Scholarship gives priority to students in households
+    at or below 185 percent of the federal poverty level and to students in
+    foster or out-of-home care, then to households up to 400 percent.
+    Starting in the 2023-24 school year, the income cap for participation was removed.
+    Scholarship funding organizations set the award.
+  official_url: https://www.fldoe.org/schools/school-choice/k-12-scholarship-programs/ftc/
+  cite_path: funding.ftc
