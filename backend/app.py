@@ -30,6 +30,8 @@ class TurnIn(BaseModel):
     answer: dict | None = None
     feedback: dict | None = None
     need: str | None = None
+    # "Yes, it's my zoned school" on a public card: {"school_id": "...", "value": true}.
+    zoned: dict | None = None
 
 
 class ReplyIn(BaseModel):
@@ -55,14 +57,22 @@ def get_session(session_id: str) -> dict:
         session = state["sessions"].get(session_id)
         if not session:
             return {"error": "unknown session"}
+        from enrollment.access import by_deadline, getting_in
+
         criteria = [Criterion(**row) for row in session.get("criteria") or []]
         items = checklist_for(session, criteria, load_schools(), _programs(), state)
         saved = []
         by_id = {school["id"]: school for school in load_schools()}
+        grade = next((c.value for c in criteria if c.kind == "grade" and c.value), None)
+        zoned = set(session.get("zoned") or [])
         for school_id in session.get("saved") or []:
             school = by_id.get(school_id)
             if school:
-                saved.append({"id": school_id, "name": school["name"], "city": school.get("city")})
+                access = getting_in(school, grade, zoned, (state.get("overlays") or {}).get(school_id) or {})
+                saved.append({"id": school_id, "name": school["name"], "city": school.get("city"),
+                              "access": access, "days_left": access["days_left"]})
+        # The saved list reads as a to-do list: the soonest open deadline first.
+        saved = by_deadline(saved)
         return {
             "session_id": session_id,
             "criteria": session.get("criteria") or [],

@@ -139,6 +139,11 @@ def main() -> None:
 
     citation_ok, citation_total = _citations()
     dropped = _dropped_for_missing_data()
+    access_ok, access_total, access_odds = _getting_in_lines()
+    if access_ok != access_total:
+        failures.append(f"{access_total - access_ok} getting in lines lack an official link or school source")
+    if access_odds:
+        failures.append(f"getting in lines that estimate odds or promise a seat: {access_odds}")
     durations.sort()
     median = durations[len(durations) // 2] if durations else 0
 
@@ -146,6 +151,8 @@ def main() -> None:
     print(f"criteria precision: {precision:.1%} ({matched}/{emitted}) target 85%")
     print(f"strength accuracy: {strength:.1%} ({strength_hit}/{strength_total}) target 85%")
     print(f"ask decision: {ask:.1%} ({ask_hit}/{ask_total}) target 80%")
+    print(f"getting in lines with an official link or school source: {access_ok}/{access_total} target 100%")
+    print(f"getting in lines that estimate odds or promise a seat: {access_odds} target 0")
     print(f"cited claims kept: {citation_ok}/{citation_total}")
     print(f"schools dropped for missing data: {dropped}")
     print(f"median turn: {median:.2f}s")
@@ -229,6 +236,33 @@ def _dropped_for_missing_data() -> int:
     eligible = [school for school in schools if passes_hard_filters(school, criteria)]
     found = {school["id"] for school in search_schools(schools, [], criteria, limit=None)}
     return sum(1 for school in eligible if school["id"] not in found)
+
+
+_ODDS_WORDS = ("chance", "odds", "likely", "probab", "guarantee", "percent", "%", "will get in", "you'll get")
+
+
+def _getting_in_lines() -> tuple[int, int, int]:
+    """Every school's Getting in line, at every level it serves.
+
+    Returns (lines with an official link or a school source, all lines, lines that
+    estimate odds or promise a seat).
+    """
+    import re
+
+    from enrollment.access import getting_in
+
+    ok = total = odds = 0
+    for school in load_schools():
+        for grade in school.get("level_codes") or [None]:
+            record = getting_in(school, grade)
+            total += 1
+            official = str((record.get("official") or {}).get("url") or "").startswith("https://")
+            school_source = (record.get("source") or {}).get("type") in {"school_reported", "school_profile"}
+            ok += official or school_source
+            # The line and the plain text are what a parent reads; the rule summary is quoted law.
+            shown = f"{record['line']} {record['text']} {record.get('detail') or ''}".casefold()
+            odds += any(re.search(rf"\b{re.escape(word)}" if word[0].isalpha() else re.escape(word), shown) for word in _ODDS_WORDS)
+    return ok, total, odds
 
 
 if __name__ == "__main__":

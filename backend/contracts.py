@@ -17,6 +17,7 @@ SourceType = Literal[
     "program",
     "funding_rule",
     "glossary",
+    "computed",
 ]
 Route = Literal[
     "new_search",

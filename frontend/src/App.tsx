@@ -24,8 +24,10 @@ const SOURCE_LABEL: Record<string, string> = {
   community: "Parents say",
   program: "Nearby program",
   funding_rule: "Scholarship rule",
+  computed: "Computed from the school's location",
 };
 const LEVEL: Record<string, string> = { p: "Pre-K", e: "Elementary", m: "Middle", h: "High" };
+import { GettingInDetail, GettingInLine, SavedDeadline, onZonedTap, type Access } from "./GettingIn";
 
 async function postTurn(body: Record<string, unknown>): Promise<Turn> {
   const response = await fetch("/api/turn", {
@@ -102,6 +104,8 @@ export function App() {
       setBusy(false);
     }
   }
+  // "Yes, it's mine" on a public school card. The backend keeps only the school ID.
+  onZonedTap((schoolId, value) => void run({ action: "refresh", zoned: { school_id: schoolId, value } }));
 
   async function onSearch(event?: FormEvent, text?: string) {
     event?.preventDefault();
@@ -361,7 +365,7 @@ export function App() {
             {saved.length === 0 && <p>Save a school from a result card. The visit list is built from what is still unknown.</p>}
             <ul className="checklist">
               {saved.map((school) => (
-                <li key={school.id}><strong>{school.name}</strong> · {school.city}</li>
+                <li key={school.id}><strong>{school.name}</strong> · {school.city}<SavedDeadline access={(school as { access?: Access }).access} /></li>
               ))}
             </ul>
             {checklist.length > 0 && (
@@ -495,6 +499,7 @@ function SchoolCard({
         </div>
       </header>
       {card.summary && <p className="summary">{card.summary}</p>}
+      <GettingInLine schoolId={card.id} access={(card as Card & { access?: Access }).access} />
       <div className="evidence">
         {card.evidence.map((row) => (
           <EvidenceRow
@@ -705,6 +710,7 @@ function Panel({ turn, onClose }: { turn: Turn; onClose: () => void }) {
                 {school.synthetic ? " · synthetic profile" : ""}
               </p>
               {((school.esp_text as string[]) ?? []).map((line) => <p key={line}>{line}</p>)}
+              <GettingInDetail access={(payload.card as (Card & { access?: Access }) | null | undefined)?.access} />
               <h3>Reviews by topic</h3>
               {payload.reviews.map((topic) => (
                 <div key={topic.topic} className="quote">
