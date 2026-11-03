@@ -163,6 +163,8 @@ With IAM-only access, OpenSearch Dashboards is awkward to reach from a browser. 
 
 ### Amazon DynamoDB
 
+> **As built (Nov 3):** sessions, saved lists, feedback, the school inbox and school answers live in **one** on-demand table with `pk` / `sk` keys (layout in `backend/store.py`, decision in the README). The six-table design below is the plan for when community posts and votes are built; they can also go in the same table under new key prefixes.
+
 On-demand capacity for all six tables. No capacity to plan.
 
 | Table | Partition key | Sort key | Holds | TTL |

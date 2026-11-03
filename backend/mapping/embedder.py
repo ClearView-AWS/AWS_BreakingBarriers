@@ -40,10 +40,14 @@ def embed_hash(text: str, dimension: int = 256) -> list[float]:
 
 def embed_texts(texts: list[str], dimension: int = 256) -> list[list[float]]:
     if BEDROCK_ENABLED:
+        from observability import append
+
         try:
-            return _embed_bedrock(texts, dimension)
-        except Exception:
-            pass
+            vectors = _embed_bedrock(texts, dimension)
+            append("bedrock", {"purpose": "embed", "ok": True, "texts": len(texts)})
+            return vectors
+        except Exception as exc:
+            append("bedrock", {"purpose": "embed", "ok": False, "error": str(exc)[:300]})
     return [embed_hash(text, dimension) for text in texts]
 
 

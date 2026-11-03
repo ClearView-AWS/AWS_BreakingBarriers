@@ -2,17 +2,59 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
+import logging
+import threading
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+import observability
 from gaps.inbox import grouped_inbox, reply_to_question
 from pipeline import checklist_for, turn
 from contracts import Criterion
+from runtime_config import BEDROCK_ENABLED, INDEX_ON_START, OPENSEARCH_URL, REPO_ROOT
 from search.corpus import load_schools
-from store import State
+from store import State, backend_name
 
-app = FastAPI(title="Guided School Search", version="0.1.0")
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
+
+INDEX_STATUS: dict = {"state": "off" if not (OPENSEARCH_URL and INDEX_ON_START) else "pending"}
+
+
+def _index_on_start() -> None:
+    """In AWS, build the OpenSearch indexes once if they are missing. Runs in the
+    background so the health check passes while it works; until it finishes,
+    searches fall back to the local engine and the request log says so."""
+    if INDEX_STATUS["state"] != "pending":
+        return
+
+    def run() -> None:
+        import sys
+
+        sys.path.insert(0, str(REPO_ROOT / "data" / "index"))
+        try:
+            from indexer import ensure_indexes
+
+            INDEX_STATUS.update(state="running")
+            INDEX_STATUS.update(state="ready", **ensure_indexes())
+        except Exception as exc:
+            log.exception("index on start failed")
+            INDEX_STATUS.update(state="error", error=str(exc)[:300])
+
+    threading.Thread(target=run, name="index-on-start", daemon=True).start()
+
+
+@asynccontextmanager
+async def _lifespan(_app: FastAPI):
+    _index_on_start()
+    yield
+
+
+app = FastAPI(title="Guided School Search", version="0.1.0", lifespan=_lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -39,14 +81,57 @@ class ReplyIn(BaseModel):
 
 @app.get("/api/health")
 def health() -> dict:
-    return {"ok": True, "schools": len(load_schools())}
+    return {
+        "ok": True,
+        "schools": len(load_schools()),
+        "state_backend": backend_name(),
+        "bedrock": BEDROCK_ENABLED,
+        "opensearch": bool(OPENSEARCH_URL),
+        "index": INDEX_STATUS,
+    }
 
 
 @app.post("/api/turn")
-def post_turn(body: TurnIn) -> dict:
-    with State() as state:
-        response = turn(state, body.model_dump())
-        return response.model_dump()
+def post_turn(body: TurnIn, response: Response) -> dict:
+    payload = body.model_dump()
+    trace = observability.start_trace(
+        "turn",
+        session_id_in=body.session_id,
+        message=body.message,
+        action=body.action,
+        answer=body.answer,
+        feedback=body.feedback,
+    )
+    response.headers["X-Trace-Id"] = trace["trace_id"]
+    try:
+        with State() as state:
+            result = turn(state, payload)
+            out = result.model_dump()
+    except Exception as exc:
+        observability.emit(error=f"{type(exc).__name__}: {exc}"[:500])
+        raise
+    observability.emit(
+        session_id=result.session_id,
+        route=result.route,
+        criteria=[
+            {k: v for k, v in c.items() if v not in (None, [], {}, "")}
+            for c in out.get("criteria") or []
+        ],
+        assumption=result.assumption,
+        blocks=[block.type for block in result.blocks],
+        results=_result_ids(out),
+    )
+    out["trace_id"] = trace["trace_id"]
+    return out
+
+
+def _result_ids(out: dict) -> list[dict]:
+    rows = []
+    for block in out.get("blocks") or []:
+        for school in (block.get("payload") or {}).get("schools") or []:
+            if isinstance(school, dict) and school.get("id"):
+                rows.append({"id": school["id"], "match": school.get("match"), "verified": school.get("verified")})
+    return rows[:15]
 
 
 @app.get("/api/session/{session_id}")
@@ -105,3 +190,10 @@ def get_school(school_id: str) -> dict:
                 "level_codes": school.get("level_codes"),
             }
     return {"error": "unknown school"}
+
+
+# Serve the built frontend when it is present (one container can host the whole
+# demo). In AWS, CloudFront serves the same build from S3 instead.
+_DIST = REPO_ROOT / "frontend" / "dist"
+if _DIST.is_dir():
+    app.mount("/", StaticFiles(directory=_DIST, html=True), name="web")

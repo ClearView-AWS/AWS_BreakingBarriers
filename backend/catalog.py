@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from functools import lru_cache
 from typing import Any
 
@@ -35,7 +36,19 @@ def glossary() -> dict[str, dict[str, Any]]:
 
 @lru_cache(maxsize=1)
 def models() -> dict[str, Any]:
-    return _load("models.yaml")
+    """Model ids from models.yaml. Env vars win, so a sandbox can swap ids without a code change."""
+    data = _load("models.yaml")
+    overrides = {
+        "fast_model": "FAST_MODEL_ID",
+        "strong_model": "STRONG_MODEL_ID",
+        "embed_model": "EMBED_MODEL_ID",
+        "region": "AWS_REGION",
+    }
+    for key, env in overrides.items():
+        value = os.environ.get(env, "").strip()
+        if value:
+            data[key] = value
+    return data
 
 
 def unmapped_offers() -> list[tuple[str, str]]:

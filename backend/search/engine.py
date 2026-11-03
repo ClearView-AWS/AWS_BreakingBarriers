@@ -14,7 +14,8 @@ from evidence.engine import field_meets, program_support
 from mapping.embedder import cosine, embed_hash
 from mapping.mapper import normalize
 from search.geo import distance_from_city
-from search.query import build_query
+from observability import append
+from search.opensearch_client import search_candidates
 
 _TOKEN = re.compile(r"[a-z0-9]+")
 _STOP = {
@@ -113,16 +114,29 @@ def search_schools(
     location, grade, and type.
     """
     readings = readings or {}
-    # Build the DSL even though the local engine applies it itself, so a bad
-    # filter shows up in tests and in logs.
-    build_query(criteria, query_text)
+    # OpenSearch (when OPENSEARCH_URL is set) returns the candidates that pass the
+    # hard filters, with keyword + vector relevance. Without it, the same DSL is
+    # built and logged, and relevance is computed here.
+    os_scores, info = search_candidates(criteria, query_text)
+    os_max = max(os_scores.values(), default=0.0) if os_scores else 0.0
+    not_in_index: list[str] = []
     matched = []
     for school in schools:
         if not passes_hard_filters(school, criteria):
             continue
-        document = search_text_for(school)
+        if os_scores is not None:
+            if school["id"] in os_scores:
+                relevance = 0.15 * (os_scores[school["id"]] / os_max) if os_max else 0.0
+            else:
+                # The index is behind the corpus. Keep the school (missing data
+                # never drops one) and log it so the index can be rebuilt.
+                not_in_index.append(school["id"])
+                relevance = 0.0
+        else:
+            document = search_text_for(school)
+            relevance = _keyword_score(query_text, document) + _vector_score(query_text, document)
         # Capped so free-text similarity cannot flip a need boost.
-        score = min(0.15, _keyword_score(query_text, document) + _vector_score(query_text, document))
+        score = min(0.15, relevance)
         for criterion in criteria:
             if criterion.kind != "need":
                 continue
@@ -135,4 +149,12 @@ def search_schools(
     matched.sort(key=lambda row: (-row[0], row[1]))
     if limit is not None:
         matched = matched[:limit]
+    info.update(
+        matched=len(matched),
+        top=[row[2]["id"] for row in matched[:10]],
+        readings=readings or None,
+    )
+    if not_in_index:
+        info["not_in_index"] = not_in_index[:20]
+    append("searches", info)
     return [row[2] for row in matched]

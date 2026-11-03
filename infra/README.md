@@ -1,14 +1,16 @@
-# Welcome to your CDK TypeScript project
+# infra
 
-This is a blank project for CDK development with TypeScript.
+One CDK stack, `InfraStack`: the shared OpenSearch domain, the DynamoDB state table, the Fargate API behind an ALB, and the frontend in S3 behind CloudFront. See the [root README](../README.md#deploy-to-aws) for what each piece does.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+```bash
+npm install
+npx cdk bootstrap
+npx cdk deploy
+```
 
-## Useful commands
+Needs Docker running (CDK builds `backend/Dockerfile`) and AWS credentials for the target account. Options: `-c fastModelId=<id>`, `-c strongModelId=<id>`, `-c bedrock=0`, `-c hosting=false`.
 
-* `npm run build`   type-check the project
-* `npm run watch`   watch for changes and type-check
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+* `bash scripts/check-sandbox.sh`: read-only check of which services and models the account allows
+* `npx jest`: template tests
+* `npx cdk diff`: compare with what is deployed
+* `npx cdk destroy`: delete everything
