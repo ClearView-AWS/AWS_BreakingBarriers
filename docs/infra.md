@@ -1,11 +1,11 @@
-# AWS Infrastructure: GreatSchools Guided Agent
+# AWS Infrastructure: GreatSchools Guided Agent and Parent Community
 
 *Draft · Nov 3, 2026 · Region: us-east-1 · Account: hackathon sandbox · Companion to [plan.md](plan.md)*
 
 What runs in AWS, how a parent's message moves through it, and how to set it up and tear it down. [plan.md](plan.md) decides what we build; this document decides where it runs.
 
 > **Managed services only, nothing to patch.**
-> Bedrock, OpenSearch, DynamoDB, S3 and SES are shared by the whole team from day 0. The backend runs on our laptops while we build and moves to one Fargate task for the demo.
+> Bedrock, OpenSearch, DynamoDB, S3, SES and Amazon Location Service are shared by the whole team from day 0. The backend runs on our laptops while we build and moves to one Fargate task for the demo.
 
 ## Contents
 
@@ -27,21 +27,22 @@ What runs in AWS, how a parent's message moves through it, and how to set it up 
 ## Overview
 
 ```text
-Parent's browser
+Parent's browser ───────────────────────────────►  Amazon Location: map tiles (API key)
       │  HTTPS
       ▼
   CloudFront ─── /*  ──────►  S3: frontend bucket (React build, private, OAC)
       │
-      └──── /api/* ──► ALB ──► ECS Fargate: FastAPI agent (image in ECR)
+      └──── /api/* ──► ALB ──► ECS Fargate: FastAPI app (image in ECR)
                                      │
-      ┌──────────────┬───────────────┼───────────────┬──────────────────┐
-      ▼              ▼               ▼               ▼                  ▼
-   Bedrock       OpenSearch       DynamoDB          SES            S3: data bucket
- Haiku: route,   schools and      sessions,       "Ask the         sample and
-  extract        programs         saved lists,    school" email    synthetic data,
- Sonnet: explain indexes          feedback,       (sandbox mode)   mock school
- Embeddings:     (keyword +       school                           websites
-  Titan/Cohere    vector)         questions
+      ┌──────────────┬───────────────┼───────────────┬──────────────┬──────────────┐
+      ▼              ▼               ▼               ▼              ▼              ▼
+   Bedrock       OpenSearch      DynamoDB        SES            Amazon         S3: data
+ Haiku: route,   schools and     sessions,       school         Location:      bucket
+  extract, tag   programs        saved lists,    digests        zip code →     sample and
+ Sonnet: explain indexes         feedback,       (sandbox)      point          synthetic
+ Embeddings      (keyword +      community                                     data
+ Guardrails:      vector)        posts, votes,
+  post check                     questions
 ```
 
 Everything lives in one account and one region (us-east-1, matching GreatSchools production). Every resource is named with the prefix `gs-guided-` and tagged `Project=greatschools-guided-search`, so we can find it, see what it costs and delete it.
@@ -50,12 +51,12 @@ Everything lives in one account and one region (us-east-1, matching GreatSchools
 
 ## Two Phases
 
-| | Build (D0–M4) | Demo |
+| | Build (D0–M5) | Demo |
 |---|---|---|
 | Frontend | Vite dev server on each laptop, proxying `/api` to `localhost:8000` | Static build in S3, served by CloudFront |
 | Backend | `uvicorn backend.app:app` on each laptop | One ECS Fargate task behind an ALB |
 | AWS credentials | Each teammate's own sandbox profile | Fargate task role |
-| Bedrock, OpenSearch, DynamoDB, S3, SES | Shared, created on day 0 | Same resources, unchanged |
+| Bedrock, OpenSearch, DynamoDB, S3, SES, Amazon Location | Shared, created on day 0 | Same resources, unchanged |
 
 The frontend calls `/api/...` in both phases. Locally Vite proxies it; in the demo CloudFront routes it. No CORS setup, and no code changes between phases.
 
@@ -69,21 +70,30 @@ The steps from [plan.md › How a Turn Works](plan.md#how-a-turn-works), mapped 
 
 | # | Step | AWS call | Notes |
 |---|---|---|---|
-| 0 | Load session | DynamoDB `GetItem` on `sessions` | Criteria and answers so far |
-| 1 | Route | Bedrock Converse (Haiku) | Tool use returns a typed route |
+| # | Step | AWS call | Notes |
+|---|---|---|---|
+| 0 | Load session | DynamoDB `GetItem` on `sessions` | Brief, answers and criteria so far |
+| 1 | Route | Bedrock Converse (Haiku) | Tool use returns a typed route. Skipped for taps on questions, the brief and the map. |
 | 2 | Extract | Bedrock Converse (Haiku) | Tool use returns criteria JSON |
-| 3 | Map | Bedrock embeddings | Need phrases are embedded once at startup and held in memory; only the parent's phrases are embedded per turn |
-| 4 | Search | Bedrock embeddings, then OpenSearch hybrid query | One query embedding, one `_search` with the hybrid search pipeline |
-| 5 | Evidence | DynamoDB `Query` on `school_questions`; S3 `GetObject` for mock websites (gap resolver only) | School-reported answers override "unknown" |
-| 6 | Score | None | In-process |
-| 7 | Clarify | OpenSearch, one search per reading, run in parallel | Only when a criterion is ambiguous |
-| 8 | Explain | Bedrock ConverseStream (Sonnet) | Streamed to the browser; the citation validator runs on the finished text |
-| 9 | Render | None | Browser |
-| 10 | Save session | DynamoDB `PutItem` on `sessions` | |
+| 3 | Match needs | Bedrock embeddings | Need phrases are embedded once at startup and held in memory; only the parent's phrases are embedded per turn |
+| 4 | Plan questions | OpenSearch, one quick search per reading, run in parallel | Only when a criterion is ambiguous. No explanations are written. |
+| 5 | Brief | Amazon Location `Geocode`, only when the parent enters a zip code | The first turn of a thin request stops here |
+| 6 | Search | Bedrock embeddings, then OpenSearch hybrid query | One query embedding, one `_search` with the hybrid search pipeline |
+| 7 | Evidence | DynamoDB `BatchGetItem` on each result school's `#summary` item in `posts` | One call covers up to 100 schools. Community posts can support; school answers confirm. |
+| 8 | Score | None | In-process |
+| 9 | Explain | Bedrock ConverseStream (Sonnet) | Streamed to the browser; the citation validator runs on the finished text |
+| 10 | Render | None | Browser. Map tiles load straight from Amazon Location with the browser API key. |
+| 11 | Save session | DynamoDB `PutItem` on `sessions` | |
 
-Side actions on any turn: saves and thumbs up / down write to DynamoDB; "Ask the school" writes to `school_questions` and sends one SES email.
+Side actions, outside the agent's turn:
 
-To meet the plan's median turn time of under 6 seconds, the critical path is two Haiku calls, one embedding, one or a few OpenSearch queries and one streamed Sonnet call. Steps 1 and 2 can be merged into a single Haiku call if timing is tight.
+- **Save, thumbs up / down:** write to `saved` and `feedback`.
+- **Post or reply:** Bedrock `ApplyGuardrail`, then Haiku suggests need tags, then a write to `posts` that also updates the school's `#summary` item.
+- **Vote:** a conditional write to `votes`, then an atomic `ADD` on the post's vote count.
+- **Ask the school:** a write to `questions`.
+- **Send digest:** one `Query` on `questions` per school, then one SES email per school.
+
+To meet the plan's median turn time of under 6 seconds: the first turn of a thin request is two Haiku calls, one embedding and a few quick searches; a search turn is one embedding, one hybrid query, one DynamoDB batch read and one streamed Sonnet call. Steps 1 and 2 can be merged into a single Haiku call if timing is tight.
 
 ---
 
@@ -106,7 +116,7 @@ data/synthetic/generator  ──►  data/sample + data/synthetic (local files)
                                      ▼
                               aliases: schools, programs
 
-data/synthetic/sites  ──►  S3 data bucket: school-sites/{school_id}.html
+data/synthetic/seed posts  ──►  seed loader  ──►  DynamoDB: posts, questions
 ```
 
 The indexer writes to a new versioned index and moves the `schools` and `programs` aliases only after it finishes. A teammate can reindex without breaking everyone else's searches, and a bad run can be rolled back by moving the alias back.
@@ -119,14 +129,16 @@ The indexer writes to a new versioned index and moves the `schools` and `program
 
 | Use | Model | API |
 |---|---|---|
-| Route, extract | Claude Haiku (small, fast) | Converse with tool use |
-| Explain, compare, word questions | Claude Sonnet (stronger) | ConverseStream |
-| Need mapping, vector search | Titan Text Embeddings V2 or Cohere Embed Multilingual (chosen with the eval set) | InvokeModel |
-| Grounding check (M5 stretch) | Bedrock Guardrails, contextual grounding | ApplyGuardrail |
+| Route, extract, tag posts | Claude Haiku (small, fast) | Converse with tool use |
+| Explain, compare, word questions and the brief | Claude Sonnet (stronger) | ConverseStream |
+| Need matching, vector search | Titan Text Embeddings V2 or Cohere Embed Multilingual (chosen with the eval set) | InvokeModel |
+| Check community posts for personal information (M3) | Bedrock Guardrails, sensitive-information filter | ApplyGuardrail |
+| Grounding check (M6 stretch) | Bedrock Guardrails, contextual grounding | ApplyGuardrail |
 
 - Request model access on day 0. Model availability in the sandbox is an open question in the plan.
 - Model IDs live in `backend/config/models.yaml`, never in code. Newer Claude models on Bedrock are usually called through an inference profile ID (`us.anthropic.…`) rather than the base model ID; use whichever ID the console shows for on-demand use.
 - Changing the embedding model changes the vector dimension and means a full reindex. Choose it before M1.
+- Create one guardrail, `gs-guided-posts`, with the sensitive-information filter set to block names, email addresses, phone numbers and addresses. Its ID and version go in config.
 
 ### Amazon OpenSearch Service
 
@@ -151,22 +163,28 @@ With IAM-only access, OpenSearch Dashboards is awkward to reach from a browser. 
 
 ### Amazon DynamoDB
 
-On-demand capacity for all four tables. No capacity to plan.
+On-demand capacity for all six tables. No capacity to plan.
 
 | Table | Partition key | Sort key | Holds | TTL |
 |---|---|---|---|---|
-| `gs-guided-sessions` | `session_id` | none | Criteria, answers, last results | 7 days |
-| `gs-guided-saved` | `user_id` | `school_id` | Saved schools and visit checklist | none |
+| `gs-guided-sessions` | `session_id` | none | Brief, answers, criteria, last results | 7 days |
+| `gs-guided-saved` | `user_id` | `school_id` | Saved schools | none |
 | `gs-guided-feedback` | `session_id` | `ts` | Thumbs up / down, reason chips, result IDs | none |
-| `gs-guided-school-questions` | `school_id` | `question_id` | Questions to schools, status, answer, answered date | none |
+| `gs-guided-posts` | `school_id` | `post_id` | Threads and replies, plus one `#summary` item per school: post counts and stance per need, and the school's answers | none |
+| `gs-guided-votes` | `post_id` | `persona` | One vote per persona per post | none |
+| `gs-guided-questions` | `school_id` | `month#need#asker` | Questions to the school, open or answered | none |
 
-`school_questions` is keyed by school so that questions from many parents to one school can be grouped into one request (plan M4). There is no login, so `user_id` is a fixed demo user or a browser-generated ID.
+- **Posts** use time-sortable IDs (ULIDs), so a school's posts come back in order. Every write also updates the school's `#summary` item, which is what the agent reads for evidence.
+- **Votes** only stop double voting, with a conditional put. The count lives on the post and goes up with an atomic `ADD`.
+- **Questions** have one item per parent, per need, per month, so a parent asking twice counts once. This month's demand counts are one `Query` with `begins_with(sk, "2026-11#")`, and the digest is the same query filtered to open questions.
+
+There is no login, so `user_id` and `persona` come from the persona switcher.
 
 ### Amazon S3
 
 | Bucket | Prefixes | Access |
 |---|---|---|
-| `gs-guided-data-<account-id>` | `raw/` sample and synthetic data · `school-sites/` mock school websites | Private; backend and indexer only |
+| `gs-guided-data-<account-id>` | `raw/` sample and synthetic data, seed posts | Private; indexer and seed loader only |
 | `gs-guided-web-<account-id>` | React build | Private; CloudFront only, through origin access control (OAC) |
 
 Block Public Access stays on for both buckets.
@@ -175,8 +193,20 @@ Block Public Access stays on for both buckets.
 
 - Stays in **sandbox mode**. In sandbox, SES delivers only to verified addresses, so the agent cannot email a real school.
 - Verify one sender address and each teammate's address on day 0.
-- Synthetic school email addresses in the data point at verified teammate addresses, so the "Ask the school" demo lands in a real inbox.
-- The school's answer comes back through the in-app school inbox page, which writes to `school_questions`. We don't receive email.
+- Synthetic school email addresses in the data point at verified teammate addresses, so the digest lands in a real inbox during the demo.
+- One digest per school, sent from a "Send digest" button. A daily schedule is an M6 stretch.
+- The school answers in its community thread, not by email. We don't receive email.
+
+### Amazon Location Service
+
+| Use | How | Access |
+|---|---|---|
+| Map tiles | MapLibre GL JS in the browser loads tiles straight from Amazon Location | An API key that allows only `geo-maps:GetTile` on `arn:aws:geo-maps:us-east-1::provider/default`, restricted to our CloudFront domain and `localhost` |
+| Zip code → point | The backend calls `Geocode` | Task role, `geo-places:Geocode` |
+
+The API key is the only credential that reaches the browser. It can only fetch map tiles, so a leaked key costs tile requests and nothing else. Give it an expiry date shortly after the hackathon.
+
+If Amazon Location isn't available in the sandbox, the map uses OpenStreetMap tiles and zip codes come from the Census Bureau's ZCTA gazetteer file.
 
 ### Compute (demo)
 
@@ -209,13 +239,14 @@ Viewers get HTTPS from CloudFront's default certificate. No custom domain needed
 
 | Service | Actions | Resources |
 |---|---|---|
-| Bedrock | `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream` (+ `bedrock:ApplyGuardrail` in M5) | The models in `models.yaml`. With inference profiles, allow both the profile ARN and the underlying foundation-model ARNs. |
+| Bedrock | `bedrock:InvokeModel`, `bedrock:InvokeModelWithResponseStream` | The models in `models.yaml`. With inference profiles, allow both the profile ARN and the underlying foundation-model ARNs. |
+| Bedrock Guardrails | `bedrock:ApplyGuardrail` | The `gs-guided-posts` guardrail |
 | OpenSearch | `es:ESHttpGet`, `es:ESHttpPost` | The domain ARN and `/*` |
-| DynamoDB | `GetItem`, `PutItem`, `UpdateItem`, `Query`, `DeleteItem` | The four tables |
+| DynamoDB | `GetItem`, `BatchGetItem`, `PutItem`, `UpdateItem`, `Query`, `DeleteItem` | The six tables |
 | SES | `ses:SendEmail` | The verified sender identity |
-| S3 | `s3:GetObject` | `gs-guided-data-*/school-sites/*` |
+| Amazon Location | `geo-places:Geocode` | `arn:aws:geo-places:us-east-1::provider/default` |
 
-The runtime role cannot write to OpenSearch indexes or S3. The indexer runs with a teammate's own credentials and needs `es:ESHttpPut` and `es:ESHttpDelete` as well.
+The runtime role cannot write to OpenSearch indexes or S3. The indexer and seed loader run with a teammate's own credentials, and the indexer needs `es:ESHttpPut` and `es:ESHttpDelete` as well.
 
 A separate **task execution role** (the AWS-managed `AmazonECSTaskExecutionRolePolicy`) lets ECS pull the image and write logs.
 
@@ -236,13 +267,22 @@ OPENSEARCH_PIPELINE=gs-guided-hybrid
 DATA_BUCKET=gs-guided-data-<account-id>
 TABLE_PREFIX=gs-guided-
 SES_FROM_ADDRESS=<verified sender>
+GUARDRAIL_ID=<gs-guided-posts guardrail ID>
+GUARDRAIL_VERSION=<published version>
 MODELS_FILE=backend/config/models.yaml
+```
+
+The frontend needs one value at build time, in its own gitignored `.env`:
+
+```bash
+VITE_LOCATION_API_KEY=<map tiles key>
 ```
 
 ```yaml
 # backend/config/models.yaml
 router:    { id: "<Haiku inference profile ID>", max_tokens: 512 }
 extractor: { id: "<Haiku inference profile ID>", max_tokens: 1024 }
+tagger:    { id: "<Haiku inference profile ID>", max_tokens: 256 }
 explainer: { id: "<Sonnet inference profile ID>", max_tokens: 2048 }
 embedding: { id: "<Titan V2 or Cohere Multilingual ID>", dimension: 1024 }
 ```
@@ -256,10 +296,11 @@ In order of lead time. Start the slow items first and do the rest while they fin
 1. **Bedrock model access.** Request Haiku, Sonnet and both embedding candidates. Approval can take a while.
 2. **OpenSearch domain.** Create it with the settings above. Creation can take a while.
 3. **SES identities.** Verify the sender and each teammate's address. Everyone clicks the link in their email.
-4. **DynamoDB tables.** Create the four tables, then turn on TTL for `sessions`.
-5. **S3 data bucket.** Upload `raw/` once the generator runs.
-6. **When the domain is active:** create the search pipeline, create the index mappings, run the indexer, point the aliases.
-7. **Smoke test.** One hybrid query from a laptop and one Bedrock Converse call, both through the same config the backend uses.
+4. **DynamoDB tables.** Create the six tables, then turn on TTL for `sessions`.
+5. **Guardrail and map key.** Create the `gs-guided-posts` guardrail and the Amazon Location API key.
+6. **S3 data bucket.** Upload `raw/` once the generator runs, then run the seed loader for posts and questions.
+7. **When the domain is active:** create the search pipeline, create the index mappings, run the indexer, point the aliases.
+8. **Smoke test.** One hybrid query from a laptop, one Bedrock Converse call, one `ApplyGuardrail` call on a post with a name in it, and one map tile in the browser, all through the same config the app uses.
 
 Fargate, ALB, ECR, the web bucket and CloudFront wait until M1 works end to end locally.
 
@@ -271,7 +312,7 @@ These can be created by hand in the console or with CDK in `infra/` (optional, p
 
 | Billed by the hour, even when idle | Billed per use |
 |---|---|
-| OpenSearch domain (by far the largest) · ALB · Fargate task | Bedrock tokens · DynamoDB on-demand · S3 · SES · CloudFront |
+| OpenSearch domain (by far the largest) · ALB · Fargate task | Bedrock tokens and guardrail checks · DynamoDB on-demand · S3 · SES · Amazon Location · CloudFront |
 
 Things we deliberately avoid: NAT gateways, multi-AZ OpenSearch, dedicated master nodes, provisioned DynamoDB capacity.
 
@@ -284,7 +325,7 @@ Check the sandbox's billing page daily using the `Project` tag.
 3. OpenSearch domain
 4. DynamoDB tables
 5. S3 buckets: empty them, then delete
-6. SES identities, CloudWatch log groups, IAM roles
+6. SES identities, the guardrail, the Amazon Location API key, CloudWatch log groups, IAM roles
 
 ---
 
@@ -296,7 +337,8 @@ Check the sandbox's billing page daily using the `Project` tag.
 | OpenSearch Serverless | Bills a minimum capacity even when idle, and GreatSchools runs a managed domain, which is what we're mirroring. |
 | OpenSearch in a VPC | Safer for production, but laptops can't reach it during the build without a VPN or bastion. |
 | App Runner instead of Fargate + ALB | Fewer pieces, but a less direct match for how GreatSchools would run it. Worth revisiting if Fargate setup eats time. |
-| Aurora or RDS for state | GreatSchools uses MySQL, but a database server is more to manage than four DynamoDB tables for a demo. |
+| Aurora or RDS for state | GreatSchools uses MySQL, but a database server is more to manage than six DynamoDB tables for a demo. |
+| OpenSearch index for community posts | The agent looks posts up by school and need, which DynamoDB does directly. Add a posts index later if parents need to search across all threads. |
 
 ---
 
@@ -309,6 +351,9 @@ How each piece maps onto GreatSchools' stack (self-managed EC2, Ruby on Rails, M
 | OpenSearch indexes in GreatSchools' document schema, plus `search_text` and `search_vector` | Add the two fields and the search pipeline to their existing indexes |
 | FastAPI agent service | Runs beside the Rails app as its own service; Rails calls `/api` |
 | DynamoDB tables | Equivalent MySQL tables in the Rails app |
+| Community threads and votes | Sit beside their 850,000+ reviews and go through their existing moderation |
+| Guardrails check on posts | A first filter in front of their moderation, not a replacement for it |
+| Amazon Location map tiles | Their existing map provider, or Amazon Location |
 | Bedrock | Bedrock; today their query parsing uses OpenAI gpt-5.4-nano |
 | S3 data bucket | Their S3 data lake; feedback could flow there for Athena |
 | SES sandbox | Their transactional email provider |
@@ -318,7 +363,7 @@ How each piece maps onto GreatSchools' stack (self-managed EC2, Ruby on Rails, M
 
 ## Open Questions
 
-- [ ] **Does the sandbox allow everything here?** Some sandbox accounts block public OpenSearch endpoints, SES or CloudFront. Check on day 0.
+- [ ] **Does the sandbox allow everything here?** Some sandbox accounts block public OpenSearch endpoints, SES, CloudFront or Amazon Location. Check on day 0.
 - [ ] **Is there a default VPC?** Fargate in the demo phase needs one with public subnets.
 - [ ] **Which Bedrock models are enabled?** Shared with [plan.md › Open Questions](plan.md#open-questions).
 - [ ] **CDK or console?** CDK is cleaner to tear down and hand off. The console is faster if nobody on the team knows CDK.
