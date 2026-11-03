@@ -35,6 +35,17 @@
       ],
       "after_school_until": [
         "18:00"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 12,
+          "waitlist": false,
+          "as_of": "2026-09-15"
+        }
       ]
     },
     "esp_text": [
@@ -133,6 +144,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -225,6 +239,12 @@
       ],
       "after_school_until": [
         "18:00"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_deadline_date": [
+        "10/1/2026"
       ]
     },
     "esp_text": [
@@ -320,6 +340,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -417,6 +440,16 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "2/1/2027"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -463,6 +496,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -550,6 +586,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -636,6 +675,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -723,6 +765,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -813,6 +858,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -905,6 +953,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -997,6 +1048,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1089,6 +1143,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1181,6 +1238,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1276,6 +1336,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1367,6 +1430,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1462,6 +1528,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1554,6 +1623,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1649,6 +1721,23 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
+      ],
+      "application_requirements": [
+        "application"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "6",
+          "applicants": 210,
+          "seats": 90,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -1741,6 +1830,17 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 0,
+          "waitlist": true,
+          "as_of": "2026-10-01"
+        }
       ]
     },
     "esp_text": [
@@ -1784,6 +1884,12 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2025"
       ]
     },
     "esp_text": [
@@ -1827,6 +1933,12 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -1918,6 +2030,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -1959,6 +2074,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
       ]
     },
     "esp_text": [
@@ -1996,6 +2117,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -2076,6 +2200,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -2118,6 +2245,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -2206,6 +2336,12 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/maple-ridge-school/admissions"
       ]
     },
     "esp_text": [
@@ -2243,6 +2379,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -2332,6 +2471,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -2424,6 +2566,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -2511,6 +2656,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/coral-bend-institute/admissions"
       ]
     },
     "esp_text": [
@@ -2595,6 +2746,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -2677,6 +2831,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -2768,6 +2925,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -2849,6 +3009,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -2930,6 +3093,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3025,6 +3191,13 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -3064,6 +3237,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3154,6 +3330,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3207,6 +3386,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -3258,6 +3440,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -3341,6 +3529,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3430,6 +3621,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3466,6 +3660,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3546,6 +3743,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3591,6 +3791,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -3684,6 +3887,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -3765,6 +3971,17 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "K",
+          "open_seats": 4,
+          "waitlist": false,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -3801,6 +4018,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3888,6 +4108,20 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "3/1/2027"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "K",
+          "open_seats": 4,
+          "waitlist": false,
+          "as_of": "2026-09-15"
+        }
       ]
     },
     "esp_text": [
@@ -3973,6 +4207,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -4060,6 +4297,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -4114,6 +4354,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -4147,6 +4390,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -4224,6 +4470,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -4264,6 +4513,12 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/bay-terrace-institute/admissions"
       ]
     },
     "esp_text": [
@@ -4300,6 +4555,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cypress-springs-institute/admissions"
       ]
     },
     "esp_text": [
@@ -4348,6 +4609,12 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/citrus-meadow-school/admissions"
       ]
     },
     "esp_text": [
@@ -4443,6 +4710,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -4531,6 +4801,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/maple-trace-academy/admissions"
       ]
     },
     "esp_text": [
@@ -4571,6 +4847,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -4618,6 +4897,17 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 15,
+          "waitlist": false,
+          "as_of": "2026-09-15"
+        }
       ]
     },
     "esp_text": [
@@ -4657,6 +4947,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -4699,6 +4992,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-commons-academy/admissions"
       ]
     },
     "esp_text": [
@@ -4788,6 +5087,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -4824,6 +5126,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/lark-walk-academy/admissions"
       ]
     },
     "esp_text": [
@@ -4866,6 +5174,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -4911,6 +5222,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -4947,6 +5261,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/pine-trace-school/admissions"
       ]
     },
     "esp_text": [
@@ -4987,6 +5307,20 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 8,
+          "waitlist": false,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -5030,6 +5364,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -5066,6 +5403,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -5150,6 +5490,15 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-point-institute/admissions"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -5184,6 +5533,15 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/heron-trace-school/admissions"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -5217,6 +5575,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -5261,6 +5622,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -5345,6 +5709,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/marlin-point-institute/admissions"
       ]
     },
     "esp_text": [
@@ -5381,6 +5751,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/heron-cove-academy/admissions"
       ]
     },
     "esp_text": [
@@ -5462,6 +5838,13 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -5551,6 +5934,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -5593,6 +5979,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -5630,6 +6019,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -5711,6 +6103,12 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-ridge-school/admissions"
       ]
     },
     "esp_text": [
@@ -5791,6 +6189,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -5831,6 +6232,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -5871,6 +6275,13 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -5955,6 +6366,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-walk-institute/admissions"
       ]
     },
     "esp_text": [
@@ -6048,6 +6465,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -6085,6 +6505,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cypress-crossing-school/admissions"
       ]
     },
     "esp_text": [
@@ -6125,6 +6551,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6169,6 +6598,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6215,6 +6647,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6295,6 +6730,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6379,6 +6817,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6415,6 +6856,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -6501,6 +6945,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -6546,6 +6993,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6630,6 +7080,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6711,6 +7164,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6748,6 +7204,17 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 0,
+          "waitlist": true,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -6836,6 +7303,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6872,6 +7342,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6962,6 +7435,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7050,6 +7526,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7140,6 +7619,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7225,6 +7707,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7262,6 +7747,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -7298,6 +7786,17 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "K",
+          "open_seats": 4,
+          "waitlist": false,
+          "as_of": "2026-09-15"
+        }
       ]
     },
     "esp_text": [
@@ -7378,6 +7877,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7459,6 +7961,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -7546,6 +8051,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7638,6 +8146,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-meadow-institute/admissions"
       ]
     },
     "esp_text": [
@@ -7726,6 +8240,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -7765,6 +8282,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7855,6 +8375,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7946,6 +8469,23 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/river-terrace-institute/admissions"
+      ],
+      "application_deadline_date": [
+        "2/1/2027"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "9",
+          "open_seats": 15,
+          "waitlist": false,
+          "as_of": "2026-08-20"
+        }
       ]
     },
     "esp_text": [
@@ -7991,6 +8531,16 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
       ]
     },
     "esp_text": [
@@ -8034,6 +8584,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -8116,6 +8669,20 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/sabal-isle-school/admissions"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "K",
+          "applicants": 180,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -8159,6 +8726,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8239,6 +8809,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8276,6 +8849,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8362,6 +8938,20 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-walk-institute/admissions"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "9",
+          "applicants": 240,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -8401,6 +8991,9 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -8441,6 +9034,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -8527,6 +9123,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8611,6 +9210,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8650,6 +9252,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -8693,6 +9298,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -8729,6 +9337,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8769,6 +9380,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8858,6 +9472,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8903,6 +9520,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8984,6 +9604,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9073,6 +9696,17 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "9",
+          "applicants": 240,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -9167,6 +9801,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -9203,6 +9840,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9246,6 +9886,20 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "PK",
+          "applicants": 240,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -9288,6 +9942,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9327,6 +9984,16 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/lark-commons-school/admissions"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -9414,6 +10081,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -9451,6 +10121,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/lark-ridge-institute/admissions"
       ]
     },
     "esp_text": [
@@ -9489,6 +10165,17 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "K",
+          "applicants": 180,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -9524,6 +10211,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -9565,6 +10255,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -9651,6 +10344,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -9739,6 +10435,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9783,6 +10482,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -9817,6 +10519,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9908,6 +10613,12 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "3/1/2027"
       ]
     },
     "esp_text": [
@@ -9947,6 +10658,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9994,6 +10708,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10034,6 +10751,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10089,6 +10809,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -10170,6 +10893,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cypress-walk-school/admissions"
       ]
     },
     "esp_text": [
@@ -10251,6 +10980,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10293,6 +11025,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -10330,6 +11065,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10412,6 +11150,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -10503,6 +11247,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -10590,6 +11337,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10671,6 +11421,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10709,6 +11462,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10754,6 +11510,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -10797,6 +11556,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -10878,6 +11640,12 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/sabal-cove-school/admissions"
       ]
     },
     "esp_text": [
@@ -10959,6 +11727,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/indigo-terrace-institute/admissions"
       ]
     },
     "esp_text": [
@@ -11041,6 +11815,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -11087,6 +11864,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11173,6 +11953,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -11255,6 +12038,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11294,6 +12080,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/heron-park-academy/admissions"
       ]
     },
     "esp_text": [
@@ -11375,6 +12167,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11413,6 +12211,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -11497,6 +12298,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11578,6 +12382,12 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/river-crossing-institute/admissions"
       ]
     },
     "esp_text": [
@@ -11623,6 +12433,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -11703,6 +12516,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -11785,6 +12601,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -11870,6 +12689,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11910,6 +12732,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11953,6 +12778,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -12035,6 +12863,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -12074,6 +12905,12 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/maple-harbor-institute/admissions"
       ]
     },
     "esp_text": [
@@ -12157,6 +12994,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12246,6 +13086,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12333,6 +13176,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -12369,6 +13215,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -12456,6 +13305,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -12537,6 +13389,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12579,6 +13434,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12668,6 +13526,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -12746,6 +13607,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12837,6 +13701,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -12921,6 +13788,25 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "PK",
+          "open_seats": 8,
+          "waitlist": false,
+          "as_of": "2026-03-15"
+        }
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "PK",
+          "applicants": 240,
+          "seats": 90,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -13008,6 +13894,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -13050,6 +13939,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -13091,6 +13983,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13124,6 +14019,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -13161,6 +14059,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/river-walk-academy/admissions"
       ]
     },
     "esp_text": [
@@ -13243,6 +14147,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -13291,6 +14198,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/osprey-trace-school/admissions"
       ]
     },
     "esp_text": [
@@ -13374,6 +14287,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13415,6 +14331,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/maple-heights-academy/admissions"
       ]
     },
     "esp_text": [
@@ -13456,6 +14378,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -13496,6 +14421,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13583,6 +14511,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13634,6 +14565,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13677,6 +14611,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2025"
       ]
     },
     "esp_text": [
@@ -13761,6 +14701,17 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "PK",
+          "open_seats": 15,
+          "waitlist": false,
+          "as_of": "2026-08-20"
+        }
       ]
     },
     "esp_text": [
@@ -13797,6 +14748,12 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/lark-commons-academy/admissions"
       ]
     },
     "esp_text": [
@@ -13840,6 +14797,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13934,6 +14894,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -13973,6 +14936,15 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/oak-ridge-school/admissions"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14017,6 +14989,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -14067,6 +15042,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -14153,6 +15131,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14237,6 +15218,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14285,6 +15269,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -14368,6 +15355,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14452,6 +15442,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -14492,6 +15485,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -14579,6 +15575,12 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-springs-institute/admissions"
       ]
     },
     "esp_text": [
@@ -14619,6 +15621,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14700,6 +15705,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -14787,6 +15795,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14836,6 +15847,12 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/river-terrace-academy/admissions"
       ]
     },
     "esp_text": [
@@ -14873,6 +15890,15 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cypress-walk-institute/admissions"
+      ],
+      "application_deadline_date": [
+        "10/1/2026"
       ]
     },
     "esp_text": [
@@ -14956,6 +15982,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15039,6 +16068,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15126,6 +16158,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -15213,6 +16248,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15260,6 +16298,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -15296,6 +16337,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -15386,6 +16430,12 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_deadline_date": [
+        "10/1/2026"
       ]
     },
     "esp_text": [
@@ -15464,6 +16514,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -15498,6 +16551,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15538,6 +16594,9 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15571,6 +16630,17 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 0,
+          "waitlist": true,
+          "as_of": "2026-08-20"
+        }
       ]
     },
     "esp_text": [
@@ -15665,6 +16735,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -15708,6 +16781,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -15797,6 +16873,13 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -15835,6 +16918,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -15931,6 +17017,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -16015,6 +17104,12 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/harbor-harbor-institute/admissions"
       ]
     },
     "esp_text": [
@@ -16099,6 +17194,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16151,6 +17249,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-ridge-school/admissions"
       ]
     },
     "esp_text": [
@@ -16234,6 +17338,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16315,6 +17422,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16410,6 +17520,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16461,6 +17574,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16508,6 +17624,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16551,6 +17670,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/heron-terrace-academy/admissions"
       ]
     },
     "esp_text": [
@@ -16647,6 +17772,12 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-point-school/admissions"
       ]
     },
     "esp_text": [
@@ -16687,6 +17818,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16726,6 +17860,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -16768,6 +17905,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16805,6 +17945,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16847,6 +17990,15 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "choice"
+      ],
+      "admissions_url": [
+        "https://www.example.org/coral-meadow-institute/admissions"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16893,6 +18045,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16943,6 +18098,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -16982,6 +18140,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -17062,6 +18223,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -17154,6 +18318,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -17202,6 +18369,17 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "PK",
+          "open_seats": 0,
+          "waitlist": true,
+          "as_of": "2026-08-20"
+        }
       ]
     },
     "esp_text": [
@@ -17289,6 +18467,9 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -17328,6 +18509,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -17371,6 +18555,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -17414,6 +18601,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -17457,6 +18647,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -17493,6 +18686,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-landing-institute/admissions"
       ]
     },
     "esp_text": [
@@ -17573,6 +18772,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -17616,6 +18818,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -17697,6 +18902,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/willow-shores-school/admissions"
       ]
     },
     "esp_text": [

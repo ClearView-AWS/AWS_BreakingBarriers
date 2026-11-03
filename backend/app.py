@@ -30,6 +30,8 @@ class TurnIn(BaseModel):
     answer: dict | None = None
     feedback: dict | None = None
     need: str | None = None
+    # "Yes, it's my zoned school" on a public card: {"school_id": "...", "value": true}.
+    zoned: dict | None = None
 
 
 class ReplyIn(BaseModel):

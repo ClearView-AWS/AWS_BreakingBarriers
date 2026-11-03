@@ -12,6 +12,7 @@ from evidence.engine import evaluate_criterion
 from evidence.scorer import score_school
 from evidence.why_not import explain_absence
 from funding.estimator import estimate_cost
+from enrollment.access import by_deadline, getting_in
 from gaps.inbox import add_question
 from gaps.ses_mailer import send_school_question
 from mapping.mapper import normalize
@@ -39,6 +40,7 @@ def turn(state: dict, payload: dict) -> TurnResponse:
 
     _apply_answer(session, payload.get("answer") or {}, state)
     _apply_feedback(session, payload.get("feedback") or {})
+    _apply_zoned(session, payload.get("zoned") or {})
 
     criteria = [Criterion(**row) for row in session["criteria"]]
     schools = load_schools()
@@ -215,6 +217,27 @@ def _apply_feedback(session: dict, feedback: dict) -> None:
             _rekey(session["criteria"])
 
 
+def _apply_zoned(session: dict, zoned: dict) -> None:
+    """The parent tapped "Yes, it's mine" (or took it back) on a public school card.
+
+    Only the school ID is kept, never an address.
+    """
+    school_id = zoned.get("school_id")
+    if not school_id:
+        return
+    ids = session.setdefault("zoned", [])
+    if zoned.get("value", True) and school_id not in ids:
+        ids.append(school_id)
+    elif not zoned.get("value", True) and school_id in ids:
+        ids.remove(school_id)
+
+
+def _access(school: dict, criteria: list[Criterion], state: dict, session: dict | None) -> dict:
+    grade = next((c.value for c in criteria if c.kind == "grade" and c.value), None)
+    zoned = set((session or {}).get("zoned") or [])
+    return getting_in(school, grade, zoned, _overlays_for(state, school["id"]))
+
+
 def _stamp_distances(schools: list[dict], criteria: list[Criterion]) -> None:
     city = next((c.value for c in criteria if c.kind == "location"), None)
     for school in schools:
@@ -225,7 +248,7 @@ def _overlays_for(state: dict, school_id: str) -> dict:
     return (state.get("overlays") or {}).get(school_id) or {}
 
 
-def _score_school(school, criteria, programs, state) -> dict | None:
+def _score_school(school, criteria, programs, state, session=None) -> dict | None:
     rows = []
     records = []
     for criterion in criteria:
@@ -251,6 +274,8 @@ def _score_school(school, criteria, programs, state) -> dict | None:
         "verified": scored["verified"],
         "coverage": scored["coverage"],
         "missed_must": scored["missed_must"],
+        # Getting in sits beside the match. It never counts toward match or coverage.
+        "access": _access(school, criteria, state, session),
         "summary": summary,
         "distance_miles": None if school.get("_distance_miles") is None else round(school["_distance_miles"], 1),
         "lat": school.get("_lat"),
@@ -270,7 +295,7 @@ def _search_response(session, criteria, schools, programs, state, message: str) 
     matched = search_schools(schools, programs, criteria, message, readings, limit=None)
     scored_rows = []
     for school in matched:
-        card = _score_school(school, criteria, programs, state)
+        card = _score_school(school, criteria, programs, state, session)
         if card:
             card["saved"] = school["id"] in session.get("saved", [])
             scored_rows.append(card)
@@ -384,7 +409,7 @@ def _compare(session, criteria, schools, programs, state, payload, message) -> T
     chosen = [_by_id(schools)[sid] for sid in ids if sid in _by_id(schools)][:2]
     cards = []
     for school in chosen:
-        card = _score_school(school, criteria, programs, state) or {
+        card = _score_school(school, criteria, programs, state, session) or {
             "id": school["id"],
             "name": school["name"],
             "evidence": [],
@@ -481,7 +506,7 @@ def _detail(session, criteria, schools, programs, state, message, payload) -> Tu
         blocks = [Block(type="message", payload={"text": "Which school should I open?"})]
         return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
     school = _by_id(schools)[ids[0]]
-    card = _score_school(school, criteria, programs, state)
+    card = _score_school(school, criteria, programs, state, session)
     blocks = [
         Block(
             type="school_detail",
@@ -505,9 +530,18 @@ def _save(session, criteria, schools, programs, state, payload, message) -> Turn
         if school_id not in saved:
             saved.append(school_id)
     items = checklist_for(session, criteria, schools, programs, state)
+    by_id = _by_id(schools)
+    deadlines = by_deadline(
+        [
+            {"school_id": sid, "name": by_id[sid]["name"], **_access(by_id[sid], criteria, state, session)}
+            for sid in saved
+            if sid in by_id
+        ]
+    )
     blocks = [
         Block(type="message", payload={"text": f"Saved list has {len(saved)} schools."}),
-        Block(type="checklist", payload={"school_ids": saved, "items": items}),
+        # by_deadline: saved schools with the soonest open deadline first, for the saved list.
+        Block(type="checklist", payload={"school_ids": saved, "items": items, "by_deadline": deadlines}),
     ]
     return TurnResponse(session_id=session["id"], route="save", criteria=criteria, blocks=blocks)
 
@@ -543,7 +577,7 @@ def checklist_for(session, criteria, schools, programs, state) -> list[dict]:
         school = by_id.get(school_id)
         if not school:
             continue
-        card = _score_school(school, criteria, programs, state)
+        card = _score_school(school, criteria, programs, state, session)
         if not card:
             continue
         for row in card["evidence"]:
