@@ -76,6 +76,15 @@ def test_every_line_has_an_official_link_and_type_defaults_by_entity():
     assert sample_public["how"] == "zoned" and sample_public["zoned_prompt"]
 
 
+def test_each_school_links_the_law_that_governs_it():
+    public_lottery = getting_in(BY_NAME["Beauclerc STEM Middle"], "m", today=TODAY)
+    charter_lottery = getting_in(BY_NAME["Arlington STEM Academy"], "m", today=TODAY)
+    private = getting_in(BY_NAME["Riverside Preparatory Middle"], "m", today=TODAY)
+    assert public_lottery["how"] == "lottery" and public_lottery["official"]["url"].endswith("/1002.31")
+    assert charter_lottery["official"]["url"].endswith("/1002.33")
+    assert "private-schools" in private["official"]["url"]
+
+
 def test_saved_list_puts_the_soonest_open_deadline_first():
     rows = [
         {"name": "Passed", "days_left": -33},

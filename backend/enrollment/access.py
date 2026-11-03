@@ -126,8 +126,15 @@ def getting_in(
 
     typed = _first(osp.get("admission_type"))
     how = typed if typed in rules else DEFAULT_HOW.get(entity, "application")
-    # A charter school's application still follows the charter admission law.
-    rule_key = "lottery" if how == "application" and entity == "charter" else how
+    # Pick the law that governs this school: charter schools follow the charter
+    # admission law (lottery when oversubscribed), and a public school's lottery is
+    # a district magnet or choice program under the school choice law.
+    if entity == "charter" and how in {"lottery", "application"}:
+        rule_key = "lottery"
+    elif entity == "public" and how == "lottery":
+        rule_key = "choice"
+    else:
+        rule_key = how
     rule = rules[rule_key]
     district = (config.get("districts") or {}).get(school.get("city"))
     grades = LEVEL_GRADES.get(grade) if grade else None
