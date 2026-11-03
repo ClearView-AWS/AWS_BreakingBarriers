@@ -1,7 +1,7 @@
 # Model ids are configuration. The turn runs with the rules engine when Bedrock
 # is off, and calls these ids when BEDROCK_ENABLED=1.
 region: us-east-1
-fast_model: us.anthropic.claude-3-5-haiku-20241022-v1:0
-strong_model: us.anthropic.claude-3-5-sonnet-20241022-v2:0
+fast_model: us.anthropic.claude-haiku-5-5
+strong_model: us.anthropic.claude-sonnet-5-5
 embed_model: amazon.titan-embed-text-v2:0
 embed_dimension: 256
