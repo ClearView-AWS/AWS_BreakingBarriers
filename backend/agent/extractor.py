@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import re
 
 from catalog import needs
@@ -48,15 +49,63 @@ _AVOID = ("not", "no", "without", "avoid", "dont", "don't")
 _REQUIRE = ("must", "required", "need", "needs")
 _PREFER = ("prefer", "ideally", "bonus")
 _UNTIL = re.compile(r"\buntil (\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b")
+_GRADE_CODES = {code for _, code, _ in _GRADE}
+_TYPE_VALUES = {value for _, value, _ in _TYPE}
+_STRENGTHS = {"require", "prefer", "avoid"}
+_TIME = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
+_TIMED_NEEDS = {"after_care", "extended_day"}
+
+log = logging.getLogger(__name__)
 
 
 def extract(text: str, cities: list[str] | None = None) -> list[Criterion]:
     from agent.bedrock_client import maybe_bedrock_criteria
 
-    drafted = maybe_bedrock_criteria(text)
+    cities = cities or []
+    drafted = maybe_bedrock_criteria(text, cities)
     if drafted is not None:
-        return _with_ids(drafted)
-    return _with_ids(_rules(text, cities or []))
+        return _with_ids(_from_draft(drafted, text, cities))
+    return _with_ids(_rules(text, cities))
+
+
+def _from_draft(items: list[dict], text: str, cities: list[str]) -> list[Criterion]:
+    """Keep only draft items whose codes, cities and need ids exist in the catalog."""
+    normalized = normalize(text)
+    by_city = {city.casefold(): city.title() for city in AMBIGUOUS_CITIES}
+    by_city.update({city.casefold(): city for city in cities})
+    found = []
+    for item in items:
+        criterion = _draft_criterion(item, normalized, by_city)
+        if criterion is None:
+            log.warning("dropped bedrock criterion: %s", item)
+            continue
+        found.append(criterion)
+    return _dedupe(found)
+
+
+def _draft_criterion(item: dict, normalized: str, by_city: dict[str, str]) -> Criterion | None:
+    kind = item.get("kind")
+    value = item.get("value")
+    text = str(item.get("text") or "").strip()
+    if kind == "grade" and value in _GRADE_CODES:
+        return Criterion(id="grade", text=text or value, kind="grade", value=value, strength="require")
+    if kind == "location" and isinstance(value, str) and value.casefold() in by_city:
+        return _location(by_city[value.casefold()])
+    if kind == "school_type" and value in _TYPE_VALUES:
+        return Criterion(id="type", text=text or value, kind="school_type", value=value, strength="require")
+    if kind != "need" or not text:
+        return None
+    need_id = item.get("need")
+    if need_id is None:
+        return _unmapped(text)
+    strength = item.get("strength")
+    if need_id not in needs() or strength not in _STRENGTHS:
+        return None
+    params = {}
+    until = (item.get("params") or {}).get("until")
+    if need_id in _TIMED_NEEDS and isinstance(until, str) and _TIME.match(until):
+        params["until"] = until
+    return _need(need_id, text, strength, params, _explicit_reading(normalized, need_id))
 
 
 def _with_ids(criteria: list[Criterion]) -> list[Criterion]:
@@ -79,26 +128,7 @@ def _rules(text: str, cities: list[str]) -> list[Criterion]:
 
     city = _find_city(normalized, cities)
     if city:
-        ambiguities = []
-        if city.casefold() in AMBIGUOUS_CITIES:
-            ambiguities.append(
-                Ambiguity(
-                    kind="place",
-                    options=[f"{city}, Florida", "A different state"],
-                    option_ids=["florida", "other"],
-                    question=f"Which {city} do you mean?",
-                )
-            )
-        found.append(
-            Criterion(
-                id="location",
-                text=city,
-                kind="location",
-                value=city,
-                strength="require",
-                ambiguities=ambiguities,
-            )
-        )
+        found.append(_location(city))
 
     for pattern, value, label in _TYPE:
         if re.search(pattern, normalized):
@@ -128,56 +158,80 @@ def _rules(text: str, cities: list[str]) -> list[Criterion]:
         if _overlaps(start, end, consumed):
             continue
         consumed.append((start, end))
-        spec = needs()[need_id]
-        strength = _strength(normalized, start, end, spec)
+        strength = _strength(normalized, start, end, needs()[need_id])
         params = {}
-        if until_value and need_id in {"after_care", "extended_day"}:
+        if until_value and need_id in _TIMED_NEEDS:
             params["until"] = until_value
-        reading = _explicit_reading(normalized, need_id)
-        ambiguities = []
-        if spec.get("ambiguities") and not reading:
-            for item in spec["ambiguities"]:
-                options = item.get("options") or []
-                ambiguities.append(
-                    Ambiguity(
-                        kind=item.get("kind") or "definition",
-                        options=[opt.get("label") for opt in options],
-                        option_ids=[opt.get("id") for opt in options],
-                        question=item.get("question"),
-                        default=item.get("default"),
-                    )
-                )
-        hit = map_phrase(phrase)
-        found.append(
-            Criterion(
-                id=need_id,
-                text=phrase,
-                need=need_id,
-                strength=strength,
-                params=params,
-                kind="need",
-                mapping=MappingInfo(score=hit.score, runner_up=hit.runner_up, margin=hit.margin),
-                ambiguities=ambiguities,
-                resolved_reading=reading,
-            )
-        )
+        found.append(_need(need_id, phrase, strength, params, _explicit_reading(normalized, need_id)))
 
     for pattern, label in _UNMAPPED:
         match = re.search(pattern, normalized)
         if not match or _overlaps(match.start(), match.end(), consumed):
             continue
         consumed.append((match.start(), match.end()))
-        found.append(
-            Criterion(
-                id="unmapped",
-                text=label,
-                need=None,
-                strength="prefer",
-                kind="need",
-                mapping=MappingInfo(score=0.0, runner_up=None, margin=0.0),
+        found.append(_unmapped(label))
+    return _dedupe(found)
+
+
+def _location(city: str) -> Criterion:
+    ambiguities = []
+    if city.casefold() in AMBIGUOUS_CITIES:
+        ambiguities.append(
+            Ambiguity(
+                kind="place",
+                options=[f"{city}, Florida", "A different state"],
+                option_ids=["florida", "other"],
+                question=f"Which {city} do you mean?",
             )
         )
-    return _dedupe(found)
+    return Criterion(
+        id="location",
+        text=city,
+        kind="location",
+        value=city,
+        strength="require",
+        ambiguities=ambiguities,
+    )
+
+
+def _need(need_id: str, phrase: str, strength: str, params: dict, reading: str | None) -> Criterion:
+    spec = needs()[need_id]
+    ambiguities = []
+    if spec.get("ambiguities") and not reading:
+        for item in spec["ambiguities"]:
+            options = item.get("options") or []
+            ambiguities.append(
+                Ambiguity(
+                    kind=item.get("kind") or "definition",
+                    options=[opt.get("label") for opt in options],
+                    option_ids=[opt.get("id") for opt in options],
+                    question=item.get("question"),
+                    default=item.get("default"),
+                )
+            )
+    hit = map_phrase(phrase)
+    return Criterion(
+        id=need_id,
+        text=phrase,
+        need=need_id,
+        strength=strength,
+        params=params,
+        kind="need",
+        mapping=MappingInfo(score=hit.score, runner_up=hit.runner_up, margin=hit.margin),
+        ambiguities=ambiguities,
+        resolved_reading=reading,
+    )
+
+
+def _unmapped(text: str) -> Criterion:
+    return Criterion(
+        id="unmapped",
+        text=text,
+        need=None,
+        strength="prefer",
+        kind="need",
+        mapping=MappingInfo(score=0.0, runner_up=None, margin=0.0),
+    )
 
 
 def _dedupe(found: list[Criterion]) -> list[Criterion]:

@@ -58,36 +58,28 @@ def maybe_bedrock_route(text: str, has_session: bool) -> str | None:
         return None
 
 
-def maybe_bedrock_criteria(text: str):
-    """Return None so the rules extractor stays the source of truth unless parsing works.
+def maybe_bedrock_criteria(text: str, cities: list[str]) -> list[dict] | None:
+    """Return the model's raw draft items, or None to use the rules extractor.
 
-    When Bedrock is on, its JSON is still mapped to needs in code by the caller
-    only if every item has text and strength. On any failure, return None.
+    The items are untrusted. The extractor validates each one against the
+    catalog and builds the criteria in code.
     """
     if not enabled():
         return None
     try:
         from catalog import models
-        from agent.prompts import EXTRACT_SYSTEM
-        from contracts import Criterion
+        from agent.prompts import extract_system
 
-        raw = converse(models()["fast_model"], EXTRACT_SYSTEM, text)
+        raw = converse(models()["fast_model"], extract_system(cities), text)
         start, end = raw.find("["), raw.rfind("]")
         if start < 0 or end < 0:
+            log.warning("bedrock extract returned no JSON array: %r", raw[:200])
             return None
         payload = json.loads(raw[start : end + 1])
-        drafted = []
-        for item in payload:
-            drafted.append(
-                Criterion(
-                    id="draft",
-                    text=str(item.get("text") or ""),
-                    strength=item.get("strength") or "prefer",
-                    params=item.get("params") or {},
-                    kind="need",
-                )
-            )
-        return [row for row in drafted if row.text] or None
+        if not isinstance(payload, list):
+            log.warning("bedrock extract returned %s, not a list", type(payload).__name__)
+            return None
+        return [item for item in payload if isinstance(item, dict)]
     except Exception as exc:
         log.warning("bedrock extract failed: %s", exc)
         return None
