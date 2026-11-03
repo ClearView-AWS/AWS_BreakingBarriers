@@ -1,0 +1,24 @@
+/* Getting in. Uses the shared color tokens and .pill classes from styles.css;
+   the fallbacks keep it readable if a theme renames them. */
+.getting-in {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px 12px;
+  align-items: start;
+  margin: 4px 0 12px;
+  padding: 10px 0 2px;
+  border-top: 1px solid var(--line, #e3d9c6);
+}
+.gi-head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.gi-title { font-size: 13px; font-weight: 640; color: var(--muted, #5d6876); }
+.gi-line { font-weight: 600; }
+.gi-detail { margin-top: 2px; }
+.gi-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 8px; }
+.gi-actions a { color: var(--teal, #0e6b62); font-size: 14px; }
+.gi-detail-panel { margin: 14px 0; padding-top: 10px; border-top: 1px solid var(--line, #e3d9c6); }
+.gi-detail-panel h3 { margin: 0 0 8px; }
+.gi-saved { display: block; margin-top: 4px; }
+
+@media (max-width: 720px) {
+  .getting-in { grid-template-columns: 1fr; }
+}
