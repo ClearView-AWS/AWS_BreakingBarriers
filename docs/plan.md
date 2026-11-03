@@ -16,7 +16,9 @@ The platform has two halves that feed each other. A **guided agent** makes sure 
 - [How a Turn Works](#how-a-turn-works)
 - [Understanding the Request](#understanding-the-request)
 - [Parent Community](#parent-community)
+- [Getting In](#getting-in)
 - [Map View](#map-view)
+- [Texting (Stretch)](#texting-stretch)
 - [Stack](#stack)
 - [Data](#data)
 - [Shared Contracts](#shared-contracts)
@@ -33,7 +35,7 @@ The platform has two halves that feed each other. A **guided agent** makes sure 
 
 ## What Sets It Apart
 
-The vision asks for ranked, explained results with confirmed / partial / needs-attention evidence. We meet that, then go further in seven places.
+The vision asks for ranked, explained results with confirmed / partial / needs-attention evidence. We meet that, then go further in eight places.
 
 | Differentiator | What the parent sees |
 |---|---|
@@ -42,6 +44,7 @@ The vision asks for ranked, explained results with confirmed / partial / needs-a
 | **Parent community** | Reddit-style threads on every school where parents ask questions and share experiences, with replies and upvotes. |
 | **Ask the school, with demand counts** | "14 parents asked about after-school care this month." The school gets one summary email and answers once, in its own thread. |
 | **Cost after scholarships** | Private school cards show likely scholarship eligibility, linked to the official source. |
+| **Getting in** | Every school says how to enroll and by when: zoned school, apply by a date, or lottery, with the official link. Saved schools line up by deadline. |
 | **Map view** | Schools, and the nearby programs that fill their gaps, on one map. Tapping the map is part of the conversation. |
 | **Measured** | An evaluation set reports extraction, citation and privacy-check accuracy in the README. |
 
@@ -54,6 +57,7 @@ These are decisions, so every track can build against them without checking in.
 - The LLM never decides whether a fact is true. It extracts criteria, routes the message, words questions, and writes explanations from evidence that code produced.
 - Hard filters apply only to location, grade level and school type. Every other criterion is scored in code, so missing data never drops a school, and a school with no data on something is marked unknown.
 - Match score and evidence coverage are separate numbers. We rank by match and show coverage beside it ("Verified 3 of 4").
+- Getting in is shown, never predicted. Every school says how admission works and by when, from data, official rules or the school itself. It never filters a school out or counts toward the match score, and the agent never estimates a family's odds or promises a seat.
 - Every claim on screen cites a field path, review ID or post ID. A sentence without a valid citation is not shown.
 - The agent asks before searching only when the request is thin: at most three questions, every one skippable, with "Just show me results" always available. A specific request goes straight to the brief, with results in the same turn.
 - Reviews and community posts can support a criterion. They never confirm one. Only data or the school's own answer confirms.
@@ -61,6 +65,7 @@ These are decisions, so every track can build against them without checking in.
 - Schools hear from us in one digest, not once per parent.
 - The map never holds information on its own. The agent's message says in words what the map shows.
 - We keep only a zip code or a rounded point for the parent's location, never a home address.
+- We store a parent's phone number only if they opt in to texts, use it only to text them, and delete it when they reply STOP.
 - Synthetic data keeps GreatSchools' document schema, so their real documents can replace it later. Every synthetic record, including seed posts, is marked `_synthetic: true`.
 
 ---
@@ -73,7 +78,7 @@ A conversation has two phases. **LLM** = Bedrock call. **Code** = deterministic,
 
 | # | Step | Who | What it does |
 |---|---|---|---|
-| 1 | Route | LLM | Classify the message: new search, refine, compare, school detail, define a term, cost, save, ask the school, ask the community. Taps on the map, questions and brief arrive as structured events and skip this step. |
+| 1 | Route | LLM | Classify the message: new search, refine, compare, school detail, define a term, cost, getting in, save, ask the school, ask the community. Taps on the map, questions and brief arrive as structured events and skip this step. |
 | 2 | Extract | LLM | Turn the text into criteria with require / prefer / avoid, parameters and possible ambiguities. Infer needs the parent implies ("I work until 5" → after-school care until about 5:30). |
 | 3 | Match needs | Code | Match each phrase to a need in `needs.yaml` with embeddings. Low similarity means unmatched; a small gap to the runner-up means ambiguous. |
 | 4 | Plan questions | Code | Pick up to three questions that would change the results, using quick searches to test ambiguous readings. The LLM only words them. |
@@ -94,7 +99,8 @@ A conversation has two phases. **LLM** = Bedrock call. **Code** = deterministic,
 - **Ask the school:** adds the parent's question to the school's queue and its demand count.
 - **Ask the community:** drafts a question for the school's thread. The parent approves it before it posts.
 - **Cost estimator:** tuition minus likely scholarship, from a rules file with official links.
-- **Saved list:** saved schools and the parent's open questions to schools and the community.
+- **Getting in:** how admission works at a school and its next deadline, from `enrollment_rules.yaml`, school data and the school's own answers.
+- **Saved list:** saved schools in deadline order, and the parent's open questions to schools and the community.
 
 ---
 
@@ -174,6 +180,47 @@ Bayview Charter · Community                          [Ask a question]
 
 ---
 
+## Getting In
+
+A school that fits is no help if the family can't enroll. Families with resources learn the rules of admission through their networks; everyone else often finds out too late that a school isn't their zone or the lottery has closed. Every school shows a **Getting in** line: how admission works, what to do next, and by when. It sits beside the match score, not inside it, because it's about access, not fit. A school whose deadline has passed stays in the results, marked.
+
+```text
+③ Bayview Charter Academy · 79% match · verified 2 of 3
+   STEM ✅   After-care ⚪   Cost ✅
+   Getting in  🟡 Lottery · apply by Jan 15 (73 days left)
+               Last year: 210 applicants for 90 sixth-grade seats
+               School-reported, Mar 2026
+               [How the lottery works]  [Ask about open seats]
+```
+
+*Sketch only; the school and numbers are made up.*
+
+| Status | When | Line on the card |
+|---|---|---|
+| ✅ **Open to you** | The parent says it's their zoned school, or the school reported open seats for the child's grade in the last 6 months | "Your zoned school" · "Open seats for 6th grade" |
+| 🟡 **Apply by a date** | Admission takes an application, a lottery or a school-choice request, and the deadline is still ahead | "Lottery · apply by Jan 15 (73 days left)" |
+| 🔴 **Needs attention** | The deadline for next school year has passed, or the school reports a waitlist only | "Deadline passed Oct 1 · ask about mid-year openings" |
+| ⚪ **Unknown** | No admissions data and no answer from the school | "Ask about open seats" |
+
+Getting in reuses the evidence statuses, so the frontend draws it the same way, but it never counts toward match or coverage.
+
+### Where the answer comes from
+
+1. **`enrollment_rules.yaml`:** how admission works for each school type in Florida and in the demo district (zoned public schools, school-choice transfers, charter applications and lotteries, private school applications). Fill it from official Florida Department of Education and district pages, and keep the link beside each rule. Like `funding_rules.yaml`, it explains; it never promises.
+2. **School data:** `osp.application_deadline_date`, `osp.admissions_url` and `osp.application_requirements` already exist in GreatSchools' schema. The sample fills them in for only 1 to 3 of 25 schools, so most real answers will start as Unknown.
+3. **The school:** "Ask about open seats" goes through Ask the school and counts toward demand ("11 parents asked about open seats this month"). The school's answer in its thread becomes `school_reported` evidence.
+4. **Parents:** community threads tagged `admissions` ("How did the lottery go for you?") can support an answer, never confirm it.
+
+### Zoned schools without an address
+
+We don't keep home addresses, so we can't work out a family's zoned school. Public school cards ask instead: **"Is this your zoned school?"** with **[Yes, it's mine]** and **[Find my zoned school ↗]**, which opens the district's official school locator. If the parent taps yes, the session stores that school's ID and nothing else. The question sits on the card, not in the conversation, so it never uses up the agent's three questions.
+
+### Deadlines on the saved list
+
+The saved list puts schools in deadline order, with days left, and shows scholarship deadlines from `funding_rules.yaml` beside them. The end of the search becomes a to-do list: what to apply to, and by when.
+
+---
+
 ## Map View
 
 Results can show on a map as well as in a list or grid. The map is part of the conversation: the agent chooses when to show it, and what the parent does on it becomes the next turn.
@@ -221,6 +268,36 @@ Chat, brief, list, grid and map all draw from the same session state, so a chang
 
 ---
 
+## Texting (Stretch)
+
+Parents can opt in to texts through [Photon](https://photon.codes), an iMessage platform for agents. It reaches families on the phone they already use, and it gives a first look at Level 3 (proactive engagement). This is M6 work, and nothing in M1–M5 depends on it.
+
+**Text the parent when the school answers.** Build this first. When a school answers a need in its thread, each parent who opted in and has an open question on that need gets one text:
+
+```text
+Bayview Charter answered your question: after-care runs until 6:00 pm.
+That's now ✅ Confirmed on your list. Reply SAVE to keep it.
+```
+
+**Text the agent.** If there is time, the whole conversation works over text. It is the same agent; only the rendering changes.
+
+```text
+Parent: middle school in jax, my son loves robotics and i work til 5
+Agent:  Two quick questions:
+        1) Is STEM a must-have? Reply Y or N
+        2) After-care at the school (A), or is a nearby program ok (B)?
+        Or reply GO to just see results.
+```
+
+- Short replies ("Y B", "GO", "OK") are parsed in code into the same events as taps (`answers_submitted`, `skip_to_results`, `brief_approved`), so they skip the router.
+- Results show the top three, with a status emoji for each criterion and a link to the web card and map. The map rule still holds: the message says in words what the map shows.
+- A 👍 or 👎 tapback on a result counts as thumbs feedback.
+- Citations and the Guardrails check apply exactly as they do on the web.
+
+**How it connects.** Photon's SDK (`spectrum-ts`) is TypeScript, so a small Bun sidecar runs beside the FastAPI app. Photon delivers incoming texts to it as signed webhooks. The sidecar returns 200 at once, verifies the signature, and calls the agent with a session keyed by phone number and marked `channel: imessage`. Webhooks only carry incoming messages, so replies and pushes go out through the SDK. A `render_text(blocks)` function turns blocks into text. We use Spectrum Cloud, Photon's hosted service, so nobody's Mac has to stay on.
+
+---
+
 ## Stack
 
 | Layer | Choice | Why |
@@ -234,6 +311,7 @@ Chat, brief, list, grid and map all draw from the same session state, so a chang
 | Email | Amazon SES in sandbox mode, for school digests | Delivers only to verified addresses, so it can't reach a real school. |
 | Frontend | React + Vite + TypeScript on S3 + CloudFront | Renders typed blocks from the API, plus the community pages. |
 | Maps | MapLibre GL JS, with Amazon Location Service for map tiles and zip-code lookup | Keeps the map on AWS. Leaflet with OpenStreetMap tiles is the fallback. |
+| Texting (stretch) | Photon Spectrum (`spectrum-ts`) on Spectrum Cloud, in a small Bun sidecar | Reaches parents by text on the phone they already use. Bedrock still does all the reasoning; Photon only carries messages. |
 | Hosting | Local during the build. ECS Fargate for the demo if time allows. | Fewest moving parts. |
 | Region | us-east-1 | Matches GreatSchools production. |
 
@@ -260,9 +338,11 @@ Two quirks to code around:
 
 - **Generator script** that expands to about 300 schools across three Florida metros, starting with Jacksonville. It keeps the exact schema and the same missing-data rates as the sample. The original 25 stay unchanged. Every generated school gets a `latlon` on land near a real street, because the map shows any point that lands in a river.
 - **New fields in `osp` style:** tuition for private schools, after-school care hours, and a `_synthetic: true` marker on every generated record.
+- **Admissions fields:** the existing `osp.application_deadline_date`, `osp.admissions_url` and `osp.application_requirements`, filled at the sample's low rates, plus new `osp`-style fields: `admission_type` (zoned, choice, lottery or application) and, for some schools, `seats_by_grade` and `applicants_last_year` with a date.
 - **Programs near schools:** homework help, STEM clubs and after-school programs with real-looking times, placed within a mile of schools that lack that service, so a program can fill a school's gap.
 - **Seed community posts:** threads and replies for the demo schools, written from the topics and tone of the 127 sample reviews, tagged with needs, with no names of students or staff. Include last month's questions so demand counts aren't empty.
 - **`funding_rules.yaml`:** Florida scholarship programs (for example the Family Empowerment Scholarship and the Florida Tax Credit Scholarship). Fill rules and amounts from the official Florida Department of Education pages and keep the link beside each one.
+- **`enrollment_rules.yaml`:** how admission works by school type in Florida and the demo district, with application windows, filled from official state and district pages with the link beside each rule.
 
 ### Indexing
 
@@ -331,6 +411,8 @@ The need IDs double as community topic tags. GreatSchools' team can add or chang
 }
 ```
 
+Getting in uses the same shape with `"criterion_id": "access"`, plus `how` (zoned | choice | lottery | application) and `deadline`. It never counts toward match or coverage.
+
 ### API response (blocks the agent chooses)
 
 A thin first request returns questions and a brief:
@@ -358,7 +440,8 @@ An approved brief returns results:
     { "type": "message", "text": "6 schools fit your brief. The 3 closest are north of the river." },
     { "type": "brief", "must": ["c1", "c2", "c3"], "nice": ["c4"], "avoid": [], "approved": true },
     { "type": "results", "schools": [{ "id": "…", "match": 0.78, "verified": "3 of 4",
-      "demand": [{ "need": "after_care", "count": 14 }] }] },
+      "demand": [{ "need": "after_care", "count": 14 }],
+      "access": { "status": "partial", "how": "lottery", "deadline": "2027-01-15", "days_left": 73 } }] },
     { "type": "evidence_grid", "schools": ["…", "…"], "criteria": ["c1", "c2", "c3"] },
     { "type": "map", "you": [30.32, -81.66],
       "schools": [{ "id": "…", "rank": 3, "match": 0.78, "missed_must_have": false }],
@@ -464,6 +547,13 @@ Otherwise the agent shows the list and grid, and the Map tab stays one tap away.
 - The agent drafts posts; it never publishes one without the parent's tap.
 - Posts never confirm a criterion, and cards label them "Parents say."
 
+### Getting in
+
+- Status follows the table in [Getting In](#getting-in), checking the school's own answer first, then school data, then `enrollment_rules.yaml`.
+- Days left are computed in code from today's date. A deadline more than a year old counts as Unknown, since it is probably last cycle's.
+- A school's report of open seats counts as Open to you for 6 months after it answers.
+- Applicant and seat counts are shown as reported, with their date. The agent never turns them into a chance for this family, and the citation validator drops any sentence about odds that doesn't cite a school-reported number.
+
 ---
 
 ## Milestones
@@ -499,8 +589,10 @@ Build in this order. Each stop point is a complete demo, so if time runs out we 
 ### M3 · Compare and explain *(P2–P4)*
 
 - Evidence grid and two-school comparison with source labels.
-- School detail view and term definitions ("What is CTE?").
+- School detail view, including admissions details, and term definitions ("What is CTE?", "How does a charter lottery work?").
 - Review topics with counts, both sides and dates.
+- Getting in on every card, grid and comparison: how admission works and by when, from `enrollment_rules.yaml` and school data. "Is this your zoned school?" on public school cards.
+- Saved list in deadline order.
 - On the map: select two pins to compare, tap a hollow pin for its detail, drag "you" or search this area to refine.
 
 **Stop point: all four of GreatSchools' priorities done**
@@ -518,6 +610,7 @@ Build in this order. Each stop point is a complete demo, so if time runs out we 
 
 - "Ask the school" and "Ask parents at this school" from any card.
 - Demand counts on school pages and cards.
+- "Ask about open seats" through Ask the school, counted like any other question.
 - Digest email through SES; the school answers in its thread with a verified badge, which turns the criterion Confirmed.
 - Cost after likely scholarships for private schools.
 - Program pins on the map, linked to the schools whose gaps they fill.
@@ -531,8 +624,10 @@ Build in this order. Each stop point is a complete demo, so if time runs out we 
 - Trade-off chart with what-if ("a 20-minute commute adds 3 schools").
 - Drive-time areas on the map instead of straight-line distance.
 - Digest on a daily schedule instead of a button.
-- Notify the parent when a school answers or someone replies (Level 3 preview).
-- Follow up on the parent's final choice and invite them to share their experience in the community.
+- Text the parent through Photon when a school answers their question or someone replies to their post (Level 3 preview). See [Texting](#texting-stretch).
+- Let parents text the agent the whole way through, from first message to saved list.
+- Text a reminder a week before a saved school's application deadline.
+- Follow up on the parent's final choice, by text if texting is built, and invite them to share their experience in the community.
 - Suggest criteria from what other parents searched for, using structured criteria only, never chat text.
 
 ---
@@ -543,11 +638,11 @@ Five tracks that can run in parallel once the contracts are agreed. With fewer p
 
 | Track | Owns |
 |---|---|
-| **A · Data and search** | Synthetic generator · Index mappings and indexer · Query builder from `needs.yaml` to OpenSearch · `funding_rules.yaml` with official links · `geo_point` mapping, distance filter and plausible coordinates |
-| **B · Agent** | Router and extractor prompts and tool definitions · Need matcher with embeddings · Question, brief and explanation wording · Citation validator · Events from questions, brief and map · Evaluation runner |
-| **C · Evidence and ranking** | `needs.yaml` and evidence rules · Review and post analysis with recency · Scorer and question rules · Cost estimator · When to show the map, pin rules, distance evidence |
-| **D · Frontend** | Block renderer, chat, questions and brief · Result cards and evidence grid · Map view and phone layout · Saved list · Feedback controls |
-| **E · Community** | Community pages, threads, replies, votes, need tags · Persona switcher · Seed posts · Guardrails check · Ask the school and ask the community, demand counts, SES digest, school answers |
+| **A · Data and search** | Synthetic generator · Index mappings and indexer · Query builder from `needs.yaml` to OpenSearch · `funding_rules.yaml` and `enrollment_rules.yaml` with official links · Admissions fields in the generator · `geo_point` mapping, distance filter and plausible coordinates |
+| **B · Agent** | Router and extractor prompts and tool definitions · Need matcher with embeddings · Question, brief and explanation wording · Answers about getting in that explain without predicting · Citation validator · Events from questions, brief and map · Evaluation runner |
+| **C · Evidence and ranking** | `needs.yaml` and evidence rules · Review and post analysis with recency · Scorer and question rules · Cost estimator · Getting in status and deadline math · When to show the map, pin rules, distance evidence |
+| **D · Frontend** | Block renderer, chat, questions and brief · Result cards and evidence grid · Getting in line and zoned-school buttons · Map view and phone layout · Saved list in deadline order · Feedback controls |
+| **E · Community** | Community pages, threads, replies, votes, need tags · Persona switcher · Seed posts · Guardrails check · Ask the school (including open seats) and ask the community, demand counts, SES digest, school answers |
 
 ---
 
@@ -557,19 +652,21 @@ About seven minutes. Each step shows one thing from the vision's success criteri
 
 1. The parent types *"Looking for a middle school in Jacksonville. My son loves robotics and I work until 5. Money is tight."* The agent asks two quick questions with tap-to-answer chips: is STEM a must-have, and does after-school care need to be at the school. It asks because the answers change the top schools. "Just show me results" sits underneath.
 2. The parent answers "Must-have" and "A nearby program is fine." The brief appears: *must have middle school, Jacksonville, STEM, after-school care until 5:30; nice to have low cost.* The parent didn't say 5:30; the agent inferred it from "I work until 5." The parent taps "Looks right."
-3. Cards show Confirmed / Partial / Needs attention / Unknown for each criterion, with sources. One card has after-school care unknown, "14 parents asked about this," and an "Ask the school" button.
+3. Cards show Confirmed / Partial / Needs attention / Unknown for each criterion, with sources. One card has after-school care unknown, "14 parents asked about this," and an "Ask the school" button. Every card also says how to get in; that one reads *Lottery · apply by Jan 15 (73 days left)*.
 4. The parent opens the map. The agent says the three closest schools are north of the river. Next to the school with unknown after-care, a program pin 0.4 miles away covers 3–6 pm, with a dashed line to the school.
 5. The parent asks *"How liberal are these schools?"* The agent says it doesn't rate schools on politics and offers chips it can back with data: inclusion, cultural responsiveness, restorative discipline, non-religious.
 6. The parent opens a school's community page. The robotics club thread has 17 upvotes, and the card had linked it as "Parents say" evidence. The parent drafts a question that includes their son's name; the check catches it and asks them to rephrase.
 7. The parent selects two pins and compares them. The evidence grid shows each answer's source and date. The private school shows likely cost after scholarship, with the official link.
 8. The parent taps "Ask the school." The persona switches to the school: its page shows 15 parents asked about after-school care, and the digest has arrived in a teammate's inbox. The school answers in its thread. Back as the parent, the grid cell turns Confirmed, labeled school-reported with today's date.
-9. The parent saves two schools. A thumbs-down with "too far" tightens the distance chip, and the map zooms in to match.
+9. The parent saves two schools. The saved list puts them in deadline order, the lottery first. A thumbs-down with "too far" tightens the distance chip, and the map zooms in to match.
+
+*If texting (M6) is built:* step 8 ends with the parent's phone buzzing on stage as the school's answer arrives by text.
 
 ---
 
 ## Evaluation
 
-A file of about 40 parent queries, each with the expected criteria, strengths, which questions (if any) should be asked, and whether the map should show. A second file of about 20 draft posts, some with names or contact details, checks the safety filter. Run both before every merge and put the latest numbers in the README. The targets are ours to adjust.
+A file of about 40 parent queries, each with the expected criteria, strengths, which questions (if any) should be asked, and whether the map should show. A second file of about 20 draft posts, some with names or contact details, checks the safety filter. About 10 of the queries ask about getting in ("Will my son get into Bayview?") and must be answered without odds or promises. Run both before every merge and put the latest numbers in the README. The targets are ours to adjust.
 
 | Check | Target |
 |---|---|
@@ -581,9 +678,11 @@ A file of about 40 parent queries, each with the expected criteria, strengths, w
 | Claims with a valid citation | 100%, required |
 | Schools dropped for missing data | 0, required |
 | Draft posts with personal info that get published | 0, required |
+| Getting in lines with an official link or a school source | 100%, required |
+| Answers that estimate odds or promise a seat | 0, required |
 | Turn time, median | under 6 s |
 
-Include the hard cases on purpose: "how liberal," a city name used in several states, Spanish queries, negations ("not religious"), vague ones ("a good school"), implied needs ("I work until 5"), and place phrases ("near my job," "on my way to work").
+Include the hard cases on purpose: "how liberal," a city name used in several states, Spanish queries, negations ("not religious"), vague ones ("a good school"), implied needs ("I work until 5"), place phrases ("near my job," "on my way to work"), and questions about odds ("Will we get in?").
 
 ---
 
@@ -604,6 +703,11 @@ Include the hard cases on purpose: "how liberal," a city name used in several st
 | Emailing a real school | SES sandbox only delivers to verified addresses. School addresses in the data are synthetic. |
 | Synthetic points look wrong on a map | The generator places schools and programs near real streets in the demo metro. Check every pin on the map before the demo. |
 | Parent's location is sensitive | Keep only a zip code or a rounded point in the session. Never ask for a home address. |
+| Wrong or outdated admissions info | Every Getting in line shows its source and date and links to the official page. Deadlines more than a year old show as Unknown. |
+| Zoning needs an exact address | We don't work it out. The parent tells us, or uses the district's official school locator. |
+| Parents read a lottery as a promise | Cards say how admission works and by when. The agent never estimates odds or promises a seat, and the eval set checks it. |
+| Texting depends on a third-party service | Stretch only; the web app never depends on it. Photon's free tier (about 5,000 messages and 50 new conversations per line a day) covers the demo. The parent texts first, so the push lands in a conversation that already exists. Use a tunnel for webhooks during the build. |
+| Parents without iPhones | Many of the families this is for use Android. Photon says it falls back to SMS or RCS when iMessage isn't available; test that on an Android phone before relying on it. |
 
 ---
 
@@ -613,7 +717,9 @@ Include the hard cases on purpose: "how liberal," a city name used in several st
 - [ ] **How would a community fit GreatSchools' existing reviews?** They already have 850,000+ reviews and moderate them. Ask whether threads should sit beside reviews, replace them, or feed into them.
 - [ ] **Will GreatSchools' sample OpenSearch documents arrive?** If they do, we write an adapter to our contracts rather than change the contracts.
 - [ ] **Which models are enabled in the sandbox?**
+- [ ] **Does GreatSchools have attendance-zone boundaries or open-seat data?** If so, Getting in could confirm zoned schools directly instead of asking the parent.
 - [ ] **Demo city.** This plan assumes Jacksonville because it is in the sample data.
+- [ ] **Texting setup.** If we reach M6, who creates the Photon project, and whose phone is the demo phone?
 - [ ] **Is Amazon Location Service available in the sandbox?** If not, the map uses OpenStreetMap tiles and zip codes come from the Census Bureau's public ZIP code (ZCTA) gazetteer file.
 
 ---
@@ -630,13 +736,16 @@ backend/
   brief/                    question rules, overlap check, brief
   community/                threads, posts, votes, demand counts, digest (SES), safety check
   funding/                  cost estimator
+  enrollment/               getting in status, deadlines
   geo/                      distance, when to show the map, pin rules, zip lookup
-  config/                   needs.yaml, funding_rules.yaml, models.yaml
+  config/                   needs.yaml, funding_rules.yaml, enrollment_rules.yaml, models.yaml
 data/
   sample/                   the 25 + 25 provided records, unchanged
   synthetic/                generator, seed community posts
   index/                    mappings, indexer
 frontend/                   React + Vite: chat, questions and brief, cards, grid, map, community pages, saved list, persona switcher
+channels/
+  imessage/                 stretch: Photon sidecar (Bun): webhook in, render_text, push when a school answers
 eval/                       queries.jsonl, post_drafts.jsonl, run_eval.py
 infra/                      optional CDK
 README.md                   how to run, decisions, AWS services, eval results
