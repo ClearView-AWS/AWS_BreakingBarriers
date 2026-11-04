@@ -778,3 +778,12 @@ tbody th { font-weight: 600; color: var(--ink); }
 thead th { background: var(--paper); }
 .reply.school, .staff-bar { border-color: var(--accent); }
 .assist-form input, .composer textarea, .reply-form textarea { background: var(--panel); }
+
+/* Dark mode switch: says what tapping does, with an icon. */
+.nav .theme-switch {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 40px; padding: 0 14px;
+  font-family: var(--font-sans); font-size: 0.875rem; letter-spacing: 0; text-transform: none;
+  color: var(--ink); border: 1px solid var(--ink-muted); border-radius: var(--radius-pill);
+}
+.nav .theme-switch:hover { border-color: var(--ledger); color: var(--ledger); }
