@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from pipeline import turn
 from store import _empty
+from testing_helpers import search_turn
 
 FIRST = "Elementary school in Seattle with after-school care until 6pm"
 
 
 def _follow_up(message: str, **payload) -> dict:
     state = _empty()
-    session_id = turn(state, {"message": FIRST}).session_id
+    session_id = search_turn(state, {"message": FIRST}).session_id
     return turn(state, {"message": message, "session_id": session_id, **payload}).model_dump()
 
 
@@ -55,3 +56,33 @@ def test_question_about_a_school_answers_it_without_changing_the_search():
     assert all(row["id"] in statuses for row in detail["asked"])
     answer = next(b["payload"]["text"] for b in response["blocks"] if b["type"] == "message")
     assert "STEM" in answer
+
+
+def test_route_and_extract_run_at_the_same_time(monkeypatch):
+    """Route waits for extract to start. Run one after the other, route would time out first."""
+    import json
+    import threading
+
+    import agent.bedrock_client as bc
+    from agent.prompts import EXPLAIN_SYSTEM, ROUTER_SYSTEM
+
+    extract_started = threading.Event()
+    overlapped = []
+
+    def answer(model_id, system, user):
+        if system == ROUTER_SYSTEM:
+            overlapped.append(extract_started.wait(timeout=5))
+            return "new_search"
+        if system == EXPLAIN_SYSTEM:
+            return "{}"
+        extract_started.set()
+        return json.dumps([{"kind": "grade", "value": "e", "text": "elementary"}])
+
+    monkeypatch.setattr(bc, "enabled", lambda: True)
+    monkeypatch.setattr(bc, "converse", answer)
+    # First message may stop at the brief gate; extract/route still ran.
+    response = turn(_empty(), {"message": FIRST}).model_dump()
+
+    assert overlapped == [True]
+    assert response["engine"]["route"] == "bedrock"
+    assert response["engine"]["extract"] == "bedrock"

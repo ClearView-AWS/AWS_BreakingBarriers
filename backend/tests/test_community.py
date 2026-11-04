@@ -150,3 +150,52 @@ def test_tags_and_stance():
     assert "after_care" in tags and "stem" in tags
     assert stance("Is after-care good?", "question") == "neutral"
     assert stance("We love the after-care staff, very helpful.", "experience") == "positive"
+
+
+# ---------- Community tab: home list and questions to the school ----------
+
+def test_school_answers_an_ask_the_school_question_in_its_community(state):
+    from gaps.inbox import add_question
+
+    school = _school(MARINER)
+    item = add_question(state, school, "foreign_language", "Which languages are taught?", "s1")
+    assert [row["id"] for row in service.open_questions(state, MARINER)] == [item["id"]]
+    before = len(service.threads_for(state, MARINER))
+    parents_before = service.support(state, MARINER, "foreign_language")["parents"]
+
+    result = service.answer_question(state, school, item["id"], "Spanish and French from 3rd grade.", {"offers": True})
+
+    assert result["ok"] and result["post"]["verified_school"]
+    assert item["status"] == "answered" and service.open_questions(state, MARINER) == []
+    threads = service.threads_for(state, MARINER)
+    assert len(threads) == before + 1
+    opened = next(row for row in threads if row.get("origin") == "ask_school")
+    assert opened["text"] == "Which languages are taught?" and opened["school_answered"]
+    assert _record(state, MARINER, "foreign_language", "prefer").status == "confirmed"
+    # The question is not a parent post, so it never counts as parents discussing the need.
+    assert service.support(state, MARINER, "foreign_language")["parents"] == parents_before
+
+
+def test_blocked_school_answer_leaves_no_thread(state):
+    from gaps.inbox import add_question
+
+    school = _school(MARINER)
+    item = add_question(state, school, "after_care", "When does care end?", "s1")
+    before = len(service.threads_for(state, MARINER))
+
+    result = service.answer_question(state, school, item["id"], "Call Mr. Lopez at 904-555-0101.", {"value": "18:00"})
+
+    assert not result["ok"]
+    assert len(service.threads_for(state, MARINER)) == before
+    assert item["status"] == "open"
+
+
+def test_community_home_lists_active_schools_and_finds_any_by_name(state):
+    schools = load_schools()
+    active = service.schools_index(state, schools, limit=1000)
+    assert active and all(row["threads"] or row["asked_this_month"] for row in active)
+    assert ARBOR_HEIGHTS in {row["id"] for row in active}
+
+    quiet = next(school for school in schools if school["id"] not in {row["id"] for row in active})
+    found = service.schools_index(state, schools, quiet["name"])
+    assert quiet["id"] in {row["id"] for row in found}

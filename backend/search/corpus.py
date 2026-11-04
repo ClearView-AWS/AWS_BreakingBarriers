@@ -19,7 +19,7 @@ def _read_json(path) -> list:
 @lru_cache(maxsize=1)
 def load_schools() -> list[dict]:
     # GreatSchools' sample, moved to Seattle by data/synthetic/generate.py. The
-    # original Florida files in Sample Data/ stay untouched.
+    # original files in Sample Data/ stay untouched.
     schools = _read_json(SYNTHETIC_DIR / "sample_seattle.json")
     schools += _read_json(SYNTHETIC_DIR / "schools.json")
     for school in schools:

@@ -26,8 +26,8 @@ The vision rules out login, so a "Viewing as" switcher in the header stands in f
 `python data/synthetic/generate_community.py` writes `data/synthetic/community_seed.json`: 31 posts on 7 demo schools plus last month's and this month's demand counts. Every seed record has `_synthetic: true` and shows "sample post" in the UI. After you regenerate it, delete `data/runtime/state.json` so the app loads the new seed.
 
 Demo schools:
-- **Arbor Heights STEM Middle**: after-school care is unknown. 13 parents asked this month, so one more ask shows 14. Robotics thread with 17 upvotes.
-- **Bluewater Charter School**: parents say after-care is good, so it shows Partial (Parents say) until the school answers.
+- **Beauclerc STEM Middle**: after-school care is unknown. 13 parents asked this month, so one more ask shows 14. Robotics thread with 17 upvotes.
+- **Cedar Landing Academy**: parents say after-care is good, so it shows Partial (Parents say) until the school answers.
 - **Mariner Elementary**: three negative posts about substitutes.
 
 ## Files

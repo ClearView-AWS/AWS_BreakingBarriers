@@ -88,6 +88,7 @@ def test_a_website_that_disagrees_with_the_profile_is_flagged():
 
 
 def test_a_program_with_only_past_sessions_does_not_count():
+    # Rainier Beach STEM Middle's only after-care program within the 1-mile radius has past sessions only.
     record = evaluate_criterion(BY_NAME["Rainier Beach STEM Middle"], _care("nearby_ok"), programs=load_programs())
     assert record.status == "unknown"
     assert "past" in record.note

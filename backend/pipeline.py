@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+
 from catalog import glossary, needs
 from agent.explainer import model_summaries, public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
-from clarify.clarifier import choose_question
+from agent.translate import to_english
+from clarify.clarifier import (
+    apply_question_defaults,
+    brief_payload,
+    choose_questions,
+)
 from community.evidence import apply_community
 from community.service import card_summary, record_ask
 from contracts import Block, Criterion, Engine, EngineStep, EvidenceRecord, TurnResponse
@@ -20,15 +27,23 @@ from gaps.ses_mailer import send_school_question
 from mapping.mapper import normalize
 from search.corpus import known_cities, load_programs, load_schools
 from search.engine import search_schools
-from search.geo import CITY_CENTROIDS, distance_from_city
+from search.geo import CITY_CENTROIDS, distance_from_city, miles_between
 
 _LEVELS = {"p": "pre-k", "e": "elementary", "m": "middle", "h": "high"}
 
 
 def turn(state: dict, payload: dict) -> TurnResponse:
     engine = Engine()
+    language = payload.get("_language")
+    if payload.get("message") and not payload.get("_translated"):
+        # /api/turn: read the message in English. The chat (/api/chat) has already done this.
+        reading = to_english(str(payload["message"]))
+        payload = {**payload, "message": reading.text}
+        language = reading.language
+        if reading.error:
+            engine.errors.append(reading.error)
     response = _turn(state, payload, engine)
-    return response.model_copy(update={"engine": engine})
+    return response.model_copy(update={"engine": engine, "language": language})
 
 
 def _record(engine: Engine, step_name: str, step: EngineStep) -> None:
@@ -41,25 +56,31 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     session = _session(state, payload.get("session_id"))
     message = (payload.get("message") or "").strip()
     action = payload.get("action")
-    if not action and message:
-        action, step = route_message(message, bool(session["criteria"]))
-        _record(engine, "route", step)
+    event = payload.get("event")
+    prefetched = None
+    if not action and not event and message:
+        action, prefetched = _route_and_extract(message, bool(session["criteria"]), engine)
     action = action or "refresh"
 
     if payload.get("criteria") is not None:
         session["criteria"] = payload["criteria"]
 
     if action in {"new_search", "refine"} and message:
-        incoming, step = extract(message, known_cities())
-        _record(engine, "extract", step)
+        incoming = _extract_once(message, prefetched, engine)
         if action == "new_search":
             session["criteria"] = [item.model_dump() for item in incoming]
+            session["brief_approved"] = False
+            session["asked"] = []
+            session["pending_questions"] = []
+            session["assumptions"] = []
         else:
             session["criteria"] = _merge(session["criteria"], incoming)
 
     _apply_answer(session, payload.get("answer") or {}, state)
+    _apply_answers(session, payload.get("answers") or {}, state)
     _apply_feedback(session, payload.get("feedback") or {})
     _apply_zoned(session, payload.get("zoned") or {})
+    _apply_brief_event(session, event, state)
 
     criteria = [Criterion(**row) for row in session["criteria"]]
     schools = load_schools()
@@ -75,18 +96,104 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     if action == "cost":
         return _cost(session, criteria, schools, programs, state, message, payload)
     if action == "school_detail":
-        return _detail(session, criteria, schools, programs, state, message, payload, engine)
+        incoming = _extract_once(message, prefetched, engine) if message else []
+        return _detail(session, criteria, schools, programs, state, message, payload, incoming)
     if action == "save":
         return _save(session, criteria, schools, programs, state, payload, message)
     if action == "ask_school":
         return _ask(session, criteria, schools, programs, state, payload, engine)
 
+    # brief_edited before approval: update chips only, do not search yet.
+    if event == "brief_edited" and not session.get("brief_approved"):
+        return _brief_gate_response(session, criteria, schools, programs, state, engine)
+
+    if not session.get("brief_approved"):
+        gated = _brief_gate_response(session, criteria, schools, programs, state, engine)
+        if gated is not None:
+            if action == "new_search":
+                gated.route = "new_search"
+            return gated
+        # No pre-search questions — show the brief with results in the same turn.
+        session["brief_approved"] = True
+
     response = _search_response(session, criteria, schools, programs, state, message or "Showing your current search.", engine)
+    session["pending_questions"] = []
     if action == "new_search":
         response.route = "new_search"
-    elif action in {"refine", "refresh", "feedback"}:
+    elif action in {"refine", "refresh", "feedback"} or event:
         response.route = "refine"
     return response
+
+
+def _apply_answers(session: dict, answers: dict, state: dict) -> None:
+    if not answers:
+        return
+    for question_id, option_id in answers.items():
+        _apply_answer(session, {"question_id": question_id, "option_id": option_id}, state)
+
+
+def _apply_brief_event(session: dict, event: str | None, state: dict) -> None:
+    if not event:
+        return
+    if event in {"brief_approved", "skip_to_results"}:
+        if event == "skip_to_results":
+            pending = list(session.get("pending_questions") or [])
+            notes = apply_question_defaults(session, pending, state, _apply_answer)
+            if notes:
+                session["assumptions"] = notes
+                session["note"] = " ".join(notes)
+        session["brief_approved"] = True
+        session["pending_questions"] = []
+    elif event == "answers_submitted":
+        # Answers already applied above; stay on the brief until approve/skip.
+        session["brief_approved"] = False
+    elif event == "brief_edited":
+        # Criteria already replaced from payload; approval unchanged.
+        pass
+
+
+def _brief_gate_response(session, criteria, schools, programs, state, engine: Engine) -> TurnResponse | None:
+    """If pre-search questions apply, return brief + questions and skip results."""
+
+    def search_fn(probe, probe_readings):
+        return search_schools(schools, programs, probe, "", probe_readings, limit=10)
+
+    questions = choose_questions(
+        criteria,
+        set(session.get("asked") or []),
+        search_fn,
+        scored=None,
+        limit=3,
+        include_unknown_rule=False,
+    )
+    if not questions:
+        return None
+
+    session["pending_questions"] = questions
+
+    assumptions = list(session.get("assumptions") or [])
+    lead = "A few quick questions so I search for the right things:"
+    if len(questions) == 1:
+        lead = "One quick question so I search for the right things:"
+
+    blocks = [
+        Block(type="message", payload={"text": lead}),
+        Block(type="criteria", payload={"items": [c.model_dump() for c in criteria]}),
+        Block(type="brief", payload=brief_payload(criteria, approved=False, assumptions=assumptions)),
+        Block(
+            type="questions",
+            payload={"skip_label": "Just show me results", "items": questions},
+        ),
+    ]
+    # Keep a singular question block for older clients / one-at-a-time UI.
+    blocks.append(Block(type="question", payload=questions[0]))
+    return TurnResponse(
+        session_id=session["id"],
+        route="new_search",
+        criteria=criteria,
+        blocks=blocks,
+        assumption=session.get("note"),
+    )
 
 
 def _session(state: dict, session_id: str | None) -> dict:
@@ -95,6 +202,21 @@ def _session(state: dict, session_id: str | None) -> dict:
     from store import new_session
 
     return new_session(state)
+
+
+def _route_and_extract(message: str, has_session: bool, engine: Engine) -> tuple[str, tuple[list[Criterion], EngineStep]]:
+    """Route and extract at the same time. The route decides whether the extract is used."""
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        pending = pool.submit(extract, message, known_cities())
+        action, step = route_message(message, has_session)
+        _record(engine, "route", step)
+        return action, pending.result()
+
+
+def _extract_once(message: str, prefetched: tuple[list[Criterion], EngineStep] | None, engine: Engine) -> list[Criterion]:
+    incoming, step = prefetched or extract(message, known_cities())
+    _record(engine, "extract", step)
+    return incoming
 
 
 def _merge(existing: list[dict], incoming: list[Criterion]) -> list[dict]:
@@ -347,13 +469,27 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
         if len(gaps) == 2:
             break
 
-    question = choose_question(criteria, set(session.get("asked") or []), search_fn, scored_rows[:10])
+    # After the brief is approved, refining turns ask at most one question.
+    question_limit = 1 if session.get("brief_approved") else 3
+    questions = choose_questions(
+        criteria,
+        set(session.get("asked") or []),
+        search_fn,
+        scored_rows[:10],
+        limit=question_limit,
+        include_unknown_rule=True,
+    )
+    question = questions[0] if questions else None
     assumption = session.get("note")
+    assumptions = list(session.get("assumptions") or [])
     if question:
+        # Mark as asked when shown with results so a refine refresh doesn't repeat it.
         session.setdefault("asked", [])
         if question["id"] not in session["asked"]:
             session["asked"].append(question["id"])
         assumption = question.get("assumption") or assumption
+        if question.get("assumption") and question["assumption"] not in assumptions:
+            assumptions.append(question["assumption"])
 
     if session.get("pending_ask_need"):
         _ask_unknowns(session, main + missed, state)
@@ -368,6 +504,8 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
         noun = "school" if len(missed) == 1 else "schools"
         verb = "stays" if len(missed) == 1 else "stay"
         lead += f" {len(missed)} {noun} missed a must-have and {verb} listed underneath."
+    if assumptions and not assumption:
+        assumption = " ".join(assumptions)
     if assumption:
         lead += f" {assumption}"
     if not main and not missed:
@@ -376,9 +514,16 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
     blocks = [
         Block(type="message", payload={"text": lead}),
         Block(type="criteria", payload={"items": [c.model_dump() for c in criteria]}),
+        Block(type="brief", payload=brief_payload(criteria, approved=True, assumptions=assumptions)),
     ]
+    if questions:
+        blocks.append(
+            Block(type="questions", payload={"skip_label": "Just show me results", "items": questions})
+        )
     if question:
         blocks.append(Block(type="question", payload=question))
+    city = next((c for c in criteria if c.kind == "location"), None)
+    centroid = CITY_CENTROIDS.get(str(city.value or city.text).casefold()) if city else None
     blocks.append(
         Block(
             type="results",
@@ -387,8 +532,9 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
                 "missed": missed,
                 "gaps": gaps,
                 "matched_count": len(scored_rows),
-                # The searched city's center, for the map's "you" marker. Never a home address.
-                "center": list(CITY_CENTROIDS[city.value.casefold()]) if city and str(city.value).casefold() in CITY_CENTROIDS else None,
+                # The searched city's center, for the map's "Search area" marker. Never a home address.
+                "center": list(centroid) if centroid else None,
+                "programs": _program_pins(main + gaps + missed, programs),
             },
         )
     )
@@ -404,6 +550,40 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
     )
 
 
+def _program_pins(cards: list[dict], programs: list[dict]) -> list[dict]:
+    """Nearby programs to pin on the map: only ones that fill a criterion on a shown card.
+
+    A program counts only when the evidence engine confirmed it (a live program the parent
+    accepted, within PROGRAM_RADIUS_MILES), so the map never shows a program the cards don't.
+    """
+    by_id = {str(program.get("id")): program for program in programs}
+    pins: dict[str, dict] = {}
+    for card in cards:
+        if card.get("lat") is None or card.get("lon") is None:
+            continue
+        for row in card["evidence"]:
+            source = row.get("source") or {}
+            path = str(source.get("path") or "")
+            if source.get("type") != "program" or row["status"] != "confirmed" or not path.startswith("programs/"):
+                continue
+            program = by_id.get(path.split("/", 1)[1])
+            if not program or program.get("_lat") is None:
+                continue
+            point = (program["_lat"], program["_lon"])
+            pin = pins.setdefault(
+                path,
+                {"id": str(program["id"]), "name": program.get("name"), "lat": point[0], "lon": point[1], "links": []},
+            )
+            pin["links"].append(
+                {
+                    "school_id": card["id"],
+                    "criterion_id": row["criterion_id"],
+                    "miles": round(miles_between((card["lat"], card["lon"]), point), 1),
+                }
+            )
+    return list(pins.values())
+
+
 def _grid(cards: list[dict], criteria: list[Criterion]) -> dict:
     columns = [c for c in criteria if c.kind in {"need", "distance"} and (c.kind == "distance" or c.need)]
     cells = {}
@@ -414,7 +594,7 @@ def _grid(cards: list[dict], criteria: list[Criterion]) -> dict:
             cells[card["id"]][column.id] = by_id.get(column.id)
     return {
         "schools": [{"id": card["id"], "name": card["name"]} for card in cards],
-        "criteria": [{"id": column.id, "text": column.text, "strength": column.strength} for column in columns],
+        "criteria": [{"id": column.id, "text": column.text, "label": column.label, "strength": column.strength} for column in columns],
         "cells": cells,
     }
 
@@ -528,14 +708,20 @@ def _cost(session, criteria, schools, programs, state, message, payload) -> Turn
         ids = [school["id"] for school in matched if school.get("entity_type") == "private"][:3]
     by_id = _by_id(schools)
     estimates = [estimate_cost(by_id[sid]) for sid in ids if sid in by_id]
+    lead = "Tuition and where financial aid may come from. Not a promised award."
+    if estimates and all(row.get("entity_type") in {"public", "charter"} for row in estimates):
+        # Public and charter schools are tuition-free in the data; there is no aid to estimate.
+        names = " and ".join(row["school_name"] for row in estimates[:2]) + (" and others" if len(estimates) > 2 else "")
+        verb = "is" if len(estimates) == 1 else "are"
+        lead = f"{names} {verb} tuition-free in the data, so there is no cost to estimate."
     blocks = [
-        Block(type="message", payload={"text": "Tuition and where financial aid may come from. Not a promised award."}),
+        Block(type="message", payload={"text": lead}),
         Block(type="cost", payload={"schools": estimates}),
     ]
     return TurnResponse(session_id=session["id"], route="cost", criteria=criteria, blocks=blocks)
 
 
-def _detail(session, criteria, schools, programs, state, message, payload, engine: Engine) -> TurnResponse:
+def _detail(session, criteria, schools, programs, state, message, payload, incoming: list[Criterion]) -> TurnResponse:
     ids = list(payload.get("school_ids") or [])
     if not ids and message:
         found = _find_by_name(school_reference(message or "") or message, schools)
@@ -544,7 +730,7 @@ def _detail(session, criteria, schools, programs, state, message, payload, engin
         blocks = [Block(type="message", payload={"text": "Which school should I open?"})]
         return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
     school = _by_id(schools)[ids[0]]
-    asked = _asked_needs(message, criteria, engine)
+    asked = _asked_needs(incoming, criteria)
     card = _score_school(school, criteria + asked, programs, state, session)
     blocks = []
     if asked and card:
@@ -566,12 +752,8 @@ def _detail(session, criteria, schools, programs, state, message, payload, engin
     return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
 
 
-def _asked_needs(message: str, criteria: list[Criterion], engine: Engine) -> list[Criterion]:
+def _asked_needs(incoming: list[Criterion], criteria: list[Criterion]) -> list[Criterion]:
     """Needs the parent asked about for one school. They are answered, not added to the search."""
-    if not message:
-        return []
-    incoming, step = extract(message, known_cities())
-    _record(engine, "extract", step)
     have = {c.need for c in criteria if c.need}
     asked = [c for c in incoming if c.kind == "need" and c.need and c.need not in have]
     return [c.model_copy(update={"id": f"q{index}"}) for index, c in enumerate(asked, start=1)]
@@ -595,7 +777,7 @@ def _save(session, criteria, schools, programs, state, payload, message) -> Turn
         ]
     )
     blocks = [
-        Block(type="message", payload={"text": f"Saved list has {len(saved)} schools."}),
+        Block(type="message", payload={"text": f"Your saved list has {len(saved)} school{'' if len(saved) == 1 else 's'}."}),
         # by_deadline: saved schools with the soonest open deadline first, for the saved list.
         Block(type="checklist", payload={"school_ids": saved, "items": items, "by_deadline": deadlines}),
     ]
@@ -613,11 +795,13 @@ def _ask(session, criteria, schools, programs, state, payload, engine: Engine) -
     item = add_question(state, school, need_id, question, session["id"])
     item["email"] = send_school_question(item)
     item["parent_count"] = record_ask(state, school["id"], need_id, session["id"], "agent")
+    count = item["parent_count"]
+    topic = needs().get(need_id, {}).get("label", need_id).lower()
     blocks = [
         Block(
             type="message",
             payload={
-                "text": f"I grouped that question for {school['name']}. {item['parent_count']} parent{'s' if item['parent_count'] != 1 else ''} asked about {needs().get(need_id, {}).get('label', need_id).lower()} this month, so the school gets one request."
+                "text": f"I grouped that question for {school['name']}. {count} parent{'s' if count != 1 else ''} asked about {topic} this month, so the school gets one request."
             },
         )
     ]

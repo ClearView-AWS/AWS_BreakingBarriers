@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from agent.citations import known_numbers, number_claims, validate_model_text
+from agent.citations import known_numbers, number_claims, strip_cites, validate_model_text
 
 FACTS = {
     "osp.after_school_until": known_numbers(["17:30", "After-school care is only partly supported: 5:30 PM."]),
@@ -66,8 +66,8 @@ QUERY = "Elementary school in Seattle with after-school care until 6pm"
 @pytest.fixture
 def cards(monkeypatch):
     """Run a search turn where only the explain step uses the fake model."""
-    from pipeline import turn
     from store import _empty
+    from testing_helpers import search_turn
 
     def run(explain):
         def answer(model_id, system, user):
@@ -78,7 +78,7 @@ def cards(monkeypatch):
         monkeypatch.setattr(bc, "converse", answer)
         monkeypatch.setattr(bc, "maybe_bedrock_route", lambda text, has_session: (None, bc.EngineStep(engine="rules")))
         monkeypatch.setattr(bc, "maybe_bedrock_criteria", lambda text, cities: (None, bc.EngineStep(engine="rules")))
-        response = turn(_empty(), {"message": QUERY}).model_dump()
+        response = search_turn(_empty(), {"message": QUERY}).model_dump()
         results = next(b for b in response["blocks"] if b["type"] == "results")["payload"]
         return results["schools"] + results["missed"], response["engine"]
 
@@ -112,15 +112,15 @@ def test_true_model_sentence_replaces_code_summary(cards):
 
 
 def test_unknown_must_have_stays_on_the_card(cards):
-    from pipeline import turn
     from store import _empty
+    from testing_helpers import search_turn
 
     # In the Seattle data the demo's middle-school query is where a card has after-school
     # care unknown with nothing else to go on (Arbor Heights STEM Middle).
-    response = turn(_empty(), {"message": "Middle school in Seattle with STEM and after-school care until 6pm"}).model_dump()
+    response = search_turn(_empty(), {"message": "Middle school in Seattle with STEM and after-school care until 6pm"}).model_dump()
     results = next(b for b in response["blocks"] if b["type"] == "results")["payload"]
     unknown = [
-        c for c in results["schools"] + results["gaps"]
+        c for c in results["schools"] + results.get("gaps", [])
         if any(r["status"] == "unknown" and r["source"] is None for r in c["evidence"])
     ]
     assert unknown, "the demo query has schools with unknown after-school care"
@@ -145,3 +145,40 @@ def test_reply_without_json_keeps_the_code_summary(cards):
     assert engine["explain"] == "rules_fallback"
     assert engine["errors"][0].startswith("bedrock explain returned no JSON object")
     assert all("[[cite:" not in card["summary"] for card in shown)
+
+
+def test_half_cited_summary_keeps_the_code_summary(cards):
+    """One citation at the very end: the check would cut the fact and keep the filler."""
+    honest, _ = cards(lambda inputs: json.dumps({}))
+    code_text = {card["id"]: card["summary"] for card in honest}
+
+    filler = "No other evidence was provided for this school."
+    shown, engine = cards(
+        lambda inputs: json.dumps({c["id"]: f"It has the care you need. {filler} [[cite:osp.after_school_until]]" for c in inputs})
+    )
+    assert all(filler not in card["summary"] for card in shown)
+    assert {card["id"]: card["summary"] for card in shown} == code_text
+    assert engine["explain"] == "rules_fallback"
+
+
+def test_model_sees_filter_names(cards):
+    seen = []
+
+    def explain(inputs):
+        seen.extend(row["text"] for card in inputs for row in card["criteria"])
+        return json.dumps({})
+
+    cards(explain)
+    assert "After-school care until 6:00 PM" in seen
+
+
+def test_a_name_with_st_is_one_sentence():
+    text = "Fremont STEM Middle is confirmed as a STEM school [[cite:osp.school_sub_type]]."
+    assert validate_model_text(text, FACTS, PARENT) == text
+
+
+def test_review_citations_with_brackets_are_read_whole():
+    facts = {**FACTS, "reviews_full[1]": set()}
+    text = "Parents' STEM reviews are mostly positive [[cite:reviews_full[1]]]."
+    assert validate_model_text(text, facts, PARENT) == text
+    assert strip_cites(text) == "Parents' STEM reviews are mostly positive."

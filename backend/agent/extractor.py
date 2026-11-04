@@ -306,7 +306,9 @@ def _until_param(text: str) -> str | None:
     hour = int(match.group(1))
     minute = match.group(2) or "00"
     meridiem = match.group(3) or ""
-    if meridiem == "pm" and hour < 12:
+    # "Until 5:30" with no am/pm is after school: the timed needs (after-school care, extended
+    # day) end in the afternoon, so 1 to 11 means pm.
+    if (meridiem == "pm" or not meridiem) and 1 <= hour < 12:
         hour += 12
     if meridiem == "am" and hour == 12:
         hour = 0

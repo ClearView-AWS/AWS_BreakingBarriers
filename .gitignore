@@ -1,3 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+node_modules/
+frontend/dist/
+infra/dist/
+infra/cdk.out/
+data/runtime/
+data/index/documents.jsonl
+*.log
 .DS_Store
 __pycache__/
 .pytest_cache/
@@ -5,3 +17,6 @@ __pycache__/
 node_modules/
 frontend/dist/
 data/runtime/
+.env
+.env.*
+!.env.example

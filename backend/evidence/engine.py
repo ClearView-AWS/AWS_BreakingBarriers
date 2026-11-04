@@ -35,7 +35,8 @@ RELIGIOUS_WORDS = (
     "jesuit",
     "hebrew",
 )
-PROGRAM_RADIUS_MILES = 3.0
+# A nearby program can fill a gap only if it is close enough to get to after school (plan: within 1 mile).
+PROGRAM_RADIUS_MILES = 1.0
 
 
 def get_path(document: dict, path: str) -> Any:

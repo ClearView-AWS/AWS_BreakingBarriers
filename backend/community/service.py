@@ -386,3 +386,97 @@ def card_summary(state: dict, school_id: str, need_ids: list[str]) -> dict:
             )
     total = len(threads_for(state, school_id))
     return {"threads": total, "discussed": discussed, "demand": demand(state, school_id)}
+
+
+# ---------- community home and questions to the school ----------
+
+def schools_index(state: dict, schools: list[dict], query: str | None = None, limit: int = 20) -> list[dict]:
+    """Schools for the Community tab, busiest first.
+
+    Without a query, only schools with threads or asks this month. With one, any school whose
+    name matches, so a parent can open a school's page before anyone has posted there.
+    """
+    community = ensure(state)
+    threads: dict[str, int] = {}
+    newest: dict[str, str] = {}
+    for post in community["posts"]:
+        if post["post_id"] == post["thread_id"]:
+            threads[post["school_id"]] = threads.get(post["school_id"], 0) + 1
+        newest[post["school_id"]] = max(newest.get(post["school_id"], ""), post.get("created_at") or "")
+    month = _month()
+    asked = {row["school_id"] for row in community["asks"] if row["month"] == month}
+    needle = (query or "").strip().casefold()
+    rows = []
+    for school in schools:
+        school_id = school["id"]
+        if needle:
+            if needle not in school["name"].casefold():
+                continue
+        elif school_id not in threads and school_id not in asked:
+            continue
+        wanted = demand(state, school_id)
+        rows.append(
+            {
+                "id": school_id,
+                "name": school["name"],
+                "city": school.get("city"),
+                "threads": threads.get(school_id, 0),
+                "asked_this_month": sum(row["count"] for row in wanted),
+                "top_asks": wanted[:3],
+                "newest": newest.get(school_id) or None,
+            }
+        )
+    rows.sort(key=lambda row: (-(row["threads"] + row["asked_this_month"]), row["name"]))
+    return rows[:limit]
+
+
+def open_questions(state: dict, school_id: str) -> list[dict]:
+    """"Ask the school" questions still waiting for this school, with how many parents asked."""
+    return [
+        {
+            "id": item["id"],
+            "need": item["need"],
+            "label": label_for(item["need"]),
+            "question": item["question"],
+            "parents": max(demand_for(state, school_id, item["need"]), int(item.get("parent_count") or 1)),
+        }
+        for item in state.get("inbox") or []
+        if item["school_id"] == school_id and item["status"] == "open"
+    ]
+
+
+def answer_question(state: dict, school: dict, question_id: str, text: str, answer: dict | None = None) -> dict:
+    """The school answers an "Ask the school" question in its community.
+
+    The question opens a thread and the answer is the school's reply, so every parent can read
+    it, and the reply goes through the same path as any school answer: safety check, Verified
+    school badge, school_reported evidence, open questions on that need closed.
+    """
+    item = next((row for row in state.get("inbox") or [] if row["id"] == question_id and row["school_id"] == school["id"]), None)
+    if not item or item["status"] != "open":
+        return {"ok": False, "safety": {"ok": False, "findings": [], "message": "That question is already answered."}}
+    community = ensure(state)
+    post_id = _next_id(community)
+    community["posts"].append(
+        {
+            "post_id": post_id,
+            "thread_id": post_id,
+            "school_id": school["id"],
+            # Not a parent post: it never counts as parents discussing a need.
+            "author": {"persona": "ask_the_school", "role": "agent"},
+            "kind": "question",
+            "needs": [item["need"]],
+            "text": item["question"],
+            "stance": "neutral",
+            "origin": "ask_school",
+            "created_at": _today(),
+            "_synthetic": False,
+        }
+    )
+    community["votes"][post_id] = []
+    result = reply(state, post_id, "school_staff", text, {"need": item["need"], **(answer or {})})
+    if not result["ok"]:
+        # Blocked by the safety check: leave no empty question thread behind.
+        community["posts"] = [post for post in community["posts"] if post["post_id"] != post_id]
+        community["votes"].pop(post_id, None)
+    return result

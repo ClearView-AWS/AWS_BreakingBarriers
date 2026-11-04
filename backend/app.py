@@ -15,7 +15,7 @@ from store import State
 app = FastAPI(title="Guided School Search", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -28,10 +28,14 @@ class TurnIn(BaseModel):
     school_ids: list[str] = Field(default_factory=list)
     criteria: list[dict] | None = None
     answer: dict | None = None
+    # Batch answers from the brief questions UI: {"q1": "Must-have", ...}
+    answers: dict | None = None
     feedback: dict | None = None
     need: str | None = None
     # "Yes, it's my zoned school" on a public card: {"school_id": "...", "value": true}.
     zoned: dict | None = None
+    # M2 UI events: brief_approved | brief_edited | skip_to_results | answers_submitted
+    event: str | None = None
 
 
 class ReplyIn(BaseModel):
@@ -42,6 +46,20 @@ class ReplyIn(BaseModel):
 @app.get("/api/health")
 def health() -> dict:
     return {"ok": True, "schools": len(load_schools())}
+
+
+class UiTextIn(BaseModel):
+    language: str
+    strings: dict[str, str]
+
+
+@app.post("/api/ui-text")
+def ui_text(body: UiTextIn) -> dict:
+    """The frontend's buttons, tabs and labels in the parent's language. Cached per language."""
+    from agent.translate import translate_ui
+
+    strings, error = translate_ui(body.strings, body.language)
+    return {"language": body.language, "strings": strings, "error": error}
 
 
 @app.post("/api/turn")
@@ -73,13 +91,28 @@ def get_session(session_id: str) -> dict:
                               "access": access, "days_left": access["days_left"]})
         # The saved list reads as a to-do list: the soonest open deadline first.
         saved = by_deadline(saved)
-        return {
-            "session_id": session_id,
-            "criteria": session.get("criteria") or [],
-            "saved": saved,
-            "checklist": items,
-            "asked": session.get("asked") or [],
-        }
+        from agent.localize import localize_response
+
+        # In the parent's language, like the chat (the session remembers it).
+        return localize_response(
+            {
+                "session_id": session_id,
+                "criteria": session.get("criteria") or [],
+                "saved": saved,
+                "checklist": items,
+                "asked": session.get("asked") or [],
+            },
+            session.get("language"),
+        )
+
+
+@app.post("/api/chat")
+def post_chat(body: TurnIn) -> dict:
+    """Same body as /api/turn. Keeps the conversation history and answers follow-up questions."""
+    from agent.conversation import chat_turn
+
+    with State() as state:
+        return chat_turn(state, body.model_dump())
 
 
 def _programs():
@@ -164,6 +197,13 @@ def community_personas() -> dict:
     return {"personas": community.PERSONAS}
 
 
+@app.get("/api/community/schools")
+def community_schools(q: str | None = None) -> dict:
+    """The Community tab's home: active schools, or any school whose name matches `q`."""
+    with State() as state:
+        return {"schools": community.schools_index(state, load_schools(), q)}
+
+
 @app.get("/api/community/schools/{school_id}")
 def community_school(school_id: str, sort: str = "top", need: str | None = None, persona: str | None = None) -> dict:
     school = _school(school_id)
@@ -174,7 +214,25 @@ def community_school(school_id: str, sort: str = "top", need: str | None = None,
             "school": {"id": school["id"], "name": school["name"], "city": school.get("city"), "entity_type": school.get("entity_type")},
             "demand": community.demand(state, school["id"]),
             "threads": community.threads_for(state, school["id"], sort=sort, need=need, viewer=persona),
+            # "Ask the school" questions waiting for an answer. Staff answer them on this page.
+            "questions": community.open_questions(state, school["id"]),
         }
+
+
+class QuestionAnswerIn(BaseModel):
+    text: str
+    value: str | None = None
+    offers: bool | None = None
+
+
+@app.post("/api/community/schools/{school_id}/questions/{question_id}/answer")
+def community_answer_question(school_id: str, question_id: str, body: QuestionAnswerIn) -> dict:
+    school = _school(school_id)
+    if not school:
+        return {"ok": False, "safety": {"ok": False, "findings": [], "message": "Unknown school."}}
+    answer = {key: value for key, value in {"value": body.value, "offers": body.offers}.items() if value is not None}
+    with State() as state:
+        return community.answer_question(state, school, question_id, body.text, answer)
 
 
 @app.get("/api/community/threads/{thread_id}")

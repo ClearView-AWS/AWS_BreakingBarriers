@@ -2,6 +2,7 @@
 // The backend builds `card.access` (backend/enrollment/access.py). It sits beside
 // the match and never changes it, so it is drawn apart from the evidence rows.
 import "./getting-in.css";
+import { formatDate, t } from "./i18n";
 
 export type Access = {
   status: "confirmed" | "partial" | "needs_attention" | "unknown";
@@ -15,7 +16,7 @@ export type Access = {
   detail?: string | null;
   detail_source?: string | null;
   source?: { type: string; path: string; as_of?: string | null } | null;
-  official: { name: string; url: string; more_url?: string | null; more_name?: string | null; state?: string | null; summary?: string; next_step?: string };
+  official: { name: string; url: string; more_url?: string | null; summary?: string; next_step?: string };
   admissions_url?: string | null;
   district?: {
     name: string;
@@ -28,14 +29,11 @@ export type Access = {
   ask_open_seats?: boolean;
 };
 
-const HOW_LINK: Record<string, string> = {
-  zoned: "How attendance areas work",
-  choice: "How school choice works",
-  lottery: "How the lottery works",
-  application: "How private school admission works",
-};
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function howLink(how: string): string {
+  const key = `gi.how.${how}`;
+  const text = t(key);
+  return text === key ? t("gi.how") : text;
+}
 
 // App registers how a "Yes, it's mine" tap is sent, so cards need no new prop.
 // That keeps this change out of the card-list code other branches are rewriting.
@@ -44,23 +42,16 @@ export function onZonedTap(handler: (schoolId: string, value: boolean) => void) 
   sendZoned = handler;
 }
 
-// Read "2026-03-15" by hand: new Date() would read it as UTC and can show the day before.
-function monthYear(iso?: string | null): string {
-  const [year, month] = (iso ?? "").split("-").map(Number);
-  return year && month ? `${MONTHS[month - 1]} ${year}` : "";
-}
-
-function fullDate(iso?: string | null): string {
-  const [year, month, day] = (iso ?? "").split("-").map(Number);
-  return year && month && day ? `${MONTHS[month - 1]} ${day}, ${year}` : "";
-}
+// Dates in the UI language. formatDate reads "2026-03-15" by hand so it never shifts a day.
+const monthYear = (iso?: string | null) => formatDate(iso, false);
+const fullDate = (iso?: string | null) => formatDate(iso, true);
 
 function sourceText(access: Access): string {
   const source = access.source;
   if (!source) return "";
-  if (source.type === "parent") return "You told us this is your zoned school";
-  if (source.type === "enrollment_rule") return `${access.official?.state ?? "State"} admission rule, checked ${fullDate(source.as_of)}`;
-  const kind = source.type === "school_reported" ? "School-reported" : "School profile";
+  if (source.type === "parent") return t("gi.src_parent");
+  if (source.type === "enrollment_rule") return t("gi.src_rule", { date: fullDate(source.as_of) });
+  const kind = source.type === "school_reported" ? t("gi.src_school") : t("gi.src_profile");
   return source.as_of ? `${kind}, ${monthYear(source.as_of)}` : kind;
 }
 
@@ -76,7 +67,7 @@ function realLink(url?: string | null): string | null {
 
 function lineFor(access: Access): string {
   // "Ask about open seats" is the label of a button that isn't wired yet, so say what is known.
-  if (access.status === "unknown" && !access.zoned_prompt) return `${access.how_label} · no dates or open seats on file yet`;
+  if (access.status === "unknown" && !access.zoned_prompt) return t("gi.no_dates", { how: access.how_label });
   return access.line;
 }
 
@@ -95,7 +86,7 @@ export function GettingInLine({ schoolId, access }: { schoolId: string; access?:
   return (
     <div className="getting-in">
       <div className="gi-head">
-        <span className="gi-title">Getting in</span>
+        <span className="gi-title">{t("gi.title")}</span>
         <span className={`pill ${access.status}`}>{access.label}</span>
       </div>
       <div>
@@ -104,15 +95,15 @@ export function GettingInLine({ schoolId, access }: { schoolId: string; access?:
         <div className="source">{access.detail_source ?? sourceText(access)}</div>
         <div className="gi-actions">
           {access.zoned_prompt && sendZoned && (
-            <button type="button" onClick={() => sendZoned?.(schoolId, true)}>Yes, it's mine</button>
+            <button type="button" onClick={() => sendZoned?.(schoolId, true)}>{t("gi.yes_mine")}</button>
           )}
           {access.zoned_prompt && access.district?.locator_url && (
-            <External href={access.district.locator_url} title={access.district.name}>Find my zoned school</External>
+            <External href={access.district.locator_url} title={access.district.name}>{t("gi.find_zoned")}</External>
           )}
           {isMine && sendZoned && (
-            <button type="button" className="texty" onClick={() => sendZoned?.(schoolId, false)}>Not my zoned school</button>
+            <button type="button" className="texty" onClick={() => sendZoned?.(schoolId, false)}>{t("gi.not_mine")}</button>
           )}
-          <External href={access.official.url} title={access.official.name}>{HOW_LINK[access.how] ?? "How admission works"}</External>
+          <External href={access.official.url} title={access.official.name}>{howLink(access.how)}</External>
         </div>
       </div>
     </div>
@@ -126,14 +117,14 @@ export function GettingInDetail({ access }: { access?: Access | null }) {
   const district = access.district;
   return (
     <section className="gi-detail-panel">
-      <h3>Getting in</h3>
+      <h3>{t("gi.title")}</h3>
       <p>
         <span className={`pill ${access.status}`}>{access.label}</span> <strong>{lineFor(access)}</strong>
       </p>
       {/* access.text already includes the applicant numbers, so they aren't repeated here. */}
       {access.text && <p>{access.text}</p>}
       {access.official.summary && <p>{access.official.summary}</p>}
-      {access.official.next_step && <p><strong>Next step:</strong> {access.official.next_step}</p>}
+      {access.official.next_step && <p><strong>{t("gi.next_step")}</strong> {access.official.next_step}</p>}
       {district?.window && (
         <p>
           {district.window}{" "}
@@ -142,15 +133,14 @@ export function GettingInDetail({ access }: { access?: Access | null }) {
       )}
       <div className="gi-actions">
         <External href={access.official.url}>{access.official.name}</External>
-        {access.official.more_url && <External href={access.official.more_url}>{access.official.more_name ?? "More details"}</External>}
-        {district?.choice_url && <External href={district.choice_url}>{`${district.name} school choice`}</External>}
-        {district?.locator_url && access.how === "zoned" && <External href={district.locator_url}>Find my school by address</External>}
-        {admissions && <External href={admissions}>School's admissions page</External>}
+        {access.official.more_url && <External href={access.official.more_url}>{t("gi.fdoe")}</External>}
+        {district?.choice_url && <External href={district.choice_url}>{t("gi.district_choice", { district: district.name })}</External>}
+        {district?.locator_url && access.how === "zoned" && <External href={district.locator_url}>{t("gi.find_zoned")}</External>}
+        {admissions && <External href={admissions}>{t("gi.admissions")}</External>}
       </div>
       <p className="source">
         {sourceText(access)}
-        {access.detail_source ? `; applicant numbers: ${access.detail_source}` : ""}. We explain how admission works; we never
-        estimate a family's chances.
+        {access.detail_source ? `; ${t("gi.applicants", { source: access.detail_source })}` : ""}. {t("gi.never_odds")}
       </p>
     </section>
   );

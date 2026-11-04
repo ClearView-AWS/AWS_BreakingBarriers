@@ -93,10 +93,10 @@ def test_reply_without_json_uses_rules(bedrock):
 
 
 def _turn(message: str) -> dict:
-    from pipeline import turn
     from store import _empty
+    from testing_helpers import search_turn
 
-    return turn(_empty(), {"message": message}).model_dump()["engine"]
+    return search_turn(_empty(), {"message": message}).model_dump()["engine"]
 
 
 def test_engine_rules_when_bedrock_is_off():
@@ -146,3 +146,31 @@ def test_engine_route_answer_outside_the_list(bedrock):
 
     assert engine["route"] == "rules_fallback"
     assert engine["errors"][0] == "bedrock route answer not allowed: 'maybe_search'"
+
+
+def test_labels_name_the_filter_not_the_parents_words(bedrock):
+    bedrock(
+        _fenced(
+            [
+                {"kind": "grade", "value": "h", "text": "a high school"},
+                {"kind": "location", "value": "seattle", "text": "seattle"},
+                {"kind": "school_type", "value": "charter", "text": "a charter"},
+                {"kind": "need", "need": "stem", "strength": "prefer", "text": "my kid is obsessed with technology"},
+                {"kind": "need", "need": "after_care", "strength": "require", "params": {"until": "17:30"}, "text": "can't pick him up before 5:30"},
+                {"kind": "need", "need": None, "text": "how liberal"},
+            ]
+        )
+    )
+    criteria, _ = extract("anything", known_cities())
+
+    assert [c.label for c in criteria] == [
+        "High school",
+        "Seattle",
+        "Charter",
+        "STEM-focused",
+        "After-school care until 5:30 PM",
+        "how liberal",  # maps to no filter, so the parent's words stay
+    ]
+    stem = next(c for c in criteria if c.need == "stem")
+    assert stem.text == "my kid is obsessed with technology", "text keeps what the parent wrote"
+    assert stem.model_dump()["label"] == "STEM-focused", "the label reaches the API"

@@ -105,8 +105,10 @@ def test_the_api_passes_the_zoned_tap_through():
 
 
 def test_zoned_tap_stores_only_the_school_id_and_never_moves_the_match():
+    from testing_helpers import search_turn
+
     state = {"sessions": {}, "inbox": [], "overlays": {}}
-    first = turn(state, {"message": "Middle school in Seattle with STEM", "action": "new_search"})
+    first = search_turn(state, {"message": "Middle school in Seattle with STEM", "action": "new_search"})
     cards = next(block.payload for block in first.blocks if block.type == "results")["schools"]
     target = next(card for card in cards if card["access"]["zoned_prompt"])
     second = turn(state, {"session_id": first.session_id, "zoned": {"school_id": target["id"]}, "action": "refresh"})

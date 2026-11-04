@@ -11,7 +11,13 @@ from typing import Any
 from catalog import needs
 
 
-def build_query(criteria: list, query_text: str = "", size: int = 100) -> dict[str, Any]:
+def build_query(
+    criteria: list,
+    query_text: str = "",
+    size: int = 100,
+    *,
+    vector: list[float] | None = None,
+) -> dict[str, Any]:
     filters: list[dict] = []
     should: list[dict] = []
     for criterion in criteria:
@@ -39,16 +45,17 @@ def build_query(criteria: list, query_text: str = "", size: int = 100) -> dict[s
                 }
             }
         )
-        should.append(
-            {
-                "knn": {
-                    "embedding": {
-                        "vector": [],
-                        "k": size,
+        if vector:
+            should.append(
+                {
+                    "knn": {
+                        "embedding": {
+                            "vector": vector,
+                            "k": size,
+                        }
                     }
                 }
-            }
-        )
+            )
     query: dict[str, Any] = {"bool": {}}
     if filters:
         query["bool"]["filter"] = filters

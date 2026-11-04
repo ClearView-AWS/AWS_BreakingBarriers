@@ -147,17 +147,26 @@ def test_negation_and_liberal_and_spanish():
     assert any(item.need == "stem" for item in spanish)
 
 
-def test_demo_turn_asks_one_care_question_and_keeps_gaps():
+def test_demo_turn_asks_before_search_then_skip_keeps_gaps():
     clear_corpus_cache()
     with State() as state:
-        response = turn(
+        first = turn(
             state,
             {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
         )
-    question = next(block.payload for block in response.blocks if block.type == "question")
-    assert question["reason"] == "ambiguous_reading"
-    assert "after-school" in question["text"]
-    assert len(question["options"]) == 2
+        assert not any(block.type == "results" for block in first.blocks)
+        questions = next(block.payload for block in first.blocks if block.type == "questions")
+        assert questions["skip_label"] == "Just show me results"
+        assert 1 <= len(questions["items"]) <= 3
+        question = questions["items"][0]
+        assert question["reason"] == "ambiguous_reading"
+        assert "after-school" in question["text"]
+        assert len(question["options"]) == 2
+        assert question.get("default")
+        brief = next(block.payload for block in first.blocks if block.type == "brief")
+        assert brief["approved"] is False
+
+        response = turn(state, {"session_id": first.session_id, "event": "skip_to_results", "action": "refresh"})
     results = next(block.payload for block in response.blocks if block.type == "results")
     assert results["schools"]
     assert results["missed"]
@@ -166,18 +175,32 @@ def test_demo_turn_asks_one_care_question_and_keeps_gaps():
     assert any(row["status"] == "unknown" for row in unknown["evidence"])
     # A require failure stays visible instead of being deleted.
     assert all(card["id"] not in {row["id"] for row in results["schools"]} for card in results["missed"])
-    dropped = 0
-    for card in results["schools"] + results["missed"] + results["gaps"]:
-        for row in card["evidence"]:
-            if row["status"] == "unknown":
-                dropped += 0
-    assert dropped == 0
+    approved = next(block.payload for block in response.blocks if block.type == "brief")
+    assert approved["approved"] is True
+
+
+def test_thin_request_asks_for_city_and_grade_before_results():
+    clear_corpus_cache()
+    with State() as state:
+        first = turn(state, {"message": "STEM schools with after-school care"})
+        assert not any(block.type == "results" for block in first.blocks)
+        questions = next(block.payload for block in first.blocks if block.type == "questions")
+        reasons = [item["reason"] for item in questions["items"]]
+        assert "missing_location" in reasons
+        assert len(questions["items"]) <= 3
+
+        approved = turn(state, {"session_id": first.session_id, "event": "brief_approved", "action": "refresh"})
+        # Approving without answering leaves location unset, so still no hard-filter match required —
+        # but the gate is open and a results block is returned.
+        assert any(block.type == "results" for block in approved.blocks)
 
 
 def test_why_not_mariner_is_the_grade_filter():
     clear_corpus_cache()
     with State() as state:
-        first = turn(
+        from testing_helpers import search_turn
+
+        first = search_turn(
             state,
             {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
         )
@@ -193,7 +216,9 @@ def test_why_not_mariner_is_the_grade_filter():
 def test_liberal_followup_offers_data_backed_needs():
     clear_corpus_cache()
     with State() as state:
-        first = turn(
+        from testing_helpers import search_turn
+
+        first = search_turn(
             state,
             {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
         )
@@ -210,7 +235,9 @@ def test_cost_does_not_promise_an_award():
     schools = load_schools()
     private = next(school for school in schools if school["name"] == "Queen Anne Preparatory Middle")
     with State() as state:
-        first = turn(state, {"message": "Middle school in Seattle"})
+        from testing_helpers import search_turn
+
+        first = search_turn(state, {"message": "Middle school in Seattle"})
         response = turn(
             state,
             {"session_id": first.session_id, "action": "cost", "school_ids": [private["id"]]},
@@ -231,7 +258,9 @@ def test_save_builds_a_visit_checklist_for_unknowns():
     schools = load_schools()
     beau = next(school for school in schools if school["name"] == "Arbor Heights STEM Middle")
     with State() as state:
-        first = turn(
+        from testing_helpers import search_turn
+
+        first = search_turn(
             state,
             {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
         )
@@ -246,7 +275,9 @@ def test_school_reply_confirms_the_gap():
     schools = load_schools()
     beau = next(school for school in schools if school["name"] == "Arbor Heights STEM Middle")
     with State() as state:
-        first = turn(
+        from testing_helpers import search_turn
+
+        first = search_turn(
             state,
             {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
         )
@@ -288,3 +319,12 @@ def test_routes():
     assert route_message("What is CTE?", False)[0] == "define"
     assert route_message("Why isn't Bayside listed?", True)[0] == "why_not"
     assert route_message("compare Cascade and Riverside", True)[0] == "compare"
+
+
+def test_a_bare_after_school_time_means_pm():
+    from agent.extractor import _until_param
+
+    assert _until_param("after-school care until 5:30") == "17:30"
+    assert _until_param("after-school care until 6") == "18:00"
+    assert _until_param("after-school care until 6pm") == "18:00"
+    assert _until_param("after-school care until 12") == "12:00"
