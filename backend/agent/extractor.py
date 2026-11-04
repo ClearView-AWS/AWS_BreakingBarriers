@@ -51,12 +51,44 @@ _UNTIL = re.compile(r"\buntil (\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b")
 
 
 def extract(text: str, cities: list[str] | None = None) -> list[Criterion]:
+    """Code builds the criteria; Bedrock can only add phrases the rules missed.
+
+    Each phrase the model drafts goes through the same rules, so it comes back
+    as a city, grade, type or a need from needs.yaml, never as raw model text.
+    A drafted phrase the rules cannot map is dropped (the full message already
+    went through the unmapped-phrase checks).
+    """
     from agent.bedrock_client import maybe_bedrock_criteria
 
+    cities = cities or []
+    found = _rules(text, cities)
     drafted = maybe_bedrock_criteria(text)
-    if drafted is not None:
-        return _with_ids(drafted)
-    return _with_ids(_rules(text, cities or []))
+    if drafted:
+        found = _add_drafted(found, drafted, cities)
+    return _with_ids(found)
+
+
+def _criterion_key(criterion: Criterion) -> tuple:
+    if criterion.kind == "need":
+        return ("need", criterion.need or normalize(criterion.text))
+    return (criterion.kind,)
+
+
+def _add_drafted(found: list[Criterion], drafted: list[Criterion], cities: list[str]) -> list[Criterion]:
+    keys = {_criterion_key(c) for c in found}
+    out = list(found)
+    for item in drafted:
+        for mapped in _rules(item.text, cities):
+            if mapped.kind == "need" and not mapped.need:
+                continue
+            key = _criterion_key(mapped)
+            if key in keys:
+                continue
+            keys.add(key)
+            if mapped.kind == "need" and item.strength in {"require", "prefer", "avoid"}:
+                mapped = mapped.model_copy(update={"strength": item.strength})
+            out.append(mapped)
+    return out
 
 
 def _with_ids(criteria: list[Criterion]) -> list[Criterion]:

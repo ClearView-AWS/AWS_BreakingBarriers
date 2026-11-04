@@ -150,3 +150,43 @@ def test_school_missing_from_index_is_kept_and_logged(monkeypatch):
     trace = observability.emit()
     assert sorted(s["id"] for s in found) == sorted(expected)
     assert trace["searches"][0]["not_in_index"][0] in expected[1:]
+
+
+def test_bedrock_draft_cannot_replace_code_mapping(monkeypatch):
+    """With Bedrock on, criteria still map to city, grade and needs (seen in the deployed log)."""
+    from agent import extractor
+    from search.corpus import known_cities
+
+    drafted = [
+        Criterion(id="draft", text="Middle school", strength="require"),
+        Criterion(id="draft", text="Jacksonville", strength="require"),
+        Criterion(id="draft", text="STEM", strength="require"),
+        Criterion(id="draft", text="after-school care", strength="require"),
+        Criterion(id="draft", text="Money is tight", strength="prefer"),
+        Criterion(id="draft", text="kids who love robots", strength="prefer"),
+    ]
+    monkeypatch.setattr("agent.bedrock_client.maybe_bedrock_criteria", lambda text: drafted)
+    message = "Middle school in Jacksonville with STEM and after-school care. Money is tight."
+    with_model = extractor.extract(message, known_cities())
+    monkeypatch.setattr("agent.bedrock_client.maybe_bedrock_criteria", lambda text: None)
+    rules_only = extractor.extract(message, known_cities())
+
+    def summary(rows):
+        return sorted((c.kind, c.need or c.value, c.strength) for c in rows)
+
+    assert summary(with_model) == summary(rules_only)
+    assert ("location", "Jacksonville", "require") in summary(with_model)
+    assert ("grade", "m", "require") in summary(with_model)
+
+
+def test_bedrock_draft_adds_a_need_the_rules_missed(monkeypatch):
+    from agent import extractor
+    from search.corpus import known_cities
+
+    monkeypatch.setattr(
+        "agent.bedrock_client.maybe_bedrock_criteria",
+        lambda text: [Criterion(id="draft", text="after-school care", strength="require")],
+    )
+    found = extractor.extract("Middle school in Jacksonville, I work late", known_cities())
+    assert any(c.need == "after_care" and c.strength == "require" for c in found)
+    assert [c.id for c in found] == [f"c{i}" for i in range(1, len(found) + 1)]
