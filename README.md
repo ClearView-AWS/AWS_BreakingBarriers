@@ -78,6 +78,16 @@ Region `us-east-1`. Leave the flags off and the rules engine, the local index, t
 
 Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/state.json` (`GS_STATE_PATH` overrides it). That file is the stand-in for DynamoDB.
 
+## Calling a school (in progress)
+
+When a fact isn't on file, an AI assistant can phone the school and ask. Amazon Connect places the call and reads the opening (it says it is an AI and asks to transcribe). Lex turns each reply into text and calls `backend/voice/lex_turn.py`, a Lambda that asks Bedrock for the next line and writes the transcript to the state table under `pk=CALLS`. The model's reading of the answers is untrusted; the app will check them in code before a card changes.
+
+```bash
+VOICE_INSTANCE_ID=<connect instance id> .venv/bin/python scripts/setup_voice.py
+```
+
+The script creates or updates the roles, the Lambda, the Lex bot, and the Connect flow, then prints `VOICE_INSTANCE_ID`, `VOICE_FLOW_ID`, and `VOICE_SOURCE`. The number to call is never in the repo: set `VOICE_VERIFIED_TO` on the API only, and calls go only to that number.
+
 ## Evaluation
 
 `eval/queries.jsonl` has 42 parent queries, including "how liberal", a city name used in more than one state, Spanish, negations, and "a good school". The latest run is the rules engine with Bedrock off.
