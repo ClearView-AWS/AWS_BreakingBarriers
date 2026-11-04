@@ -13,12 +13,13 @@ type Answer = {
   follow_ups: string[];
   mode: "rules" | "bedrock";
 };
-type Target = { text: string; schoolId: string | null; criterionId: string | null; rect: DOMRect };
+type Target = { text: string; schoolId: string | null; criterionId: string | null; rect: DOMRect; first: DOMRect };
 type Exchange = { question: string; answer: Answer | null; error?: string };
 
 const MIN_CHARS = 2;
 const MAX_CHARS = 500;
-const BUBBLE = 34;
+const PILL_W = 74;
+const PILL_H = 34;
 
 function closestData(node: Node | null, attribute: string): string | null {
   let element: Element | null = node instanceof Element ? node : node?.parentElement ?? null;
@@ -43,11 +44,13 @@ function readSelection(root: Element | null): Target | null {
   if (element.closest("input, textarea, select, [contenteditable='true'], .assist-panel")) return null;
   const rects = range.getClientRects();
   const rect = rects.length ? rects[rects.length - 1] : range.getBoundingClientRect();
+  const first = rects.length ? rects[0] : rect;
   return {
     text: text.slice(0, MAX_CHARS),
     schoolId: closestData(range.startContainer, "data-school-id") ?? closestData(anchor, "data-school-id"),
     criterionId: closestData(range.startContainer, "data-criterion-id"),
     rect,
+    first,
   };
 }
 
@@ -187,12 +190,12 @@ export function HighlightAssistant({ sessionId, rootSelector = "main" }: { sessi
     void ask(panel, text);
   }
 
-  // Sit just above the end of the highlight, so the circle never covers the buttons below it.
-  const roomAbove = bubble ? bubble.rect.top - BUBBLE - 6 > 72 : false;
+  // Like a "Reply" button: sit just above where the highlight starts, or below it near the top of the screen.
+  const roomAbove = bubble ? bubble.first.top - PILL_H - 8 > 72 : false;
   const bubbleStyle = bubble
     ? {
-        left: clamp(bubble.rect.right - BUBBLE / 2, 8, window.innerWidth - BUBBLE - 8),
-        top: clamp(roomAbove ? bubble.rect.top - BUBBLE - 6 : bubble.rect.bottom + 6, 8, window.innerHeight - BUBBLE - 8),
+        left: clamp(bubble.first.left, 8, window.innerWidth - PILL_W - 8),
+        top: clamp(roomAbove ? bubble.first.top - PILL_H - 8 : bubble.rect.bottom + 8, 8, window.innerHeight - PILL_H - 8),
       }
     : undefined;
 
@@ -217,11 +220,12 @@ export function HighlightAssistant({ sessionId, rootSelector = "main" }: { sessi
           className="assist-bubble"
           style={bubbleStyle}
           aria-label={`Ask the assistant about “${bubble.text.slice(0, 60)}”`}
-          title="Ask about this"
-          // Keep the highlight while the circle is pressed.
+          title="Ask the assistant about this"
+          // Keep the highlight while the button is pressed.
           onMouseDown={(event) => event.preventDefault()}
           onClick={open}
         >
+          <span>Ask</span>
           <SparkIcon />
         </button>
       )}

@@ -619,21 +619,26 @@ tbody th { font-weight: 600; color: var(--ink); }
 .assist-bubble {
   position: fixed;
   z-index: 1200;
-  width: 34px;
   height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  border: 1px solid var(--ledger);
-  background: var(--ledger);
-  color: var(--on-ledger);
-  box-shadow: var(--glow-signal);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px 0 14px;
+  border-radius: var(--radius-3);
+  border: 1px solid var(--control);
+  background: var(--panel);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   cursor: pointer;
 }
+.assist-bubble svg { color: var(--ledger); }
+.assist-bubble:hover { border-color: var(--ledger); }
 @media (prefers-reduced-motion: no-preference) {
   .assist-bubble { animation: assist-pop 150ms cubic-bezier(0.2, 0, 0, 1); }
 }
-@keyframes assist-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes assist-pop { from { transform: translateY(4px); opacity: 0; } to { transform: none; opacity: 1; } }
 .assist-panel {
   position: fixed;
   z-index: 1200;
