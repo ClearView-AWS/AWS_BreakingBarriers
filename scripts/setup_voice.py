@@ -27,6 +27,13 @@ PREFIX = "GsVoice"
 BOT_NAME = "GsSchoolCaller"
 FLOW_NAME = "GS school call"
 VOICE = "Joanna"
+# The AI always finishes its sentence (no barge-in), then waits 5 s for the first word
+# and 1.5 s of silence before a reply is done.
+LISTEN = {
+    "x-amz-lex:allow-interrupt:*:*": "false",
+    "x-amz-lex:audio:start-timeout-ms:*:*": "5000",
+    "x-amz-lex:audio:end-timeout-ms:*:*": "1500",
+}
 HANDLER = Path(__file__).resolve().parents[1] / "backend" / "voice" / "lex_turn.py"
 
 iam = boto3.client("iam")
@@ -145,10 +152,27 @@ def bot(lambda_arn: str) -> str:
         if "already exists" not in str(exc):
             raise
     wait(lambda: lex.describe_bot_locale(botId=bot_id, botVersion="DRAFT", localeId="en_US")["botLocaleStatus"]
-         in {"NotBuilt", "Built", "ReadyExpressTesting"}, "locale")
+         in {"NotBuilt", "Built", "ReadyExpressTesting", "Failed"}, "locale")
 
     # Every utterance goes to the Lambda. Lex needs one real intent, so it gets a phrase nobody says.
-    hook = {"enabled": True}
+    # While the Lambda waits on Bedrock, Lex says "One moment" so the line never goes quiet.
+    hook = {
+        "enabled": True,
+        "fulfillmentUpdatesSpecification": {
+            "active": True,
+            "startResponse": {
+                "delayInSeconds": 1,
+                "allowInterrupt": False,
+                "messageGroups": [{"message": {"plainTextMessage": {"value": "One moment."}}}],
+            },
+            "updateResponse": {
+                "frequencyInSeconds": 5,
+                "allowInterrupt": False,
+                "messageGroups": [{"message": {"plainTextMessage": {"value": "Still with you."}}}],
+            },
+            "timeoutInSeconds": 30,
+        },
+    }
     intents = {i["intentName"]: i["intentId"] for i in lex.list_intents(botId=bot_id, botVersion="DRAFT", localeId="en_US")["intentSummaries"]}
     if "Placeholder" not in intents:
         lex.create_intent(
@@ -195,16 +219,22 @@ def bot(lambda_arn: str) -> str:
 
 
 def flow(alias_arn: str) -> str:
+    # Flow logs show where a call ended (CloudWatch group /aws/connect/<alias>).
+    connect.update_instance_attribute(InstanceId=INSTANCE_ID, AttributeType="CONTACTFLOW_LOGS", Value="true")
     try:
         connect.associate_bot(InstanceId=INSTANCE_ID, LexV2Bot={"AliasArn": alias_arn})
         log("associated bot with Connect")
     except connect.exceptions.DuplicateResourceException:
         pass
     session = {key: f"$.Attributes.{key}" for key in ("call_id", "school_name", "questions", "opening")}
+    session.update(LISTEN)
     content = {
         "Version": "2019-10-30",
-        "StartAction": "voice",
+        "StartAction": "logs",
         "Actions": [
+            {"Identifier": "logs", "Type": "UpdateFlowLoggingBehavior",
+             "Parameters": {"FlowLoggingBehavior": "Enabled"},
+             "Transitions": {"NextAction": "voice", "Errors": [], "Conditions": []}},
             {"Identifier": "voice", "Type": "UpdateContactTextToSpeechVoice",
              "Parameters": {"TextToSpeechVoice": VOICE, "TextToSpeechEngine": "Neural"},
              "Transitions": {"NextAction": "talk", "Errors": [], "Conditions": []}},

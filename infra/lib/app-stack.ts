@@ -95,6 +95,14 @@ export class AppStack extends cdk.Stack {
       environment.BEDROCK_GUARDRAIL_ID = guardrail.attrGuardrailId;
       environment.BEDROCK_GUARDRAIL_VERSION = version.attrVersion;
     }
+    // School phone calls (backend/gaps/phone.py). On only when the deploy shell sets all four;
+    // VOICE_VERIFIED_TO is the one number calls may reach and never lives in the repo.
+    const voiceKeys = ['VOICE_INSTANCE_ID', 'VOICE_FLOW_ID', 'VOICE_SOURCE', 'VOICE_VERIFIED_TO'];
+    const voiceEnabled = voiceKeys.every((key) => !!process.env[key]);
+    if (voiceEnabled) {
+      environment.VOICE_ENABLED = '1';
+      for (const key of voiceKeys) environment[key] = process.env[key] as string;
+    }
     if (props.openSearchEndpoint) {
       environment.OPENSEARCH_URL = props.openSearchEndpoint.startsWith('http')
         ? props.openSearchEndpoint
@@ -139,6 +147,15 @@ export class AppStack extends cdk.Stack {
     });
 
     stateTable.grantReadWriteData(service.taskDefinition.taskRole);
+    if (voiceEnabled) {
+      const instance = `arn:aws:connect:${this.region}:${this.account}:instance/${process.env.VOICE_INSTANCE_ID}`;
+      service.taskDefinition.addToTaskRolePolicy(
+        new iam.PolicyStatement({
+          actions: ['connect:StartOutboundVoiceContact', 'connect:DescribeContact'],
+          resources: [instance, `${instance}/*`],
+        }),
+      );
+    }
     service.taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],

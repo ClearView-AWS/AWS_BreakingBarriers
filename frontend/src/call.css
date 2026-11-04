@@ -1,0 +1,65 @@
+/* "Have AI call the school" button and the live call panel on a school card. */
+.call-start { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 10px; }
+.call-start .meta { font-size: 13px; color: var(--muted); }
+.call-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--leaf);
+  /* paper-solid is light on the light theme and dark on the dark one, so it reads on --leaf in both. */
+  color: var(--paper-solid);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+.call-button:hover:not(:disabled) { background: var(--leaf-deep); }
+.call-button:disabled { opacity: 0.6; cursor: progress; }
+
+.call-panel {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  background: var(--paper-solid);
+  display: grid;
+  gap: 10px;
+}
+.call-panel.is-live { border-color: var(--leaf); box-shadow: 0 0 0 3px var(--confirmed-bg); }
+.call-panel header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.call-panel header .meta { color: var(--muted); font-size: 13px; }
+.call-panel header .texty { margin-left: auto; }
+
+.call-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--unknown); flex: none; }
+.call-dot.dialing,
+.call-dot.in_call { background: var(--leaf); animation: call-pulse 1.2s ease-in-out infinite; }
+.call-dot.completed { background: var(--confirmed); }
+.call-dot.ended,
+.call-dot.no_answer,
+.call-dot.declined,
+.call-dot.failed { background: var(--attention); }
+@keyframes call-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(31, 138, 76, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(31, 138, 76, 0); }
+}
+
+.call-questions { margin: 0; padding-left: 18px; font-size: 14px; color: var(--muted); }
+.call-questions li.is-answered { color: var(--confirmed); }
+.call-questions li.is-answered::marker { content: "✓ "; }
+
+.call-transcript { display: grid; gap: 6px; max-height: 260px; overflow-y: auto; }
+.call-line { max-width: 85%; padding: 6px 10px; border-radius: 12px; font-size: 14px; }
+.call-line span { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.call-line p { margin: 2px 0 0; }
+.call-line.agent { justify-self: start; background: var(--mist); }
+.call-line.school { justify-self: end; background: var(--sky); }
+.call-line.typing p { letter-spacing: 0.2em; }
+
+.call-result { border-top: 1px solid var(--line); padding-top: 8px; font-size: 14px; }
+.call-result h4 { margin: 0 0 4px; font-size: 14px; }
+.call-result p { margin: 2px 0; }
+.call-result .meta { color: var(--confirmed); }
+
+@media (prefers-reduced-motion: reduce) {
+  .call-dot.dialing,
+  .call-dot.in_call { animation: none; }
+}

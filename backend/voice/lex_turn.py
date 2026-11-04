@@ -20,6 +20,12 @@ MODEL_ID = os.environ.get("VOICE_MODEL_ID", "us.anthropic.claude-haiku-5-5")
 TABLE = os.environ.get("GS_DYNAMODB_TABLE", "")
 REGION = os.environ.get("AWS_REGION", "us-east-1")
 MAX_TURNS = 12
+# Same as the Connect flow: never cut the AI off, wait 5 s for an answer, 1.5 s of silence ends it.
+LISTEN = {
+    "x-amz-lex:allow-interrupt:*:*": "false",
+    "x-amz-lex:audio:start-timeout-ms:*:*": "5000",
+    "x-amz-lex:audio:end-timeout-ms:*:*": "1500",
+}
 
 SYSTEM = """You are an automated AI assistant on a phone call with a school's front office,
 calling on behalf of parents who use GreatSchools. You already introduced yourself as an
@@ -30,6 +36,8 @@ Questions parents asked (ask each one, one at a time, in this order):
 {questions}
 
 Rules:
+- Speech is transcribed by machine and can be garbled. Read it generously: "okay", "sure",
+  "all right", "go ahead", or anything close is a yes. Then ask the first question.
 - Speak in short, natural sentences. One or two sentences per turn. No lists, no markup.
 - If the person declines the transcript, is busy, or asks you to stop: thank them, say the
   families will follow up by email, and end the call.
@@ -65,7 +73,7 @@ def _converse(system: str, transcript: list[dict]) -> dict:
         modelId=MODEL_ID,
         system=[{"text": system}],
         messages=messages,
-        inferenceConfig={"maxTokens": 400},
+        inferenceConfig={"maxTokens": 250},
     )
     raw = "".join(block.get("text", "") for block in response["output"]["message"]["content"])
     start, end = raw.find("{"), raw.rfind("}")
@@ -126,5 +134,6 @@ def handler(event, context):
         record["status"] = "completed"
         record["ended"] = _now()
     attrs["transcript"] = json.dumps(transcript)
+    attrs.update(LISTEN)
     _save(call_id, record)
     return _reply(event, attrs, say, done)
