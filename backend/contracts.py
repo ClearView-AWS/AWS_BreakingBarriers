@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 Strength = Literal["require", "prefer", "avoid"]
 EvidenceStatus = Literal["confirmed", "partial", "needs_attention", "unknown"]
@@ -13,6 +13,7 @@ SourceType = Literal[
     "school_reported",
     "school_website",
     "parent_reviews",
+    "community",
     "program",
     "funding_rule",
     "glossary",
@@ -58,6 +59,39 @@ class Criterion(BaseModel):
     value: Any = None
     resolved_reading: str | None = None
 
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def label(self) -> str:
+        """The filter's name for chips and cards ("STEM-focused"), not the parent's words.
+
+        `text` keeps what the parent wrote. A need that maps to nothing keeps it as the label.
+        """
+        if self.kind == "grade":
+            return _GRADE_LABELS.get(str(self.value), self.text)
+        if self.kind == "school_type":
+            return _TYPE_LABELS.get(str(self.value), self.text)
+        if self.kind != "need" or not self.need:
+            return self.text
+        from catalog import needs
+
+        spec = needs().get(self.need) or {}
+        name = spec.get("display") or spec.get("label") or self.text
+        until = (self.params or {}).get("until")
+        return f"{name} until {_clock(until)}" if until else name
+
+
+_GRADE_LABELS = {"p": "Pre-K", "e": "Elementary school", "m": "Middle school", "h": "High school"}
+_TYPE_LABELS = {"public": "Public", "private": "Private", "charter": "Charter"}
+
+
+def _clock(value: object) -> str:
+    """'17:30' -> '5:30 PM'. Anything else is shown as given."""
+    hour, _, minute = str(value).partition(":")
+    if not (hour.isdigit() and minute.isdigit()):
+        return str(value)
+    h = int(hour)
+    return f"{h % 12 or 12}:{minute} {'AM' if h < 12 else 'PM'}"
+
 
 class Source(BaseModel):
     type: SourceType
@@ -82,6 +116,8 @@ class EvidenceRecord(BaseModel):
     note: str = ""
     conflict: Conflict | None = None
     review_ids: list[str] = Field(default_factory=list)
+    # Community posts that support this criterion. They never confirm it.
+    post_ids: list[str] = Field(default_factory=list)
     # Fields that were checked and empty. An "unknown" sentence cites these; they are not a source.
     missing_paths: list[str] = Field(default_factory=list)
 

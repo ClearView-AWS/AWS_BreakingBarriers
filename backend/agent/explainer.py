@@ -63,10 +63,10 @@ def _card_input(card: dict, criteria: list[Criterion]) -> dict:
     return {
         "id": card["id"],
         "name": card["name"],
-        "criteria": [{"text": c.text, "strength": c.strength, "params": c.params} for c in criteria if c.kind in {"need", "distance"}],
+        "criteria": [{"text": c.label, "strength": c.strength, "params": c.params} for c in criteria if c.kind in {"need", "distance"}],
         "evidence": [
             {
-                "criterion": by_id[row["criterion_id"]].text if row["criterion_id"] in by_id else row["criterion_id"],
+                "criterion": by_id[row["criterion_id"]].label if row["criterion_id"] in by_id else row["criterion_id"],
                 "status": row["status"],
                 "cite": (row.get("source") or {}).get("path") or next(iter(row.get("missing_paths") or []), None),
                 "note": row["note"],
@@ -77,7 +77,8 @@ def _card_input(card: dict, criteria: list[Criterion]) -> dict:
 
 
 def _sentence_count(text: str) -> int:
-    return len([s for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s])
+    """Sentences with the citations taken out, so "A. [[cite:x]] B." and "A [[cite:x]]. B." both count 2."""
+    return len([s for s in re.split(r"(?<=[.!?])\s+", strip_cites(text)) if s])
 
 
 def model_summaries(cards: list[dict], schools_by_id: dict[str, dict], criteria: list[Criterion]) -> tuple[dict[str, str], EngineStep]:
@@ -94,11 +95,15 @@ def model_summaries(cards: list[dict], schools_by_id: dict[str, dict], criteria:
         records = [EvidenceRecord(**row) for row in card["evidence"]]
         checked = validate_model_text(draft, facts_for(records, schools_by_id[card["id"]]), extra)
         if _sentence_count(checked) < _sentence_count(draft):
-            log.warning("explain: dropped model sentences for %s: %r -> %r", card["id"], draft, checked)
+            # What survives a partial cut is often filler ("No other evidence was provided"),
+            # because the model cited the last sentence and not the one with the fact.
+            # The code summary is better than half a model summary.
+            log.warning("explain: dropped model sentences for %s, kept the code summary: %r -> %r", card["id"], draft, checked)
+            continue
         if checked:
             kept[card["id"]] = strip_cites(checked)
     if not kept:
-        error = f"no model sentence passed the fact check for {len(cards)} cards"
+        error = f"no model summary passed the fact check for {len(cards)} cards"
         log.warning("%s", error)
         return {}, EngineStep(engine="rules_fallback", error=error)
     return kept, step

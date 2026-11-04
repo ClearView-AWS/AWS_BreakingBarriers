@@ -146,3 +146,31 @@ def test_engine_route_answer_outside_the_list(bedrock):
 
     assert engine["route"] == "rules_fallback"
     assert engine["errors"][0] == "bedrock route answer not allowed: 'maybe_search'"
+
+
+def test_labels_name_the_filter_not_the_parents_words(bedrock):
+    bedrock(
+        _fenced(
+            [
+                {"kind": "grade", "value": "h", "text": "a high school"},
+                {"kind": "location", "value": "jacksonville", "text": "jax"},
+                {"kind": "school_type", "value": "charter", "text": "a charter"},
+                {"kind": "need", "need": "stem", "strength": "prefer", "text": "my kid is obsessed with technology"},
+                {"kind": "need", "need": "after_care", "strength": "require", "params": {"until": "17:30"}, "text": "can't pick him up before 5:30"},
+                {"kind": "need", "need": None, "text": "how liberal"},
+            ]
+        )
+    )
+    criteria, _ = extract("anything", known_cities())
+
+    assert [c.label for c in criteria] == [
+        "High school",
+        "Jacksonville",
+        "Charter",
+        "STEM-focused",
+        "After-school care until 5:30 PM",
+        "how liberal",  # maps to no filter, so the parent's words stay
+    ]
+    stem = next(c for c in criteria if c.need == "stem")
+    assert stem.text == "my kid is obsessed with technology", "text keeps what the parent wrote"
+    assert stem.model_dump()["label"] == "STEM-focused", "the label reaches the API"

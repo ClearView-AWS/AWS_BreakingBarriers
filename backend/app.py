@@ -82,6 +82,15 @@ def get_session(session_id: str) -> dict:
         }
 
 
+@app.post("/api/chat")
+def post_chat(body: TurnIn) -> dict:
+    """Same body as /api/turn. Keeps the conversation history and answers follow-up questions."""
+    from agent.conversation import chat_turn
+
+    with State() as state:
+        return chat_turn(state, body.model_dump())
+
+
 def _programs():
     from search.corpus import load_programs
 
@@ -115,3 +124,147 @@ def get_school(school_id: str) -> dict:
                 "level_codes": school.get("level_codes"),
             }
     return {"error": "unknown school"}
+
+
+# ---------- Parent community ----------
+
+from community import service as community  # noqa: E402
+from community.tags import suggest_tags  # noqa: E402
+
+
+class PostIn(BaseModel):
+    school_id: str
+    persona: str = "parent_a"
+    kind: str = "question"
+    text: str
+    needs: list[str] = Field(default_factory=list)
+    origin: str = "community"
+    session_id: str | None = None
+
+
+class CommunityReplyIn(BaseModel):
+    persona: str = "parent_a"
+    text: str
+    answer: dict | None = None
+
+
+class VoteIn(BaseModel):
+    persona: str = "parent_a"
+
+
+class TextIn(BaseModel):
+    text: str
+
+
+class DraftIn(BaseModel):
+    school_id: str
+    need: str
+
+
+def _school(school_id: str) -> dict | None:
+    for school in load_schools():
+        if school["id"] == school_id or str(school.get("school_id")) == school_id:
+            return school
+    return None
+
+
+@app.get("/api/community/personas")
+def community_personas() -> dict:
+    return {"personas": community.PERSONAS}
+
+
+@app.get("/api/community/schools")
+def community_schools(q: str | None = None) -> dict:
+    """The Community tab's home: active schools, or any school whose name matches `q`."""
+    with State() as state:
+        return {"schools": community.schools_index(state, load_schools(), q)}
+
+
+@app.get("/api/community/schools/{school_id}")
+def community_school(school_id: str, sort: str = "top", need: str | None = None, persona: str | None = None) -> dict:
+    school = _school(school_id)
+    if not school:
+        return {"error": "unknown school"}
+    with State() as state:
+        return {
+            "school": {"id": school["id"], "name": school["name"], "city": school.get("city"), "entity_type": school.get("entity_type")},
+            "demand": community.demand(state, school["id"]),
+            "threads": community.threads_for(state, school["id"], sort=sort, need=need, viewer=persona),
+            # "Ask the school" questions waiting for an answer. Staff answer them on this page.
+            "questions": community.open_questions(state, school["id"]),
+        }
+
+
+class QuestionAnswerIn(BaseModel):
+    text: str
+    value: str | None = None
+    offers: bool | None = None
+
+
+@app.post("/api/community/schools/{school_id}/questions/{question_id}/answer")
+def community_answer_question(school_id: str, question_id: str, body: QuestionAnswerIn) -> dict:
+    school = _school(school_id)
+    if not school:
+        return {"ok": False, "safety": {"ok": False, "findings": [], "message": "Unknown school."}}
+    answer = {key: value for key, value in {"value": body.value, "offers": body.offers}.items() if value is not None}
+    with State() as state:
+        return community.answer_question(state, school, question_id, body.text, answer)
+
+
+@app.get("/api/community/threads/{thread_id}")
+def community_thread(thread_id: str, persona: str | None = None) -> dict:
+    with State() as state:
+        found = community.thread(state, thread_id, viewer=persona)
+        return found or {"error": "unknown thread"}
+
+
+@app.post("/api/community/posts")
+def community_post(body: PostIn) -> dict:
+    school = _school(body.school_id)
+    if not school:
+        return {"ok": False, "safety": {"ok": False, "findings": [], "message": "Unknown school."}}
+    with State() as state:
+        return community.create_thread(
+            state,
+            school,
+            body.persona,
+            body.kind,
+            body.text,
+            body.needs,
+            origin=body.origin,
+            asker=body.session_id,
+        )
+
+
+@app.post("/api/community/threads/{thread_id}/replies")
+def community_reply(thread_id: str, body: CommunityReplyIn) -> dict:
+    with State() as state:
+        return community.reply(state, thread_id, body.persona, body.text, body.answer)
+
+
+@app.post("/api/community/posts/{post_id}/vote")
+def community_vote(post_id: str, body: VoteIn) -> dict:
+    with State() as state:
+        return community.vote(state, post_id, body.persona)
+
+
+@app.post("/api/community/suggest-tags")
+def community_tags(body: TextIn) -> dict:
+    return {"tags": suggest_tags(body.text)}
+
+
+@app.post("/api/community/draft")
+def community_draft(body: DraftIn) -> dict:
+    school = _school(body.school_id)
+    if not school:
+        return {"error": "unknown school"}
+    return community.draft_question(school, body.need)
+
+
+@app.post("/api/community/schools/{school_id}/digest")
+def community_digest(school_id: str) -> dict:
+    school = _school(school_id)
+    if not school:
+        return {"error": "unknown school"}
+    with State() as state:
+        return community.digest(state, school)
