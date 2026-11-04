@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Create the Bedrock Guardrail that checks every community post for personal info.
+# For local runs only: the deployed demo gets its guardrail from GsAppStack (CDK).
 #
 # Before running: log in to the sandbox (Workshop Studio "Get AWS CLI credentials",
 # paste the export lines) and set:  export AWS_DEFAULT_REGION=us-east-1

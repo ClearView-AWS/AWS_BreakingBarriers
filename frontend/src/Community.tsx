@@ -34,7 +34,7 @@ type Post = {
 
 type Demand = { need: string; label: string; count: number };
 type SchoolQuestion = { id: string; need: string; label: string; question: string; parents: number };
-type Safety = { ok: boolean; message: string; findings: { type: string; text: string }[] };
+type Safety = { ok: boolean; message: string; findings: { type: string; text: string }[]; checked_by?: string[] };
 type Tag = { need: string; label: string };
 
 const TIME_NEEDS = new Set(["after_care", "extended_day", "before_care"]);
@@ -238,6 +238,16 @@ function SafetyNote({ safety }: { safety: Safety | null }) {
       <strong>{t("community.not_posted")}</strong> {safety.message}
       {safety.findings.length > 0 && (
         <span> {t("community.found", { items: safety.findings.map((item) => `${item.type} "${item.text}"`).join(", ") })}</span>
+      )}
+      {safety.checked_by && safety.checked_by.length > 0 && (
+        <small className="checked-by">
+          {" "}
+          {t("community.checked_by", {
+            checks: safety.checked_by
+              .map((check) => t(check === "bedrock_guardrails" ? "community.check_guardrails" : "community.check_rules"))
+              .join(" + "),
+          })}
+        </small>
       )}
     </div>
   );
