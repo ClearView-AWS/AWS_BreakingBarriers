@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from catalog import glossary, needs
-from agent.explainer import public_summary
+from agent.explainer import model_summaries, public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
 from clarify.clarifier import choose_question
-from contracts import Block, Criterion, TurnResponse
+from contracts import Block, Criterion, Engine, EngineStep, TurnResponse
 from evidence.engine import evaluate_criterion
 from evidence.scorer import score_school
 from evidence.why_not import explain_absence
@@ -24,15 +24,32 @@ _LEVELS = {"p": "pre-k", "e": "elementary", "m": "middle", "h": "high"}
 
 
 def turn(state: dict, payload: dict) -> TurnResponse:
+    engine = Engine()
+    response = _turn(state, payload, engine)
+    return response.model_copy(update={"engine": engine})
+
+
+def _record(engine: Engine, step_name: str, step: EngineStep) -> None:
+    setattr(engine, step_name, step.engine)
+    if step.error:
+        engine.errors.append(step.error)
+
+
+def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     session = _session(state, payload.get("session_id"))
     message = (payload.get("message") or "").strip()
-    action = payload.get("action") or (route_message(message, bool(session["criteria"])) if message else "refresh")
+    action = payload.get("action")
+    if not action and message:
+        action, step = route_message(message, bool(session["criteria"]))
+        _record(engine, "route", step)
+    action = action or "refresh"
 
     if payload.get("criteria") is not None:
         session["criteria"] = payload["criteria"]
 
     if action in {"new_search", "refine"} and message:
-        incoming = extract(message, known_cities())
+        incoming, step = extract(message, known_cities())
+        _record(engine, "extract", step)
         if action == "new_search" and not session["criteria"]:
             session["criteria"] = [item.model_dump() for item in incoming]
         else:
@@ -60,9 +77,9 @@ def turn(state: dict, payload: dict) -> TurnResponse:
     if action == "save":
         return _save(session, criteria, schools, programs, state, payload, message)
     if action == "ask_school":
-        return _ask(session, criteria, schools, programs, state, payload)
+        return _ask(session, criteria, schools, programs, state, payload, engine)
 
-    response = _search_response(session, criteria, schools, programs, state, message or "Showing your current search.")
+    response = _search_response(session, criteria, schools, programs, state, message or "Showing your current search.", engine)
     if action == "new_search":
         response.route = "new_search"
     elif action in {"refine", "refresh", "feedback"}:
@@ -295,7 +312,7 @@ def _score_school(school, criteria, programs, state, session=None) -> dict | Non
     }
 
 
-def _search_response(session, criteria, schools, programs, state, message: str) -> TurnResponse:
+def _search_response(session, criteria, schools, programs, state, message: str, engine: Engine) -> TurnResponse:
     readings = {row.id: row.resolved_reading for row in criteria if row.resolved_reading}
 
     def search_fn(probe, probe_readings):
@@ -311,6 +328,11 @@ def _search_response(session, criteria, schools, programs, state, message: str) 
     scored_rows.sort(key=_rank_key)
     main = [row for row in scored_rows if not row["missed_must"]][:8]
     missed = [row for row in scored_rows if row["missed_must"]][:6]
+    if main or missed:
+        summaries, step = model_summaries(main + missed, _by_id(schools), criteria)
+        _record(engine, "explain", step)
+        for row in main + missed:
+            row["summary"] = summaries.get(row["id"], row["summary"])
     shown = {row["id"] for row in main}
     gaps = []
     for row in scored_rows:
@@ -555,7 +577,7 @@ def _save(session, criteria, schools, programs, state, payload, message) -> Turn
     return TurnResponse(session_id=session["id"], route="save", criteria=criteria, blocks=blocks)
 
 
-def _ask(session, criteria, schools, programs, state, payload) -> TurnResponse:
+def _ask(session, criteria, schools, programs, state, payload, engine: Engine) -> TurnResponse:
     school_id = (payload.get("school_ids") or [None])[0]
     need_id = payload.get("need")
     school = _by_id(schools).get(school_id)
@@ -574,7 +596,7 @@ def _ask(session, criteria, schools, programs, state, payload) -> TurnResponse:
         )
     ]
     # Re-run the search so the card still shows the unknown cell beside the button.
-    response = _search_response(session, criteria, schools, programs, state, "")
+    response = _search_response(session, criteria, schools, programs, state, "", engine)
     response.blocks.insert(0, blocks[0])
     return response
 

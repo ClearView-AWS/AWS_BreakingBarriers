@@ -124,7 +124,7 @@ def test_citation_validator_drops_uncited_sentences():
 
 
 def test_extractor_demo_query():
-    found = extract(
+    found, _ = extract(
         "Middle school in Jacksonville with STEM and after-school care. Money is tight.",
         known_cities(),
     )
@@ -138,11 +138,11 @@ def test_extractor_demo_query():
 
 
 def test_negation_and_liberal_and_spanish():
-    religious = extract("elementary school in Orlando, not religious", known_cities())
+    religious, _ = extract("elementary school in Orlando, not religious", known_cities())
     assert any(item.need == "non_religious" and item.strength == "require" for item in religious)
-    liberal = extract("How liberal are middle schools in Jacksonville?", known_cities())
+    liberal, _ = extract("How liberal are middle schools in Jacksonville?", known_cities())
     assert any(item.need is None and "liberal" in item.text for item in liberal)
-    spanish = extract("escuela intermedia en Jacksonville con ciencias", known_cities())
+    spanish, _ = extract("escuela intermedia en Jacksonville con ciencias", known_cities())
     assert any(item.kind == "grade" and item.value == "m" for item in spanish)
     assert any(item.need == "stem" for item in spanish)
 
@@ -284,6 +284,6 @@ def _need(response, row) -> bool:
 
 
 def test_routes():
-    assert route_message("What is CTE?", False) == "define"
-    assert route_message("Why isn't Bayside listed?", True) == "why_not"
-    assert route_message("compare Tidewater and Riverside", True) == "compare"
+    assert route_message("What is CTE?", False)[0] == "define"
+    assert route_message("Why isn't Bayside listed?", True)[0] == "why_not"
+    assert route_message("compare Tidewater and Riverside", True)[0] == "compare"
