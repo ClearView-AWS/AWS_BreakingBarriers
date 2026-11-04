@@ -7,6 +7,7 @@ Bedrock stays off. The rules engine is what this file measures.
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -24,6 +25,7 @@ from search.engine import passes_hard_filters, search_schools
 from store import State
 
 QUERIES = ROOT / "eval" / "queries.jsonl"
+POST_DRAFTS = ROOT / "eval" / "post_drafts.jsonl"
 
 
 def main() -> None:
@@ -143,6 +145,11 @@ def main() -> None:
         failures.append(f"{access_total - access_ok} getting in lines lack an official link or school source")
     if access_odds:
         failures.append(f"getting in lines that estimate odds or promise a seat: {access_odds}")
+    convo = _conversations(failures)
+    # Paraphrased follow-ups measure how well the message is read, so the rules alone
+    # are expected to miss some. Misses are listed, but they don't fail the run.
+    paraphrase_misses: list[str] = []
+    paraphrased = _conversations(paraphrase_misses, ROOT / "eval" / "conversations_paraphrased.jsonl")
     durations.sort()
     median = durations[len(durations) // 2] if durations else 0
 
@@ -152,14 +159,49 @@ def main() -> None:
     print(f"ask decision: {ask:.1%} ({ask_hit}/{ask_total}) target 80%")
     print(f"getting in lines with an official link or school source: {access_ok}/{access_total} target 100%")
     print(f"getting in lines that estimate odds or promise a seat: {access_odds} target 0")
+    print(f"follow-up routing: {convo['route_ok']}/{convo['route_total']} target 90%")
+    print(f"follow-up school and topic: {convo['ref_ok']}/{convo['ref_total']} target 90%")
+    print(f"follow-up answer lines with a citation: {convo['cited_ok']}/{convo['cited_total']} target 100%")
+    print(f"follow-up answers that estimate odds: {convo['odds']} target 0")
+    reader = "bedrock" if os.environ.get("BEDROCK_ENABLED", "").lower() in {"1", "true", "yes"} else "rules only"
+    print(
+        f"paraphrased follow-ups ({reader}): routing {paraphrased['route_ok']}/{paraphrased['route_total']}, "
+        f"school and topic {paraphrased['ref_ok']}/{paraphrased['ref_total']} target 90% with Bedrock"
+    )
+    for line in paraphrase_misses:
+        print("   paraphrase miss:", line)
     print(f"cited claims kept: {citation_ok}/{citation_total}")
     print(f"schools dropped for missing data: {dropped}")
     print(f"median turn: {median:.2f}s")
+    leaked, blocked_clean, total_pii, total_clean = _post_safety()
+    print(f"draft posts with personal info published: {leaked}/{total_pii} target 0")
+    print(f"clean draft posts wrongly blocked: {blocked_clean}/{total_clean}")
+    if leaked:
+        failures.append(f"{leaked} draft posts with personal info passed the safety check")
     if failures:
         print("failures:")
         for line in failures:
             print(" -", line)
         sys.exit(1)
+
+
+def _post_safety() -> tuple[int, int, int, int]:
+    """Personal info that would be published, and clean posts that were blocked."""
+    from community.safety import check_post
+
+    leaked = blocked_clean = total_pii = total_clean = 0
+    for line in POST_DRAFTS.read_text().splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        ok = check_post(row["text"])["ok"]
+        if row["pii"]:
+            total_pii += 1
+            leaked += int(ok)
+        else:
+            total_clean += 1
+            blocked_clean += int(not ok)
+    return leaked, blocked_clean, total_pii, total_clean
 
 
 def _citations() -> tuple[int, int]:
@@ -186,6 +228,7 @@ def _citations() -> tuple[int, int]:
                 if source:
                     defended.add(source)
                 defended.update(row.get("review_ids") or [])
+                defended.update(row.get("post_ids") or [])
                 if row.get("status") == "unknown":
                     # An "unknown" claim may cite a field only if that field really is empty.
                     defended.update(p for p in row.get("missing_paths") or [] if get_path(school, p) is None)
@@ -240,6 +283,71 @@ def _getting_in_lines() -> tuple[int, int, int]:
             shown = f"{record['line']} {record['text']} {record.get('detail') or ''}".casefold()
             odds += any(re.search(rf"\b{re.escape(word)}" if word[0].isalpha() else re.escape(word), shown) for word in _ODDS_WORDS)
     return ok, total, odds
+
+
+def _conversations(failures: list[str], path: Path | None = None) -> dict:
+    """Run the scripted chats in eval/conversations.jsonl through the conversation layer.
+
+    Each turn may expect a route, the schools a follow-up is about (by name, by its
+    position in the shown list, or the whole list) and its topic. Every line of an
+    answer must carry a citation, and no answer may estimate a family's odds.
+    """
+    import re
+
+    from agent.conversation import chat_turn
+
+    odds_words = re.compile(r"\b(likely|probab\w*|percent|odds of|chance of|you will get in|guarantee\w*)\b|%")
+    out = {"route_ok": 0, "route_total": 0, "ref_ok": 0, "ref_total": 0, "cited_ok": 0, "cited_total": 0, "odds": 0}
+    by_name = {school["name"]: school["id"] for school in load_schools()}
+    path = path or ROOT / "eval" / "conversations.jsonl"
+    for row in (json.loads(line) for line in path.read_text().splitlines() if line.strip()):
+        state = {"sessions": {}, "inbox": [], "overlays": {}}
+        session_id = None
+        for step, spec in enumerate(row["turns"]):
+            shown = list(state["sessions"][session_id]["focus"]["results"]) if session_id else []
+            response = chat_turn(state, {"session_id": session_id, "message": spec["say"]})
+            session_id = response["session_id"]
+            label = f"{row['id']} turn {step}"
+            if "route" in spec:
+                out["route_total"] += 1
+                if response["route"] == spec["route"]:
+                    out["route_ok"] += 1
+                else:
+                    failures.append(f"{label} route {response['route']} != {spec['route']}")
+            answer = next((b["payload"] for b in response["blocks"] if b["type"] == "answer"), None)
+            detail = next((b["payload"] for b in response["blocks"] if b["type"] == "school_detail"), None)
+            about = answer["school_ids"] if answer else ([detail["school"]["id"]] if detail else [])
+            if response["route"] == "save":
+                about = list(state["sessions"][session_id].get("saved") or [])[-1:]
+            expected = None
+            if "schools" in spec:
+                expected = [by_name[name] for name in spec["schools"]]
+            elif "ordinal" in spec:
+                expected = shown[spec["ordinal"] - 1 : spec["ordinal"]]
+            elif spec.get("scope") == "results":
+                expected = shown[:8]
+            if expected is not None or "topic" in spec:
+                out["ref_total"] += 1
+                topic = None
+                if answer:
+                    kind, need = answer["topic"]["kind"], answer["topic"]["need"]
+                    topic = f"need:{need}" if kind == "need" else kind
+                ok = (expected is None or about == expected) and ("topic" not in spec or topic == spec["topic"])
+                out["ref_ok"] += ok
+                if not ok:
+                    failures.append(f"{label} about {about} topic {topic} != {expected} {spec.get('topic')}")
+            if answer:
+                message = next(b["payload"] for b in response["blocks"] if b["type"] == "message")
+                for line in filter(None, (message.get("cited") or "").split("\n")):
+                    out["cited_total"] += 1
+                    out["cited_ok"] += bool(citations_in(line))
+                shown_text = f"{message.get('text') or ''} {message.get('prompt') or ''}".casefold()
+                if odds_words.search(shown_text):
+                    out["odds"] += 1
+                    failures.append(f"{label} answer estimates odds")
+    if out["cited_ok"] != out["cited_total"]:
+        failures.append(f"{out['cited_total'] - out['cited_ok']} follow-up answer lines lack a citation")
+    return out
 
 
 if __name__ == "__main__":

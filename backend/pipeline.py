@@ -9,6 +9,8 @@ from agent.explainer import model_summaries, public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
 from clarify.clarifier import choose_question
+from community.evidence import apply_community
+from community.service import card_summary, record_ask
 from contracts import Block, Criterion, Engine, EngineStep, EvidenceRecord, TurnResponse
 from evidence.engine import evaluate_criterion
 from evidence.scorer import score_school
@@ -300,6 +302,7 @@ def _score_school(school, criteria, programs, state, session=None) -> dict | Non
         if criterion.kind not in {"need", "distance"}:
             continue
         record = evaluate_criterion(school, criterion, programs, _overlays_for(state, school["id"]))
+        record = apply_community(record, school, criterion, state)
         records.append(record)
         rows.append((criterion.strength, record))
     if not rows and not any(c.kind in {"location", "grade", "school_type"} for c in criteria):
@@ -326,6 +329,7 @@ def _score_school(school, criteria, programs, state, session=None) -> dict | Non
         "evidence": [record.model_dump() for record in records],
         "tuition": (school.get("osp") or {}).get("tuition"),
         "saved": False,
+        "community": card_summary(state, school["id"], [c.need for c in criteria if c.kind == "need" and c.need]),
     }
 
 
@@ -425,7 +429,7 @@ def _grid(cards: list[dict], criteria: list[Criterion]) -> dict:
             cells[card["id"]][column.id] = by_id.get(column.id)
     return {
         "schools": [{"id": card["id"], "name": card["name"]} for card in cards],
-        "criteria": [{"id": column.id, "text": column.text, "strength": column.strength} for column in columns],
+        "criteria": [{"id": column.id, "text": column.text, "label": column.label, "strength": column.strength} for column in columns],
         "cells": cells,
     }
 
@@ -448,6 +452,7 @@ def _ask_unknowns(session, cards, state) -> None:
             question = needs().get(need_id, {}).get("visit_question") or f"Can you confirm {criterion.get('text')}?"
             item = add_question(state, school, need_id, question, session["id"])
             item["email"] = send_school_question(item)
+            record_ask(state, school["id"], need_id, session["id"], "agent")
 
 
 def _compare(session, criteria, schools, programs, state, payload, message) -> TurnResponse:
@@ -538,8 +543,14 @@ def _cost(session, criteria, schools, programs, state, message, payload) -> Turn
         ids = [school["id"] for school in matched if school.get("entity_type") == "private"][:3]
     by_id = _by_id(schools)
     estimates = [estimate_cost(by_id[sid]) for sid in ids if sid in by_id]
+    lead = "Likely scholarship eligibility. Not a promised award."
+    if estimates and all(row.get("entity_type") in {"public", "charter"} for row in estimates):
+        # Public and charter schools are tuition-free in the data; there is no scholarship to estimate.
+        names = " and ".join(row["school_name"] for row in estimates[:2]) + (" and others" if len(estimates) > 2 else "")
+        verb = "is" if len(estimates) == 1 else "are"
+        lead = f"{names} {verb} tuition-free in the data, so no scholarship estimate is needed."
     blocks = [
-        Block(type="message", payload={"text": "Likely scholarship eligibility. Not a promised award."}),
+        Block(type="message", payload={"text": lead}),
         Block(type="cost", payload={"schools": estimates}),
     ]
     return TurnResponse(session_id=session["id"], route="cost", criteria=criteria, blocks=blocks)
@@ -601,7 +612,7 @@ def _save(session, criteria, schools, programs, state, payload, message) -> Turn
         ]
     )
     blocks = [
-        Block(type="message", payload={"text": f"Saved list has {len(saved)} schools."}),
+        Block(type="message", payload={"text": f"Your saved list has {len(saved)} school{'' if len(saved) == 1 else 's'}."}),
         # by_deadline: saved schools with the soonest open deadline first, for the saved list.
         Block(type="checklist", payload={"school_ids": saved, "items": items, "by_deadline": deadlines}),
     ]
@@ -618,11 +629,14 @@ def _ask(session, criteria, schools, programs, state, payload, engine: Engine) -
     question = needs().get(need_id, {}).get("visit_question") or f"Can you tell us about {need_id}?"
     item = add_question(state, school, need_id, question, session["id"])
     item["email"] = send_school_question(item)
+    item["parent_count"] = record_ask(state, school["id"], need_id, session["id"], "agent")
+    count = item["parent_count"]
+    topic = needs().get(need_id, {}).get("label", need_id).lower()
     blocks = [
         Block(
             type="message",
             payload={
-                "text": f"I grouped that question for {school['name']}. It is waiting in the school inbox ({item['parent_count']} parent{'s' if item['parent_count'] != 1 else ''})."
+                "text": f"I grouped that question for {school['name']}. {count} parent{'s' if count != 1 else ''} asked about {topic} this month, so the school gets one request."
             },
         )
     ]

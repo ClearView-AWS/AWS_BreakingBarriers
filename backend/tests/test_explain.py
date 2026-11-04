@@ -85,15 +85,19 @@ def cards(monkeypatch):
     return run
 
 
-def _care_note(card: dict) -> str:
-    return next(row["note"] for row in card["evidence"] if (row.get("source") or {}).get("path") == "osp.after_school_until")
+def _care_note(card: dict) -> str | None:
+    # A card can get its after-care status from parent posts instead of the profile field
+    # (community evidence). Those cards have no profile time to quote, so tests skip them.
+    return next((row["note"] for row in card["evidence"] if (row.get("source") or {}).get("path") == "osp.after_school_until"), None)
 
 
 def test_true_model_sentence_replaces_code_summary(cards):
     def explain(inputs):
         out = {}
         for card in inputs:
-            note = next(r["note"] for r in card["evidence"] if r["cite"] == "osp.after_school_until")
+            note = next((r["note"] for r in card["evidence"] if r["cite"] == "osp.after_school_until"), None)
+            if note is None:
+                continue
             time = re.search(r"\d{1,2}:\d{2} [AP]M", note).group(0)
             out[card["id"]] = f"Care runs until {time}, and you need 6 PM [[cite:osp.after_school_until]]."
         return json.dumps(out)
@@ -101,6 +105,8 @@ def test_true_model_sentence_replaces_code_summary(cards):
     shown, engine = cards(explain)
     assert engine["explain"] == "bedrock"
     for card in shown:
+        if _care_note(card) is None:
+            continue
         time = re.search(r"\d{1,2}:\d{2} [AP]M", _care_note(card)).group(0)
         assert card["summary"] == f"Care runs until {time}, and you need 6 PM."
 
@@ -134,3 +140,28 @@ def test_reply_without_json_keeps_the_code_summary(cards):
     assert engine["explain"] == "rules_fallback"
     assert engine["errors"][0].startswith("bedrock explain returned no JSON object")
     assert all("[[cite:" not in card["summary"] for card in shown)
+
+
+def test_half_cited_summary_keeps_the_code_summary(cards):
+    """One citation at the very end: the check would cut the fact and keep the filler."""
+    honest, _ = cards(lambda inputs: json.dumps({}))
+    code_text = {card["id"]: card["summary"] for card in honest}
+
+    filler = "No other evidence was provided for this school."
+    shown, engine = cards(
+        lambda inputs: json.dumps({c["id"]: f"It has the care you need. {filler} [[cite:osp.after_school_until]]" for c in inputs})
+    )
+    assert all(filler not in card["summary"] for card in shown)
+    assert {card["id"]: card["summary"] for card in shown} == code_text
+    assert engine["explain"] == "rules_fallback"
+
+
+def test_model_sees_filter_names(cards):
+    seen = []
+
+    def explain(inputs):
+        seen.extend(row["text"] for card in inputs for row in card["criteria"])
+        return json.dumps({})
+
+    cards(explain)
+    assert "After-school care until 6:00 PM" in seen

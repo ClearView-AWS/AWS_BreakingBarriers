@@ -22,6 +22,7 @@ def allowed_citations(records: list[EvidenceRecord], school: dict | None = None)
         if record.source:
             allowed.add(record.source.path)
         allowed.update(record.review_ids)
+        allowed.update(record.post_ids)
         allowed.update(record.missing_paths)
         if record.conflict:
             allowed.add(record.conflict.path)
