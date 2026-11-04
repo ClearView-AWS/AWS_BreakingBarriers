@@ -47,6 +47,21 @@ OPENSEARCH_ENDPOINT=<DomainEndpoint> ./scripts/deploy-demo.sh
 
 The API still works with the local hybrid engine if OpenSearch is missing.
 
+## Auto-deploy from `main`
+
+`.github/workflows/deploy-demo.yml` runs `./scripts/deploy-demo.sh` on every push to `main` (and on manual **Run workflow**).
+
+Repo secrets (Workshop Studio keys expire — refresh after `aws login`):
+
+| Secret | Required | Notes |
+|---|---|---|
+| `AWS_ACCESS_KEY_ID` | yes | From the sandbox session |
+| `AWS_SECRET_ACCESS_KEY` | yes | |
+| `AWS_SESSION_TOKEN` | yes if temporary | Workshop Studio needs this |
+| `OPENSEARCH_ENDPOINT` | no | Hostname only; wires the existing domain into the app |
+
+Default flags in CI: `BEDROCK=1`, `SKIP_OPENSEARCH=1` (does not recreate the OpenSearch domain).
+
 ## Teardown (stop the bill)
 
 ```bash

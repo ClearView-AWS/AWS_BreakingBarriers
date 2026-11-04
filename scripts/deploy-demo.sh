@@ -69,5 +69,10 @@ if [[ "${SKIP_OPENSEARCH:-}" != "1" ]]; then
 fi
 
 echo
-echo "Done. Open the CloudFrontURL output above in a browser."
+URL="$(aws cloudformation describe-stacks --stack-name GsAppStack --region "$CDK_DEFAULT_REGION" \
+  --query "Stacks[0].Outputs[?OutputKey=='CloudFrontURL'].OutputValue" --output text 2>/dev/null || true)"
+echo "Done. Open the CloudFrontURL in a browser."
+if [[ -n "${URL}" && "${URL}" != "None" ]]; then
+  echo "CloudFrontURL=${URL}"
+fi
 echo "That URL replaces yesterday's IP address."
