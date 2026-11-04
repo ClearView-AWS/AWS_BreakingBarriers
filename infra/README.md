@@ -30,11 +30,7 @@ SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
 Outputs include `CloudFrontURL` — that is the parent-facing link (no IP).
 Current demo: https://dvpvz48phigre.cloudfront.net
 
-Turn Bedrock on after model access is approved:
-
-```bash
-BEDROCK=1 SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
-```
+Bedrock is on by default; `BEDROCK=0` deploys the rules engine only. If `GsOpenSearchStack` exists, the script passes its endpoint to the app; `OPENSEARCH_ENDPOINT=none` keeps local search.
 
 ## OpenSearch later
 
@@ -42,8 +38,8 @@ BEDROCK=1 SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
 cd infra && npx cdk deploy GsOpenSearchStack
 # then reindex:
 OPENSEARCH_URL=https://<DomainEndpoint> ../.venv/bin/python ../data/index/indexer.py
-# then redeploy app with the endpoint:
-OPENSEARCH_ENDPOINT=<DomainEndpoint> ./scripts/deploy-demo.sh
+# then redeploy the app (it reads the endpoint from the stack):
+SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
 ```
 
 The API still works with the local hybrid engine if OpenSearch is missing.
@@ -52,14 +48,12 @@ The API still works with the local hybrid engine if OpenSearch is missing.
 
 `.github/workflows/deploy-demo.yml` runs `./scripts/deploy-demo.sh` on every push to `main` (and on manual **Run workflow**).
 
-Repo secrets (Workshop Studio keys expire — refresh after `aws login`):
+The workflow signs in with GitHub OIDC, so no AWS keys are stored and nothing expires. Repo variable `AWS_DEPLOY_ROLE_ARN` names the IAM role `GsGitHubDeploy`, which trusts only pushes to this repo's `main`. The role and the `token.actions.githubusercontent.com` OIDC provider were created by hand in the sandbox account, not by CDK.
 
-| Secret | Required | Notes |
+| Setting | Required | Notes |
 |---|---|---|
-| `AWS_ACCESS_KEY_ID` | yes | From the sandbox session |
-| `AWS_SECRET_ACCESS_KEY` | yes | |
-| `AWS_SESSION_TOKEN` | yes if temporary | Workshop Studio needs this |
-| `OPENSEARCH_ENDPOINT` | no | Hostname only; wires the existing domain into the app |
+| `vars.AWS_DEPLOY_ROLE_ARN` | yes | `arn:aws:iam::<account>:role/GsGitHubDeploy` |
+| `secrets.OPENSEARCH_ENDPOINT` | no | Hostname only. Without it the script reads `GsOpenSearchStack`. |
 
 Default flags in CI: `BEDROCK=1`, `SKIP_OPENSEARCH=1` (does not recreate the OpenSearch domain).
 
@@ -68,4 +62,6 @@ Default flags in CI: `BEDROCK=1`, `SKIP_OPENSEARCH=1` (does not recreate the Ope
 ```bash
 cd infra
 npx cdk destroy GsAppStack GsOpenSearchStack --force
+aws iam detach-role-policy --role-name GsGitHubDeploy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+aws iam delete-role --role-name GsGitHubDeploy
 ```
