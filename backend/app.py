@@ -272,6 +272,34 @@ def community_vote(post_id: str, body: VoteIn) -> dict:
         return community.vote(state, post_id, body.persona)
 
 
+import faq  # noqa: E402
+
+
+class FaqIn(BaseModel):
+    persona: str = "parent_a"
+    text: str = ""
+
+
+@app.get("/api/faq")
+def faq_list(persona: str | None = None, q: str | None = None) -> dict:
+    with State() as state:
+        return {"questions": faq.list_faq(state, persona), "similar": faq.similar(state, q) if q else []}
+
+
+@app.post("/api/faq")
+def faq_add(body: FaqIn) -> dict:
+    with State() as state:
+        result = faq.add_question(state, body.persona, body.text)
+        return {**result, "questions": faq.list_faq(state, body.persona)}
+
+
+@app.post("/api/faq/{faq_id}/ask")
+def faq_ask(faq_id: str, body: FaqIn) -> dict:
+    with State() as state:
+        result = faq.toggle_ask(state, faq_id, body.persona)
+        return {**result, "questions": faq.list_faq(state, body.persona)}
+
+
 @app.post("/api/community/suggest-tags")
 def community_tags(body: TextIn) -> dict:
     return {"tags": suggest_tags(body.text)}

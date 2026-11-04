@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { HighlightAssistant } from "./Assistant";
+import { FaqWidget } from "./Faq";
 import type { Turn } from "./types";
 import { SavedDeadline, onZonedTap, type Access } from "./GettingIn";
 import { Chat, newTapLine, type Entry, type HistoryEntry } from "./Chat";
@@ -185,6 +186,7 @@ export function App() {
         )}
       </main>
       <HighlightAssistant sessionId={sessionId} rootSelector="#root" />
+      <FaqWidget persona={persona} />
     </div>
   );
 }
