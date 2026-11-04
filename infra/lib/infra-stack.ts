@@ -168,6 +168,16 @@ export class InfraStack extends cdk.Stack {
         ],
       }),
     );
+    // The first call to a Claude model enables it for the account through AWS
+    // Marketplace, which the caller must be allowed to do. Without this, Converse
+    // fails with AccessDeniedException and the API falls back to the rules engine.
+    taskRole.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        sid: 'BedrockModelEnablement',
+        actions: ['aws-marketplace:ViewSubscriptions', 'aws-marketplace:Subscribe'],
+        resources: ['*'],
+      }),
+    );
     // The domain policy trusts the account; the role still needs its own es:ESHttp* grant.
     // Write access lets the task build the indexes once at startup (INDEX_ON_START).
     this.domain.grantReadWrite(taskRole);

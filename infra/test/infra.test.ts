@@ -36,7 +36,7 @@ test('state table is on-demand with pk/sk', () => {
 test('task role can call Bedrock, OpenSearch and DynamoDB', () => {
   const template = synth();
   const policies = JSON.stringify(template.findResources('AWS::IAM::Policy'));
-  for (const action of ['bedrock:InvokeModel', 'es:ESHttpGet', 'es:ESHttpPost', 'dynamodb:PutItem', 'dynamodb:Query']) {
+  for (const action of ['bedrock:InvokeModel', 'aws-marketplace:Subscribe', 'es:ESHttpGet', 'es:ESHttpPost', 'dynamodb:PutItem', 'dynamodb:Query']) {
     expect(policies).toContain(action);
   }
 });
