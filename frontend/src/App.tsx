@@ -5,6 +5,7 @@ import { Chat, newTapLine, type Entry, type HistoryEntry } from "./Chat";
 import type { Actions, Picked } from "./blocks";
 import { CommunityHome, CommunityPage, PersonaSwitcher, type CommunityTarget } from "./Community";
 import type { ResultsView } from "./Views";
+import { t, useUiLanguage } from "./i18n";
 
 type View = "search" | "saved" | "community";
 type ChatTurn = Turn & { history?: HistoryEntry[] };
@@ -16,7 +17,7 @@ async function postChat(body: Record<string, unknown>): Promise<ChatTurn> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!response.ok) throw new Error(`Something went wrong (${response.status}). Try again.`);
+  if (!response.ok) throw new Error(t("app.error_status", { status: response.status }));
   return response.json();
 }
 
@@ -40,6 +41,8 @@ export function App() {
 
   const lastTurn = [...entries].reverse().find((entry): entry is Extract<Entry, { role: "agent" }> => entry.role === "agent")?.turn;
   const criteria = lastTurn?.criteria ?? [];
+  // The whole UI follows the language of the latest reply (the parent's latest typed message).
+  useUiLanguage(lastTurn?.language);
 
   // Everything the parent types or taps goes through here and lands in the chat.
   async function send(body: Record<string, unknown>) {
@@ -49,7 +52,8 @@ export function App() {
     try {
       const data = await postChat({ session_id: sessionId, ...body });
       setSessionId(data.session_id);
-      const tap = message ? null : newTapLine(history.current, data.history ?? []);
+      // The backend sends this turn's tap line already in the reply's language.
+      const tap = message ? null : data.tap ?? newTapLine(history.current, data.history ?? []);
       history.current = data.history ?? [];
       setEntries((list) => [
         ...list,
@@ -59,7 +63,7 @@ export function App() {
       if (data.route === "save") void refreshSaved(data.session_id);
       return data;
     } catch (err) {
-      setEntries((list) => [...list, { role: "system", text: err instanceof Error ? err.message : "Something went wrong. Try again." }]);
+      setEntries((list) => [...list, { role: "system", text: err instanceof Error ? err.message : t("app.error") }]);
       return null;
     } finally {
       setBusy(false);
@@ -96,11 +100,11 @@ export function App() {
       <header className="top">
         <div className="brand">
           <strong>Guided Search</strong>
-          <span>Florida prototype · synthetic schools · facts come from the data</span>
+          <span>{t("app.tagline")}</span>
         </div>
         <div className="top-right">
           <nav className="nav">
-            <button aria-pressed={view === "search"} onClick={openSearch}>Search</button>
+            <button aria-pressed={view === "search"} onClick={openSearch}>{t("app.search")}</button>
             <button
               aria-pressed={view === "saved"}
               onClick={async () => {
@@ -108,9 +112,9 @@ export function App() {
                 await refreshSaved();
               }}
             >
-              Saved ({saved.length})
+              {t("app.saved", { n: saved.length })}
             </button>
-            <button aria-pressed={view === "community"} onClick={() => openCommunity(null)}>Community</button>
+            <button aria-pressed={view === "community"} onClick={() => openCommunity(null)}>{t("app.community")}</button>
           </nav>
           <PersonaSwitcher value={persona} onChange={setPersona} />
         </div>
@@ -121,8 +125,8 @@ export function App() {
         )}
         {view === "saved" && (
           <section>
-            <h2 className="section-title">Saved schools</h2>
-            {saved.length === 0 && <p>Save a school from a result card. The visit list is built from what is still unknown.</p>}
+            <h2 className="section-title">{t("app.saved_title")}</h2>
+            {saved.length === 0 && <p>{t("app.saved_empty")}</p>}
             <ul className="checklist">
               {saved.map((school) => (
                 <li key={school.id}><strong>{school.name}</strong> · {school.city}<SavedDeadline access={(school as { access?: Access }).access} /></li>
@@ -130,7 +134,7 @@ export function App() {
             </ul>
             {checklist.length > 0 && (
               <>
-                <h2 className="section-title">Visit checklist</h2>
+                <h2 className="section-title">{t("app.checklist")}</h2>
                 <ul className="checklist">
                   {checklist.map((item, index) => (
                     <li key={index}><strong>{item.school_name}.</strong> {item.question}</li>
@@ -151,7 +155,7 @@ export function App() {
             sessionId={sessionId}
             draftNeed={community.draftNeed}
             filterNeed={community.filterNeed}
-            backLabel={community.from === "results" ? "Back to results" : "All schools"}
+            backLabel={community.from === "results" ? t("app.back_results") : t("app.all_schools")}
             onBack={() => (community.from === "results" ? openSearch() : openCommunity(null))}
             onChanged={() => {
               communityChanged.current = true;

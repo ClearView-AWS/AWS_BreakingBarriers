@@ -4,6 +4,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { AgentBlocks, ChipRow, type Actions } from "./blocks";
 import { DEMO_QUERY, type Criterion, type Turn } from "./types";
+import { t } from "./i18n";
 import "./chat.css";
 
 export type HistoryEntry = {
@@ -70,12 +71,9 @@ export function Chat({
       <div className="chat-scroll">
         <ol className="chat-log" aria-live="polite" aria-label="Conversation">
           <li className="chat-entry chat-agent">
-            <span className="chat-who">Guide</span>
+            <span className="chat-who">{t("chat.guide")}</span>
             <div className="agent-text">
-              <p>
-                Tell me about the school you need: the grade, the city, and what matters to your family. I'll show the
-                schools that fit and the evidence for each one, and you can ask me about any of them.
-              </p>
+              <p>{t("chat.intro")}</p>
             </div>
             {!entries.length && (
               <div className="chat-chips">
@@ -105,15 +103,15 @@ export function Chat({
             }
             return (
               <li key={index} ref={ref} className="chat-entry chat-agent">
-                <span className="chat-who">Guide</span>
+                <span className="chat-who">{t("chat.guide")}</span>
                 <AgentBlocks turn={entry.turn} latest={index === latestAgent} current={index === currentResults} actions={actions} />
               </li>
             );
           })}
           {busy && (
             <li ref={thinking} className="chat-entry chat-agent chat-thinking">
-              <span className="chat-who">Guide</span>
-              <span className="chat-text">Looking…</span>
+              <span className="chat-who">{t("chat.guide")}</span>
+              <span className="chat-text">{t("chat.looking")}</span>
             </li>
           )}
         </ol>
@@ -134,23 +132,23 @@ export function Chat({
                   setPicked([]);
                 }}
               >
-                Compare {picked[0].name} and {picked[1].name}
+                {t("chat.compare_pair", { a: picked[0].name, b: picked[1].name })}
               </button>
             ) : (
-              <span>Pick one more school to compare with {picked[0].name}.</span>
+              <span>{t("chat.compare_one", { name: picked[0].name })}</span>
             )}
-            <button type="button" className="texty" onClick={() => setPicked([])}>Clear</button>
+            <button type="button" className="texty" onClick={() => setPicked([])}>{t("chat.clear")}</button>
           </div>
         )}
         <form className="chat-input" onSubmit={submit}>
           <input
-            aria-label={entries.length ? "Ask about these schools or change your search" : "Describe the school you need"}
-            placeholder={entries.length ? "Ask about these schools, like “does #2 have a bus?”, or change your search" : "Describe the school you need"}
+            aria-label={entries.length ? t("chat.ask_label") : t("chat.describe")}
+            placeholder={entries.length ? t("chat.ask_placeholder") : t("chat.describe")}
             value={text}
             onChange={(event) => setText(event.target.value)}
           />
           <button className="primary" disabled={busy || !text.trim()}>
-            {busy ? "…" : "Send"}
+            {busy ? "…" : t("chat.send")}
           </button>
         </form>
       </div>

@@ -7,7 +7,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./views.css";
 import type { Actions } from "./blocks";
-import { STATUS_LABEL, nameOf } from "./labels";
+import { nameOf, statusLabel } from "./labels";
+import { t, tn, uiLanguage } from "./i18n";
 import type { Card, Criterion, ProgramPin } from "./types";
 
 export type ResultsView = "list" | "map";
@@ -46,11 +47,11 @@ export function ViewToggle(props: {
   const spread = useMemo(() => spreadMiles(props.cards), [props.cards]);
   const aboutPlace = props.criteria.some((item) => item.kind === "distance");
   const suggestMap = props.view !== "map" && props.cards.length > 1 && (aboutPlace || spread > SUGGEST_MAP_MILES);
-  const tabs: [ResultsView, string][] = [["list", "List"], ["map", "Map"]];
+  const tabs: [ResultsView, string][] = [["list", t("views.list")], ["map", t("views.map")]];
 
   return (
     <section className="results-views">
-      <div className="view-tabs" role="tablist" aria-label="Results view">
+      <div className="view-tabs" role="tablist" aria-label={t("views.label")}>
         {tabs.map(([id, label]) => (
           <button key={id} role="tab" aria-selected={props.view === id} onClick={() => props.onChange(id)}>
             {label}
@@ -60,9 +61,9 @@ export function ViewToggle(props: {
       {suggestMap && (
         <p className="map-hint">
           {aboutPlace
-            ? "You mentioned distance, so the map may help."
-            : `These schools are spread across about ${Math.round(spread)} miles, so the map may help.`}{" "}
-          <button className="texty" onClick={() => props.onChange("map")}>Show map</button>
+            ? t("views.hint_distance")
+            : t("views.hint_spread", { n: Math.round(spread) })}{" "}
+          <button className="texty" onClick={() => props.onChange("map")}>{t("views.show_map")}</button>
         </p>
       )}
       <div role="tabpanel" aria-label={tabs.find(([id]) => id === props.view)?.[1]}>
@@ -135,7 +136,7 @@ export function MapView(props: {
     const bounds: L.LatLngExpression[] = [];
     if (props.center) {
       L.marker(props.center, {
-        icon: L.divIcon({ className: "pin-you", html: "<span>Search area</span>", iconSize: [96, 24], iconAnchor: [48, 12] }),
+        icon: L.divIcon({ className: "pin-you", html: `<span>${escapeHtml(t("views.search_area"))}</span>`, iconSize: [96, 24], iconAnchor: [48, 12] }),
         keyboard: false,
         interactive: false,
       }).addTo(group);
@@ -149,7 +150,7 @@ export function MapView(props: {
           const row = byId.get(link.school_id);
           if (!row) return null;
           const where = row.rank ? `#${row.rank}` : row.card.name;
-          return `${labels.get(link.criterion_id) ?? "a need"} at ${where} · ${link.miles} mi`;
+          return t("views.program_fills", { need: labels.get(link.criterion_id) ?? t("views.a_need"), where, miles: link.miles });
         })
         .filter(Boolean);
       for (const link of program.links) {
@@ -159,10 +160,10 @@ export function MapView(props: {
       }
       L.marker(point, {
         icon: L.divIcon({ className: "pin-wrap", html: '<span class="pin-program">◆</span>', iconSize: [22, 22], iconAnchor: [11, 11] }),
-        title: `Nearby program: ${program.name}`,
-        alt: `Nearby program: ${program.name}`,
+        title: t("views.nearby_program", { name: program.name }),
+        alt: t("views.nearby_program", { name: program.name }),
       })
-        .bindTooltip(`<strong>Nearby program: ${escapeHtml(program.name)}</strong><br>${fills.map((line) => escapeHtml(String(line))).join("<br>")}`)
+        .bindTooltip(`<strong>${escapeHtml(t("views.nearby_program", { name: program.name }))}</strong><br>${fills.map((line) => escapeHtml(String(line))).join("<br>")}`)
         .addTo(group);
       bounds.push(point);
     }
@@ -174,7 +175,7 @@ export function MapView(props: {
         : `<span class="pin" style="background:${pinColor(row.card)}">${label}</span>`;
       const marker = L.marker(point, {
         icon: L.divIcon({ className: "pin-wrap", html, iconSize: [30, 30], iconAnchor: [15, 15] }),
-        title: `${row.rank ? `${row.rank}. ` : ""}${row.card.name}, ${Math.round(row.card.match * 100)}% match${row.hollow ? ", missed a must-have" : ""}`,
+        title: `${row.rank ? `${row.rank}. ` : ""}${t("views.pin_title", { name: row.card.name, pct: Math.round(row.card.match * 100) })}${row.hollow ? `, ${t("views.pin_missed")}` : ""}`,
         alt: row.card.name,
         riseOnHover: true,
       });
@@ -185,7 +186,8 @@ export function MapView(props: {
     if (bounds.length > 1) current.fitBounds(L.latLngBounds(bounds), { padding: [36, 36], maxZoom: 13 });
     else if (bounds.length === 1) current.setView(bounds[0], 12);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.schools, props.gaps, props.missed, props.center, props.programs]);
+    // uiLanguage(): rebuild the pins' titles and tooltips when the UI language changes.
+  }, [props.schools, props.gaps, props.missed, props.center, props.programs, uiLanguage()]);
 
   useEffect(() => {
     // The map can be created before the chat lays it out; recompute its size once it has one.
@@ -204,17 +206,17 @@ export function MapView(props: {
   return (
     <div className="map-view">
       <p className="meta">
-        {placed.length} school{placed.length === 1 ? "" : "s"} on the map. Numbers match the list. Hollow pins missed a must-have.
-        {props.programs.length > 0 ? " ◆ marks a nearby program that fills a gap, with a dashed line to its school." : ""}
-        {unplaced > 0 ? ` ${unplaced} school${unplaced === 1 ? " has" : "s have"} no map point and ${unplaced === 1 ? "is" : "are"} only in the list.` : ""}
+        {tn("views.on_map", placed.length)} {t("views.numbers")}
+        {props.programs.length > 0 ? ` ${t("views.programs_note")}` : ""}
+        {unplaced > 0 ? ` ${tn("views.unplaced", unplaced)}` : ""}
       </p>
-      <div className="map-box" ref={box} aria-label="Map of the schools in the list" role="region" />
+      <div className="map-box" ref={box} aria-label={t("views.map_label")} role="region" />
       <ul className="map-legend" aria-hidden="true">
-        <li><span className="dot" style={{ background: "var(--confirmed)" }} /> 85%+ match</li>
-        <li><span className="dot" style={{ background: "var(--partial)" }} /> 65 to 84%</li>
-        <li><span className="dot" style={{ background: "var(--attention)" }} /> under 65%</li>
-        <li><span className="dot hollow" /> missed a must-have</li>
-        {props.programs.length > 0 && <li><span className="legend-program">◆</span> nearby program</li>}
+        <li><span className="dot" style={{ background: "var(--confirmed)" }} /> {t("views.legend_high")}</li>
+        <li><span className="dot" style={{ background: "var(--partial)" }} /> {t("views.legend_mid")}</li>
+        <li><span className="dot" style={{ background: "var(--attention)" }} /> {t("views.legend_low")}</li>
+        <li><span className="dot hollow" /> {t("views.legend_missed")}</li>
+        {props.programs.length > 0 && <li><span className="legend-program">◆</span> {t("views.legend_program")}</li>}
       </ul>
       {chosen && (
         <article className="pin-card" aria-live="polite" data-school-id={chosen.card.id}>
@@ -223,29 +225,29 @@ export function MapView(props: {
               {chosen.rank ? `${chosen.rank}. ` : ""}
               {chosen.card.name}
             </h3>
-            <button className="icon" aria-label="Close" onClick={() => setSelected(null)}>×</button>
+            <button className="icon" aria-label={t("views.close")} onClick={() => setSelected(null)}>×</button>
           </header>
           <p className="meta">
-            {Math.round(chosen.card.match * 100)}% match · Verified {chosen.card.verified}
-            {chosen.card.distance_miles != null ? ` · ${chosen.card.distance_miles} miles` : ""}
-            {chosen.hollow ? " · missed a must-have" : ""}
+            {t("views.pin_meta", { pct: Math.round(chosen.card.match * 100), verified: chosen.card.verified })}
+            {chosen.card.distance_miles != null ? ` · ${t("blocks.miles", { n: chosen.card.distance_miles })}` : ""}
+            {chosen.hollow ? ` · ${t("views.pin_missed")}` : ""}
           </p>
           <ul className="pin-evidence">
             {chosen.card.evidence.map((row) => (
               <li key={row.criterion_id}>
-                <span className={`pill ${row.status}`}>{STATUS_LABEL[row.status] ?? row.status}</span>{" "}
+                <span className={`pill ${row.status}`}>{statusLabel(row.status)}</span>{" "}
                 {labels.get(row.criterion_id) ?? row.criterion_id}
               </li>
             ))}
             {chosenPrograms.map(({ program, link }) => (
               <li key={`${program.id}-${link.criterion_id}`} className="pin-program-line">
-                ◆ {program.name} · {link.miles} mi · fills {(labels.get(link.criterion_id) ?? "a need").toLowerCase()}
+                {t("views.pin_program", { name: program.name, miles: link.miles, need: (labels.get(link.criterion_id) ?? t("views.a_need")).toLowerCase() })}
               </li>
             ))}
           </ul>
           <div className="row-actions">
-            <button disabled={busy} onClick={() => send({ action: "school_detail", school_ids: [chosen.card.id] })}>Details</button>
-            <button disabled={busy} onClick={() => send({ action: "save", school_ids: [chosen.card.id] })}>Save</button>
+            <button disabled={busy} onClick={() => send({ action: "school_detail", school_ids: [chosen.card.id] })}>{t("views.details")}</button>
+            <button disabled={busy} onClick={() => send({ action: "save", school_ids: [chosen.card.id] })}>{t("blocks.save")}</button>
             <button
               aria-pressed={isPicked}
               onClick={() =>
@@ -256,7 +258,7 @@ export function MapView(props: {
                 )
               }
             >
-              {isPicked ? "Selected" : "Compare"}
+              {isPicked ? t("blocks.selected") : t("blocks.compare")}
             </button>
           </div>
         </article>

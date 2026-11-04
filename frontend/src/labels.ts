@@ -1,26 +1,23 @@
 // Names for evidence statuses, sources and criteria. Shared by the chat blocks and the
-// List / Map / Compare views so a school reads the same everywhere.
+// List / Map views so a school reads the same everywhere, in the parent's language.
+import { t } from "./i18n";
 import type { Criterion } from "./types";
-
-export const STATUS_LABEL: Record<string, string> = {
-  confirmed: "Confirmed",
-  partial: "Partial",
-  needs_attention: "Needs attention",
-  unknown: "Unknown",
-};
 
 export const STATUS_MARK: Record<string, string> = { confirmed: "✓", partial: "~", needs_attention: "!", unknown: "?" };
 
-export const SOURCE_LABEL: Record<string, string> = {
-  state_data: "State data",
-  school_reported: "School-reported",
-  school_website: "School website",
-  parent_reviews: "Parent reviews",
-  community: "Parents say",
-  program: "Nearby program",
-  funding_rule: "Scholarship rule",
-  computed: "Computed from the school's location",
-};
+/** "Confirmed", "Needs attention"... in the UI language. Unknown codes show as written. */
+export function statusLabel(status: string): string {
+  const key = `status.${status}`;
+  const text = t(key);
+  return text === key ? status : text;
+}
+
+/** "School-reported", "Nearby program"... in the UI language. Unknown types show as written. */
+export function sourceLabel(type: string): string {
+  const key = `source.${type}`;
+  const text = t(key);
+  return text === key ? type : text;
+}
 
 /** The filter's name ("STEM-focused"), falling back to the parent's words for anything that maps to no filter. */
 export function nameOf(item: Pick<Criterion, "text" | "label">): string {

@@ -68,6 +68,12 @@ export type Turn = {
   criteria: Criterion[];
   blocks: Block[];
   assumption?: string | null;
+  /** The reply's language: the language of the parent's latest typed message ("es", "ht"...). */
+  language?: string | null;
+  /** Set when this turn's message was not English and Amazon Translate read it. */
+  read_from?: string | null;
+  /** This turn's tap line ("You saved X."), already in the reply's language. */
+  tap?: string | null;
 };
 
 export const DEMO_QUERY =

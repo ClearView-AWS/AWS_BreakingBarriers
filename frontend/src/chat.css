@@ -36,6 +36,7 @@
 
 /* A Guide reply: text, then whatever blocks the turn returned. */
 .agent-blocks { display: grid; gap: 12px; min-width: 0; }
+.read-from { margin: 0; color: var(--muted, #5d6876); font-size: 13px; }
 .agent-text p { margin: 0 0 6px; font-size: 17px; line-height: 1.5; white-space: pre-line; }
 .agent-text p:last-child { margin-bottom: 0; }
 .agent-prompt { color: var(--muted, #5d6876); }

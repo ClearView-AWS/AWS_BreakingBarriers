@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from agent.citations import known_numbers, number_claims, validate_model_text
+from agent.citations import known_numbers, number_claims, strip_cites, validate_model_text
 
 FACTS = {
     "osp.after_school_until": known_numbers(["17:30", "After-school care is only partly supported: 5:30 PM."]),
@@ -165,3 +165,15 @@ def test_model_sees_filter_names(cards):
 
     cards(explain)
     assert "After-school care until 6:00 PM" in seen
+
+
+def test_a_name_with_st_is_one_sentence():
+    text = "St. Johns STEM Middle is confirmed as a STEM school [[cite:osp.school_sub_type]]."
+    assert validate_model_text(text, FACTS, PARENT) == text
+
+
+def test_review_citations_with_brackets_are_read_whole():
+    facts = {**FACTS, "reviews_full[1]": set()}
+    text = "Parents' STEM reviews are mostly positive [[cite:reviews_full[1]]]."
+    assert validate_model_text(text, facts, PARENT) == text
+    assert strip_cites(text) == "Parents' STEM reviews are mostly positive."
