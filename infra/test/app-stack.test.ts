@@ -26,3 +26,15 @@ test('translation is on by default and can be turned off', () => {
   template.hasResourceProperties('AWS::ECS::TaskDefinition', env('1'));
   synth({ translateEnabled: false }).hasResourceProperties('AWS::ECS::TaskDefinition', env('0'));
 });
+
+test('runtime state uses a DynamoDB table shared across Fargate replaces', () => {
+  template.hasResourceProperties('AWS::DynamoDB::Table', {
+    BillingMode: 'PAY_PER_REQUEST',
+    KeySchema: [
+      { AttributeName: 'pk', KeyType: 'HASH' },
+      { AttributeName: 'sk', KeyType: 'RANGE' },
+    ],
+  });
+  const task = JSON.stringify(template.findResources('AWS::ECS::TaskDefinition'));
+  expect(task).toContain('GS_DYNAMODB_TABLE');
+});

@@ -8,6 +8,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecrAssets from 'aws-cdk-lib/aws-ecr-assets';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
@@ -58,12 +59,21 @@ export class AppStack extends cdk.Stack {
 
     const cluster = new ecs.Cluster(this, 'Cluster', { vpc });
 
+    // One table stands in for the local state.json so task replaces keep sessions.
+    const stateTable = new dynamodb.Table(this, 'RuntimeState', {
+      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'sk', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     const environment: Record<string, string> = {
       GS_STATE_PATH: '/tmp/gs-state.json',
       GS_TODAY: '2026-11-03',
       AWS_REGION: cdk.Stack.of(this).region,
       BEDROCK_ENABLED: bedrockEnabled ? '1' : '0',
       TRANSLATE_ENABLED: translateEnabled ? '1' : '0',
+      GS_DYNAMODB_TABLE: stateTable.tableName,
     };
     if (props.openSearchEndpoint) {
       environment.OPENSEARCH_URL = props.openSearchEndpoint.startsWith('http')
@@ -108,6 +118,7 @@ export class AppStack extends cdk.Stack {
       unhealthyThresholdCount: 5,
     });
 
+    stateTable.grantReadWriteData(service.taskDefinition.taskRole);
     service.taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
