@@ -18,7 +18,9 @@ def _read_json(path) -> list:
 
 @lru_cache(maxsize=1)
 def load_schools() -> list[dict]:
-    schools = _read_json(SAMPLE_DIR / "schools_sample.json")
+    # GreatSchools' sample, moved to Seattle by data/synthetic/generate.py. The
+    # original Florida files in Sample Data/ stay untouched.
+    schools = _read_json(SYNTHETIC_DIR / "sample_seattle.json")
     schools += _read_json(SYNTHETIC_DIR / "schools.json")
     for school in schools:
         attach_coordinates(school)
@@ -46,5 +48,6 @@ def clear_corpus_cache() -> None:
 
 def known_cities() -> list[str]:
     cities = {school.get("city") for school in load_schools() if school.get("city")}
-    cities.update({"Jacksonville", "Miami", "Orlando", "Tampa", "Tallahassee", "St. Petersburg"})
+    # Washington cities a parent may name. Only Seattle has schools in this prototype.
+    cities.update({"Seattle", "Bellevue", "Redmond", "Tacoma", "Everett", "Spokane"})
     return sorted(cities, key=len, reverse=True)

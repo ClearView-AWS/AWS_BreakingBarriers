@@ -191,7 +191,7 @@ export function App() {
       <header className="top">
         <div className="brand">
           <strong>Guided Search</strong>
-          <span>Florida prototype · synthetic schools · facts come from the data</span>
+          <span>Seattle prototype · synthetic schools · facts come from the data</span>
         </div>
         <nav className="nav">
           <button aria-pressed={view === "search"} onClick={() => setView("search")}>Search</button>
@@ -555,7 +555,7 @@ function SchoolCard({
         >
           {selected ? "Selected" : "Compare"}
         </button>
-        {card.entity_type === "private" && <button onClick={() => onCost(card.id)}>Cost after scholarships</button>}
+        {card.entity_type === "private" && <button onClick={() => onCost(card.id)}>Cost and financial aid</button>}
         <button onClick={() => onCommunity({ schoolId: card.id })}>
           Community{card.community?.threads ? ` (${card.community.threads})` : ""}
         </button>
@@ -702,7 +702,7 @@ function Panel({ turn, onClose }: { turn: Turn; onClose: () => void }) {
           const schools = (block.payload.schools as Record<string, unknown>[]) ?? [];
           return (
             <div key={index}>
-              <h2>Cost after likely scholarships</h2>
+              <h2>Cost and financial aid</h2>
               {schools.map((school) => (
                 <div key={String(school.school_id)}>
                   <h3>{String(school.school_name)}</h3>
@@ -712,7 +712,7 @@ function Panel({ turn, onClose }: { turn: Turn; onClose: () => void }) {
                     {((school.lines as Record<string, string>[]) ?? []).map((line, lineIndex) => (
                       <li key={lineIndex}>
                         <strong>{line.wording}</strong> {line.name ? ` ${line.name}.` : ""} {line.eligibility ?? ""}{" "}
-                        {line.official_url && <a href={line.official_url}>Official page</a>}
+                        {line.official_url && <a href={line.official_url}>{line.link_label ?? "Official page"}</a>}
                       </li>
                     ))}
                   </ul>

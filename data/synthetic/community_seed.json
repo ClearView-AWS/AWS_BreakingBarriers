@@ -3,7 +3,7 @@
     {
       "post_id": "p_1",
       "thread_id": "p_1",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_1",
         "role": "parent"
@@ -21,7 +21,7 @@
     {
       "post_id": "p_2",
       "thread_id": "p_1",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_2",
         "role": "parent"
@@ -39,7 +39,7 @@
     {
       "post_id": "p_3",
       "thread_id": "p_1",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_3",
         "role": "parent"
@@ -57,7 +57,7 @@
     {
       "post_id": "p_4",
       "thread_id": "p_1",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_4",
         "role": "parent"
@@ -75,7 +75,7 @@
     {
       "post_id": "p_5",
       "thread_id": "p_5",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_5",
         "role": "parent"
@@ -93,7 +93,7 @@
     {
       "post_id": "p_6",
       "thread_id": "p_5",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_6",
         "role": "parent"
@@ -111,7 +111,7 @@
     {
       "post_id": "p_7",
       "thread_id": "p_5",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_7",
         "role": "parent"
@@ -129,7 +129,7 @@
     {
       "post_id": "p_8",
       "thread_id": "p_5",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_8",
         "role": "parent"
@@ -147,7 +147,7 @@
     {
       "post_id": "p_9",
       "thread_id": "p_9",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_9",
         "role": "parent"
@@ -165,7 +165,7 @@
     {
       "post_id": "p_10",
       "thread_id": "p_9",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_10",
         "role": "parent"
@@ -183,7 +183,7 @@
     {
       "post_id": "p_11",
       "thread_id": "p_11",
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "author": {
         "persona": "seed_parent_11",
         "role": "parent"
@@ -192,7 +192,7 @@
       "needs": [
         "transportation"
       ],
-      "text": "Does the bus route cover the neighborhoods south of Beach Blvd?",
+      "text": "Does the bus route cover the neighborhoods south of SW Roxbury St?",
       "stance": "neutral",
       "origin": "community",
       "created_at": "2026-11-02",
@@ -201,7 +201,7 @@
     {
       "post_id": "p_12",
       "thread_id": "p_12",
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "author": {
         "persona": "seed_parent_12",
         "role": "parent"
@@ -219,7 +219,7 @@
     {
       "post_id": "p_13",
       "thread_id": "p_12",
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "author": {
         "persona": "seed_parent_13",
         "role": "parent"
@@ -237,7 +237,7 @@
     {
       "post_id": "p_14",
       "thread_id": "p_12",
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "author": {
         "persona": "seed_parent_14",
         "role": "parent"
@@ -255,7 +255,7 @@
     {
       "post_id": "p_15",
       "thread_id": "p_15",
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "author": {
         "persona": "seed_parent_15",
         "role": "parent"
@@ -273,7 +273,7 @@
     {
       "post_id": "p_16",
       "thread_id": "p_15",
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "author": {
         "persona": "seed_parent_16",
         "role": "parent"
@@ -291,7 +291,7 @@
     {
       "post_id": "p_17",
       "thread_id": "p_17",
-      "school_id": "School fl-180003",
+      "school_id": "School wa-180003",
       "author": {
         "persona": "seed_parent_17",
         "role": "parent"
@@ -309,7 +309,7 @@
     {
       "post_id": "p_18",
       "thread_id": "p_17",
-      "school_id": "School fl-180003",
+      "school_id": "School wa-180003",
       "author": {
         "persona": "seed_parent_18",
         "role": "parent"
@@ -327,7 +327,7 @@
     {
       "post_id": "p_19",
       "thread_id": "p_19",
-      "school_id": "School fl-180003",
+      "school_id": "School wa-180003",
       "author": {
         "persona": "seed_parent_19",
         "role": "parent"
@@ -345,7 +345,7 @@
     {
       "post_id": "p_20",
       "thread_id": "p_19",
-      "school_id": "School fl-180003",
+      "school_id": "School wa-180003",
       "author": {
         "persona": "seed_parent_20",
         "role": "parent"
@@ -363,7 +363,7 @@
     {
       "post_id": "p_21",
       "thread_id": "p_21",
-      "school_id": "School fl-180001",
+      "school_id": "School wa-180001",
       "author": {
         "persona": "seed_parent_21",
         "role": "parent"
@@ -381,7 +381,7 @@
     {
       "post_id": "p_22",
       "thread_id": "p_22",
-      "school_id": "School fl-180001",
+      "school_id": "School wa-180001",
       "author": {
         "persona": "seed_parent_22",
         "role": "parent"
@@ -399,7 +399,7 @@
     {
       "post_id": "p_23",
       "thread_id": "p_23",
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "author": {
         "persona": "seed_parent_23",
         "role": "parent"
@@ -408,7 +408,7 @@
       "needs": [
         "low_cost"
       ],
-      "text": "Has anyone used the Florida scholarship here? How long did approval take?",
+      "text": "Has anyone gotten financial aid here? How long did it take to hear back?",
       "stance": "neutral",
       "origin": "community",
       "created_at": "2026-10-27",
@@ -417,7 +417,7 @@
     {
       "post_id": "p_24",
       "thread_id": "p_23",
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "author": {
         "persona": "seed_parent_24",
         "role": "parent"
@@ -426,7 +426,7 @@
       "needs": [
         "low_cost"
       ],
-      "text": "It took about six weeks for us. Apply as early as the window opens.",
+      "text": "It took about six weeks for us. Ask for the aid form when you apply.",
       "stance": "neutral",
       "origin": "community",
       "created_at": "2026-10-28",
@@ -435,7 +435,7 @@
     {
       "post_id": "p_25",
       "thread_id": "p_25",
-      "school_id": "School fl-180021",
+      "school_id": "School wa-180021",
       "author": {
         "persona": "seed_parent_25",
         "role": "parent"
@@ -453,7 +453,7 @@
     {
       "post_id": "p_26",
       "thread_id": "p_26",
-      "school_id": "School fl-180004",
+      "school_id": "School wa-180004",
       "author": {
         "persona": "seed_parent_26",
         "role": "parent"
@@ -471,7 +471,7 @@
     {
       "post_id": "p_27",
       "thread_id": "p_26",
-      "school_id": "School fl-180004",
+      "school_id": "School wa-180004",
       "author": {
         "persona": "seed_parent_27",
         "role": "parent"
@@ -489,7 +489,7 @@
     {
       "post_id": "p_28",
       "thread_id": "p_28",
-      "school_id": "School fl-95390",
+      "school_id": "School wa-95390",
       "author": {
         "persona": "seed_parent_28",
         "role": "parent"
@@ -507,7 +507,7 @@
     {
       "post_id": "p_29",
       "thread_id": "p_28",
-      "school_id": "School fl-95390",
+      "school_id": "School wa-95390",
       "author": {
         "persona": "seed_parent_29",
         "role": "parent"
@@ -525,7 +525,7 @@
     {
       "post_id": "p_30",
       "thread_id": "p_28",
-      "school_id": "School fl-95390",
+      "school_id": "School wa-95390",
       "author": {
         "persona": "seed_parent_30",
         "role": "parent"
@@ -543,7 +543,7 @@
     {
       "post_id": "p_31",
       "thread_id": "p_28",
-      "school_id": "School fl-95390",
+      "school_id": "School wa-95390",
       "author": {
         "persona": "seed_parent_31",
         "role": "parent"
@@ -806,7 +806,7 @@
   },
   "asks": [
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_0",
@@ -814,7 +814,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_1",
@@ -822,7 +822,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_2",
@@ -830,7 +830,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_3",
@@ -838,7 +838,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_4",
@@ -846,7 +846,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_5",
@@ -854,7 +854,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_6",
@@ -862,7 +862,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_7",
@@ -870,7 +870,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_8",
@@ -878,7 +878,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_9",
@@ -886,7 +886,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_10",
@@ -894,7 +894,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_11",
@@ -902,7 +902,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_12",
@@ -910,7 +910,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-10",
       "asker": "seed_asker_after_care_old_0",
@@ -918,7 +918,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-10",
       "asker": "seed_asker_after_care_old_1",
@@ -926,7 +926,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-10",
       "asker": "seed_asker_after_care_old_2",
@@ -934,7 +934,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "after_care",
       "month": "2026-10",
       "asker": "seed_asker_after_care_old_3",
@@ -942,7 +942,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "stem",
       "month": "2026-11",
       "asker": "seed_asker_stem_0",
@@ -950,7 +950,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "stem",
       "month": "2026-11",
       "asker": "seed_asker_stem_1",
@@ -958,7 +958,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "stem",
       "month": "2026-11",
       "asker": "seed_asker_stem_2",
@@ -966,7 +966,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "stem",
       "month": "2026-11",
       "asker": "seed_asker_stem_3",
@@ -974,7 +974,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "stem",
       "month": "2026-11",
       "asker": "seed_asker_stem_4",
@@ -982,7 +982,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "stem",
       "month": "2026-11",
       "asker": "seed_asker_stem_5",
@@ -990,7 +990,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "stem",
       "month": "2026-10",
       "asker": "seed_asker_stem_old_0",
@@ -998,7 +998,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "stem",
       "month": "2026-10",
       "asker": "seed_asker_stem_old_1",
@@ -1006,7 +1006,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "transportation",
       "month": "2026-11",
       "asker": "seed_asker_transportation_0",
@@ -1014,7 +1014,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "transportation",
       "month": "2026-11",
       "asker": "seed_asker_transportation_1",
@@ -1022,7 +1022,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "transportation",
       "month": "2026-11",
       "asker": "seed_asker_transportation_2",
@@ -1030,7 +1030,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180019",
+      "school_id": "School wa-180019",
       "need": "transportation",
       "month": "2026-10",
       "asker": "seed_asker_transportation_old_0",
@@ -1038,7 +1038,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_0",
@@ -1046,7 +1046,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_1",
@@ -1054,7 +1054,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_2",
@@ -1062,7 +1062,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_3",
@@ -1070,7 +1070,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_4",
@@ -1078,7 +1078,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "need": "after_care",
       "month": "2026-10",
       "asker": "seed_asker_after_care_old_0",
@@ -1086,7 +1086,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180100",
+      "school_id": "School wa-96528",
       "need": "after_care",
       "month": "2026-10",
       "asker": "seed_asker_after_care_old_1",
@@ -1094,7 +1094,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180001",
+      "school_id": "School wa-180001",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_0",
@@ -1102,7 +1102,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180001",
+      "school_id": "School wa-180001",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_1",
@@ -1110,7 +1110,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180001",
+      "school_id": "School wa-180001",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_2",
@@ -1118,7 +1118,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180001",
+      "school_id": "School wa-180001",
       "need": "after_care",
       "month": "2026-11",
       "asker": "seed_asker_after_care_3",
@@ -1126,7 +1126,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180001",
+      "school_id": "School wa-180001",
       "need": "after_care",
       "month": "2026-10",
       "asker": "seed_asker_after_care_old_0",
@@ -1134,7 +1134,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180003",
+      "school_id": "School wa-180003",
       "need": "sports",
       "month": "2026-11",
       "asker": "seed_asker_sports_0",
@@ -1142,7 +1142,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180003",
+      "school_id": "School wa-180003",
       "need": "sports",
       "month": "2026-11",
       "asker": "seed_asker_sports_1",
@@ -1150,7 +1150,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-11",
       "asker": "seed_asker_low_cost_0",
@@ -1158,7 +1158,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-11",
       "asker": "seed_asker_low_cost_1",
@@ -1166,7 +1166,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-11",
       "asker": "seed_asker_low_cost_2",
@@ -1174,7 +1174,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-11",
       "asker": "seed_asker_low_cost_3",
@@ -1182,7 +1182,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-11",
       "asker": "seed_asker_low_cost_4",
@@ -1190,7 +1190,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-11",
       "asker": "seed_asker_low_cost_5",
@@ -1198,7 +1198,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-11",
       "asker": "seed_asker_low_cost_6",
@@ -1206,7 +1206,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-10",
       "asker": "seed_asker_low_cost_old_0",
@@ -1214,7 +1214,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-10",
       "asker": "seed_asker_low_cost_old_1",
@@ -1222,7 +1222,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180005",
+      "school_id": "School wa-180005",
       "need": "low_cost",
       "month": "2026-10",
       "asker": "seed_asker_low_cost_old_2",
@@ -1230,7 +1230,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180004",
+      "school_id": "School wa-180004",
       "need": "safety",
       "month": "2026-11",
       "asker": "seed_asker_safety_0",
@@ -1238,7 +1238,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180004",
+      "school_id": "School wa-180004",
       "need": "safety",
       "month": "2026-11",
       "asker": "seed_asker_safety_1",
@@ -1246,7 +1246,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180004",
+      "school_id": "School wa-180004",
       "need": "safety",
       "month": "2026-11",
       "asker": "seed_asker_safety_2",
@@ -1254,7 +1254,7 @@
       "_synthetic": true
     },
     {
-      "school_id": "School fl-180004",
+      "school_id": "School wa-180004",
       "need": "safety",
       "month": "2026-10",
       "asker": "seed_asker_safety_old_0",

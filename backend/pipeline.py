@@ -173,7 +173,7 @@ def _apply_answer(session: dict, answer: dict, state: dict) -> None:
         )
         _rekey(criteria)
     elif question_id == "q:location_ambiguity" and option == "other":
-        session["note"] = "This prototype only includes Florida schools, so I kept the Florida reading."
+        session["note"] = "This prototype only includes Seattle schools in Washington, so I kept the Washington reading."
     elif question_id.startswith("q:amb:"):
         criterion_id = question_id.split(":")[-1]
         for row in criteria:
@@ -529,7 +529,7 @@ def _cost(session, criteria, schools, programs, state, message, payload) -> Turn
     by_id = _by_id(schools)
     estimates = [estimate_cost(by_id[sid]) for sid in ids if sid in by_id]
     blocks = [
-        Block(type="message", payload={"text": "Likely scholarship eligibility. Not a promised award."}),
+        Block(type="message", payload={"text": "Tuition and where financial aid may come from. Not a promised award."}),
         Block(type="cost", payload={"schools": estimates}),
     ]
     return TurnResponse(session_id=session["id"], route="cost", criteria=criteria, blocks=blocks)

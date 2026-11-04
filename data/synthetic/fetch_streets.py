@@ -37,9 +37,7 @@ GRID_DEGREES = 0.002
 
 # (south, west, north, east), wide enough to hold every generated point plus a margin.
 METROS = {
-    "Jacksonville": (30.10, -81.86, 30.47, -81.44),
-    "Miami": (25.66, -80.36, 25.94, -80.08),
-    "Orlando": (28.38, -81.52, 28.66, -81.24),
+    "Seattle": (47.49, -122.42, 47.74, -122.25),
 }
 
 

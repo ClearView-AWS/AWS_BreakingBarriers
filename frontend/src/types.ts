@@ -57,4 +57,4 @@ export type Turn = {
 };
 
 export const DEMO_QUERY =
-  "Middle school in Jacksonville with STEM and after-school care. Money is tight.";
+  "Middle school in Seattle with STEM and after-school care. Money is tight.";

@@ -2,7 +2,7 @@
 
 A guided school-search agent for an empty AWS sandbox. The parent writes in plain language. Code decides what is true. Every fact on a card cites the field or review it came from.
 
-This build runs locally through the demo script (milestones M1–M4). Bedrock, OpenSearch, SES, and DynamoDB stay behind flags so the same code can move into the sandbox later. The demo city is Jacksonville. The clock the age rules use is 2026-11-03 (`GS_TODAY`).
+This build runs locally through the demo script (milestones M1–M4). Bedrock, OpenSearch, SES, and DynamoDB stay behind flags so the same code can move into the sandbox later. The demo city is Seattle, Washington. GreatSchools' 25 sample schools (Florida in the original files) are moved to Seattle by the generator; the original files stay unchanged. The clock the age rules use is 2026-11-03 (`GS_TODAY`).
 
 ## How to run
 
@@ -20,18 +20,18 @@ cd frontend && npm run dev -- --host 127.0.0.1 --port 5173
 
 Open http://127.0.0.1:5173. The demo query is:
 
-> Middle school in Jacksonville with STEM and after-school care. Money is tight.
+> Middle school in Seattle with STEM and after-school care. Money is tight.
 
-Then: answer the care question, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
+Then: answer the care question, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel says each school sets its own aid, links the State Board of Education, and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
 
 ```bash
 .venv/bin/python -m pytest -q
 .venv/bin/python eval/run_eval.py
 ```
 
-Parent community demo: on the Beauclerc STEM Middle card, tap "Ask parents at this school". Try posting with a child's name (it is blocked), then post without it. Switch "Viewing as" to School staff, tap "Send digest", and answer the after-care thread. Switch back to Parent A and go back to results. After-school care is now Confirmed, school-reported. See `docs/community.md`.
+Parent community demo: on the Arbor Heights STEM Middle card, tap "Ask parents at this school". Try posting with a child's name (it is blocked), then post without it. Switch "Viewing as" to School staff, tap "Send digest", and answer the after-care thread. Switch back to Parent A and go back to results. After-school care is now Confirmed, school-reported. See `docs/community.md`.
 
-Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25 sample schools in `Sample Data/` stay unchanged. The generator writes 275 more schools, nearby programs, and one static page per generated school.
+Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25 sample schools in `Sample Data/` stay unchanged; the generator writes their Seattle copies, 275 more Seattle schools, nearby programs, and one static page per generated school.
 
 ## Decisions
 
@@ -39,7 +39,8 @@ Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25
 - Match score and evidence coverage are separate. Unknown scores 0.5. A high-confidence miss on a required criterion moves the school into "Missed a must-have" and keeps it on screen.
 - Reviews can support a criterion. They never confirm one. A school website can fill a gap only up to Partial, and a conflict stays visible.
 - The agent asks at most one question per turn, and only when the answer would change the top results, a required fact is unknown for many of them, or the phrase does not map to a need. Results show in the same turn, with the assumption stated.
-- Scholarship lines say "You may qualify" and link the Florida Department of Education page. The screen does not promise an award amount. Net price stays empty.
+- Private-school cost lines say each Washington private school sets its own tuition and aid, link the State Board of Education, and note that the federal Education Freedom Tax Credit (from Jan 1, 2027) depends on Washington opting in. The screen does not promise an award amount. Net price stays empty.
+- Getting in follows Seattle Public Schools (attendance area schools, Open Enrollment for School Choice) and Washington law (RCW 28A.710.050 for charter lotteries), each with its official link.
 - School email addresses are on `example.org`. SES sends only when `SES_ENABLED=1`, and only to `SES_VERIFIED_TO`.
 
 ## What code owns

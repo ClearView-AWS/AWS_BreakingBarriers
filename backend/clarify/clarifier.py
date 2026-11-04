@@ -11,7 +11,7 @@ GRADE_OPTIONS = [
     ("m", "Middle"),
     ("h", "High"),
 ]
-CITY_OPTIONS = ["Jacksonville", "Miami", "Orlando", "Tampa"]
+CITY_OPTIONS = ["Seattle"]  # the only city with schools in this prototype
 
 
 def _top_ids(search_fn, criteria: list[Criterion], readings: dict) -> list[str]:
@@ -54,9 +54,9 @@ def choose_question(
         return {
             "id": "q:location_ambiguity",
             "reason": "ambiguous_location",
-            "text": f"{city} is in more than one state. This prototype only has Florida schools. Do you mean the Florida one?",
+            "text": f"{city} is in more than one state. This prototype only has Seattle schools in Washington. Search Washington?",
             "options": [
-                {"id": "florida", "label": f"{city}, Florida"},
+                {"id": "washington", "label": "Yes, Washington"},
                 {"id": "other", "label": "A different state"},
             ],
         }

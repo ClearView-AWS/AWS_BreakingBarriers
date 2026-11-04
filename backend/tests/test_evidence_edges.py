@@ -76,19 +76,19 @@ def test_review_thresholds():
 # Sources that can only support ----------------------------------------------
 
 def test_a_school_website_supports_but_never_confirms():
-    record = evaluate_criterion(BY_NAME["Cedar Creek STEM Middle"], _care("on_site"), programs=[])
+    record = evaluate_criterion(BY_NAME["Northgate STEM Middle"], _care("on_site"), programs=[])
     assert record.status == "partial"
     assert record.source is not None and record.source.type == "school_website"
 
 
 def test_a_website_that_disagrees_with_the_profile_is_flagged():
-    record = evaluate_criterion(BY_NAME["Tidewater STEM Charter"], _care("on_site"), programs=[])
+    record = evaluate_criterion(BY_NAME["Cascade STEM Charter"], _care("on_site"), programs=[])
     assert record.conflict is not None
     assert record.conflict.website_value == "16:00"
 
 
 def test_a_program_with_only_past_sessions_does_not_count():
-    record = evaluate_criterion(BY_NAME["Northside STEM Middle"], _care("nearby_ok"), programs=load_programs())
+    record = evaluate_criterion(BY_NAME["Rainier Beach STEM Middle"], _care("nearby_ok"), programs=load_programs())
     assert record.status == "unknown"
     assert "past" in record.note
 

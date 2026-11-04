@@ -5,11 +5,12 @@ from __future__ import annotations
 import math
 
 CITY_CENTROIDS = {
-    "jacksonville": (30.3322, -81.6557),
-    "miami": (25.7617, -80.1918),
-    "orlando": (28.5383, -81.3792),
-    "tampa": (27.9506, -82.4572),
-    "tallahassee": (30.4383, -84.2807),
+    "seattle": (47.6062, -122.3321),
+    "bellevue": (47.6101, -122.2015),
+    "redmond": (47.6740, -122.1215),
+    "tacoma": (47.2529, -122.4443),
+    "everett": (47.9790, -122.2021),
+    "spokane": (47.6588, -117.4260),
 }
 
 

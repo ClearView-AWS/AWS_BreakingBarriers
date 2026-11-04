@@ -1,83 +1,74 @@
-# How admission works, by admission type, in Florida and the three demo districts.
+# How admission works, by admission type, in Washington and Seattle Public Schools.
 # Each rule explains and keeps its official link beside it. Like funding_rules.yaml,
 # it never promises a seat or estimates a family's chances.
 #
-# Checked 2026-11-03. Rule wording follows the 2025 Florida Statutes on flsenate.gov.
-# fldoe.org blocks automated readers, so its pages were confirmed through search
-# results; they are kept as the parent-friendly link where they exist.
+# Checked 2026-11-03 against seattleschools.org (Find Your School, Open Enrollment
+# for School Choice, School Assignment), RCW 28A.710.050 on app.leg.wa.gov, and the
+# Washington State Board of Education's Private Schools page.
 checked: "2026-11-03"
+state: Washington
 
 rules:
   zoned:
-    label: Zoned school
+    label: Attendance area school
     summary: >
-      Every home address in a Florida district is assigned a neighborhood public
-      school. A child who lives in the school's attendance zone can enroll there.
-    next_step: Check which school your address is zoned for.
-    official_name: Florida school choice options (Florida Department of Education)
-    official_url: https://www.fldoe.org/schools/school-choice/
+      Seattle Public Schools assigns every student to an attendance area school
+      based on the address where the student lives. A child who lives in the
+      school's attendance area can enroll there.
+    next_step: Look up your attendance area school by address.
+    official_name: Find Your School (Seattle Public Schools)
+    official_url: https://www.seattleschools.org/enroll/find-your-school/
     cite_path: enrollment.zoned
 
   choice:
     label: School choice
     summary: >
-      Florida's controlled open enrollment lets a parent enroll a child in any
-      public school, including a charter school, that has not reached capacity.
-      Districts also run magnet and choice programs with an application window,
-      and use a lottery when there are more applicants than seats.
-    next_step: Apply through the district's school choice application.
-    official_name: Florida Statutes 1002.31, controlled open enrollment
-    official_url: https://www.flsenate.gov/Laws/Statutes/2025/1002.31
-    more_url: https://www.fldoe.org/schools/school-choice/other-school-choice-options/controlled-open-enrollment.stml
+      Families can ask for a school other than their attendance area school
+      through Seattle Public Schools' Open Enrollment for School Choice, ranking
+      up to five schools. When a school and grade have more applications than
+      seats, siblings come first, then students in an option school's geo zone,
+      then a random lottery number.
+    next_step: Apply during Open Enrollment for School Choice and rank up to five schools.
+    official_name: Open Enrollment for School Choice (Seattle Public Schools)
+    official_url: https://www.seattleschools.org/enroll/find-your-school/school-choice/
+    more_name: How assignment and tiebreakers work
+    more_url: https://www.seattleschools.org/enroll/find-your-school/school-assignment/
     cite_path: enrollment.choice
 
   lottery:
     label: Lottery
     summary: >
-      A Florida charter school must enroll every eligible student who applies on
-      time, unless applications exceed its capacity. Then every applicant has an
-      equal chance through a random selection. District magnet programs also use
-      a lottery when they have more applicants than seats.
-    next_step: Apply by the deadline; if there are more applicants than seats, a lottery decides.
-    official_name: Florida Statutes 1002.33(10), charter school admission
-    official_url: https://www.flsenate.gov/Laws/Statutes/2025/1002.33
+      A Washington charter school is a public school open to any student,
+      wherever they live, and it may not charge tuition. If more students apply
+      than it has room for, siblings of enrolled students come first and the
+      remaining seats are filled by lottery.
+    next_step: Apply by the school's deadline; if there are more applicants than seats, a lottery decides.
+    official_name: RCW 28A.710.050, charter school enrollment
+    official_url: https://app.leg.wa.gov/RCW/default.aspx?cite=28A.710.050
     cite_path: enrollment.lottery
 
   application:
     label: Application
     summary: >
-      Each private school sets its own admission process and deadlines. The
-      Florida Department of Education does not oversee private school admission,
-      so families apply to the school directly.
+      Washington private schools are approved each year by the State Board of
+      Education and set their own admission process and deadlines, so families
+      apply to the school directly. Board approval is not an endorsement or
+      accreditation of the school.
     next_step: Apply to the school directly and ask about its deadline.
-    official_name: Choosing a private school (Florida Department of Education)
-    official_url: https://www.fldoe.org/schools/school-choice/private-schools/choosing-a-private-school.stml
+    official_name: Private Schools (Washington State Board of Education)
+    official_url: https://sbe.wa.gov/private-schools
     cite_path: enrollment.application
 
-# District pages for each demo metro. locator_url opens the district's official
-# "find my zoned school" tool; null means none was found, so the card hides that button.
+# District pages for each demo city. locator_url opens the district's official
+# address lookup; null means none was found, so the card hides that button.
 districts:
-  Jacksonville:
-    name: Duval County Public Schools
-    locator_url: https://dcps.duvalschools.org/locator
-    choice_url: https://www.duvalschools.org/o/dcps/page/magnet-school
+  Seattle:
+    name: Seattle Public Schools
+    locator_url: https://app.guidek12.com/seattlewa/school_search/current/
+    choice_url: https://www.seattleschools.org/enroll/find-your-school/school-choice/
     window: >
-      For 2026-27, Duval's magnet and school choice lottery took applications from
-      Dec 1, 2025 to Jan 31, 2026 through the Family Portal, with results in
-      mid-March. Families who miss it can apply during controlled open enrollment
-      later in the year.
-    window_url: https://www.duvalschools.org/article/2570460
-  Miami:
-    name: Miami-Dade County Public Schools
-    locator_url: null
-    choice_url: https://attendanceservices.dadeschools.net/
-    window: >
-      Magnet applications open October 1 and are due January 15 for the next
-      school year; applicants hear back around March 15.
-    window_url: https://news.dadeschools.net/cmnc/new/37651
-  Orlando:
-    name: Orange County Public Schools
-    locator_url: https://www.ocps.net/find-my-school-home
-    choice_url: null
-    window: null
-    window_url: null
+      For 2026-27, Seattle Public Schools took School Choice forms from Jan. 5 to
+      Jan. 31, 2026 and posted assignments starting Feb. 24, 2026. Late forms were
+      accepted through March 31 without tiebreakers. Dates for 2027-28 were not
+      posted yet.
+    window_url: https://www.seattleschools.org/enroll/find-your-school/school-choice/

@@ -22,28 +22,26 @@ charter:
   title: Charter school
   text: >
     A charter school is a public school that operates under a charter, or contract.
-    Charter schools in this data are tuition-free, the same as district public schools.
+    In Washington, charter schools are open to any student and may not charge tuition.
   cite_path: glossary.charter
 
-esa:
-  term: ESA
-  title: Education savings account
+attendance_area:
+  term: Attendance area school
+  title: Attendance area school
   text: >
-    An education savings account deposits public education funds for a family to
-    spend on approved expenses such as private school tuition, tutoring, or curriculum.
-    Florida's Family Empowerment Scholarship for Students with Unique Abilities
-    is an example. The scholarship funding organization approves the spending.
-  cite_path: glossary.esa
+    An attendance area school is the neighborhood public school Seattle Public
+    Schools assigns a student to, based on the address where the student lives.
+    Families can ask for a different school through Open Enrollment for School Choice.
+  cite_path: glossary.attendance_area
 
-fes:
-  term: FES
-  title: Family Empowerment Scholarship
+option_school:
+  term: Option school
+  title: Option school
   text: >
-    The Family Empowerment Scholarship is a Florida program with two branches:
-    Educational Options, and Students with Unique Abilities. Families apply through
-    an approved scholarship funding organization. See the Florida Department of
-    Education page linked on private-school cost cards.
-  cite_path: glossary.fes
+    An option school is a Seattle public school that offers a different approach
+    or program. Families request it through School Choice; students who live in
+    its geo zone, near the school, get priority after siblings.
+  cite_path: glossary.option_school
 
 partial:
   term: Partial

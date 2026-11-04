@@ -60,7 +60,7 @@ import pytest
 import agent.bedrock_client as bc
 from agent.prompts import EXPLAIN_SYSTEM
 
-QUERY = "Elementary school in Jacksonville with after-school care until 6pm"
+QUERY = "Elementary school in Seattle with after-school care until 6pm"
 
 
 @pytest.fixture
@@ -115,9 +115,14 @@ def test_unknown_must_have_stays_on_the_card(cards):
     from pipeline import turn
     from store import _empty
 
-    response = turn(_empty(), {"message": QUERY + " and strong STEM"}).model_dump()
+    # In the Seattle data the demo's middle-school query is where a card has after-school
+    # care unknown with nothing else to go on (Arbor Heights STEM Middle).
+    response = turn(_empty(), {"message": "Middle school in Seattle with STEM and after-school care until 6pm"}).model_dump()
     results = next(b for b in response["blocks"] if b["type"] == "results")["payload"]
-    unknown = [c for c in results["schools"] if any(r["status"] == "unknown" for r in c["evidence"])]
+    unknown = [
+        c for c in results["schools"] + results["gaps"]
+        if any(r["status"] == "unknown" and r["source"] is None for r in c["evidence"])
+    ]
     assert unknown, "the demo query has schools with unknown after-school care"
     for card in unknown:
         row = next(r for r in card["evidence"] if r["status"] == "unknown")

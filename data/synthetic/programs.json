@@ -1,15 +1,15 @@
 [
   {
-    "id": "Program fl-880001",
+    "id": "Program wa-880001",
     "program_id": 880001,
-    "name": "Cedar Creek After School STEM Lab",
+    "name": "Northgate After School STEM Lab",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.41997, -81.78006",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.7085, -122.325096",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -32,19 +32,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "6819 Fox Tail Lane"
+    "street": "6819 NE Northgate Way"
   },
   {
-    "id": "Program fl-880002",
+    "id": "Program wa-880002",
     "program_id": 880002,
-    "name": "Mandarin Homework Help Club",
+    "name": "Lake City Homework Help Club",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.42456, -81.78504",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.717897, -122.3335",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -67,19 +67,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "4938 Micki Lane"
+    "street": "4938 Meridian Ave N"
   },
   {
-    "id": "Program fl-880003",
+    "id": "Program wa-880003",
     "program_id": 880003,
-    "name": "Northside After School Club",
+    "name": "Rainier Beach After School Club",
     "description": "After school homework help until 17:30 on school days.",
     "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.14426, -81.50939",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.523523, -122.280438",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -102,89 +102,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "3057 Rudin Street"
+    "street": "3057 Martin Luther King Jr Way S"
   },
   {
-    "id": "Program fl-880104",
-    "program_id": 880104,
-    "name": "Maple Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.2518, -81.58436",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880104,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "9076 Belfort Road"
-  },
-  {
-    "id": "Program fl-880112",
-    "program_id": 880112,
-    "name": "Lark Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.42553, -81.34201",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880112,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "3828 Oceanus Drive"
-  },
-  {
-    "id": "Program fl-880117",
+    "id": "Program wa-880117",
     "program_id": 880117,
-    "name": "Heron Homework Help",
+    "name": "Larch Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.27764, -81.69856",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.609735, -122.321",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -207,19 +137,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "4223 Holly Avenue"
+    "street": "4223 Broadway"
   },
   {
-    "id": "Program fl-880121",
-    "program_id": 880121,
-    "name": "Maple Homework Help",
+    "id": "Program wa-880125",
+    "program_id": 880125,
+    "name": "Evergreen Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.73571, -80.22373",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.610898, -122.321",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -232,42 +162,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880121,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "6499 Crystal View Court"
-  },
-  {
-    "id": "Program fl-880128",
-    "program_id": 880128,
-    "name": "Dolphin Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.79347, -80.15961",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880128,
+        "id": 880125,
         "start_date": "2024-01-08",
         "end_date": "2024-05-20",
         "status": "past",
@@ -277,19 +172,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "3132 7th Di Lido Terrace"
+    "street": "8775 Broadway"
   },
   {
-    "id": "Program fl-880131",
-    "program_id": 880131,
-    "name": "Dolphin Homework Help",
+    "id": "Program wa-880129",
+    "program_id": 880129,
+    "name": "Olympic Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.56843, -81.44192",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.581404, -122.294423",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -302,7 +197,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880131,
+        "id": 880129,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -312,89 +207,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "7289 San Jose Boulevard"
+    "street": "1251 Martin Luther King Jr Way S"
   },
   {
-    "id": "Program fl-880133",
-    "program_id": 880133,
-    "name": "Osprey Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.914, -80.24083",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880133,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "3527 Northwest 153rd Street"
-  },
-  {
-    "id": "Program fl-880137",
-    "program_id": 880137,
-    "name": "Citrus Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.7578, -80.13982",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880137,
-        "start_date": "2024-01-08",
-        "end_date": "2024-05-20",
-        "status": "past",
-        "active": false,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "5803 Fisher Island Drive"
-  },
-  {
-    "id": "Program fl-880140",
-    "program_id": 880140,
+    "id": "Program wa-880130",
+    "program_id": 880130,
     "name": "Heron Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.47636, -81.48694",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.6612, -122.308875",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -407,7 +232,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880140,
+        "id": 880130,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -417,19 +242,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "160 Sand Pines Estates Boulevard"
+    "street": "9170 NE 45th St"
   },
   {
-    "id": "Program fl-880146",
-    "program_id": 880146,
-    "name": "Maple Homework Help",
+    "id": "Program wa-880162",
+    "program_id": 880162,
+    "name": "Juniper Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.49384, -81.43395",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.6612, -122.326087",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -442,42 +267,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880146,
-        "start_date": "2024-01-08",
-        "end_date": "2024-05-20",
-        "status": "past",
-        "active": false,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "8474 Conroy Road"
-  },
-  {
-    "id": "Program fl-880155",
-    "program_id": 880155,
-    "name": "Pine Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.27408, -81.60678",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880155,
+        "id": 880162,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -487,19 +277,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "1345 5800-4 Barnes Ap"
+    "street": "7778 N 45th St"
   },
   {
-    "id": "Program fl-880156",
-    "program_id": 880156,
-    "name": "Marlin Homework Help",
+    "id": "Program wa-880211",
+    "program_id": 880211,
+    "name": "Sitka Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.90097, -80.14364",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.614388, -122.321",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -512,7 +302,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880156,
+        "id": 880211,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -522,579 +312,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "9264 Northeast 135th Street"
+    "street": "3809 Broadway"
   },
   {
-    "id": "Program fl-880163",
-    "program_id": 880163,
-    "name": "Oak Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.23353, -81.56696",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880163,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "5897 Baymeadows Circle West"
-  },
-  {
-    "id": "Program fl-880164",
-    "program_id": 880164,
-    "name": "Cedar Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.83365, -80.2382",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880164,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "4016 Northwest 65th Street"
-  },
-  {
-    "id": "Program fl-880168",
-    "program_id": 880168,
-    "name": "Cypress Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.84796, -80.20925",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880168,
-        "start_date": "2024-01-08",
-        "end_date": "2024-05-20",
-        "status": "past",
-        "active": false,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "6292 Northwest 80th Street"
-  },
-  {
-    "id": "Program fl-880174",
-    "program_id": 880174,
-    "name": "Cedar Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.90915, -80.18971",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880174,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "4806 Northeast 146th Street"
-  },
-  {
-    "id": "Program fl-880175",
-    "program_id": 880175,
-    "name": "River Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.72904, -80.2354",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880175,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "2925 Pan American Drive"
-  },
-  {
-    "id": "Program fl-880180",
-    "program_id": 880180,
-    "name": "Sabal Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.82374, -80.13599",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880180,
-        "start_date": "2024-01-08",
-        "end_date": "2024-05-20",
-        "status": "past",
-        "active": false,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "3320 North Bay Road"
-  },
-  {
-    "id": "Program fl-880191",
-    "program_id": 880191,
-    "name": "Cedar Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.53984, -81.43186",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880191,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "2229 West Jackson Street"
-  },
-  {
-    "id": "Program fl-880193",
-    "program_id": 880193,
-    "name": "Maple Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.26966, -81.6524",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880193,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "8267 Jean Court"
-  },
-  {
-    "id": "Program fl-880197",
-    "program_id": 880197,
-    "name": "Pine Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.914, -80.14064",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880197,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "743 Northeast 147th Street"
-  },
-  {
-    "id": "Program fl-880204",
-    "program_id": 880204,
-    "name": "Osprey Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.28829, -81.78039",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880204,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "7176 Dubois Drive"
-  },
-  {
-    "id": "Program fl-880205",
-    "program_id": 880205,
-    "name": "Willow Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.27701, -81.63998",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880205,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "5295 Jernigan Road"
-  },
-  {
-    "id": "Program fl-880206",
-    "program_id": 880206,
-    "name": "Marlin Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.30367, -81.60846",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880206,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "3414 Martha Ann Drive"
-  },
-  {
-    "id": "Program fl-880215",
-    "program_id": 880215,
-    "name": "River Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.69895, -80.15833",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880215,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "6085 Ocean Lane Drive"
-  },
-  {
-    "id": "Program fl-880232",
-    "program_id": 880232,
-    "name": "Dolphin Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.7574, -80.23023",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880232,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "3508 Southwest 16th Terrace"
-  },
-  {
-    "id": "Program fl-880235",
-    "program_id": 880235,
-    "name": "Osprey Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.89863, -80.32279",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880235,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "7665 West 19th Court"
-  },
-  {
-    "id": "Program fl-880242",
-    "program_id": 880242,
-    "name": "Maple Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.797, -80.24193",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880242,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "4298 Northwest 22nd Street"
-  },
-  {
-    "id": "Program fl-880244",
+    "id": "Program wa-880244",
     "program_id": 880244,
-    "name": "Marlin Homework Help",
+    "name": "Salmon Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.69403, -80.30929",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.681667, -122.3553",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1117,19 +347,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "536 Southwest 72nd Avenue"
+    "street": "536 Greenwood Ave N"
   },
   {
-    "id": "Program fl-880245",
-    "program_id": 880245,
-    "name": "Sabal Homework Help",
+    "id": "Program wa-880257",
+    "program_id": 880257,
+    "name": "Madrona Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.69152, -80.25012",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.639, -122.3665",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1142,7 +372,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880245,
+        "id": 880257,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -1152,159 +382,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "8455 Casuarina Concourse"
+    "street": "5483 W McGraw St"
   },
   {
-    "id": "Program fl-880250",
-    "program_id": 880250,
-    "name": "Citrus Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.55774, -81.27368",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880250,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "8850 Troutman Street"
-  },
-  {
-    "id": "Program fl-880254",
-    "program_id": 880254,
-    "name": "River Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.26961, -81.6252",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880254,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "1326 Mercury Road South"
-  },
-  {
-    "id": "Program fl-880263",
-    "program_id": 880263,
-    "name": "Maple Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.44294, -81.26041",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880263,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "3997 Academy Drive"
-  },
-  {
-    "id": "Program fl-880264",
-    "program_id": 880264,
-    "name": "Indigo Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.49505, -81.2575",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880264,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "2116 Mahogany Bend Lane"
-  },
-  {
-    "id": "Program fl-880268",
+    "id": "Program wa-880268",
     "program_id": 880268,
-    "name": "Marlin Homework Help",
+    "name": "Fir Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.69591, -80.15963",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.5992, -122.312",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1318,41 +408,6 @@
     "instances": [
       {
         "id": 880268,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "4392 Atlantic Road"
-  },
-  {
-    "id": "Program fl-880293",
-    "program_id": 880293,
-    "name": "Oak Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.72367, -80.24629",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880293,
         "start_date": "2024-01-08",
         "end_date": "2024-05-20",
         "status": "past",
@@ -1362,19 +417,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "6367 Royal Road"
+    "street": "4392 S Jackson St"
   },
   {
-    "id": "Program fl-880295",
-    "program_id": 880295,
-    "name": "Harbor Homework Help",
+    "id": "Program wa-880277",
+    "program_id": 880277,
+    "name": "Madrona Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.26412, -81.61189",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.558816, -122.361203",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1387,7 +442,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880295,
+        "id": 880277,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -1397,19 +452,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "2605 Richard Street"
+    "street": "7063 Delridge Way SW"
   },
   {
-    "id": "Program fl-880305",
-    "program_id": 880305,
-    "name": "Indigo Homework Help",
+    "id": "Program wa-880291",
+    "program_id": 880291,
+    "name": "Fir Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.77557, -80.1317",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.681454, -122.3125",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1422,7 +477,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880305,
+        "id": 880291,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -1432,19 +487,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "3395 6th Street"
+    "street": "329 15th Ave NE"
   },
   {
-    "id": "Program fl-880310",
-    "program_id": 880310,
-    "name": "Marlin Homework Help",
+    "id": "Program wa-880299",
+    "program_id": 880299,
+    "name": "Juniper Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.73744, -80.16302",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.6905, -122.329125",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1457,7 +512,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880310,
+        "id": 880299,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -1467,124 +522,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "3790 Arthur Lamb Jr Road"
+    "street": "4881 NE 85th St"
   },
   {
-    "id": "Program fl-880313",
-    "program_id": 880313,
-    "name": "Citrus Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Orlando",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "28.39932, -81.29652",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880313,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "7947 Heintzelman Boulevard"
-  },
-  {
-    "id": "Program fl-880330",
-    "program_id": 880330,
-    "name": "Pine Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.73976, -80.14993",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880330,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "5370 Arthur Lamb Jr Road"
-  },
-  {
-    "id": "Program fl-880331",
-    "program_id": 880331,
-    "name": "Willow Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.27933, -81.64375",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880331,
-        "start_date": "2026-11-01",
-        "end_date": "2027-05-20",
-        "status": "upcoming",
-        "active": true,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "3489 Caljon Road"
-  },
-  {
-    "id": "Program fl-880333",
+    "id": "Program wa-880333",
     "program_id": 880333,
-    "name": "Palm Homework Help",
+    "name": "Orca Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.71255, -80.31003",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.5421, -122.387",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1607,19 +557,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "9527 Southwest 62nd Street"
+    "street": "9527 California Ave SW"
   },
   {
-    "id": "Program fl-880337",
-    "program_id": 880337,
-    "name": "Cypress Homework Help",
+    "id": "Program wa-880347",
+    "program_id": 880347,
+    "name": "Olympic Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Jacksonville",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "Duval County",
-    "latlon": "30.2091, -81.56286",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.549656, -122.387",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1632,7 +582,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880337,
+        "id": 880347,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -1642,19 +592,19 @@
       }
     ],
     "_synthetic": true,
-    "street": "2003 Western Way"
+    "street": "2793 California Ave SW"
   },
   {
-    "id": "Program fl-880346",
-    "program_id": 880346,
-    "name": "Osprey Homework Help",
+    "id": "Program wa-880353",
+    "program_id": 880353,
+    "name": "Juniper Homework Help",
     "description": "After school homework help until 18:00 on school days.",
     "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.90884, -80.20125",
+    "city": "Seattle",
+    "state": "WA",
+    "geo_state": "WA",
+    "county": "King County",
+    "latlon": "47.589219, -122.302",
     "tag_names": [
       "After School",
       "Homework Help",
@@ -1667,42 +617,7 @@
     "age_max_search": 14,
     "instances": [
       {
-        "id": 880346,
-        "start_date": "2024-01-08",
-        "end_date": "2024-05-20",
-        "status": "past",
-        "active": false,
-        "start_time": "15:30",
-        "end_time": "18:00"
-      }
-    ],
-    "_synthetic": true,
-    "street": "4674 Garden Drive"
-  },
-  {
-    "id": "Program fl-880352",
-    "program_id": 880352,
-    "name": "Citrus Homework Help",
-    "description": "After school homework help until 18:00 on school days.",
-    "program_type": "after_school",
-    "city": "Miami",
-    "state": "FL",
-    "geo_state": "FL",
-    "county": "",
-    "latlon": "25.87875, -80.18519",
-    "tag_names": [
-      "After School",
-      "Homework Help",
-      "STEM"
-    ],
-    "level_code": [
-      "m"
-    ],
-    "age_min_search": 10,
-    "age_max_search": 14,
-    "instances": [
-      {
-        "id": 880352,
+        "id": 880353,
         "start_date": "2026-11-01",
         "end_date": "2027-05-20",
         "status": "upcoming",
@@ -1712,6 +627,6 @@
       }
     ],
     "_synthetic": true,
-    "street": "3188 Griffing Boulevard"
+    "street": "1307 23rd Ave"
   }
 ]

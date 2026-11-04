@@ -15,7 +15,7 @@ export type Access = {
   detail?: string | null;
   detail_source?: string | null;
   source?: { type: string; path: string; as_of?: string | null } | null;
-  official: { name: string; url: string; more_url?: string | null; summary?: string; next_step?: string };
+  official: { name: string; url: string; more_url?: string | null; more_name?: string | null; state?: string | null; summary?: string; next_step?: string };
   admissions_url?: string | null;
   district?: {
     name: string;
@@ -29,7 +29,7 @@ export type Access = {
 };
 
 const HOW_LINK: Record<string, string> = {
-  zoned: "How zoned schools work",
+  zoned: "How attendance areas work",
   choice: "How school choice works",
   lottery: "How the lottery works",
   application: "How private school admission works",
@@ -59,7 +59,7 @@ function sourceText(access: Access): string {
   const source = access.source;
   if (!source) return "";
   if (source.type === "parent") return "You told us this is your zoned school";
-  if (source.type === "enrollment_rule") return `Florida admission rule, checked ${fullDate(source.as_of)}`;
+  if (source.type === "enrollment_rule") return `${access.official?.state ?? "State"} admission rule, checked ${fullDate(source.as_of)}`;
   const kind = source.type === "school_reported" ? "School-reported" : "School profile";
   return source.as_of ? `${kind}, ${monthYear(source.as_of)}` : kind;
 }
@@ -142,9 +142,9 @@ export function GettingInDetail({ access }: { access?: Access | null }) {
       )}
       <div className="gi-actions">
         <External href={access.official.url}>{access.official.name}</External>
-        {access.official.more_url && <External href={access.official.more_url}>Florida Department of Education</External>}
+        {access.official.more_url && <External href={access.official.more_url}>{access.official.more_name ?? "More details"}</External>}
         {district?.choice_url && <External href={district.choice_url}>{`${district.name} school choice`}</External>}
-        {district?.locator_url && access.how === "zoned" && <External href={district.locator_url}>Find my zoned school</External>}
+        {district?.locator_url && access.how === "zoned" && <External href={district.locator_url}>Find my school by address</External>}
         {admissions && <External href={admissions}>School's admissions page</External>}
       </div>
       <p className="source">

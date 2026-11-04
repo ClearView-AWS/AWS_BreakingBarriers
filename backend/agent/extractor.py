@@ -179,8 +179,8 @@ def _location(city: str) -> Criterion:
         ambiguities.append(
             Ambiguity(
                 kind="place",
-                options=[f"{city}, Florida", "A different state"],
-                option_ids=["florida", "other"],
+                options=["Washington", "A different state"],
+                option_ids=["washington", "other"],
                 question=f"Which {city} do you mean?",
             )
         )

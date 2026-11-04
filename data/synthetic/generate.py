@@ -1,14 +1,19 @@
-"""Expand the Florida sample to about 300 schools without editing the original 25.
+"""Build about 300 Seattle schools without editing GreatSchools' original sample.
 
-Demo schools are hand-placed so the Jacksonville middle-school script can show
+The 25 sample schools (anonymized, Florida in the original) are copied to
+sample_seattle.json with Seattle locations, ids, districts and addresses; their
+ratings, reviews and missing fields stay as GreatSchools sent them. The original
+files in Sample Data/ are not touched.
+
+Demo schools are hand-placed so the Seattle middle-school script can show
 on-site care, nearby programs, a stale program, a website conflict, and a
 school with no after-care data. Random schools keep the sample's missing-data
-rates. Jacksonville middle schools in the random set never have both STEM and
+rates. Seattle middle schools in the random set never have both STEM and
 on-site care, so they cannot crowd the demo ranking.
 
-Every generated school and program is then moved to the nearest real street
-point from street_points.json (OpenStreetMap, no bridges), so no pin lands in
-water. That step uses no random numbers, so every other field stays the same.
+Every generated school and program is then moved to the nearest street point
+from street_points.json (Seattle arterials, see seattle_streets.py), so no pin
+lands in water. That step uses no random numbers, so every other field stays the same.
 
 Last, every generated school gets admissions fields in osp: admission_type on
 all of them, and deadlines, links, requirements and seat counts at about the
@@ -26,6 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SAMPLE = ROOT / "Sample Data" / "schools_sample.json"
+OUT_SAMPLE = Path(__file__).resolve().parent / "sample_seattle.json"
 PROGRAM_SAMPLE = ROOT / "Sample Data" / "programs_sample.json"
 OUT_SCHOOLS = Path(__file__).resolve().parent / "schools.json"
 OUT_PROGRAMS = Path(__file__).resolve().parent / "programs.json"
@@ -50,10 +56,10 @@ DEADLINES = ["1/15/2027", "2/1/2027", "3/1/2027", "10/1/2026", "1/15/2025"]
 REPORTED_ON = ["2026-03-15", "2026-08-20", "2026-09-15", "2026-10-05"]
 ENTRY_GRADE = {"p": "PK", "e": "K", "m": "6", "h": "9"}
 
-# Hand-set for the Jacksonville middle-school demo so each Getting in status shows up:
+# Hand-set for the Seattle middle-school demo so each Getting in status shows up:
 # apply by a date, open seats, deadline passed, waitlist only, and a stale deadline.
 DEMO_ADMISSIONS = {
-    "Beauclerc STEM Middle": {
+    "Arbor Heights STEM Middle": {
         # A district magnet lottery, so the demo's "after-care unknown" card also reads
         # "Lottery · apply by Jan 15".
         "admission_type": ["lottery"],
@@ -61,39 +67,46 @@ DEMO_ADMISSIONS = {
         "application_requirements": ["application"],
         "applicants_last_year": [{"grade": "6", "applicants": 210, "seats": 90, "as_of": "2026-03-15"}],
     },
-    "Riverside Preparatory Middle": {
+    "Queen Anne Preparatory Middle": {
         "admission_type": ["application"],
         "application_deadline_date": ["2/1/2027"],
         "application_requirements": ["application", "interview"],
     },
-    "Tidewater STEM Charter": {
+    "Cascade STEM Charter": {
         "admission_type": ["lottery"],
         "seats_by_grade": [{"grade": "6", "open_seats": 12, "waitlist": False, "as_of": "2026-09-15"}],
     },
-    "Arlington STEM Academy": {
+    "Wallingford STEM Academy": {
         "admission_type": ["lottery"],
         "application_deadline_date": ["10/1/2026"],
     },
-    "Northside STEM Middle": {
+    "Rainier Beach STEM Middle": {
         "admission_type": ["lottery"],
         "seats_by_grade": [{"grade": "6", "open_seats": 0, "waitlist": True, "as_of": "2026-10-01"}],
     },
-    "Landmark Christian Middle": {
+    "Evergreen Hill Christian Middle": {
         "admission_type": ["application"],
         "application_deadline_date": ["1/15/2025"],
     },
 }
 
 TARGET = 300
-LEAP_POINT = (30.42, -81.78)
-FULL_POINT = (30.33, -81.60)
-ONSITE_POINT = (30.30, -81.58)
-ASK_POINT = (30.20, -81.80)
-STALE_POINT = (30.15, -81.50)
+# Seattle neighborhoods: Northgate (leap), Wallingford (full), Ballard (on-site care),
+# Arbor Heights (ask), Rainier Beach (stale program).
+LEAP_POINT = (47.708, -122.325)
+FULL_POINT = (47.661, -122.340)
+ONSITE_POINT = (47.668, -122.383)
+ASK_POINT = (47.517, -122.376)
+STALE_POINT = (47.524, -122.280)
+# About the old Jacksonville density of after-school programs per square mile.
+PROGRAM_RATE = 0.06
+# Random Seattle pins stay south of the Northgate leap cluster.
+RANDOM_BOX = (47.53, 47.69, -122.39, -122.28)
 
+# Every word sorts after "Arbor", so the demo's ask school keeps its place in ties.
 ADJECTIVES = [
-    "Harbor", "Cedar", "Palm", "Oak", "Cypress", "Bay", "Pine", "Coral", "Willow", "Maple",
-    "Lark", "Heron", "Osprey", "Marlin", "Dolphin", "Magnolia", "Sabal", "Indigo", "Citrus", "River",
+    "Cedar", "Fir", "Madrona", "Salmon", "Orca", "Cascade", "Evergreen", "Hemlock", "Spruce", "Maple",
+    "Willow", "Heron", "Osprey", "Juniper", "Sound", "Summit", "Olympic", "Larch", "Rainier", "Sitka",
 ]
 PLACES = [
     "Ridge", "Crossing", "Landing", "Gardens", "Shores", "Park", "Grove", "Heights", "Walk", "Point",
@@ -103,17 +116,20 @@ PLACES = [
 
 def main() -> None:
     sample = json.loads(SAMPLE.read_text())
+    seattle_sample = _relocate_sample(sample)
     demo, demo_programs = _demo()
     random_schools, random_programs = _random(len(sample) + len(demo))
     schools = demo + random_schools
     programs = demo_programs + random_programs
-    moves = _place_on_streets(schools, programs, {p["id"] for p in random_programs})
+    moves = _place_on_streets(seattle_sample + schools, programs, {p["id"] for p in random_programs})
+    OUT_SAMPLE.write_text(json.dumps(seattle_sample, indent=2))
     for school in schools:
         _add_admissions(school)
+    # The relocated sample keeps the sample's own admissions fields.
     OUT_SCHOOLS.write_text(json.dumps(schools, indent=2))
     OUT_PROGRAMS.write_text(json.dumps(programs, indent=2))
     _websites(schools)
-    print(f"sample {len(sample)} + synthetic {len(schools)} = {len(sample) + len(schools)} schools")
+    print(f"sample moved to Seattle {len(seattle_sample)} + synthetic {len(schools)} = {len(seattle_sample) + len(schools)} schools")
     print(f"synthetic programs {len(programs)}")
     for kind, miles in moves.items():
         miles = sorted(miles)
@@ -128,6 +144,43 @@ def main() -> None:
     }
     print(f"admission types: {types}")
     print(f"admissions fields filled (of {len(schools)}): {filled}")
+
+
+def _relocate_sample(sample: list[dict]) -> list[dict]:
+    """Copy GreatSchools' sample schools to Seattle.
+
+    Location, id, district and address change; ratings, reviews, osp answers and
+    missing fields stay exactly as the sample has them. Each school starts at a
+    stable random Seattle point and is then moved onto a street like the rest.
+    """
+    moved = []
+    for original in sample:
+        school = json.loads(json.dumps(original))
+        number = school["school_id"]
+        rng = random.Random(f"relocate-{number}")
+        lat = round(rng.uniform(RANDOM_BOX[0], RANDOM_BOX[1]), 6)
+        lon = round(rng.uniform(RANDOM_BOX[2], RANDOM_BOX[3]), 6)
+        school["id"] = f"School wa-{number}"
+        school["city"] = "Seattle"
+        school["city_untokenized"] = "seattle"
+        school["county"] = "King County"
+        school["state"] = "WA"
+        school["zipcode"] = f"981{number % 100:02d}"
+        school["latlon"] = f"{lat}, {lon}"
+        if "school_district_city" in school:
+            school["school_district_city"] = "Seattle"
+        if school.get("entity_type") == "public":
+            school["school_district_name"] = "Seattle Public Schools"
+        else:
+            school.pop("school_district_name", None)
+        osp = school.get("osp") or {}
+        for key, values in list(osp.items()):
+            if isinstance(values, list):
+                osp[key] = ["University of Washington" if v == "Florida State University" else v for v in values]
+        school["_synthetic"] = True
+        school["_relocated_from"] = "Sample Data/schools_sample.json (Florida)"
+        moved.append(school)
+    return moved
 
 
 def _add_admissions(school: dict) -> None:
@@ -231,14 +284,14 @@ def _place_on_streets(schools: list[dict], programs: list[dict], offset_ids: set
 
 def _demo() -> tuple[list[dict], list[dict]]:
     schools = []
-    schools.append(_school(1, "Tidewater STEM Charter", "charter", ["m"], FULL_POINT, 0.004, stem=True, care="18:00", rating=9, role="full"))
-    schools.append(_school(2, "St. Johns STEM Middle", "public", ["m"], FULL_POINT, 0.008, stem=True, care="17:30", rating=8, role="full"))
-    schools.append(_school(3, "Arlington STEM Academy", "charter", ["m"], FULL_POINT, 0.012, stem=True, care="18:00", rating=8, role="full"))
-    schools.append(_school(4, "Mandarin Bridge Middle", "public", ["m"], FULL_POINT, 0.016, stem=True, care="17:30", rating=7, role="full"))
+    schools.append(_school(1, "Cascade STEM Charter", "charter", ["m"], FULL_POINT, 0.004, stem=True, care="18:00", rating=9, role="full"))
+    schools.append(_school(2, "Fremont STEM Middle", "public", ["m"], FULL_POINT, 0.008, stem=True, care="17:30", rating=8, role="full"))
+    schools.append(_school(3, "Wallingford STEM Academy", "charter", ["m"], FULL_POINT, 0.012, stem=True, care="18:00", rating=8, role="full"))
+    schools.append(_school(4, "Ravenna Bridge Middle", "public", ["m"], FULL_POINT, 0.016, stem=True, care="17:30", rating=7, role="full"))
     schools.append(
         _school(
             5,
-            "Riverside Preparatory Middle",
+            "Queen Anne Preparatory Middle",
             "private",
             ["m"],
             FULL_POINT,
@@ -252,11 +305,11 @@ def _demo() -> tuple[list[dict], list[dict]]:
     )
     for offset, name in enumerate(
         [
-            "Riverview Day Middle",
-            "Ortega Day Middle",
-            "Avondale Day Middle",
-            "Murray Hill Day Middle",
-            "Lakewood Day Middle",
+            "Ballard Day Middle",
+            "Phinney Day Middle",
+            "Greenwood Day Middle",
+            "Crown Hill Day Middle",
+            "Loyal Heights Day Middle",
         ],
         start=6,
     ):
@@ -275,25 +328,25 @@ def _demo() -> tuple[list[dict], list[dict]]:
             )
         )
     leap_names = [
-        "Cedar Creek STEM Middle",
-        "San Marco STEM Middle",
-        "Hogan STEM Middle",
-        "Kernan STEM Middle",
-        "Oceanway STEM Middle",
-        "Fort Caroline STEM Middle",
-        "Dames Point STEM Middle",
-        "Southside STEM Middle",
+        "Northgate STEM Middle",
+        "Haller Lake STEM Middle",
+        "Lake City STEM Middle",
+        "Pinehurst STEM Middle",
+        "Victory Heights STEM Middle",
+        "Meadowbrook STEM Middle",
+        "Maple Leaf STEM Middle",
+        "Olympic Hills STEM Middle",
     ]
     for offset, name in enumerate(leap_names, start=11):
         schools.append(
             _school(offset, name, "public", ["m"], LEAP_POINT, 0.004 * (offset - 10), stem=True, care=None, rating=6, role="leap")
         )
-    schools.append(_school(19, "Beauclerc STEM Middle", "public", ["m"], ASK_POINT, 0.0, stem=True, care=None, rating=5, role="ask"))
-    schools.append(_school(20, "Northside STEM Middle", "charter", ["m"], STALE_POINT, 0.0, stem=True, care=None, rating=4, role="stale"))
+    schools.append(_school(19, "Arbor Heights STEM Middle", "public", ["m"], ASK_POINT, 0.0, stem=True, care=None, rating=5, role="ask"))
+    schools.append(_school(20, "Rainier Beach STEM Middle", "charter", ["m"], STALE_POINT, 0.0, stem=True, care=None, rating=4, role="stale"))
     schools.append(
         _school(
             21,
-            "Landmark Christian Middle",
+            "Evergreen Hill Christian Middle",
             "private",
             ["m"],
             ASK_POINT,
@@ -307,9 +360,9 @@ def _demo() -> tuple[list[dict], list[dict]]:
         )
     )
     programs = [
-        _program(1, "Cedar Creek After School STEM Lab", LEAP_POINT, live=True, end="18:00"),
-        _program(2, "Mandarin Homework Help Club", (LEAP_POINT[0] + 0.01, LEAP_POINT[1] - 0.01), live=True, end="18:00"),
-        _program(3, "Northside After School Club", STALE_POINT, live=False, end="17:30"),
+        _program(1, "Northgate After School STEM Lab", LEAP_POINT, live=True, end="18:00"),
+        _program(2, "Lake City Homework Help Club", (LEAP_POINT[0] + 0.01, LEAP_POINT[1] - 0.01), live=True, end="18:00"),
+        _program(3, "Rainier Beach After School Club", STALE_POINT, live=False, end="17:30"),
     ]
     return schools, programs
 
@@ -317,28 +370,19 @@ def _demo() -> tuple[list[dict], list[dict]]:
 def _random(already: int) -> tuple[list[dict], list[dict]]:
     rng = random.Random(7)
     need = TARGET - already
-    metros = [
-        ("Jacksonville", "Duval County", 30.25, -81.60, "322"),
-        ("Miami", "Miami-Dade County", 25.80, -80.22, "331"),
-        ("Orlando", "Orange County", 28.52, -81.38, "328"),
-    ]
     schools = []
     programs = []
+    city, county, zip_prefix = "Seattle", "King County", "981"
     for index in range(need):
-        city, county, lat, lon, zip_prefix = metros[0 if rng.random() < 0.4 else 1 if rng.random() < 0.7 else 2]
-        # Keep random Jacksonville pins south of the leap-program cluster.
-        if city == "Jacksonville":
-            lat = 30.18 + rng.random() * 0.14
-            lon = -81.80 + rng.random() * 0.28
-        else:
-            lat = lat + rng.uniform(-0.12, 0.12)
-            lon = lon + rng.uniform(-0.12, 0.12)
+        # Keep random Seattle pins south of the Northgate leap-program cluster.
+        lat = RANDOM_BOX[0] + rng.random() * (RANDOM_BOX[1] - RANDOM_BOX[0])
+        lon = RANDOM_BOX[2] + rng.random() * (RANDOM_BOX[3] - RANDOM_BOX[2])
         roll = rng.random()
         entity = "charter" if roll < 0.48 else "private" if roll < 0.80 else "public"
         levels = rng.choice([["e"], ["m"], ["h"], ["p", "e"], ["e", "m"], ["m", "h"]])
         stem = rng.random() < 0.28
         care = "17:30" if rng.random() < 0.35 else None
-        if city == "Jacksonville" and "m" in levels and stem and care:
+        if "m" in levels and stem and care:
             care = None
         rating = None if rng.random() < 0.48 else rng.choice([3, 4, 5, 6, 7, 8, 9])
         tuition = str(rng.choice([9000, 11000, 14000, 18000])) if entity == "private" else None
@@ -367,7 +411,11 @@ def _random(already: int) -> tuple[list[dict], list[dict]]:
         if rng.random() < 0.48:
             school.pop("student_teacher_ratio", None)
         schools.append(school)
-        if rng.random() < 0.18 and not (city == "Jacksonville" and lat > 30.36):
+        # Seattle packs the random schools far tighter than the old three-metro spread,
+        # so programs are rarer here, and none sit near the stale-program demo school.
+        # The draw stays in place, so no other random value moves.
+        near_stale = _miles((lat, lon), STALE_POINT) < 3.5
+        if rng.random() < PROGRAM_RATE and not near_stale:
             programs.append(
                 _program(
                     100 + index,
@@ -395,9 +443,9 @@ def _school(
     tuition: str | None = None,
     arts: bool = False,
     religious: bool = False,
-    county: str = "Duval County",
-    city: str = "Jacksonville",
-    zip_prefix: str = "322",
+    county: str = "King County",
+    city: str = "Seattle",
+    zip_prefix: str = "981",
     rng: random.Random | None = None,
 ) -> dict:
     rng = rng or random.Random(number)
@@ -427,7 +475,7 @@ def _school(
     if rng.random() > 0.5:
         osp["end_time"] = ["3:15 PM"]
     record = {
-        "id": f"School fl-{school_id}",
+        "id": f"School wa-{school_id}",
         "school_id": school_id,
         "name": name,
         "sortable_name": name.casefold(),
@@ -437,12 +485,12 @@ def _school(
         "city": city,
         "city_untokenized": city.casefold().replace(" ", ""),
         "county": county,
-        "state": "FL",
+        "state": "WA",
         "street": f"{100 + number} Synthetic Avenue",
         "zipcode": f"{zip_prefix}{number % 100:02d}",
         "latlon": f"{lat}, {lon}",
         "enrollment": 280 + number * 3,
-        "created": "2026-02-01T12:00:00-05:00",
+        "created": "2026-02-01T12:00:00-08:00",
         "osp": osp,
         "esp_text": [f"{name} serves families in {city}."],
         "_synthetic": True,
@@ -487,22 +535,22 @@ def _reviews(name: str, positive: bool, stem_topic: bool = False) -> list[dict]:
     ]
 
 
-def _program(number: int, name: str, origin: tuple[float, float], live: bool, end: str, city: str = "Jacksonville") -> dict:
+def _program(number: int, name: str, origin: tuple[float, float], live: bool, end: str, city: str = "Seattle") -> dict:
     program_id = 880000 + number
     if live:
         start, finish, status = "2026-11-01", "2027-05-20", "upcoming"
     else:
         start, finish, status = "2024-01-08", "2024-05-20", "past"
     return {
-        "id": f"Program fl-{program_id}",
+        "id": f"Program wa-{program_id}",
         "program_id": program_id,
         "name": name,
         "description": f"After school homework help until {end} on school days.",
         "program_type": "after_school",
         "city": city,
-        "state": "FL",
-        "geo_state": "FL",
-        "county": "Duval County" if city == "Jacksonville" else "",
+        "state": "WA",
+        "geo_state": "WA",
+        "county": "King County",
         "latlon": f"{origin[0]}, {origin[1]}",
         "tag_names": ["After School", "Homework Help", "STEM"],
         "level_code": ["m"],
@@ -530,9 +578,9 @@ def _websites(schools: list[dict]) -> None:
     for school in schools:
         facts = []
         role = school.get("_demo_role")
-        if role == "full" and school["name"].startswith("Tidewater"):
+        if role == "full" and school["name"].startswith("Cascade"):
             facts.append({"path": "osp.after_school_until", "value": "16:00", "as_of": "2026-10-01"})
-        if school["name"] == "Cedar Creek STEM Middle":
+        if school["name"] == "Northgate STEM Middle":
             facts.append({"path": "osp.after_school_until", "value": "18:00", "as_of": "2026-10-12"})
         payload = {"school_id": school["id"], "facts": facts}
         body = f"""<!doctype html>

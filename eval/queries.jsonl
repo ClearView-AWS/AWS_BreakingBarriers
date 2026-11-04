@@ -1,42 +1,42 @@
-{"id":"q01","query":"Middle school in Jacksonville with STEM and after-school care. Money is tight.","grade":"m","city":"Jacksonville","school_type":null,"needs":{"stem":"require","after_care":"require","low_cost":"prefer"},"unmapped":false,"ask":true}
-{"id":"q02","query":"elementary school in Miami","grade":"e","city":"Miami","school_type":null,"needs":{},"unmapped":false,"ask":false}
+{"id":"q01","query":"Middle school in Seattle with STEM and after-school care. Money is tight.","grade":"m","city":"Seattle","school_type":null,"needs":{"stem":"require","after_care":"require","low_cost":"prefer"},"unmapped":false,"ask":true}
+{"id":"q02","query":"elementary school in Seattle","grade":"e","city":"Seattle","school_type":null,"needs":{},"unmapped":false,"ask":false}
 {"id":"q03","query":"a good school","grade":null,"city":null,"school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":true}
-{"id":"q04","query":"How liberal are middle schools in Jacksonville?","grade":"m","city":"Jacksonville","school_type":null,"needs":{},"unmapped":true,"ask":true}
-{"id":"q05","query":"not religious elementary in Orlando","grade":"e","city":"Orlando","school_type":null,"needs":{"non_religious":"require"},"unmapped":false,"ask":false}
+{"id":"q04","query":"How liberal are middle schools in Seattle?","grade":"m","city":"Seattle","school_type":null,"needs":{},"unmapped":true,"ask":true}
+{"id":"q05","query":"not religious elementary in Seattle","grade":"e","city":"Seattle","school_type":null,"needs":{"non_religious":"require"},"unmapped":false,"ask":false}
 {"id":"q06","query":"high school with no sports","grade":"h","city":null,"school_type":null,"needs":{"sports":"avoid"},"unmapped":false,"ask":true}
-{"id":"q07","query":"charter middle school in Jacksonville with small classes","grade":"m","city":"Jacksonville","school_type":"charter","needs":{"small_classes":"prefer"},"unmapped":false,"ask":false}
+{"id":"q07","query":"charter middle school in Seattle with small classes","grade":"m","city":"Seattle","school_type":"charter","needs":{"small_classes":"prefer"},"unmapped":false,"ask":false}
 {"id":"q08","query":"I prefer a school with arts","grade":null,"city":null,"school_type":null,"needs":{"arts":"prefer"},"unmapped":false,"ask":true}
-{"id":"q09","query":"escuela intermedia en Jacksonville con ciencias","grade":"m","city":"Jacksonville","school_type":null,"needs":{"stem":"require"},"unmapped":false,"ask":false}
+{"id":"q09","query":"escuela intermedia en Seattle con ciencias","grade":"m","city":"Seattle","school_type":null,"needs":{"stem":"require"},"unmapped":false,"ask":false}
 {"id":"q10","query":"Springfield middle school","grade":"m","city":"Springfield","school_type":null,"needs":{},"unmapped":false,"ask":true}
-{"id":"q11","query":"private high school in Miami, money is tight","grade":"h","city":"Miami","school_type":"private","needs":{"low_cost":"prefer"},"unmapped":false,"ask":false}
-{"id":"q12","query":"top school in Jacksonville","grade":null,"city":"Jacksonville","school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":true}
+{"id":"q11","query":"private high school in Seattle, money is tight","grade":"h","city":"Seattle","school_type":"private","needs":{"low_cost":"prefer"},"unmapped":false,"ask":false}
+{"id":"q12","query":"top school in Seattle","grade":null,"city":"Seattle","school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":true}
 {"id":"q13","query":"What is CTE?","route":"define"}
-{"id":"q14","query":"middle school in Tampa with STEM, no religious affiliation","grade":"m","city":"Tampa","school_type":null,"needs":{"stem":"require","non_religious":"require"},"unmapped":false,"ask":false}
-{"id":"q15","query":"affordable elementary in Jacksonville","grade":"e","city":"Jacksonville","school_type":null,"needs":{"low_cost":"prefer"},"unmapped":false,"ask":false}
-{"id":"q16","query":"small class sizes in Miami","grade":null,"city":"Miami","school_type":null,"needs":{"small_classes":"prefer"},"unmapped":false,"ask":true}
-{"id":"q17","query":"I need after school care until 5:30 at a middle school in Jacksonville","grade":"m","city":"Jacksonville","school_type":null,"needs":{"after_care":"require"},"unmapped":false,"ask":false}
-{"id":"q18","query":"escuela primaria en Miami, no religiosa","grade":"e","city":"Miami","school_type":null,"needs":{"non_religious":"require"},"unmapped":false,"ask":false}
-{"id":"q19","query":"best high school in Orlando","grade":"h","city":"Orlando","school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":false}
-{"id":"q20","query":"public school with bus service in Jacksonville","grade":null,"city":"Jacksonville","school_type":"public","needs":{"transportation":"prefer"},"unmapped":false,"ask":true}
-{"id":"q21","query":"magnet middle school in Miami","grade":"m","city":"Miami","school_type":null,"needs":{"magnet":"prefer"},"unmapped":false,"ask":false}
-{"id":"q22","query":"CTE high school in Tampa","grade":"h","city":"Tampa","school_type":null,"needs":{"cte":"prefer"},"unmapped":false,"ask":false}
-{"id":"q23","query":"gifted program elementary Jacksonville","grade":"e","city":"Jacksonville","school_type":null,"needs":{"gifted":"prefer"},"unmapped":false,"ask":false}
+{"id":"q14","query":"middle school in Seattle with STEM, no religious affiliation","grade":"m","city":"Seattle","school_type":null,"needs":{"stem":"require","non_religious":"require"},"unmapped":false,"ask":false}
+{"id":"q15","query":"affordable elementary in Seattle","grade":"e","city":"Seattle","school_type":null,"needs":{"low_cost":"prefer"},"unmapped":false,"ask":false}
+{"id":"q16","query":"small class sizes in Seattle","grade":null,"city":"Seattle","school_type":null,"needs":{"small_classes":"prefer"},"unmapped":false,"ask":true}
+{"id":"q17","query":"I need after school care until 5:30 at a middle school in Seattle","grade":"m","city":"Seattle","school_type":null,"needs":{"after_care":"require"},"unmapped":false,"ask":false}
+{"id":"q18","query":"escuela primaria en Seattle, no religiosa","grade":"e","city":"Seattle","school_type":null,"needs":{"non_religious":"require"},"unmapped":false,"ask":false}
+{"id":"q19","query":"best high school in Seattle","grade":"h","city":"Seattle","school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":false}
+{"id":"q20","query":"public school with bus service in Seattle","grade":null,"city":"Seattle","school_type":"public","needs":{"transportation":"prefer"},"unmapped":false,"ask":true}
+{"id":"q21","query":"magnet middle school in Seattle","grade":"m","city":"Seattle","school_type":null,"needs":{"magnet":"prefer"},"unmapped":false,"ask":false}
+{"id":"q22","query":"CTE high school in Seattle","grade":"h","city":"Seattle","school_type":null,"needs":{"cte":"prefer"},"unmapped":false,"ask":false}
+{"id":"q23","query":"gifted program elementary Seattle","grade":"e","city":"Seattle","school_type":null,"needs":{"gifted":"prefer"},"unmapped":false,"ask":false}
 {"id":"q24","query":"school with inclusion and restorative discipline","grade":null,"city":null,"school_type":null,"needs":{"inclusion":"prefer","restorative_discipline":"prefer"},"unmapped":false,"ask":true}
-{"id":"q25","query":"homework help for a middle school in Orlando","grade":"m","city":"Orlando","school_type":null,"needs":{"homework_support":"prefer"},"unmapped":false,"ask":false}
-{"id":"q26","query":"dual language elementary in Miami","grade":"e","city":"Miami","school_type":null,"needs":{"dual_language":"prefer"},"unmapped":false,"ask":false}
-{"id":"q27","query":"small school in Jacksonville","grade":null,"city":"Jacksonville","school_type":null,"needs":{"small_school":"prefer"},"unmapped":false,"ask":true}
-{"id":"q28","query":"college prep high school in Orlando","grade":"h","city":"Orlando","school_type":null,"needs":{"college_prep":"prefer"},"unmapped":false,"ask":false}
-{"id":"q29","query":"safe elementary in Tampa","grade":"e","city":"Tampa","school_type":null,"needs":{"safety":"prefer"},"unmapped":false,"ask":false}
-{"id":"q30","query":"IEP support at a middle school in Jacksonville","grade":"m","city":"Jacksonville","school_type":null,"needs":{"special_education":"prefer"},"unmapped":false,"ask":false}
-{"id":"q31","query":"music and sports high school in Miami","grade":"h","city":"Miami","school_type":null,"needs":{"music":"prefer","sports":"prefer"},"unmapped":false,"ask":false}
-{"id":"q32","query":"uniforms required at a private middle school in Jacksonville","grade":"m","city":"Jacksonville","school_type":"private","needs":{"uniforms":"require"},"unmapped":false,"ask":true}
-{"id":"q33","query":"before school care for elementary in Jacksonville","grade":"e","city":"Jacksonville","school_type":null,"needs":{"before_care":"prefer"},"unmapped":false,"ask":false}
-{"id":"q34","query":"extended day middle school in Orlando","grade":"m","city":"Orlando","school_type":null,"needs":{"extended_day":"prefer"},"unmapped":false,"ask":false}
-{"id":"q35","query":"high attendance elementary in Miami","grade":"e","city":"Miami","school_type":null,"needs":{"high_attendance":"prefer"},"unmapped":false,"ask":false}
-{"id":"q36","query":"low student teacher ratio in a Jacksonville elementary","grade":"e","city":"Jacksonville","school_type":null,"needs":{"low_student_teacher_ratio":"prefer"},"unmapped":false,"ask":false}
-{"id":"q37","query":"How conservative is this high school in Tampa?","grade":"h","city":"Tampa","school_type":null,"needs":{},"unmapped":true,"ask":true}
+{"id":"q25","query":"homework help for a middle school in Seattle","grade":"m","city":"Seattle","school_type":null,"needs":{"homework_support":"prefer"},"unmapped":false,"ask":false}
+{"id":"q26","query":"dual language elementary in Seattle","grade":"e","city":"Seattle","school_type":null,"needs":{"dual_language":"prefer"},"unmapped":false,"ask":false}
+{"id":"q27","query":"small school in Seattle","grade":null,"city":"Seattle","school_type":null,"needs":{"small_school":"prefer"},"unmapped":false,"ask":true}
+{"id":"q28","query":"college prep high school in Seattle","grade":"h","city":"Seattle","school_type":null,"needs":{"college_prep":"prefer"},"unmapped":false,"ask":false}
+{"id":"q29","query":"safe elementary in Seattle","grade":"e","city":"Seattle","school_type":null,"needs":{"safety":"prefer"},"unmapped":false,"ask":false}
+{"id":"q30","query":"IEP support at a middle school in Seattle","grade":"m","city":"Seattle","school_type":null,"needs":{"special_education":"prefer"},"unmapped":false,"ask":false}
+{"id":"q31","query":"music and sports high school in Seattle","grade":"h","city":"Seattle","school_type":null,"needs":{"music":"prefer","sports":"prefer"},"unmapped":false,"ask":false}
+{"id":"q32","query":"uniforms required at a private middle school in Seattle","grade":"m","city":"Seattle","school_type":"private","needs":{"uniforms":"require"},"unmapped":false,"ask":true}
+{"id":"q33","query":"before school care for elementary in Seattle","grade":"e","city":"Seattle","school_type":null,"needs":{"before_care":"prefer"},"unmapped":false,"ask":false}
+{"id":"q34","query":"extended day middle school in Seattle","grade":"m","city":"Seattle","school_type":null,"needs":{"extended_day":"prefer"},"unmapped":false,"ask":false}
+{"id":"q35","query":"high attendance elementary in Seattle","grade":"e","city":"Seattle","school_type":null,"needs":{"high_attendance":"prefer"},"unmapped":false,"ask":false}
+{"id":"q36","query":"low student teacher ratio in a Seattle elementary","grade":"e","city":"Seattle","school_type":null,"needs":{"low_student_teacher_ratio":"prefer"},"unmapped":false,"ask":false}
+{"id":"q37","query":"How conservative is this high school in Seattle?","grade":"h","city":"Seattle","school_type":null,"needs":{},"unmapped":true,"ask":true}
 {"id":"q38","query":"Portland elementary school","grade":"e","city":"Portland","school_type":null,"needs":{},"unmapped":false,"ask":true}
-{"id":"q39","query":"a good school in Orlando","grade":null,"city":"Orlando","school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":true}
-{"id":"q40","query":"buena escuela en Miami","grade":null,"city":"Miami","school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":true}
+{"id":"q39","query":"a good school in Seattle","grade":null,"city":"Seattle","school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":true}
+{"id":"q40","query":"buena escuela en Seattle","grade":null,"city":"Seattle","school_type":null,"needs":{"high_performing":"prefer"},"unmapped":false,"ask":true}
 {"id":"q41","query":"Why isn't Mariner Elementary listed?","route":"why_not"}
-{"id":"q42","query":"compare Tidewater STEM Charter and Riverside Preparatory Middle","route":"compare"}
+{"id":"q42","query":"compare Cascade STEM Charter and Queen Anne Preparatory Middle","route":"compare"}

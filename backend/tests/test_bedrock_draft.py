@@ -11,7 +11,7 @@ from agent.extractor import extract
 from search.corpus import known_cities, load_programs, load_schools
 from search.engine import search_schools
 
-QUERY = "Elementary school in Jacksonville with after-school care until 6pm"
+QUERY = "Elementary school in Seattle with after-school care until 6pm"
 
 
 @pytest.fixture
@@ -40,16 +40,16 @@ def test_valid_draft_matches_rules_results(bedrock):
         _fenced(
             [
                 {"kind": "grade", "value": "e", "text": "my kid is 7"},
-                {"kind": "location", "value": "jacksonville", "text": "Jax"},
+                {"kind": "location", "value": "seattle", "text": "Seattle"},
                 {"kind": "need", "need": "after_care", "strength": "require", "params": {"until": "18:00"}, "text": "can't pick up before 6"},
             ]
         )
     )
-    criteria, _ = extract("my kid is 7, we live in Jax, I can't pick up before 6", known_cities())
+    criteria, _ = extract("my kid is 7, we live in Seattle, I can't pick up before 6", known_cities())
 
     by_kind = {c.kind: c for c in criteria}
     assert by_kind["grade"].value == "e"
-    assert by_kind["location"].value == "Jacksonville"
+    assert by_kind["location"].value == "Seattle"
     assert by_kind["need"].need == "after_care"
     assert by_kind["need"].params == {"until": "18:00"}
     assert by_kind["need"].ambiguities, "after_care keeps its on-site question"

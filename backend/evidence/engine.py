@@ -367,15 +367,15 @@ def _low_cost(school: dict, criterion, today: date) -> EvidenceRecord:
         )
     if entity == "private":
         tuition = unwrap(get_path(school, "osp.tuition"))
-        rule = funding_rules()["fes_eo"]
+        # The first private-school cost rule in funding_rules.yaml explains tuition and aid.
+        rule = next(r for r in funding_rules().values() if "private" in (r.get("applies_to") or []))
         if tuition:
             tuition_text = f"listed tuition is ${tuition} [[cite:osp.tuition]]"
         else:
             tuition_text = "tuition is not listed on the profile"
         note = (
             f"{label} is only partly supported; {tuition_text}; "
-            f"you may qualify for the {rule['name']}; "
-            f"the scholarship funding organization sets the award, so this is not a promised amount "
+            f"{rule['card_note']} "
             f"[[cite:{rule['cite_path']}]]."
         )
         return EvidenceRecord(
@@ -386,7 +386,7 @@ def _low_cost(school: dict, criterion, today: date) -> EvidenceRecord:
             source=Source(
                 type="funding_rule",
                 path=rule["cite_path"],
-                as_of="2026-03-01",
+                as_of="2026-11-03",
                 confidence="medium",
             ),
             note=note,
