@@ -16,6 +16,8 @@ export interface AppStackProps extends cdk.StackProps {
   /** OpenSearch endpoint hostname without https:// */
   openSearchEndpoint?: string;
   bedrockEnabled?: boolean;
+  /** Amazon Translate: read and answer parents in any language. On unless set to false. */
+  translateEnabled?: boolean;
 }
 
 function repoRootFrom(start: string): string {
@@ -41,6 +43,7 @@ export class AppStack extends cdk.Stack {
 
     const repoRoot = repoRootFrom(__dirname);
     const bedrockEnabled = props.bedrockEnabled ?? false;
+    const translateEnabled = props.translateEnabled ?? true;
 
     const vpc = new ec2.Vpc(this, 'Vpc', {
       maxAzs: 2,
@@ -60,6 +63,7 @@ export class AppStack extends cdk.Stack {
       GS_TODAY: '2026-11-03',
       AWS_REGION: cdk.Stack.of(this).region,
       BEDROCK_ENABLED: bedrockEnabled ? '1' : '0',
+      TRANSLATE_ENABLED: translateEnabled ? '1' : '0',
     };
     if (props.openSearchEndpoint) {
       environment.OPENSEARCH_URL = props.openSearchEndpoint.startsWith('http')
@@ -107,6 +111,15 @@ export class AppStack extends cdk.Stack {
     service.taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
+        resources: ['*'],
+      }),
+    );
+    // Amazon Translate (backend/agent/translate.py): each message is read in any language
+    // (TranslateText with automatic detection, which calls Comprehend) and the reply and UI
+    // strings are translated back (TranslateDocument, TranslateText). No resources to scope to.
+    service.taskDefinition.addToTaskRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['translate:TranslateText', 'translate:TranslateDocument', 'comprehend:DetectDominantLanguage'],
         resources: ['*'],
       }),
     );

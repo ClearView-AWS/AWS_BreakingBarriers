@@ -18,6 +18,7 @@ const env =
 
 const enableOpenSearch = String(app.node.tryGetContext('enableOpenSearch') ?? 'true') !== 'false';
 const bedrockEnabled = String(app.node.tryGetContext('bedrockEnabled') ?? 'false') === 'true';
+const translateEnabled = String(app.node.tryGetContext('translateEnabled') ?? 'true') !== 'false';
 const openSearchEndpoint = app.node.tryGetContext('openSearchEndpoint') as string | undefined;
 
 if (enableOpenSearch) {
@@ -32,4 +33,5 @@ new AppStack(app, 'GsAppStack', {
   description: 'GreatSchools guided search — CloudFront + Fargate demo',
   openSearchEndpoint,
   bedrockEnabled,
+  translateEnabled,
 });

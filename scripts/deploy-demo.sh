@@ -3,6 +3,7 @@
 # Usage:
 #   ./scripts/deploy-demo.sh
 #   BEDROCK=1 ./scripts/deploy-demo.sh
+#   TRANSLATE=0 ./scripts/deploy-demo.sh      # turn off Amazon Translate (on by default)
 #   SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh   # URL first; OpenSearch later
 
 set -euo pipefail
@@ -51,6 +52,9 @@ if [[ "${SKIP_OPENSEARCH:-}" == "1" ]]; then
 fi
 if [[ "${BEDROCK:-}" == "1" ]]; then
   CONTEXT+=(-c bedrockEnabled=true)
+fi
+if [[ "${TRANSLATE:-}" == "0" ]]; then
+  CONTEXT+=(-c translateEnabled=false)
 fi
 if [[ -n "${OPENSEARCH_ENDPOINT:-}" ]]; then
   CONTEXT+=(-c "openSearchEndpoint=${OPENSEARCH_ENDPOINT}")
