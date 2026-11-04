@@ -21,8 +21,6 @@ cd backend && ../.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 800
 cd frontend && npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-Open the live demo above, or http://127.0.0.1:5173 locally. The demo query is:
-
 > Middle school in Jacksonville with STEM and after-school care. Money is tight.
 
 Then: answer or skip the brief questions, approve the brief, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
