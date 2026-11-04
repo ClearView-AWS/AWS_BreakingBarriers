@@ -21,7 +21,7 @@ flowchart LR
 ```text
 Parent ──HTTPS──► CloudFront ─┬─ /*      ─► S3 (React build, private bucket, origin access control)
                               └─ /api/*  ─► ALB ─► Fargate task: FastAPI
-                                                      ├─► Bedrock      route + extract (Claude), embeddings (Titan V2)
+                                                      ├─► Bedrock      route + extract (Nova Lite), embeddings (Titan V2)
                                                       ├─► OpenSearch   hard filters + keyword + vector candidates
                                                       ├─► DynamoDB     sessions, saved lists, feedback, school inbox
                                                       └─► CloudWatch   criteria + OpenSearch query for every request
@@ -33,7 +33,7 @@ A turn: Bedrock routes the message and extracts criteria → code maps them to n
 
 | Service | What it does here | Where |
 |---|---|---|
-| Amazon Bedrock | Claude (Converse) routes each message and extracts criteria; Titan Text Embeddings V2 embeds documents and queries. A failed call falls back to the rules engine and the log says so. | `backend/agent/bedrock_client.py`, `backend/mapping/embedder.py` |
+| Amazon Bedrock | Amazon Nova Lite (Converse) routes each message and drafts criteria, which code maps to needs before use; Titan Text Embeddings V2 embeds documents and queries. A failed call falls back to the rules engine and the log says so. | `backend/agent/bedrock_client.py`, `backend/mapping/embedder.py` |
 | Amazon OpenSearch Service | `schools` and `programs` indexes with a k-NN `embedding` field. Every search sends one SigV4-signed query: hard filters, a keyword match and a k-NN clause. | `backend/search/opensearch_client.py`, `data/index/` |
 | Amazon DynamoDB | One on-demand table: sessions, saved lists, feedback, questions to schools, and schools' answers. | `backend/store.py` |
 | Amazon ECS on Fargate | Runs the API container (0.5 vCPU, 1 GB) in public subnets, no NAT gateway. | `backend/Dockerfile`, `infra/` |
@@ -190,7 +190,9 @@ The frontend is a static build in a private S3 bucket behind CloudFront (task 4,
 
 - **One stack.** `npx cdk deploy` works with no stack name, so a second teammate can stand up a full backup in their own sandbox (task 6). The existing OpenSearch domain keeps its construct id, so deploying over the shared sandbox updates it in place instead of replacing it.
 - **Public subnets, no NAT gateway.** The task gets a public IP to reach AWS APIs. The ALB is the only way in, and it only forwards requests carrying a header that CloudFront adds (the value is the stack's GUID); anything else gets 403.
-- **The domain's policy trusts the account, and the task role also has its own permissions.** The role is allowed `bedrock:InvokeModel` on Claude and Titan, `es:ESHttp*` on the domain, and read/write on the state table, nothing more.
+- **The domain's policy trusts the account, and the task role also has its own permissions.** The role is allowed `bedrock:InvokeModel` on Claude, Nova and Titan, `es:ESHttp*` on the domain, and read/write on the state table, nothing more.
+- **Amazon Nova Lite for routing and extraction, not Claude.** The first call to a Claude model has to subscribe the account through AWS Marketplace, and the hackathon account denies that (the CloudWatch log showed `AccessDeniedException` on every Converse call). Nova is Amazon's own model and needs no subscription. In an account that allows it, deploy with `-c fastModelId=us.anthropic.claude-haiku-5-5` to switch back; the role already has the Marketplace permissions.
+- **Bedrock drafts, code decides.** The model's criteria are never used as-is: the rules extractor builds the criteria, and each phrase the model adds is mapped through the same rules (city, grade, type, or a need in `needs.yaml`). The first deployed run, before this rule, returned no schools because the model's "Jacksonville" was not a city filter; the request log is how it was found.
 - **The API builds the OpenSearch indexes at startup if they are missing,** so a fresh deploy needs no laptop step. That is why the task role can write to the domain. Rebuild by hand with `python data/index/indexer.py --recreate`.
 - **One DynamoDB table instead of six.** Keys are `pk` / `sk` (`SESSION#<id>` with `META`, `SAVED#<school>`, `FEEDBACK#<n>`; `INBOX`; `OVERLAY`). One grant, one thing to tear down; community posts and votes can be added under new key prefixes. Layout in `backend/store.py`.
 - **Everything is `DESTROY` on delete,** including the table, because this is a hackathon sandbox.
