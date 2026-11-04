@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { DEMO_QUERY, type Block, type Card, type Criterion, type Evidence, type Turn } from "./types";
 
 type View = "search" | "saved" | "inbox";
@@ -29,10 +29,33 @@ async function postTurn(body: Record<string, unknown>): Promise<Turn> {
   return response.json();
 }
 
+// The session id is kept in the browser so the saved list (stored server-side
+// in DynamoDB) is still there after a reload. Storage can be blocked, so every
+// access is guarded and the page works without it.
+const SESSION_KEY = "gs-guided-session";
+
+function readStoredSession(): string | null {
+  try {
+    return window.localStorage.getItem(SESSION_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function storeSession(id: string) {
+  try {
+    window.localStorage.setItem(SESSION_KEY, id);
+  } catch {
+    /* storage unavailable: the session lasts for this tab only */
+  }
+}
+
 export function App() {
   const [view, setView] = useState<View>("search");
   const [query, setQuery] = useState("");
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(() => readStoredSession());
+  // After a reload, the first search starts fresh criteria but keeps the saved list.
+  const [freshPage, setFreshPage] = useState(true);
   const [turn, setTurn] = useState<Turn | null>(null);
   const [panel, setPanel] = useState<Turn | null>(null);
   const [saved, setSaved] = useState<{ id: string; name: string; city?: string }[]>([]);
@@ -52,6 +75,7 @@ export function App() {
     try {
       const data = await postTurn({ session_id: sessionId, ...body });
       setSessionId(data.session_id);
+      storeSession(data.session_id);
       if (mode === "panel") setPanel(data);
       else if (mode === "replace") {
         setTurn(data);
@@ -73,7 +97,12 @@ export function App() {
     setQuery(message);
     setView("search");
     setPicked([]);
-    await run({ message });
+    if (freshPage) {
+      setFreshPage(false);
+      await run({ message, action: "new_search", criteria: [] });
+    } else {
+      await run({ message });
+    }
   }
 
   async function refreshSaved(nextSession = sessionId) {
@@ -83,6 +112,12 @@ export function App() {
     setSaved(data.saved ?? []);
     setChecklist(data.checklist ?? []);
   }
+
+  useEffect(() => {
+    // Show the saved count from an earlier visit.
+    if (sessionId) refreshSaved(sessionId).catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function openInbox() {
     setView("inbox");
