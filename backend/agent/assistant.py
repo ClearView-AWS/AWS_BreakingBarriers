@@ -101,6 +101,8 @@ def _cite_label(path: str, records: list[dict], access: dict | None) -> str:
     if path.startswith("programs/"):
         return "Nearby program"
     for record in records:
+        if path in (record.get("missing_paths") or []):
+            return f"Not in the profile · {path}"
         source = record.get("source") or {}
         if source.get("path") == path:
             label = SOURCE_LABELS.get(source.get("type") or "", "Data")
@@ -147,6 +149,8 @@ def _allowed(records: list[dict], access: dict | None) -> set[str]:
             allowed.add(record["source"]["path"])
         allowed.update(record.get("review_ids") or [])
         allowed.update(record.get("post_ids") or [])
+        # Fields that were checked and found empty; an "unknown" sentence cites these.
+        allowed.update(record.get("missing_paths") or [])
     if access:
         if (access.get("source") or {}).get("path"):
             allowed.add(access["source"]["path"])

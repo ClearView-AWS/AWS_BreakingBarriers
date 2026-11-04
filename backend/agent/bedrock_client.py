@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 
+from contracts import EngineStep
 from runtime_config import BEDROCK_ENABLED
 
 log = logging.getLogger(__name__)
@@ -29,9 +30,18 @@ def converse(model_id: str, system: str, user: str) -> str:
     return "".join(block.get("text", "") for block in blocks)
 
 
-def maybe_bedrock_route(text: str, has_session: bool) -> str | None:
+def _step(answered: bool, error: str | None) -> EngineStep:
+    if answered:
+        return EngineStep(engine="bedrock")
     if not enabled():
-        return None
+        return EngineStep(engine="rules")
+    log.warning("%s", error)
+    return EngineStep(engine="rules_fallback", error=error)
+
+
+def maybe_bedrock_route(text: str, has_session: bool) -> tuple[str | None, EngineStep]:
+    if not enabled():
+        return None, _step(False, None)
     try:
         from catalog import models
         from agent.prompts import ROUTER_SYSTEM
@@ -52,42 +62,56 @@ def maybe_bedrock_route(text: str, has_session: bool) -> str | None:
             "save",
             "feedback",
         }
-        return raw if raw in allowed else None
+        if raw in allowed:
+            return raw, _step(True, None)
+        error = f"bedrock route answer not allowed: {raw!r}"
     except Exception as exc:
-        log.warning("bedrock route failed: %s", exc)
-        return None
+        error = f"bedrock route failed: {exc}"
+    return None, _step(False, error)
 
 
-def maybe_bedrock_criteria(text: str):
-    """Return None so the rules extractor stays the source of truth unless parsing works.
+def maybe_bedrock_explanations(cards: list[dict]) -> tuple[dict[str, str] | None, EngineStep]:
+    """Return the model's draft summary per card id, or None to keep the code summaries.
 
-    When Bedrock is on, its JSON is still mapped to needs in code by the caller
-    only if every item has text and strength. On any failure, return None.
+    The text is untrusted. The explainer fact-checks every sentence.
     """
     if not enabled():
-        return None
+        return None, _step(False, None)
     try:
         from catalog import models
-        from agent.prompts import EXTRACT_SYSTEM
-        from contracts import Criterion
+        from agent.prompts import EXPLAIN_SYSTEM
 
-        raw = converse(models()["fast_model"], EXTRACT_SYSTEM, text)
+        raw = converse(models()["strong_model"], EXPLAIN_SYSTEM, json.dumps(cards))
+        start, end = raw.find("{"), raw.rfind("}")
+        if start < 0 or end < 0:
+            return None, _step(False, f"bedrock explain returned no JSON object: {raw[:200]!r}")
+        payload = json.loads(raw[start : end + 1])
+        if not isinstance(payload, dict):
+            return None, _step(False, f"bedrock explain returned {type(payload).__name__}, not an object")
+        return {str(key): str(value) for key, value in payload.items()}, _step(True, None)
+    except Exception as exc:
+        return None, _step(False, f"bedrock explain failed: {exc}")
+
+
+def maybe_bedrock_criteria(text: str, cities: list[str]) -> tuple[list[dict] | None, EngineStep]:
+    """Return the model's raw draft items, or None to use the rules extractor.
+
+    The items are untrusted. The extractor validates each one against the
+    catalog and builds the criteria in code.
+    """
+    if not enabled():
+        return None, _step(False, None)
+    try:
+        from catalog import models
+        from agent.prompts import extract_system
+
+        raw = converse(models()["fast_model"], extract_system(cities), text)
         start, end = raw.find("["), raw.rfind("]")
         if start < 0 or end < 0:
-            return None
+            return None, _step(False, f"bedrock extract returned no JSON array: {raw[:200]!r}")
         payload = json.loads(raw[start : end + 1])
-        drafted = []
-        for item in payload:
-            drafted.append(
-                Criterion(
-                    id="draft",
-                    text=str(item.get("text") or ""),
-                    strength=item.get("strength") or "prefer",
-                    params=item.get("params") or {},
-                    kind="need",
-                )
-            )
-        return [row for row in drafted if row.text] or None
+        if not isinstance(payload, list):
+            return None, _step(False, f"bedrock extract returned {type(payload).__name__}, not a list")
+        return [item for item in payload if isinstance(item, dict)], _step(True, None)
     except Exception as exc:
-        log.warning("bedrock extract failed: %s", exc)
-        return None
+        return None, _step(False, f"bedrock extract failed: {exc}")
