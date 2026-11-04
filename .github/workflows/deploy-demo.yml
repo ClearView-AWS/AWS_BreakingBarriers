@@ -1,7 +1,7 @@
 # Redeploy the CloudFront + Fargate demo whenever main changes.
-# Needs repo secrets (Workshop Studio sessions expire — refresh when login renews):
-#   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN (if temporary)
-# Optional:
+# Signs in with GitHub OIDC: repo variable AWS_DEPLOY_ROLE_ARN names an IAM role
+# (GsGitHubDeploy) that trusts this repo's main branch. No stored AWS keys.
+# Optional secret:
 #   OPENSEARCH_ENDPOINT — existing domain hostname (no https://). Without it the
 #   app keeps the local in-memory search engine.
 name: Deploy demo
@@ -17,6 +17,7 @@ concurrency:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   deploy:
@@ -37,9 +38,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: us-east-1
 
       - name: Set CDK account

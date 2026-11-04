@@ -2,9 +2,10 @@
 # Deploy the parent-facing CloudFront + Fargate demo.
 # Usage:
 #   ./scripts/deploy-demo.sh
-#   BEDROCK=1 ./scripts/deploy-demo.sh
+#   BEDROCK=0 ./scripts/deploy-demo.sh        # rules engine only (Bedrock is on by default)
 #   TRANSLATE=0 ./scripts/deploy-demo.sh      # turn off Amazon Translate (on by default)
 #   SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh   # URL first; OpenSearch later
+#   OPENSEARCH_ENDPOINT=none ./scripts/deploy-demo.sh  # local search even if a domain exists
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -50,11 +51,25 @@ CONTEXT=()
 if [[ "${SKIP_OPENSEARCH:-}" == "1" ]]; then
   CONTEXT+=(-c enableOpenSearch=false)
 fi
-if [[ "${BEDROCK:-}" == "1" ]]; then
+if [[ "${BEDROCK:-1}" != "0" ]]; then
   CONTEXT+=(-c bedrockEnabled=true)
 fi
 if [[ "${TRANSLATE:-}" == "0" ]]; then
   CONTEXT+=(-c translateEnabled=false)
+fi
+# Without an endpoint the app falls back to local search, so reuse the
+# deployed domain unless the caller set one (OPENSEARCH_ENDPOINT=none opts out).
+if [[ -z "${OPENSEARCH_ENDPOINT:-}" ]]; then
+  OPENSEARCH_ENDPOINT="$(aws cloudformation describe-stacks --stack-name GsOpenSearchStack --region "$CDK_DEFAULT_REGION" \
+    --query "Stacks[0].Outputs[?OutputKey=='DomainEndpoint'].OutputValue" --output text 2>/dev/null || true)"
+  if [[ "${OPENSEARCH_ENDPOINT}" == "None" ]]; then
+    OPENSEARCH_ENDPOINT=""
+  elif [[ -n "${OPENSEARCH_ENDPOINT}" ]]; then
+    echo "Using OpenSearch domain ${OPENSEARCH_ENDPOINT}"
+  fi
+fi
+if [[ "${OPENSEARCH_ENDPOINT:-}" == "none" ]]; then
+  OPENSEARCH_ENDPOINT=""
 fi
 if [[ -n "${OPENSEARCH_ENDPOINT:-}" ]]; then
   CONTEXT+=(-c "openSearchEndpoint=${OPENSEARCH_ENDPOINT}")

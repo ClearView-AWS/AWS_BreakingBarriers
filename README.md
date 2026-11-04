@@ -3,7 +3,7 @@
 A guided school-search agent for an empty AWS sandbox. The parent writes in plain language. Code decides what is true. Every fact on a card cites the field or review it came from.
 
 **Live demo:** [https://dvpvz48phigre.cloudfront.net](https://dvpvz48phigre.cloudfront.net)  
-(CloudFront + Fargate, deployed from `main`. Bedrock and OpenSearch are off unless re-enabled.)
+(CloudFront + Fargate, deployed from `main` on every merge. Bedrock, OpenSearch, DynamoDB and Translate are on.)
 
 This build also runs locally. Bedrock, OpenSearch, SES, and DynamoDB stay behind flags. The demo city is Jacksonville. The clock the age rules use is 2026-11-03 (`GS_TODAY`).
 
@@ -25,7 +25,7 @@ cd frontend && npm run dev -- --host 127.0.0.1 --port 5173
 
 Then: answer or skip the brief questions, approve the brief, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
 
-Redeploy the hosted demo from `main`:
+Merging to `main` redeploys the hosted demo through GitHub Actions. To redeploy by hand (Bedrock on, and the existing OpenSearch domain picked up automatically):
 
 ```bash
 SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
