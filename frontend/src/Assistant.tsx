@@ -146,9 +146,12 @@ export function HighlightAssistant({ sessionId, rootSelector = "main" }: { sessi
   }, [panel]);
 
   useEffect(() => {
-    // Keep the newest answer in view.
+    // Show the newest question at the top, so its answer reads from the start.
     const thread = threadRef.current;
-    if (thread) thread.scrollTop = thread.scrollHeight;
+    const turns = thread?.querySelectorAll<HTMLElement>(".assist-turn");
+    const last = turns && turns.length ? turns[turns.length - 1] : null;
+    if (thread && last) thread.scrollTop = last.offsetTop;
+    // Run again when the answer arrives, because the loading dots were too short to scroll to.
   }, [history]);
 
   async function ask(target: Target, text: string) {
@@ -203,14 +206,14 @@ export function HighlightAssistant({ sessionId, rootSelector = "main" }: { sessi
   const panelStyle = panel
     ? {
         left: clamp(panel.rect.left, 8, window.innerWidth - width - 8),
-        top: clamp(panel.rect.bottom + 10, 8, Math.max(8, window.innerHeight - 460)),
+        top: clamp(panel.rect.bottom + 10, 8, Math.max(8, window.innerHeight - 540)),
         width,
       }
     : undefined;
 
   const latest = history[history.length - 1];
   const followUps = latest?.answer?.follow_ups ?? [];
-  const quote = panel ? (panel.text.length > 160 ? `${panel.text.slice(0, 157)}…` : panel.text) : "";
+  const quote = panel ? (panel.text.length > 90 ? `${panel.text.slice(0, 87)}…` : panel.text) : "";
 
   return (
     <>

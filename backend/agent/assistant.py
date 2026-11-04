@@ -186,61 +186,95 @@ def _focus_records(
     return []
 
 
+SOURCE_QUESTIONS = ("where does this come from", "where is this from", "source", "how do you know")
+
+
+def _is_source_question(question: str) -> bool:
+    q = question.casefold()
+    return any(phrase in q for phrase in SOURCE_QUESTIONS)
+
+
 def rules_answer(selection: str, question: str, card: dict | None, criteria: list[Criterion], criterion_id: str | None) -> dict:
-    haystack = normalize(f"{selection} {question}")
-    raw_haystack = f"{selection} {question}".casefold()
+    """Explain the highlight, or answer a follow-up question.
+
+    A follow-up is answered on its own terms: the question decides the topic, and the
+    highlight is only used for "where does this come from" and "how do I find out".
+    """
     records = list((card or {}).get("evidence") or [])
     access = (card or {}).get("access")
+    about_highlight = not question or _is_source_question(question) or _wants_how(question)
+    text = f"{selection} {question}" if about_highlight else question
+    haystack = normalize(text)
+    raw_haystack = text.casefold()
     sentences: list[str] = []
     next_step = None
     follow_ups: list[str] = []
-
-    for key, entry in glossary().items():
-        if key == "partial":
-            continue
-        terms = [entry.get("term") or "", entry.get("title") or "", key]
-        if any(_has_word(haystack, normalize(term)) for term in terms if term):
-            sentences.append(f"{' '.join(entry['text'].split()).split('. ')[0].rstrip('.')} {_cite(entry['cite_path'])}.")
+    empty_message = None
 
     names_school = bool(card) and bool(selection) and normalize(selection) in normalize(card["name"])
-    focus = []
-    if card and question:
-        # A follow-up question says what the parent wants now, so it wins over the highlight.
-        focus = _focus_records(records, criteria, normalize(question), None, use_mapper=True)
-    if card and not focus and not names_school:
-        focus = _focus_records(records, criteria, haystack, criterion_id)
-    for record in focus[:2]:
-        sentences.append(_record_sentence(record, _label_for_record(record, criteria)))
-        if record.get("status") == "unknown":
-            next_step = "Tap “Ask the school” on the card, or ask parents at this school in the community."
-            follow_ups.append("How do I find out?")
+    focus: list[dict] = []
+    if card and not about_highlight:
+        focus = _focus_records(records, criteria, haystack, None, use_mapper=True)
+    elif card and not names_school:
+        focus = _focus_records(records, criteria, normalize(selection), criterion_id)
+    if card and about_highlight and question and not focus:
+        focus = records[:MAX_SENTENCES]
 
-    for phrase, status in STATUS_WORDS.items():
-        if _has_word(haystack, phrase) and not any(r.get("status") == status for r in focus):
-            sentences.append(f"{RULES[status]} {_cite('rules.' + status)}")
-    for record in focus[:1]:
-        status = record.get("status")
-        if status and f"{RULES[status]} {_cite('rules.' + status)}" not in sentences:
-            sentences.append(f"{RULES[status]} {_cite('rules.' + status)}")
-
-    if card and ("%" in selection or _has_word(haystack, "match") or _has_word(haystack, "verified")):
-        sentences.append(
-            f"{card['name']} matches {round(card['match'] * 100)}% and is verified on {card['verified']} criteria {_cite('rules.match')}."
-        )
-        sentences.append(f"{RULES['match']} {_cite('rules.match')}")
-
-    if access and any(word in raw_haystack for word in ACCESS_WORDS):
-        sentences.extend(_access_sentences(access))
-        follow_ups.append("Where do I apply?")
-
-    if not sentences and card:
-        # Nothing specific was highlighted (for example the school's name): summarize the card.
-        for record in records[:MAX_SENTENCES]:
+    if question and _is_source_question(question):
+        # Show each fact with its source, and nothing else.
+        for record in focus[:MAX_SENTENCES]:
             sentences.append(_record_sentence(record, _label_for_record(record, criteria)))
-        follow_ups.append("What does the match score mean?")
+    else:
+        for key, entry in glossary().items():
+            if key == "partial":
+                continue
+            terms = [entry.get("term") or "", entry.get("title") or "", key]
+            if any(_has_word(haystack, normalize(term)) for term in terms if term):
+                sentences.append(f"{' '.join(entry['text'].split()).split('. ')[0].rstrip('.')} {_cite(entry['cite_path'])}.")
 
-    if card:
+        for record in focus[:2]:
+            sentences.append(_record_sentence(record, _label_for_record(record, criteria)))
+            if record.get("status") == "unknown":
+                next_step = "Tap “Ask the school” on the card, or ask parents at this school in the community."
+                follow_ups.append("How do I find out?")
+
+        for phrase, status in STATUS_WORDS.items():
+            if _has_word(haystack, phrase) and not any(r.get("status") == status for r in focus):
+                sentences.append(f"{RULES[status]} {_cite('rules.' + status)}")
+        if not question:
+            for record in focus[:1]:
+                status = record.get("status")
+                if status and f"{RULES[status]} {_cite('rules.' + status)}" not in sentences:
+                    sentences.append(f"{RULES[status]} {_cite('rules.' + status)}")
+
+        percent_highlighted = "%" in selection and not question
+        if card and (percent_highlighted or _has_word(haystack, "match") or _has_word(haystack, "verified") or _has_word(haystack, "score")):
+            sentences.append(
+                f"{card['name']} matches {round(card['match'] * 100)}% and is verified on {card['verified']} criteria {_cite('rules.match')}."
+            )
+            sentences.append(f"{RULES['match']} {_cite('rules.match')}")
+
+        if access and any(word in raw_haystack for word in ACCESS_WORDS):
+            sentences.extend(_access_sentences(access))
+            follow_ups.append("Where do I apply?")
+
+        if not sentences and card and not question:
+            # Nothing specific was highlighted (for example the school's name): summarize the card.
+            for record in records[:MAX_SENTENCES]:
+                sentences.append(_record_sentence(record, _label_for_record(record, criteria)))
+            follow_ups.append("What does the match score mean?")
+
+    if not sentences and card and question:
+        topics = ", ".join(_label_for_record(r, criteria).lower() for r in records) or "its profile"
+        empty_message = (
+            f"{card['name']}'s data doesn't answer that. I can tell you about {topics}, "
+            "how it gets in, and what the ratings mean."
+        )
+
+    if card and not (question and _is_source_question(question)):
         follow_ups.append("Where does this come from?")
+    if card:
+        follow_ups.append("What does the match score mean?")
     if not follow_ups:
         follow_ups = ["What does Partial mean?", "What is a charter school?"]
 
@@ -253,7 +287,7 @@ def rules_answer(selection: str, question: str, card: dict | None, criteria: lis
     kept = kept[:MAX_SENTENCES]
     if _wants_how(question) and next_step:
         kept = kept[:2]
-    return _package(kept, records, access, card, next_step, follow_ups, mode="rules")
+    return _package(kept, records, access, card, next_step, follow_ups, mode="rules", empty_message=empty_message)
 
 
 def _wants_how(question: str) -> bool:
@@ -261,7 +295,7 @@ def _wants_how(question: str) -> bool:
     return any(phrase in q for phrase in ("find out", "how do i", "what can i do", "ask"))
 
 
-def _package(kept: list[str], records, access, card, next_step, follow_ups, mode: str) -> dict:
+def _package(kept: list[str], records, access, card, next_step, follow_ups, mode: str, empty_message: str | None = None) -> dict:
     out_sentences = []
     for sentence in kept:
         cites = []
@@ -272,7 +306,8 @@ def _package(kept: list[str], records, access, card, next_step, follow_ups, mode
         out_sentences.append({"text": strip_cites(sentence), "cites": cites})
     if not out_sentences:
         out_sentences = [{
-            "text": "I don't have data that answers that. I can explain statuses, terms, and the evidence on a school card.",
+            "text": empty_message
+            or "I don't have data that answers that. I can explain statuses, terms, and the evidence on a school card.",
             "cites": [],
         }]
     seen = []
@@ -348,5 +383,7 @@ def assist(selection: str, question: str, card: dict | None, criteria: list[Crit
     if card:
         worded = _bedrock_answer(selection, question, card, criteria, answer)
         if worded:
-            return worded
+            answer = worded
+    # Don't offer the question that was just asked.
+    answer["follow_ups"] = [item for item in answer["follow_ups"] if item.casefold() != question.casefold()]
     return answer

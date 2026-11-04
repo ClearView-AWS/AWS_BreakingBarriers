@@ -134,3 +134,41 @@ def test_bedrock_answer_keeps_only_cited_sentences(client, session, monkeypatch)
     answer = ask(client, sid, "stem")
     assert answer["mode"] == "bedrock"
     assert [s["text"] for s in answer["sentences"]] == ["STEM is confirmed here."]
+
+
+TIDEWATER = "School fl-180001"
+SUMMARY = (
+    "After-school care is confirmed: 6:00 PM; the school website says 16:00, which does not match the profile. "
+    "Low cost is confirmed: charter schools in this data are tuition-free. STEM is confirmed: STEM."
+)
+
+
+def test_follow_up_answers_the_question_not_the_highlight(client, session):
+    sid, _ = session
+    answer = ask(client, sid, SUMMARY, school_id=TIDEWATER, question="Is after school care on campus?")
+    paths = [c["path"] for s in answer["sentences"] for c in s["cites"]]
+    text = " ".join(s["text"] for s in answer["sentences"])
+    assert "After-school care" in text
+    assert "glossary.charter" not in paths
+    assert "rules.match" not in paths
+
+
+def test_follow_up_outside_the_data_says_so(client, session):
+    sid, _ = session
+    answer = ask(client, sid, SUMMARY, school_id=TIDEWATER, question="Do they have a swimming pool?")
+    assert answer["sentences"][0]["cites"] == []
+    assert "Tidewater STEM Charter's data doesn't answer that" in answer["sentences"][0]["text"]
+
+
+def test_where_does_this_come_from_lists_sources(client, session):
+    sid, _ = session
+    answer = ask(client, sid, SUMMARY, school_id=TIDEWATER, question="Where does this come from?")
+    paths = [c["path"] for s in answer["sentences"] for c in s["cites"]]
+    assert paths and not any(path.startswith(("rules.", "glossary.")) for path in paths)
+    assert "Where does this come from?" not in answer["follow_ups"]
+
+
+def test_follow_up_about_the_score(client, session):
+    sid, _ = session
+    answer = ask(client, sid, SUMMARY, school_id=TIDEWATER, question="why is the score so high?")
+    assert any(c["path"] == "rules.match" for s in answer["sentences"] for c in s["cites"])
