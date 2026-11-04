@@ -26,6 +26,7 @@
 | OpenSearch | **연결됨** — `GsOpenSearchStack` 도메인 `searchdomainfdc-imug9ulee6sc`, `schools` 인덱스 적재 |
 | DynamoDB | `GsAppStack`의 `RuntimeState` 테이블 (세션·인박스). `/tmp/gs-state.json`은 테이블 없을 때만 쓰는 폴백 |
 | Translate | 켜짐 |
+| Bedrock Guardrails | 켜짐 — `GsAppStack`이 커뮤니티 글 PII 가드레일을 만들고 `BEDROCK_GUARDRAIL_ID`로 넘김 |
 
 예전 `InfraStack`(두 번째 OpenSearch 도메인, 미사용)은 11/04 저녁에 삭제함.
 

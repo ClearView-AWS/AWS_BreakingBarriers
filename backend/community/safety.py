@@ -65,6 +65,29 @@ def _local_findings(text: str) -> list[dict]:
     return unique
 
 
+_HOUSE_NUMBER_BEFORE = re.compile(r"\b\d{1,5}\s+(?:[\w.'-]+\s+){0,3}$")
+_STREET_WORD = re.compile(
+    r"\b(?:st|street|ave|avenue|rd|road|blvd|boulevard|dr|drive|ln|lane|ct|court|way|pl|place"
+    r"|pkwy|parkway|cir|circle|ter|terrace|hwy|highway)\b\.?",
+    re.IGNORECASE,
+)
+
+
+def _home_address(text: str, match: str) -> str | None:
+    """The address with its house number, or None for a bare place name.
+
+    Guardrails can return only the tail of an address ("st" for "1420 oak st").
+    """
+    if re.search(r"\d", match):
+        return match
+    for found in re.finditer(re.escape(match), text, flags=re.IGNORECASE):
+        before = _HOUSE_NUMBER_BEFORE.search(text[max(0, found.start() - 60):found.start()])
+        address = before.group(0) + found.group(0) if before else ""
+        if address and _STREET_WORD.search(address):
+            return address
+    return None
+
+
 def _guardrail_findings(text: str) -> list[dict] | None:
     """Return Guardrails findings, or None when Guardrails is not configured or fails."""
     guardrail_id = os.environ.get("BEDROCK_GUARDRAIL_ID", "").strip()
@@ -85,13 +108,25 @@ def _guardrail_findings(text: str) -> list[dict] | None:
     if response.get("action") != "GUARDRAIL_INTERVENED":
         return []
     found: list[dict] = []
+    ignored = 0
     for assessment in response.get("assessments") or []:
         policy = assessment.get("sensitiveInformationPolicy") or {}
         for entity in policy.get("piiEntities") or []:
-            found.append({"type": str(entity.get("type", "pii")).lower(), "text": entity.get("match", "")})
+            kind = str(entity.get("type", "pii")).lower()
+            match = entity.get("match", "")
+            # Guardrails tags neighborhoods, street names and school names as ADDRESS.
+            # Only a house number makes it a home address.
+            if kind == "address":
+                match = _home_address(text, match)
+                if match is None:
+                    ignored += 1
+                    continue
+            found.append({"type": kind, "text": match})
         for regex in policy.get("regexes") or []:
             found.append({"type": regex.get("name", "pattern"), "text": regex.get("match", "")})
-    return found or [{"type": "guardrail", "text": ""}]
+    if found or ignored:
+        return found
+    return [{"type": "guardrail", "text": ""}]
 
 
 _MESSAGES = {

@@ -32,6 +32,8 @@ Current demo: https://dvpvz48phigre.cloudfront.net
 
 Bedrock is on by default; `BEDROCK=0` deploys the rules engine only. If `GsOpenSearchStack` exists, the script passes its endpoint to the app; `OPENSEARCH_ENDPOINT=none` keeps local search.
 
+With Bedrock on, `GsAppStack` also creates the Bedrock Guardrail for community posts and passes `BEDROCK_GUARDRAIL_ID` / `BEDROCK_GUARDRAIL_VERSION` to the task.
+
 ## OpenSearch later
 
 ```bash
