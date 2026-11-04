@@ -24,7 +24,8 @@
     "typeRoots": [
       "./node_modules/@types"
     ],
-    "noEmit": true,
+    "outDir": "dist",
+    "rootDir": ".",
     "isolatedModules": true,
     "types": [
       "jest",
@@ -33,6 +34,7 @@
   },
   "exclude": [
     "node_modules",
-    "cdk.out"
+    "cdk.out",
+    "dist"
   ]
 }
