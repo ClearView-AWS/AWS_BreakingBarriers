@@ -164,6 +164,9 @@ export class InfraStack extends cdk.Stack {
         resources: [
           'arn:aws:bedrock:*::foundation-model/anthropic.*',
           'arn:aws:bedrock:*::foundation-model/amazon.titan-embed-*',
+          // Amazon Nova needs no Marketplace subscription: the fallback if an
+          // account blocks Marketplace (deploy with -c fastModelId=us.amazon.nova-lite-v1:0).
+          'arn:aws:bedrock:*::foundation-model/amazon.nova-*',
           `arn:aws:bedrock:*:${this.account}:inference-profile/*`,
         ],
       }),
