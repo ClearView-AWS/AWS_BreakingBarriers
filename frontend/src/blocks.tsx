@@ -44,18 +44,45 @@ export function blockOf(blocks: Block[], type: string) {
  * make sense for the newest reply. `current` marks the results the parent is
  * looking at now; older results fold to one line so "#2" always means one list.
  */
-export function AgentBlocks({ turn, latest, current, actions }: { turn: Turn; latest: boolean; current: boolean; actions: Actions }) {
+export function AgentBlocks({
+  turn,
+  latest,
+  current,
+  briefHere = false,
+  actions,
+}: {
+  turn: Turn;
+  latest: boolean;
+  current: boolean;
+  /** This reply holds the newest brief, so it draws it. */
+  briefHere?: boolean;
+  actions: Actions;
+}) {
   return (
     <div className="agent-blocks">
       {turn.read_from && <p className="read-from">{t("blocks.read_from", { language: languageName(turn.read_from) })}</p>}
       {turn.blocks.map((block, index) => (
-        <AgentBlock key={index} block={block} turn={turn} latest={latest} current={current} actions={actions} />
+        <AgentBlock key={index} block={block} turn={turn} latest={latest} current={current} briefHere={briefHere} actions={actions} />
       ))}
     </div>
   );
 }
 
-function AgentBlock({ block, turn, latest, current, actions }: { block: Block; turn: Turn; latest: boolean; current: boolean; actions: Actions }) {
+function AgentBlock({
+  block,
+  turn,
+  latest,
+  current,
+  briefHere,
+  actions,
+}: {
+  block: Block;
+  turn: Turn;
+  latest: boolean;
+  current: boolean;
+  briefHere: boolean;
+  actions: Actions;
+}) {
   const payload = block.payload;
   switch (block.type) {
     case "message": {
@@ -80,12 +107,15 @@ function AgentBlock({ block, turn, latest, current, actions }: { block: Block; t
         />
       );
     case "brief": {
-      // Before the first search the parent approves the brief (must / nice / avoid) or edits it.
-      // Once approved, the chip row above the input carries it, so it isn't drawn again.
-      if (!latest || payload.approved) return null;
+      // The parent's search: must / nice / avoid. Only the newest brief is drawn. Before the first
+      // search it waits for approval; after that, editing a chip re-runs the search. It's the one
+      // place the search is shown and edited.
+      const approved = Boolean(payload.approved);
+      if (!briefHere) return null;
       return (
         <Brief
           criteria={turn.criteria}
+          approved={approved}
           onChange={(next) => actions.send({ event: "brief_edited", action: "refresh", criteria: next })}
           onApprove={() => actions.send({ event: "brief_approved", action: "refresh" })}
         />
@@ -183,31 +213,6 @@ function Question({ payload, disabled, onPick }: { payload: Record<string, unkno
   );
 }
 
-export function ChipRow({ criteria, disabled, onChange }: { criteria: Criterion[]; disabled: boolean; onChange: (next: Criterion[]) => void }) {
-  const cycle: Record<string, Criterion["strength"]> = { require: "prefer", prefer: "avoid", avoid: "require" };
-  return (
-    <div className="chips" aria-label={t("blocks.your_search")}>
-      {criteria.map((item) => (
-        <span className="chip" key={item.id} title={item.label && item.label !== item.text ? t("blocks.you_said", { text: item.text }) : undefined}>
-          <b>{nameOf(item)}</b>
-          {item.kind === "need" || item.kind === "distance" ? (
-            <button
-              className={`strength-${item.strength}`}
-              disabled={disabled}
-              title={t("blocks.change_strength")}
-              onClick={() => onChange(criteria.map((row) => (row.id === item.id ? { ...row, strength: cycle[row.strength] } : row)))}
-            >
-              {t(`strength.${item.strength}`)}
-            </button>
-          ) : (
-            <span>{t(item.kind === "grade" ? "kind.grade" : item.kind === "location" ? "kind.city" : "kind.type")}</span>
-          )}
-          <button aria-label={t("blocks.remove", { name: nameOf(item) })} disabled={disabled} onClick={() => onChange(criteria.filter((row) => row.id !== item.id))}>×</button>
-        </span>
-      ))}
-    </div>
-  );
-}
 
 // --- results -----------------------------------------------------------------
 

@@ -6,9 +6,11 @@ type Props = {
   criteria: Criterion[];
   onChange: (next: Criterion[]) => void;
   onApprove: () => void;
+  /** Already approved: the results are on screen, so editing re-runs the search and there's nothing to approve. */
+  approved?: boolean;
 };
 
-export function Brief({ criteria, onChange, onApprove }: Props) {
+export function Brief({ criteria, onChange, onApprove, approved = false }: Props) {
   if (!criteria.length) return null;
 
   // Hard filters (location/grade/type) always belong in must-have for the brief.
@@ -26,9 +28,11 @@ export function Brief({ criteria, onChange, onApprove }: Props) {
           <p className="eyebrow">{t("brief.label")}</p>
           <h2>{t("brief.title")}</h2>
         </div>
-        <button type="button" className="btn-primary" onClick={onApprove}>
-          {t("brief.approve")}
-        </button>
+        {!approved && (
+          <button type="button" className="btn-primary" onClick={onApprove}>
+            {t("brief.approve")}
+          </button>
+        )}
       </div>
 
       <div className="brief-grid">

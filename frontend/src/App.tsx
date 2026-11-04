@@ -40,7 +40,6 @@ export function App() {
   const history = useRef<HistoryEntry[]>([]);
 
   const lastTurn = [...entries].reverse().find((entry): entry is Extract<Entry, { role: "agent" }> => entry.role === "agent")?.turn;
-  const criteria = lastTurn?.criteria ?? [];
   // The whole UI follows the language of the latest reply (the parent's latest typed message).
   useUiLanguage(lastTurn?.language);
 
@@ -97,31 +96,33 @@ export function App() {
 
   return (
     <div className={view === "search" ? "app chat-mode" : "app"}>
-      <header className="top">
-        <div className="brand">
-          <strong>Guided Search</strong>
-          <span>{t("app.tagline")}</span>
-        </div>
-        <div className="top-right">
-          <nav className="nav">
-            <button aria-pressed={view === "search"} onClick={openSearch}>{t("app.search")}</button>
-            <button
-              aria-pressed={view === "saved"}
-              onClick={async () => {
-                setView("saved");
-                await refreshSaved();
-              }}
-            >
-              {t("app.saved", { n: saved.length })}
-            </button>
-            <button aria-pressed={view === "community"} onClick={() => openCommunity(null)}>{t("app.community")}</button>
-          </nav>
-          <PersonaSwitcher value={persona} onChange={setPersona} />
-        </div>
+      <header className="topbar">
+        <a className="brand" href="/" title={t("app.tagline")} onClick={(event) => event.preventDefault()}>
+          <span className="brand-mark" aria-hidden="true" />
+          <span className="brand-text">
+            <strong>GreatSchools</strong>
+            <em>Guided Search</em>
+          </span>
+        </a>
+        <nav className="nav" aria-label="Primary">
+          <button type="button" aria-pressed={view === "search"} onClick={openSearch}>{t("app.search")}</button>
+          <button
+            type="button"
+            aria-pressed={view === "saved"}
+            onClick={async () => {
+              setView("saved");
+              await refreshSaved();
+            }}
+          >
+            {t("app.saved", { n: saved.length })}
+          </button>
+          <button type="button" aria-pressed={view === "community"} onClick={() => openCommunity(null)}>{t("app.community")}</button>
+        </nav>
+        <PersonaSwitcher value={persona} onChange={setPersona} />
       </header>
       <main className={view === "search" ? "chat-main" : "wrap"}>
         {view === "search" && (
-          <Chat entries={entries} criteria={criteria} actions={actions} onSend={(text) => void send({ message: text })} />
+          <Chat entries={entries} actions={actions} onSend={(text) => void send({ message: text })} />
         )}
         {view === "saved" && (
           <section>

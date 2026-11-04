@@ -2,8 +2,8 @@
 // Guide reply holds that turn's blocks (results, questions, answers) inline.
 // The backend keeps the history too (POST /api/chat, backend/agent/conversation.py).
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { AgentBlocks, ChipRow, type Actions } from "./blocks";
-import { DEMO_QUERY, type Criterion, type Turn } from "./types";
+import { AgentBlocks, type Actions } from "./blocks";
+import { DEMO_QUERY, type Turn } from "./types";
 import { t } from "./i18n";
 import "./chat.css";
 
@@ -28,12 +28,10 @@ const EXAMPLES = [
 
 export function Chat({
   entries,
-  criteria,
   actions,
   onSend,
 }: {
   entries: Entry[];
-  criteria: Criterion[];
   actions: Actions;
   onSend: (text: string) => void;
 }) {
@@ -48,6 +46,11 @@ export function Chat({
     -1,
   );
   const latestAgent = entries.reduce((found, entry, index) => (entry.role === "agent" ? index : found), -1);
+  // The newest reply that carries the brief shows it; it's where the search is read and edited.
+  const currentBrief = entries.reduce(
+    (found, entry, index) => (entry.role === "agent" && entry.turn.blocks.some((b) => b.type === "brief") ? index : found),
+    -1,
+  );
 
   useEffect(() => {
     // A reply can be tall (cards), so show its top. A parent line or error just needs to be in view.
@@ -104,7 +107,13 @@ export function Chat({
             return (
               <li key={index} ref={ref} className="chat-entry chat-agent">
                 <span className="chat-who">{t("chat.guide")}</span>
-                <AgentBlocks turn={entry.turn} latest={index === latestAgent} current={index === currentResults} actions={actions} />
+                <AgentBlocks
+                  turn={entry.turn}
+                  latest={index === latestAgent}
+                  current={index === currentResults}
+                  briefHere={index === currentBrief}
+                  actions={actions}
+                />
               </li>
             );
           })}
@@ -117,9 +126,6 @@ export function Chat({
         </ol>
       </div>
       <div className="composer">
-        {criteria.length > 0 && (
-          <ChipRow criteria={criteria} disabled={busy} onChange={(next) => send({ action: "refresh", criteria: next })} />
-        )}
         {picked.length > 0 && (
           <div className="compare-tray">
             {picked.length === 2 ? (
