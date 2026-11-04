@@ -1,1 +1,13 @@
 .DS_Store
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+
+# Frontend: npm install recreates these, vite build writes dist
+node_modules/
+frontend/dist/
+
+# Local app state (sessions, saved lists, community posts). Each machine keeps its own.
+data/runtime/
