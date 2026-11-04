@@ -3,18 +3,18 @@
 from __future__ import annotations
 
 import evidence.engine as engine
-from pipeline import turn
 from search.corpus import load_programs
 from search.geo import miles_between
 from store import _empty
+from testing_helpers import results_payload, search_turn
 
 CARE = "Elementary school in Jacksonville with after-school care until 6pm"
 NEARBY_OK = CARE + ", a nearby program is fine"
 
 
 def _results(message: str) -> dict:
-    response = turn(_empty(), {"message": message}).model_dump()
-    return next(block["payload"] for block in response["blocks"] if block["type"] == "results")
+    response = search_turn(_empty(), {"message": message})
+    return results_payload(response)
 
 
 def _cards(results: dict) -> dict[str, dict]:

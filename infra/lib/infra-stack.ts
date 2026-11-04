@@ -3,6 +3,10 @@ import { Construct } from 'constructs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as opensearch from 'aws-cdk-lib/aws-opensearchservice';
 
+/**
+ * Slow / costly data plane. Deploy separately from the demo URL stack so
+ * CloudFront can come up without waiting on the OpenSearch domain.
+ */
 export class InfraStack extends cdk.Stack {
   public readonly domain: opensearch.Domain;
 
@@ -34,5 +38,9 @@ export class InfraStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'DomainEndpoint', { value: this.domain.domainEndpoint });
     new cdk.CfnOutput(this, 'DomainName', { value: this.domain.domainName });
+    new cdk.CfnOutput(this, 'OpenSearchUrl', {
+      value: `https://${this.domain.domainEndpoint}`,
+      description: 'Pass as OPENSEARCH_URL to the indexer and AppStack',
+    });
   }
 }
