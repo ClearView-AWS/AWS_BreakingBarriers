@@ -15,12 +15,34 @@ from search.engine import search_text_for
 from mapping.embedder import embed_hash
 
 
+def _city_key(city: str | None) -> str:
+    return str(city or "").casefold().replace(" ", "")
+
+
 def documents() -> list[dict]:
     clear_corpus_cache()
     rows = []
     for school in load_schools():
         text = search_text_for(school)
-        rows.append({"index": "schools", "id": school["id"], "search_text": text, "embedding": embed_hash(text)})
+        city = school.get("city")
+        rows.append(
+            {
+                "index": "schools",
+                "id": school["id"],
+                "body": {
+                    "id": school["id"],
+                    "name": school.get("name"),
+                    "city": city,
+                    "city_untokenized": _city_key(city),
+                    "state": school.get("state"),
+                    "entity_type": school.get("entity_type"),
+                    "level_codes": school.get("level_codes") or [],
+                    "summary_rating": school.get("summary_rating"),
+                    "search_text": text,
+                    "embedding": embed_hash(text),
+                },
+            }
+        )
     for program in load_programs():
         text = " ".join(
             [
@@ -30,16 +52,41 @@ def documents() -> list[dict]:
                 str(program.get("city") or ""),
             ]
         )
-        rows.append({"index": "programs", "id": program.get("id"), "search_text": text, "embedding": embed_hash(text)})
+        rows.append(
+            {
+                "index": "programs",
+                "id": program.get("id"),
+                "body": {
+                    "id": program.get("id"),
+                    "name": program.get("name"),
+                    "city": program.get("city"),
+                    "search_text": text,
+                    "embedding": embed_hash(text),
+                },
+            }
+        )
     return rows
 
 
 def main() -> None:
     rows = documents()
     out = INDEX_DIR / "documents.jsonl"
+    INDEX_DIR.mkdir(parents=True, exist_ok=True)
     with out.open("w") as handle:
         for row in rows:
-            handle.write(json.dumps({"id": row["id"], "index": row["index"], "search_text": row["search_text"]}) + "\n")
+            handle.write(
+                json.dumps(
+                    {
+                        "id": row["id"],
+                        "index": row["index"],
+                        "search_text": row["body"].get("search_text"),
+                        "city_untokenized": row["body"].get("city_untokenized"),
+                        "entity_type": row["body"].get("entity_type"),
+                        "level_codes": row["body"].get("level_codes"),
+                    }
+                )
+                + "\n"
+            )
     print(f"wrote {len(rows)} documents to {out}")
     if not OPENSEARCH_URL:
         print("OPENSEARCH_URL is not set; skipped the cluster.")
@@ -61,7 +108,7 @@ def main() -> None:
             client.indices.delete(index=name)
         client.indices.create(index=name, body=body)
     for row in rows:
-        client.index(index=row["index"], id=row["id"], body={"id": row["id"], "search_text": row["search_text"], "embedding": row["embedding"]})
+        client.index(index=row["index"], id=row["id"], body=row["body"])
     print("indexed into OpenSearch")
 
 

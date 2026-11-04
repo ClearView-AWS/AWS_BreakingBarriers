@@ -113,6 +113,18 @@ export const EN = {
   "blocks.synthetic": "synthetic profile",
   "blocks.review_counts": "{positive} positive · {negative} negative",
   "blocks.review_range": "{start} to {end}",
+  // components/Brief.tsx and components/QuestionPrompt.tsx (shown in the chat before the first search)
+  "brief.label": "Search brief",
+  "brief.title": "Here’s what I’ll look for",
+  "brief.approve": "Looks right — search",
+  "brief.must": "Must have",
+  "brief.nice": "Nice to have",
+  "brief.avoid": "Avoid",
+  "brief.hint": "Tap a need to cycle must / nice / avoid. Remove anything that doesn’t belong.",
+  "brief.cycle": "Cycle strength",
+  "questions.quick_one": "One quick question",
+  "questions.quick_other": "{n} quick questions",
+  "questions.skip": "Just show me results",
   // the two-school comparison
   "compare.not_on_file": "Not on file",
   "compare.nearby_program": "Nearby program: {name}",

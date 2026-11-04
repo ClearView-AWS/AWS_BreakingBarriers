@@ -9,6 +9,8 @@ import type { CommunityTarget } from "./Community";
 import { STATUS_MARK, nameOf, sourceLabel, statusLabel } from "./labels";
 import { languageName, t, tn } from "./i18n";
 import { MapView, ViewToggle, type ResultsView } from "./Views";
+import { Brief } from "./components/Brief";
+import { QuestionPrompt, type QuestionItem } from "./components/QuestionPrompt";
 
 /** "public" -> "Public" in the UI language; anything else as written. */
 function typeLabel(type: string | null | undefined): string {
@@ -68,6 +70,8 @@ function AgentBlock({ block, turn, latest, current, actions }: { block: Block; t
       );
     }
     case "question":
+      // Before the first search the same question also comes in the `questions` block, drawn above.
+      if (turn.blocks.some((other) => other.type === "questions")) return null;
       return (
         <Question
           payload={payload}
@@ -75,6 +79,32 @@ function AgentBlock({ block, turn, latest, current, actions }: { block: Block; t
           onPick={(optionId) => actions.send({ action: "refresh", answer: { question_id: payload.id, option_id: optionId } })}
         />
       );
+    case "brief": {
+      // Before the first search the parent approves the brief (must / nice / avoid) or edits it.
+      // Once approved, the chip row above the input carries it, so it isn't drawn again.
+      if (!latest || payload.approved) return null;
+      return (
+        <Brief
+          criteria={turn.criteria}
+          onChange={(next) => actions.send({ event: "brief_edited", action: "refresh", criteria: next })}
+          onApprove={() => actions.send({ event: "brief_approved", action: "refresh" })}
+        />
+      );
+    }
+    case "questions": {
+      // Up to three questions that would change the results, each skippable.
+      if (!latest || turn.blocks.some((other) => other.type === "results")) return null;
+      return (
+        <QuestionPrompt
+          items={(payload.items as QuestionItem[]) ?? []}
+          skipLabel={payload.skip_label ? String(payload.skip_label) : undefined}
+          onPick={(questionId, optionId) =>
+            actions.send({ event: "answers_submitted", action: "refresh", answer: { question_id: questionId, option_id: optionId } })
+          }
+          onSkip={() => actions.send({ event: "skip_to_results", action: "refresh" })}
+        />
+      );
+    }
     case "chips":
       // Chips name a school and an action ("Open the full profile"), so they still work later.
       return <Chips items={(payload.items as ChatChip[]) ?? []} disabled={actions.busy} onAction={actions.send} />;

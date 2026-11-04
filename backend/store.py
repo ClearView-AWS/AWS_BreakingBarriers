@@ -52,6 +52,10 @@ def new_session(state: dict) -> dict:
         "asked": [],
         "saved": [],
         "feedback": [],
+        # M2: search runs only after the brief is approved or the parent skips questions.
+        "brief_approved": False,
+        "pending_questions": [],
+        "assumptions": [],
     }
     state["sessions"][session["id"]] = session
     return session

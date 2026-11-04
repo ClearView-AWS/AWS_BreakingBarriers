@@ -1,5 +1,5 @@
 {
-  "app": "npx tsc && npx tsx bin/infra.ts",
+  "app": "npx tsc && node dist/bin/infra.js",
   "watch": {
     "include": [
       "**"

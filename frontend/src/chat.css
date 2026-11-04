@@ -1,6 +1,31 @@
 /* The search as a chat. Uses the shared color tokens from styles.css, with
    fallbacks so it stays readable if a theme renames them. */
 
+/* The chat, map and community styles were written against the earlier tokens. The redesign
+   (styles.css) renamed them, so map the old names onto its palette. */
+:root {
+  --card: #fff;
+  --bg: var(--mist, #eef4f1);
+  --shadow: 0 10px 30px rgba(16, 32, 51, 0.08);
+  --teal: var(--leaf, #1f8a4c);
+  --teal-dark: var(--leaf-deep, #146338);
+}
+
+/* Rules the redesign dropped that the chat, Saved and Community screens still use. */
+.wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 64px; }
+.search { display: grid; grid-template-columns: 1fr auto; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 10px; box-shadow: var(--shadow); }
+.search input { border: 0; padding: 12px 14px; background: transparent; outline: none; font-size: 18px; }
+.icon { border: 0; background: var(--bg); border-radius: 999px; padding: 4px 8px; }
+.source { color: var(--muted); font-size: 13px; }
+.compare-on { outline: 2px solid var(--teal); }
+.quotes { display: grid; gap: 8px; margin-top: 8px; }
+.checklist { margin: 0; padding-left: 18px; }
+.checklist li { margin: 8px 0; }
+@media (max-width: 720px) {
+  .wrap { width: min(1120px, calc(100% - 24px)); padding-left: 0; padding-right: 0; }
+  .search { grid-template-columns: 1fr; }
+}
+
 /* Full height: the conversation scrolls, the composer stays at the bottom. */
 .app.chat-mode { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
 .chat-main { flex: 1; min-height: 0; display: flex; }

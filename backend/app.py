@@ -15,7 +15,7 @@ from store import State
 app = FastAPI(title="Guided School Search", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -28,10 +28,14 @@ class TurnIn(BaseModel):
     school_ids: list[str] = Field(default_factory=list)
     criteria: list[dict] | None = None
     answer: dict | None = None
+    # Batch answers from the brief questions UI: {"q1": "Must-have", ...}
+    answers: dict | None = None
     feedback: dict | None = None
     need: str | None = None
     # "Yes, it's my zoned school" on a public card: {"school_id": "...", "value": true}.
     zoned: dict | None = None
+    # M2 UI events: brief_approved | brief_edited | skip_to_results | answers_submitted
+    event: str | None = None
 
 
 class ReplyIn(BaseModel):

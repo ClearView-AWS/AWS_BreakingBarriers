@@ -33,6 +33,7 @@ _TEXT_KEYS = {
     "tap",
     "window",
     "detail_source",
+    "skip_label",
 }
 # Subtrees that are data, logs or the stored conversation, never shown as prose.
 _SKIP_KEYS = {"history", "engine", "evidence", "source", "cited", "records"}

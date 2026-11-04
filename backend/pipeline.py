@@ -9,7 +9,11 @@ from agent.explainer import model_summaries, public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
 from agent.translate import to_english
-from clarify.clarifier import choose_question
+from clarify.clarifier import (
+    apply_question_defaults,
+    brief_payload,
+    choose_questions,
+)
 from community.evidence import apply_community
 from community.service import card_summary, record_ask
 from contracts import Block, Criterion, Engine, EngineStep, EvidenceRecord, TurnResponse
@@ -52,8 +56,9 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     session = _session(state, payload.get("session_id"))
     message = (payload.get("message") or "").strip()
     action = payload.get("action")
+    event = payload.get("event")
     prefetched = None
-    if not action and message:
+    if not action and not event and message:
         action, prefetched = _route_and_extract(message, bool(session["criteria"]), engine)
     action = action or "refresh"
 
@@ -64,12 +69,18 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
         incoming = _extract_once(message, prefetched, engine)
         if action == "new_search":
             session["criteria"] = [item.model_dump() for item in incoming]
+            session["brief_approved"] = False
+            session["asked"] = []
+            session["pending_questions"] = []
+            session["assumptions"] = []
         else:
             session["criteria"] = _merge(session["criteria"], incoming)
 
     _apply_answer(session, payload.get("answer") or {}, state)
+    _apply_answers(session, payload.get("answers") or {}, state)
     _apply_feedback(session, payload.get("feedback") or {})
     _apply_zoned(session, payload.get("zoned") or {})
+    _apply_brief_event(session, event, state)
 
     criteria = [Criterion(**row) for row in session["criteria"]]
     schools = load_schools()
@@ -92,12 +103,97 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     if action == "ask_school":
         return _ask(session, criteria, schools, programs, state, payload, engine)
 
+    # brief_edited before approval: update chips only, do not search yet.
+    if event == "brief_edited" and not session.get("brief_approved"):
+        return _brief_gate_response(session, criteria, schools, programs, state, engine)
+
+    if not session.get("brief_approved"):
+        gated = _brief_gate_response(session, criteria, schools, programs, state, engine)
+        if gated is not None:
+            if action == "new_search":
+                gated.route = "new_search"
+            return gated
+        # No pre-search questions — show the brief with results in the same turn.
+        session["brief_approved"] = True
+
     response = _search_response(session, criteria, schools, programs, state, message or "Showing your current search.", engine)
+    session["pending_questions"] = []
     if action == "new_search":
         response.route = "new_search"
-    elif action in {"refine", "refresh", "feedback"}:
+    elif action in {"refine", "refresh", "feedback"} or event:
         response.route = "refine"
     return response
+
+
+def _apply_answers(session: dict, answers: dict, state: dict) -> None:
+    if not answers:
+        return
+    for question_id, option_id in answers.items():
+        _apply_answer(session, {"question_id": question_id, "option_id": option_id}, state)
+
+
+def _apply_brief_event(session: dict, event: str | None, state: dict) -> None:
+    if not event:
+        return
+    if event in {"brief_approved", "skip_to_results"}:
+        if event == "skip_to_results":
+            pending = list(session.get("pending_questions") or [])
+            notes = apply_question_defaults(session, pending, state, _apply_answer)
+            if notes:
+                session["assumptions"] = notes
+                session["note"] = " ".join(notes)
+        session["brief_approved"] = True
+        session["pending_questions"] = []
+    elif event == "answers_submitted":
+        # Answers already applied above; stay on the brief until approve/skip.
+        session["brief_approved"] = False
+    elif event == "brief_edited":
+        # Criteria already replaced from payload; approval unchanged.
+        pass
+
+
+def _brief_gate_response(session, criteria, schools, programs, state, engine: Engine) -> TurnResponse | None:
+    """If pre-search questions apply, return brief + questions and skip results."""
+
+    def search_fn(probe, probe_readings):
+        return search_schools(schools, programs, probe, "", probe_readings, limit=10)
+
+    questions = choose_questions(
+        criteria,
+        set(session.get("asked") or []),
+        search_fn,
+        scored=None,
+        limit=3,
+        include_unknown_rule=False,
+    )
+    if not questions:
+        return None
+
+    session["pending_questions"] = questions
+
+    assumptions = list(session.get("assumptions") or [])
+    lead = "A few quick questions so I search for the right things:"
+    if len(questions) == 1:
+        lead = "One quick question so I search for the right things:"
+
+    blocks = [
+        Block(type="message", payload={"text": lead}),
+        Block(type="criteria", payload={"items": [c.model_dump() for c in criteria]}),
+        Block(type="brief", payload=brief_payload(criteria, approved=False, assumptions=assumptions)),
+        Block(
+            type="questions",
+            payload={"skip_label": "Just show me results", "items": questions},
+        ),
+    ]
+    # Keep a singular question block for older clients / one-at-a-time UI.
+    blocks.append(Block(type="question", payload=questions[0]))
+    return TurnResponse(
+        session_id=session["id"],
+        route="new_search",
+        criteria=criteria,
+        blocks=blocks,
+        assumption=session.get("note"),
+    )
 
 
 def _session(state: dict, session_id: str | None) -> dict:
@@ -373,13 +469,27 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
         if len(gaps) == 2:
             break
 
-    question = choose_question(criteria, set(session.get("asked") or []), search_fn, scored_rows[:10])
+    # After the brief is approved, refining turns ask at most one question.
+    question_limit = 1 if session.get("brief_approved") else 3
+    questions = choose_questions(
+        criteria,
+        set(session.get("asked") or []),
+        search_fn,
+        scored_rows[:10],
+        limit=question_limit,
+        include_unknown_rule=True,
+    )
+    question = questions[0] if questions else None
     assumption = session.get("note")
+    assumptions = list(session.get("assumptions") or [])
     if question:
+        # Mark as asked when shown with results so a refine refresh doesn't repeat it.
         session.setdefault("asked", [])
         if question["id"] not in session["asked"]:
             session["asked"].append(question["id"])
         assumption = question.get("assumption") or assumption
+        if question.get("assumption") and question["assumption"] not in assumptions:
+            assumptions.append(question["assumption"])
 
     if session.get("pending_ask_need"):
         _ask_unknowns(session, main + missed, state)
@@ -394,6 +504,8 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
         noun = "school" if len(missed) == 1 else "schools"
         verb = "stays" if len(missed) == 1 else "stay"
         lead += f" {len(missed)} {noun} missed a must-have and {verb} listed underneath."
+    if assumptions and not assumption:
+        assumption = " ".join(assumptions)
     if assumption:
         lead += f" {assumption}"
     if not main and not missed:
@@ -402,7 +514,12 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
     blocks = [
         Block(type="message", payload={"text": lead}),
         Block(type="criteria", payload={"items": [c.model_dump() for c in criteria]}),
+        Block(type="brief", payload=brief_payload(criteria, approved=True, assumptions=assumptions)),
     ]
+    if questions:
+        blocks.append(
+            Block(type="questions", payload={"skip_label": "Just show me results", "items": questions})
+        )
     if question:
         blocks.append(Block(type="question", payload=question))
     city = next((c for c in criteria if c.kind == "location"), None)
