@@ -2,43 +2,65 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+
 from catalog import glossary, needs
-from agent.explainer import public_summary
+from agent.explainer import model_summaries, public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
 from clarify.clarifier import choose_question
-from contracts import Block, Criterion, TurnResponse
+from community.evidence import apply_community
+from community.service import card_summary, record_ask
+from contracts import Block, Criterion, Engine, EngineStep, EvidenceRecord, TurnResponse
 from evidence.engine import evaluate_criterion
 from evidence.scorer import score_school
 from evidence.why_not import explain_absence
 from funding.estimator import estimate_cost
+from enrollment.access import by_deadline, getting_in
 from gaps.inbox import add_question
 from gaps.ses_mailer import send_school_question
 from mapping.mapper import normalize
 from search.corpus import known_cities, load_programs, load_schools
 from search.engine import search_schools
-from search.geo import distance_from_city
+from search.geo import CITY_CENTROIDS, distance_from_city, miles_between
 
 _LEVELS = {"p": "pre-k", "e": "elementary", "m": "middle", "h": "high"}
 
 
 def turn(state: dict, payload: dict) -> TurnResponse:
+    engine = Engine()
+    response = _turn(state, payload, engine)
+    return response.model_copy(update={"engine": engine})
+
+
+def _record(engine: Engine, step_name: str, step: EngineStep) -> None:
+    setattr(engine, step_name, step.engine)
+    if step.error:
+        engine.errors.append(step.error)
+
+
+def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     session = _session(state, payload.get("session_id"))
     message = (payload.get("message") or "").strip()
-    action = payload.get("action") or (route_message(message, bool(session["criteria"])) if message else "refresh")
+    action = payload.get("action")
+    prefetched = None
+    if not action and message:
+        action, prefetched = _route_and_extract(message, bool(session["criteria"]), engine)
+    action = action or "refresh"
 
     if payload.get("criteria") is not None:
         session["criteria"] = payload["criteria"]
 
     if action in {"new_search", "refine"} and message:
-        incoming = extract(message, known_cities())
-        if action == "new_search" and not session["criteria"]:
+        incoming = _extract_once(message, prefetched, engine)
+        if action == "new_search":
             session["criteria"] = [item.model_dump() for item in incoming]
         else:
             session["criteria"] = _merge(session["criteria"], incoming)
 
     _apply_answer(session, payload.get("answer") or {}, state)
     _apply_feedback(session, payload.get("feedback") or {})
+    _apply_zoned(session, payload.get("zoned") or {})
 
     criteria = [Criterion(**row) for row in session["criteria"]]
     schools = load_schools()
@@ -54,13 +76,14 @@ def turn(state: dict, payload: dict) -> TurnResponse:
     if action == "cost":
         return _cost(session, criteria, schools, programs, state, message, payload)
     if action == "school_detail":
-        return _detail(session, criteria, schools, programs, state, message, payload)
+        incoming = _extract_once(message, prefetched, engine) if message else []
+        return _detail(session, criteria, schools, programs, state, message, payload, incoming)
     if action == "save":
         return _save(session, criteria, schools, programs, state, payload, message)
     if action == "ask_school":
-        return _ask(session, criteria, schools, programs, state, payload)
+        return _ask(session, criteria, schools, programs, state, payload, engine)
 
-    response = _search_response(session, criteria, schools, programs, state, message or "Showing your current search.")
+    response = _search_response(session, criteria, schools, programs, state, message or "Showing your current search.", engine)
     if action == "new_search":
         response.route = "new_search"
     elif action in {"refine", "refresh", "feedback"}:
@@ -74,6 +97,21 @@ def _session(state: dict, session_id: str | None) -> dict:
     from store import new_session
 
     return new_session(state)
+
+
+def _route_and_extract(message: str, has_session: bool, engine: Engine) -> tuple[str, tuple[list[Criterion], EngineStep]]:
+    """Route and extract at the same time. The route decides whether the extract is used."""
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        pending = pool.submit(extract, message, known_cities())
+        action, step = route_message(message, has_session)
+        _record(engine, "route", step)
+        return action, pending.result()
+
+
+def _extract_once(message: str, prefetched: tuple[list[Criterion], EngineStep] | None, engine: Engine) -> list[Criterion]:
+    incoming, step = prefetched or extract(message, known_cities())
+    _record(engine, "extract", step)
+    return incoming
 
 
 def _merge(existing: list[dict], incoming: list[Criterion]) -> list[dict]:
@@ -215,6 +253,36 @@ def _apply_feedback(session: dict, feedback: dict) -> None:
             _rekey(session["criteria"])
 
 
+def _apply_zoned(session: dict, zoned: dict) -> None:
+    """The parent tapped "Yes, it's mine" (or took it back) on a public school card.
+
+    Only the school ID is kept, never an address.
+    """
+    school_id = zoned.get("school_id")
+    if not school_id:
+        return
+    ids = session.setdefault("zoned", [])
+    if zoned.get("value", True) and school_id not in ids:
+        ids.append(school_id)
+    elif not zoned.get("value", True) and school_id in ids:
+        ids.remove(school_id)
+
+
+def _access(school: dict, criteria: list[Criterion], state: dict, session: dict | None) -> dict:
+    grade = next((c.value for c in criteria if c.kind == "grade" and c.value), None)
+    zoned = set((session or {}).get("zoned") or [])
+    return getting_in(school, grade, zoned, _overlays_for(state, school["id"]))
+
+
+def _rank_key(card: dict) -> tuple:
+    """Rank by match only; ties go in name order so the list is stable.
+
+    Coverage is shown beside the match but never used to order results: breaking
+    ties on it would push down schools whose only fault is missing data.
+    """
+    return (-card["match"], card["name"])
+
+
 def _stamp_distances(schools: list[dict], criteria: list[Criterion]) -> None:
     city = next((c.value for c in criteria if c.kind == "location"), None)
     for school in schools:
@@ -225,7 +293,7 @@ def _overlays_for(state: dict, school_id: str) -> dict:
     return (state.get("overlays") or {}).get(school_id) or {}
 
 
-def _score_school(school, criteria, programs, state) -> dict | None:
+def _score_school(school, criteria, programs, state, session=None) -> dict | None:
     rows = []
     records = []
     for criterion in criteria:
@@ -234,6 +302,7 @@ def _score_school(school, criteria, programs, state) -> dict | None:
         if criterion.kind not in {"need", "distance"}:
             continue
         record = evaluate_criterion(school, criterion, programs, _overlays_for(state, school["id"]))
+        record = apply_community(record, school, criterion, state)
         records.append(record)
         rows.append((criterion.strength, record))
     if not rows and not any(c.kind in {"location", "grade", "school_type"} for c in criteria):
@@ -251,6 +320,8 @@ def _score_school(school, criteria, programs, state) -> dict | None:
         "verified": scored["verified"],
         "coverage": scored["coverage"],
         "missed_must": scored["missed_must"],
+        # Getting in sits beside the match. It never counts toward match or coverage.
+        "access": _access(school, criteria, state, session),
         "summary": summary,
         "distance_miles": None if school.get("_distance_miles") is None else round(school["_distance_miles"], 1),
         "lat": school.get("_lat"),
@@ -258,10 +329,11 @@ def _score_school(school, criteria, programs, state) -> dict | None:
         "evidence": [record.model_dump() for record in records],
         "tuition": (school.get("osp") or {}).get("tuition"),
         "saved": False,
+        "community": card_summary(state, school["id"], [c.need for c in criteria if c.kind == "need" and c.need]),
     }
 
 
-def _search_response(session, criteria, schools, programs, state, message: str) -> TurnResponse:
+def _search_response(session, criteria, schools, programs, state, message: str, engine: Engine) -> TurnResponse:
     readings = {row.id: row.resolved_reading for row in criteria if row.resolved_reading}
 
     def search_fn(probe, probe_readings):
@@ -270,13 +342,18 @@ def _search_response(session, criteria, schools, programs, state, message: str) 
     matched = search_schools(schools, programs, criteria, message, readings, limit=None)
     scored_rows = []
     for school in matched:
-        card = _score_school(school, criteria, programs, state)
+        card = _score_school(school, criteria, programs, state, session)
         if card:
             card["saved"] = school["id"] in session.get("saved", [])
             scored_rows.append(card)
-    scored_rows.sort(key=lambda row: (-row["match"], -row["coverage"], row["name"]))
+    scored_rows.sort(key=_rank_key)
     main = [row for row in scored_rows if not row["missed_must"]][:8]
     missed = [row for row in scored_rows if row["missed_must"]][:6]
+    if main or missed:
+        summaries, step = model_summaries(main + missed, _by_id(schools), criteria)
+        _record(engine, "explain", step)
+        for row in main + missed:
+            row["summary"] = summaries.get(row["id"], row["summary"])
     shown = {row["id"] for row in main}
     gaps = []
     for row in scored_rows:
@@ -319,6 +396,8 @@ def _search_response(session, criteria, schools, programs, state, message: str) 
     ]
     if question:
         blocks.append(Block(type="question", payload=question))
+    city = next((c for c in criteria if c.kind == "location"), None)
+    centroid = CITY_CENTROIDS.get(str(city.value or city.text).casefold()) if city else None
     blocks.append(
         Block(
             type="results",
@@ -327,6 +406,9 @@ def _search_response(session, criteria, schools, programs, state, message: str) 
                 "missed": missed,
                 "gaps": gaps,
                 "matched_count": len(scored_rows),
+                # The searched city's center, for the map's "Search area" marker. Never a home address.
+                "center": list(centroid) if centroid else None,
+                "programs": _program_pins(main + gaps + missed, programs),
             },
         )
     )
@@ -342,6 +424,40 @@ def _search_response(session, criteria, schools, programs, state, message: str) 
     )
 
 
+def _program_pins(cards: list[dict], programs: list[dict]) -> list[dict]:
+    """Nearby programs to pin on the map: only ones that fill a criterion on a shown card.
+
+    A program counts only when the evidence engine confirmed it (a live program the parent
+    accepted, within PROGRAM_RADIUS_MILES), so the map never shows a program the cards don't.
+    """
+    by_id = {str(program.get("id")): program for program in programs}
+    pins: dict[str, dict] = {}
+    for card in cards:
+        if card.get("lat") is None or card.get("lon") is None:
+            continue
+        for row in card["evidence"]:
+            source = row.get("source") or {}
+            path = str(source.get("path") or "")
+            if source.get("type") != "program" or row["status"] != "confirmed" or not path.startswith("programs/"):
+                continue
+            program = by_id.get(path.split("/", 1)[1])
+            if not program or program.get("_lat") is None:
+                continue
+            point = (program["_lat"], program["_lon"])
+            pin = pins.setdefault(
+                path,
+                {"id": str(program["id"]), "name": program.get("name"), "lat": point[0], "lon": point[1], "links": []},
+            )
+            pin["links"].append(
+                {
+                    "school_id": card["id"],
+                    "criterion_id": row["criterion_id"],
+                    "miles": round(miles_between((card["lat"], card["lon"]), point), 1),
+                }
+            )
+    return list(pins.values())
+
+
 def _grid(cards: list[dict], criteria: list[Criterion]) -> dict:
     columns = [c for c in criteria if c.kind in {"need", "distance"} and (c.kind == "distance" or c.need)]
     cells = {}
@@ -352,7 +468,7 @@ def _grid(cards: list[dict], criteria: list[Criterion]) -> dict:
             cells[card["id"]][column.id] = by_id.get(column.id)
     return {
         "schools": [{"id": card["id"], "name": card["name"]} for card in cards],
-        "criteria": [{"id": column.id, "text": column.text, "strength": column.strength} for column in columns],
+        "criteria": [{"id": column.id, "text": column.text, "label": column.label, "strength": column.strength} for column in columns],
         "cells": cells,
     }
 
@@ -375,6 +491,7 @@ def _ask_unknowns(session, cards, state) -> None:
             question = needs().get(need_id, {}).get("visit_question") or f"Can you confirm {criterion.get('text')}?"
             item = add_question(state, school, need_id, question, session["id"])
             item["email"] = send_school_question(item)
+            record_ask(state, school["id"], need_id, session["id"], "agent")
 
 
 def _compare(session, criteria, schools, programs, state, payload, message) -> TurnResponse:
@@ -384,7 +501,7 @@ def _compare(session, criteria, schools, programs, state, payload, message) -> T
     chosen = [_by_id(schools)[sid] for sid in ids if sid in _by_id(schools)][:2]
     cards = []
     for school in chosen:
-        card = _score_school(school, criteria, programs, state) or {
+        card = _score_school(school, criteria, programs, state, session) or {
             "id": school["id"],
             "name": school["name"],
             "evidence": [],
@@ -418,7 +535,7 @@ def _why_not(session, criteria, schools, programs, state, message) -> TurnRespon
         card = _score_school(item, criteria, programs, state)
         if card:
             ranked.append(card)
-    ranked.sort(key=lambda row: (-row["match"], -row["coverage"], row["name"]))
+    ranked.sort(key=_rank_key)
     # Rank across the full filtered set, missed group included, so the parent
     # can see where a weak school actually sits.
     explanation = explain_absence(
@@ -465,14 +582,20 @@ def _cost(session, criteria, schools, programs, state, message, payload) -> Turn
         ids = [school["id"] for school in matched if school.get("entity_type") == "private"][:3]
     by_id = _by_id(schools)
     estimates = [estimate_cost(by_id[sid]) for sid in ids if sid in by_id]
+    lead = "Likely scholarship eligibility. Not a promised award."
+    if estimates and all(row.get("entity_type") in {"public", "charter"} for row in estimates):
+        # Public and charter schools are tuition-free in the data; there is no scholarship to estimate.
+        names = " and ".join(row["school_name"] for row in estimates[:2]) + (" and others" if len(estimates) > 2 else "")
+        verb = "is" if len(estimates) == 1 else "are"
+        lead = f"{names} {verb} tuition-free in the data, so no scholarship estimate is needed."
     blocks = [
-        Block(type="message", payload={"text": "Likely scholarship eligibility. Not a promised award."}),
+        Block(type="message", payload={"text": lead}),
         Block(type="cost", payload={"schools": estimates}),
     ]
     return TurnResponse(session_id=session["id"], route="cost", criteria=criteria, blocks=blocks)
 
 
-def _detail(session, criteria, schools, programs, state, message, payload) -> TurnResponse:
+def _detail(session, criteria, schools, programs, state, message, payload, incoming: list[Criterion]) -> TurnResponse:
     ids = list(payload.get("school_ids") or [])
     if not ids and message:
         found = _find_by_name(school_reference(message or "") or message, schools)
@@ -481,19 +604,33 @@ def _detail(session, criteria, schools, programs, state, message, payload) -> Tu
         blocks = [Block(type="message", payload={"text": "Which school should I open?"})]
         return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
     school = _by_id(schools)[ids[0]]
-    card = _score_school(school, criteria, programs, state)
-    blocks = [
+    asked = _asked_needs(incoming, criteria)
+    card = _score_school(school, criteria + asked, programs, state, session)
+    blocks = []
+    if asked and card:
+        asked_ids = {c.id for c in asked}
+        records = [EvidenceRecord(**row) for row in card["evidence"] if row["criterion_id"] in asked_ids]
+        blocks.append(Block(type="message", payload={"text": f"{school['name']}: {public_summary(records, school)}"}))
+    blocks.append(
         Block(
             type="school_detail",
             payload={
                 "school": _profile(school),
                 "card": card,
+                "asked": [c.model_dump() for c in asked],
                 "reviews": _review_topics(school),
                 "cost": estimate_cost(school) if school.get("entity_type") == "private" else None,
             },
         )
-    ]
+    )
     return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
+
+
+def _asked_needs(incoming: list[Criterion], criteria: list[Criterion]) -> list[Criterion]:
+    """Needs the parent asked about for one school. They are answered, not added to the search."""
+    have = {c.need for c in criteria if c.need}
+    asked = [c for c in incoming if c.kind == "need" and c.need and c.need not in have]
+    return [c.model_copy(update={"id": f"q{index}"}) for index, c in enumerate(asked, start=1)]
 
 
 def _save(session, criteria, schools, programs, state, payload, message) -> TurnResponse:
@@ -505,14 +642,23 @@ def _save(session, criteria, schools, programs, state, payload, message) -> Turn
         if school_id not in saved:
             saved.append(school_id)
     items = checklist_for(session, criteria, schools, programs, state)
+    by_id = _by_id(schools)
+    deadlines = by_deadline(
+        [
+            {"school_id": sid, "name": by_id[sid]["name"], **_access(by_id[sid], criteria, state, session)}
+            for sid in saved
+            if sid in by_id
+        ]
+    )
     blocks = [
-        Block(type="message", payload={"text": f"Saved list has {len(saved)} schools."}),
-        Block(type="checklist", payload={"school_ids": saved, "items": items}),
+        Block(type="message", payload={"text": f"Your saved list has {len(saved)} school{'' if len(saved) == 1 else 's'}."}),
+        # by_deadline: saved schools with the soonest open deadline first, for the saved list.
+        Block(type="checklist", payload={"school_ids": saved, "items": items, "by_deadline": deadlines}),
     ]
     return TurnResponse(session_id=session["id"], route="save", criteria=criteria, blocks=blocks)
 
 
-def _ask(session, criteria, schools, programs, state, payload) -> TurnResponse:
+def _ask(session, criteria, schools, programs, state, payload, engine: Engine) -> TurnResponse:
     school_id = (payload.get("school_ids") or [None])[0]
     need_id = payload.get("need")
     school = _by_id(schools).get(school_id)
@@ -522,16 +668,19 @@ def _ask(session, criteria, schools, programs, state, payload) -> TurnResponse:
     question = needs().get(need_id, {}).get("visit_question") or f"Can you tell us about {need_id}?"
     item = add_question(state, school, need_id, question, session["id"])
     item["email"] = send_school_question(item)
+    item["parent_count"] = record_ask(state, school["id"], need_id, session["id"], "agent")
+    count = item["parent_count"]
+    topic = needs().get(need_id, {}).get("label", need_id).lower()
     blocks = [
         Block(
             type="message",
             payload={
-                "text": f"I grouped that question for {school['name']}. It is waiting in the school inbox ({item['parent_count']} parent{'s' if item['parent_count'] != 1 else ''})."
+                "text": f"I grouped that question for {school['name']}. {count} parent{'s' if count != 1 else ''} asked about {topic} this month, so the school gets one request."
             },
         )
     ]
     # Re-run the search so the card still shows the unknown cell beside the button.
-    response = _search_response(session, criteria, schools, programs, state, "")
+    response = _search_response(session, criteria, schools, programs, state, "", engine)
     response.blocks.insert(0, blocks[0])
     return response
 
@@ -543,7 +692,7 @@ def checklist_for(session, criteria, schools, programs, state) -> list[dict]:
         school = by_id.get(school_id)
         if not school:
             continue
-        card = _score_school(school, criteria, programs, state)
+        card = _score_school(school, criteria, programs, state, session)
         if not card:
             continue
         for row in card["evidence"]:

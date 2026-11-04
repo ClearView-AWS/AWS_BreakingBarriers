@@ -1,0 +1,20 @@
+{"id": "d01", "text": "My son Ethan is starting 6th grade. Does after-care run past 5:30?", "pii": true}
+{"id": "d02", "text": "my daughter, Maya, loves robotics. Is the club open to beginners?", "pii": true}
+{"id": "d03", "text": "Is Mr. Alvarez still teaching seventh grade science?", "pii": true}
+{"id": "d04", "text": "Leo is in 4th grade and reads above level. Is there a gifted program?", "pii": true}
+{"id": "d05", "text": "Please email me at jaxmom2014@example.com if you know about the bus routes.", "pii": true}
+{"id": "d06", "text": "Text me at 904-555-0188 about carpools.", "pii": true}
+{"id": "d07", "text": "We live at 4410 San Jose Boulevard. Which bus stop is closest?", "pii": true}
+{"id": "d08", "text": "Coach Daniels runs the volleyball team, right?", "pii": true}
+{"id": "d09", "text": "Our kid, named Ava, has an IEP. How did the transition go for others?", "pii": true}
+{"id": "d10", "text": "Call (904) 555 0123 for the PTA sign-up sheet.", "pii": true}
+{"id": "d11", "text": "Does after-care run past 5:30?", "pii": false}
+{"id": "d12", "text": "How is the robotics club? Is it worth it in sixth grade?", "pii": false}
+{"id": "d13", "text": "Our experience with the IEP process was good. The team followed the plan.", "pii": false}
+{"id": "d14", "text": "Does the bus cover the neighborhoods south of Beach Blvd?", "pii": false}
+{"id": "d15", "text": "My kid loves the art program and the spring concert was wonderful.", "pii": false}
+{"id": "d16", "text": "Is there a waitlist for after-care this year?", "pii": false}
+{"id": "d17", "text": "We had a lot of substitutes last year. Has that improved?", "pii": false}
+{"id": "d18", "text": "How long did the Florida scholarship take to approve for your family?", "pii": false}
+{"id": "d19", "text": "Pickup moves faster after the first two weeks. Arrive by 3:10.", "pii": false}
+{"id": "d20", "text": "Is Spanish offered in middle school, or only French?", "pii": false}

@@ -1,0 +1,151 @@
+/* The search as a chat. Uses the shared color tokens from styles.css, with
+   fallbacks so it stays readable if a theme renames them. */
+
+/* Full height: the conversation scrolls, the composer stays at the bottom. */
+.app.chat-mode { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+.chat-main { flex: 1; min-height: 0; display: flex; }
+.chat-view { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.chat-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+.chat-log {
+  list-style: none;
+  width: min(880px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 32px;
+  display: grid;
+  gap: 18px;
+}
+.chat-entry { display: grid; gap: 6px; min-width: 0; scroll-margin-top: 12px; }
+.chat-who { font-size: 12px; font-weight: 640; letter-spacing: 0.02em; color: var(--muted, #5d6876); }
+.chat-text { white-space: pre-line; line-height: 1.45; }
+
+.chat-parent { justify-self: end; max-width: 80%; }
+.chat-parent.chat-message .chat-text {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--teal, #0e6b62);
+  color: white;
+}
+.chat-parent.chat-event { justify-self: center; max-width: 100%; }
+.chat-parent.chat-event .chat-text { font-size: 13px; color: var(--muted, #5d6876); }
+.chat-system { justify-self: stretch; }
+.chat-thinking .chat-text { color: var(--muted, #5d6876); animation: chat-pulse 1.2s ease-in-out infinite; }
+@keyframes chat-pulse { 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .chat-thinking .chat-text { animation: none; } }
+
+/* A Guide reply: text, then whatever blocks the turn returned. */
+.agent-blocks { display: grid; gap: 12px; min-width: 0; }
+.agent-text p { margin: 0 0 6px; font-size: 17px; line-height: 1.5; white-space: pre-line; }
+.agent-text p:last-child { margin-bottom: 0; }
+.agent-prompt { color: var(--muted, #5d6876); }
+.chat-agent .question { margin: 0; padding: 14px 16px; box-shadow: none; }
+.chat-agent .question p { font-size: 17px; }
+.chat-agent .table-wrap { margin-top: 0; box-shadow: none; }
+
+.chat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chat-chips button {
+  border: 1px solid var(--line, #e3d9c6);
+  background: var(--card, #fffdf8);
+  border-radius: 999px;
+  padding: 7px 12px;
+  text-align: left;
+}
+.chat-chips a { color: var(--teal, #0e6b62); font-size: 14px; align-self: center; }
+button:disabled { cursor: default; opacity: 0.55; }
+
+.inline-panel {
+  background: var(--card, #fffdf8);
+  border: 1px solid var(--line, #e3d9c6);
+  border-radius: 14px;
+  padding: 14px 16px;
+  min-width: 0;
+}
+.inline-panel h3 { font-family: Fraunces, Georgia, serif; font-size: 20px; margin: 0 0 6px; }
+.inline-panel h4 { margin: 14px 0 4px; }
+.inline-panel p { margin: 0 0 8px; line-height: 1.5; }
+
+/* Results: compact numbered cards. */
+.results { display: grid; gap: 10px; min-width: 0; }
+.chat-agent .cards { gap: 10px; }
+.card.compact { padding: 14px 16px; box-shadow: none; border-radius: 14px; min-width: 0; }
+.card.compact h3 { font-size: 20px; display: flex; align-items: baseline; gap: 8px; }
+.card.compact .score strong { font-size: 22px; }
+.card.compact .score span { font-size: 12px; color: var(--muted, #5d6876); white-space: nowrap; }
+.card.compact .summary { margin: 8px 0; }
+.card.compact .getting-in { margin: 2px 0 8px; }
+.card-number {
+  flex: none;
+  font-family: Outfit, "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 640;
+  color: var(--teal-dark, #0a4e48);
+  background: var(--confirmed-bg, #e5f5ec);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+button.pill { border: 0; cursor: pointer; font: inherit; font-size: 13px; font-weight: 640; text-decoration: underline dotted; }
+.card.compact .row-actions { margin-top: 10px; gap: 6px; }
+.card.compact .row-actions button, .card.compact .reasons button { padding: 6px 10px; font-size: 14px; }
+.card.compact .evidence { margin-top: 4px; }
+.results-group { margin: 6px 0 0; font-size: 14px; color: var(--muted, #5d6876); font-weight: 640; }
+.results-more, .results-fold { justify-self: start; font-size: 14px; padding: 6px 12px; }
+.results-folded {
+  justify-self: start;
+  max-width: 100%;
+  text-align: left;
+  border: 1px dashed var(--line, #e3d9c6);
+  background: transparent;
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: var(--muted, #5d6876);
+}
+/* Compare: two schools side by side, differences first */
+.comparison { display: grid; gap: 8px; }
+.comparison h4 { margin: 0; }
+.comparison > .meta { margin: 0; }
+.comparison .table-wrap { margin-top: 0; }
+.side-by-side { min-width: 0; table-layout: fixed; }
+.side-by-side thead th:first-child { width: 28%; }
+.side-by-side td, .side-by-side th { vertical-align: top; overflow-wrap: anywhere; }
+.side-by-side .pill { margin-right: 4px; }
+
+/* The composer: what you're searching for, the compare tray, and the input. */
+.composer {
+  flex: none;
+  border-top: 1px solid var(--line, #e3d9c6);
+  background: rgba(255, 253, 248, 0.96);
+  padding: 10px 16px 14px;
+  display: grid;
+  gap: 8px;
+}
+.composer > * { width: min(880px, 100%); margin: 0 auto; }
+.composer .chips { margin: 0 auto; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; }
+.composer .chip { flex: none; padding: 4px 6px 4px 10px; font-size: 14px; }
+.compare-tray { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted, #5d6876); }
+.compare-tray .primary { padding: 8px 14px; }
+.chat-input {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  background: var(--card, #fffdf8);
+  border: 1px solid var(--line, #e3d9c6);
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow: var(--shadow, none);
+}
+.chat-input input { min-width: 0; border: 0; background: transparent; outline: none; padding: 10px 12px; font-size: 17px; }
+.chat-input:focus-within { border-color: var(--teal, #0e6b62); }
+
+@media (max-width: 720px) {
+  .chat-mode .top { flex-wrap: wrap; gap: 8px; padding: 10px 16px; }
+  .chat-mode .brand span { display: none; }
+  .chat-mode .nav button { padding: 6px 10px; font-size: 14px; }
+  .chat-log { padding-top: 16px; }
+  .chat-parent { max-width: 90%; }
+  .card.compact header { flex-direction: row; }
+  .card.compact .score { text-align: right; }
+  .composer { padding: 8px 16px 12px; }
+  .chat-input input { font-size: 16px; }
+}

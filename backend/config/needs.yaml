@@ -1,5 +1,7 @@
 # One need per parent phrase. GreatSchools can add a need by editing this file.
 # confirmed / partial / fails are operators evaluated in code. Reviews never confirm.
+# `label` is also a search phrase. `display` (optional) is the name on chips and cards
+# when it should read differently; without it, chips and cards show `label`.
 
 high_performing:
   label: High-performing
@@ -20,6 +22,7 @@ high_performing:
 
 stem:
   label: STEM
+  display: STEM-focused
   default_strength: require
   phrases: [stem, robotics, coding, science and math, science & math, ciencias, stem program, science focus]
   evidence:

@@ -35,7 +35,8 @@ RELIGIOUS_WORDS = (
     "jesuit",
     "hebrew",
 )
-PROGRAM_RADIUS_MILES = 3.0
+# A nearby program can fill a gap only if it is close enough to get to after school (plan: within 1 mile).
+PROGRAM_RADIUS_MILES = 1.0
 
 
 def get_path(document: dict, path: str) -> Any:
@@ -282,10 +283,13 @@ def evaluate_criterion(
         best_as_of = today
         best_value = program.get("name")
 
+    missing: list[str] = []
     if best_status is None:
         best_status = "unknown"
+        missing = [rule["field"] for rule in spec.get("evidence") or [] if rule["field"] != "reviews"]
 
-    note = _note(spec.get("label") or need_id, best_status, best_value, best_path, program_note, conflict)
+    note_path = best_path or (missing[0] if missing else None)
+    note = _note(spec.get("label") or need_id, best_status, best_value, note_path, program_note, conflict)
     source = None
     if best_path:
         source = Source(
@@ -303,6 +307,7 @@ def evaluate_criterion(
         note=note,
         conflict=conflict,
         review_ids=review_ids,
+        missing_paths=[] if best_path else missing,
     )
 
 
@@ -391,7 +396,8 @@ def _low_cost(school: dict, criterion, today: date) -> EvidenceRecord:
         school_id=school["id"],
         criterion_id=criterion.id,
         status="unknown",
-        note=f"{label} is unknown because the school type is missing.",
+        note=_cite("entity_type", f"{label} is unknown because the school type is missing."),
+        missing_paths=["entity_type"],
     )
 
 
@@ -427,13 +433,15 @@ def _non_religious(school: dict, criterion, today: date) -> EvidenceRecord:
             criterion_id=criterion.id,
             status="unknown",
             value=None,
-            note="Non-religious is unknown: the profile does not say whether this private school is religious.",
+            note=_cite("osp.school_sub_type", "Non-religious is unknown: the profile does not say whether this private school is religious."),
+            missing_paths=["osp.school_sub_type"],
         )
     return EvidenceRecord(
         school_id=school["id"],
         criterion_id=criterion.id,
         status="unknown",
-        note="Non-religious is unknown.",
+        note=_cite("entity_type", "Non-religious is unknown."),
+        missing_paths=["entity_type"],
     )
 
 
@@ -460,7 +468,8 @@ def _distance_evidence(school: dict, criterion, today: date) -> EvidenceRecord:
         criterion_id=criterion.id,
         status=status,
         value=round(distance, 1),
-        source=Source(type="state_data", path="latlon", as_of=_as_of(school, today), confidence="high"),
+        # Distance is worked out here from latlon, not reported by anyone.
+        source=Source(type="computed", path="latlon", as_of=_as_of(school, today), confidence="high"),
         note=note,
     )
 

@@ -7,6 +7,7 @@ import { InboxView } from "./components/InboxView";
 import { QuestionPrompt } from "./components/QuestionPrompt";
 import { SavedView } from "./components/SavedView";
 import { SchoolResult } from "./components/SchoolResult";
+import { onZonedTap } from "./GettingIn";
 import { DEMO_QUERY, type Block, type Card, type Criterion, type Turn } from "./types";
 
 type View = "search" | "saved" | "inbox";
@@ -83,6 +84,9 @@ export function App() {
     setRefine("");
     await run({ message: messageText });
   }
+
+  // "Yes, it's mine" on a public school card. The backend keeps only the school ID.
+  onZonedTap((schoolId, value) => void run({ action: "refresh", zoned: { school_id: schoolId, value } }));
 
   async function refreshSaved(nextSession = sessionId) {
     if (!nextSession) return;

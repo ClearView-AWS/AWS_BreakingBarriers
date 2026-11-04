@@ -13,9 +13,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "101 Synthetic Avenue",
+    "street": "8219 Commerce Street",
     "zipcode": "32201",
-    "latlon": "30.334, -81.598",
+    "latlon": "30.33477, -81.59781",
     "enrollment": 283,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -35,6 +35,17 @@
       ],
       "after_school_until": [
         "18:00"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 12,
+          "waitlist": false,
+          "as_of": "2026-09-15"
+        }
       ]
     },
     "esp_text": [
@@ -105,9 +116,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "102 Synthetic Avenue",
+    "street": "6338 Shelton Road",
     "zipcode": "32202",
-    "latlon": "30.338, -81.596",
+    "latlon": "30.33763, -81.59631",
     "enrollment": 286,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -133,6 +144,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -203,9 +217,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "103 Synthetic Avenue",
+    "street": "4457 Sprinkle Drive",
     "zipcode": "32203",
-    "latlon": "30.342, -81.594",
+    "latlon": "30.34226, -81.59356",
     "enrollment": 289,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -225,6 +239,12 @@
       ],
       "after_school_until": [
         "18:00"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_deadline_date": [
+        "10/1/2026"
       ]
     },
     "esp_text": [
@@ -295,9 +315,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "104 Synthetic Avenue",
+    "street": "2576 Eastwood Lane",
     "zipcode": "32204",
-    "latlon": "30.346, -81.592",
+    "latlon": "30.34599, -81.5906",
     "enrollment": 292,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -320,6 +340,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -389,9 +412,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "105 Synthetic Avenue",
+    "street": "695 Syringa Lane",
     "zipcode": "32205",
-    "latlon": "30.35, -81.59",
+    "latlon": "30.35087, -81.5895",
     "enrollment": 295,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -417,6 +440,16 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "2/1/2027"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -443,9 +476,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "106 Synthetic Avenue",
+    "street": "8614 Grove Park Boulevard",
     "zipcode": "32206",
-    "latlon": "30.304, -81.578",
+    "latlon": "30.30392, -81.57754",
     "enrollment": 298,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -463,6 +496,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -533,9 +569,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "107 Synthetic Avenue",
+    "street": "6733 Aquarius Circle West",
     "zipcode": "32207",
-    "latlon": "30.308, -81.576",
+    "latlon": "30.30747, -81.57605",
     "enrollment": 301,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -550,6 +586,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -619,9 +658,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "108 Synthetic Avenue",
+    "street": "4852 Highfield Avenue",
     "zipcode": "32208",
-    "latlon": "30.312, -81.574",
+    "latlon": "30.31128, -81.57217",
     "enrollment": 304,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -636,6 +675,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -706,9 +748,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "109 Synthetic Avenue",
+    "street": "2971 Cocoa Avenue",
     "zipcode": "32209",
-    "latlon": "30.316, -81.572",
+    "latlon": "30.31633, -81.57257",
     "enrollment": 307,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -723,6 +765,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -793,9 +838,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "110 Synthetic Avenue",
+    "street": "1090 North Bowlan Street",
     "zipcode": "32210",
-    "latlon": "30.32, -81.57",
+    "latlon": "30.3203, -81.56952",
     "enrollment": 310,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -813,6 +858,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -883,9 +931,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "111 Synthetic Avenue",
+    "street": "9009 Sycamore Street",
     "zipcode": "32211",
-    "latlon": "30.424, -81.778",
+    "latlon": "30.42285, -81.77647",
     "enrollment": 313,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -905,6 +953,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -975,9 +1026,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "112 Synthetic Avenue",
+    "street": "7128 Brandon Cove Lane",
     "zipcode": "32212",
-    "latlon": "30.428, -81.776",
+    "latlon": "30.42798, -81.77616",
     "enrollment": 316,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -997,6 +1048,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1067,9 +1121,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "113 Synthetic Avenue",
+    "street": "5247 Jars Street",
     "zipcode": "32213",
-    "latlon": "30.432, -81.774",
+    "latlon": "30.43334, -81.7741",
     "enrollment": 319,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1089,6 +1143,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1159,9 +1216,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "114 Synthetic Avenue",
+    "street": "3366 Plummer Road",
     "zipcode": "32214",
-    "latlon": "30.436, -81.772",
+    "latlon": "30.43649, -81.77163",
     "enrollment": 322,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1181,6 +1238,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1251,9 +1311,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "115 Synthetic Avenue",
+    "street": "1485 Old Kings Road",
     "zipcode": "32215",
-    "latlon": "30.44, -81.77",
+    "latlon": "30.4404, -81.77236",
     "enrollment": 325,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1276,6 +1336,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1345,9 +1408,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "116 Synthetic Avenue",
+    "street": "9404 Shoreline Lane",
     "zipcode": "32216",
-    "latlon": "30.444, -81.768",
+    "latlon": "30.44347, -81.76481",
     "enrollment": 328,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1367,6 +1430,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1437,9 +1503,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "117 Synthetic Avenue",
+    "street": "7523 Rapid River Court",
     "zipcode": "32217",
-    "latlon": "30.448, -81.766",
+    "latlon": "30.44825, -81.76433",
     "enrollment": 331,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1462,6 +1528,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1532,9 +1601,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "118 Synthetic Avenue",
+    "street": "5642 Gulf Shores Court",
     "zipcode": "32218",
-    "latlon": "30.452, -81.764",
+    "latlon": "30.4501, -81.76336",
     "enrollment": 334,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1554,6 +1623,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -1624,9 +1696,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "119 Synthetic Avenue",
+    "street": "3761 Leafcrest Drive",
     "zipcode": "32219",
-    "latlon": "30.2, -81.8",
+    "latlon": "30.20049, -81.80003",
     "enrollment": 337,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1649,6 +1721,23 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
+      ],
+      "application_requirements": [
+        "application"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "6",
+          "applicants": 210,
+          "seats": 90,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -1719,9 +1808,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "120 Synthetic Avenue",
+    "street": "1880 Holsinger Boulevard",
     "zipcode": "32220",
-    "latlon": "30.15, -81.5",
+    "latlon": "30.14417, -81.49075",
     "enrollment": 340,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1741,6 +1830,17 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 0,
+          "waitlist": true,
+          "as_of": "2026-10-01"
+        }
       ]
     },
     "esp_text": [
@@ -1767,9 +1867,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "121 Synthetic Avenue",
+    "street": "9799 Dove Creek Drive",
     "zipcode": "32221",
-    "latlon": "30.23, -81.785",
+    "latlon": "30.22999, -81.78508",
     "enrollment": 343,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1784,6 +1884,12 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2025"
       ]
     },
     "esp_text": [
@@ -1808,9 +1914,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "200 Synthetic Avenue",
+    "street": "8200 Kori Road",
     "zipcode": "32200",
-    "latlon": "30.201119, -81.617738",
+    "latlon": "30.20058, -81.61805",
     "enrollment": 580,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1827,6 +1933,12 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -1896,9 +2008,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "201 Synthetic Avenue",
+    "street": "6319 South Mashta Drive",
     "zipcode": "33101",
-    "latlon": "25.694847, -80.19947",
+    "latlon": "25.68644, -80.17719",
     "enrollment": 583,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1918,6 +2030,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -1942,9 +2057,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "202 Synthetic Avenue",
+    "street": "4438 Sessions Lane",
     "zipcode": "32202",
-    "latlon": "30.279696, -81.641977",
+    "latlon": "30.28087, -81.64183",
     "enrollment": 586,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1959,6 +2074,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
       ]
     },
     "esp_text": [
@@ -1982,9 +2103,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "203 Synthetic Avenue",
+    "street": "2557 San Pedro Road",
     "zipcode": "32203",
-    "latlon": "30.242837, -81.629491",
+    "latlon": "30.24381, -81.62989",
     "enrollment": 589,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -1996,6 +2117,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -2062,9 +2186,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "204 Synthetic Avenue",
+    "street": "676 A. C. Skinner Parkway",
     "zipcode": "32204",
-    "latlon": "30.249534, -81.57687",
+    "latlon": "30.24893, -81.57655",
     "enrollment": 592,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2076,6 +2200,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -2101,9 +2228,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "205 Synthetic Avenue",
+    "street": "8595 Cayuga Trail East",
     "zipcode": "32205",
-    "latlon": "30.196393, -81.783493",
+    "latlon": "30.19723, -81.78304",
     "enrollment": 595,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2118,6 +2245,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -2187,9 +2317,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "206 Synthetic Avenue",
+    "street": "6714 Epic Boulevard",
     "zipcode": "32806",
-    "latlon": "28.436221, -81.457708",
+    "latlon": "28.43617, -81.45678",
     "enrollment": 598,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2206,6 +2336,12 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/maple-ridge-school/admissions"
       ]
     },
     "esp_text": [
@@ -2229,9 +2365,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "207 Synthetic Avenue",
+    "street": "4833 Northwest 92nd Street",
     "zipcode": "33107",
-    "latlon": "25.857548, -80.230406",
+    "latlon": "25.85813, -80.23195",
     "enrollment": 601,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2243,6 +2379,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -2310,9 +2449,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "208 Synthetic Avenue",
+    "street": "2952 Cassandra Drive",
     "zipcode": "32208",
-    "latlon": "30.25935, -81.649747",
+    "latlon": "30.25945, -81.64841",
     "enrollment": 604,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2332,6 +2471,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -2402,9 +2544,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "209 Synthetic Avenue",
+    "street": "1071 Barcelona Avenue",
     "zipcode": "32209",
-    "latlon": "30.194306, -81.704062",
+    "latlon": "30.19333, -81.70368",
     "enrollment": 607,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2424,6 +2566,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -2494,9 +2639,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "210 Synthetic Avenue",
+    "street": "8990 Skyler Jean Drive",
     "zipcode": "32210",
-    "latlon": "30.231338, -81.753228",
+    "latlon": "30.23108, -81.75336",
     "enrollment": 610,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2511,6 +2656,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/coral-bend-institute/admissions"
       ]
     },
     "esp_text": [
@@ -2581,9 +2732,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "211 Synthetic Avenue",
+    "street": "7109 Northwest 55th Street",
     "zipcode": "33111",
-    "latlon": "25.825233, -80.257373",
+    "latlon": "25.82415, -80.25705",
     "enrollment": 613,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2595,6 +2746,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -2663,9 +2817,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "212 Synthetic Avenue",
+    "street": "5228 Oceanus Drive",
     "zipcode": "32812",
-    "latlon": "28.420347, -81.341459",
+    "latlon": "28.42108, -81.34186",
     "enrollment": 616,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2677,6 +2831,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -2743,9 +2900,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "213 Synthetic Avenue",
+    "street": "3347 90th Street",
     "zipcode": "33113",
-    "latlon": "25.878363, -80.104727",
+    "latlon": "25.87625, -80.12105",
     "enrollment": 619,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2768,6 +2925,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -2835,9 +2995,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "214 Synthetic Avenue",
+    "street": "1466 Ed Sullivan Drive",
     "zipcode": "33114",
-    "latlon": "25.810645, -80.139793",
+    "latlon": "25.81152, -80.14034",
     "enrollment": 622,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2849,6 +3009,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -2919,9 +3082,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "215 Synthetic Avenue",
+    "street": "9385 Shady Drive",
     "zipcode": "32215",
-    "latlon": "30.199818, -81.626652",
+    "latlon": "30.20052, -81.62779",
     "enrollment": 625,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -2930,6 +3093,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3000,9 +3166,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "216 Synthetic Avenue",
+    "street": "7504 Northwest 13th Avenue",
     "zipcode": "33116",
-    "latlon": "25.827007, -80.218667",
+    "latlon": "25.8269, -80.21843",
     "enrollment": 628,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3025,6 +3191,13 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -3050,9 +3223,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "217 Synthetic Avenue",
+    "street": "5623 Point la Vista Road West",
     "zipcode": "32217",
-    "latlon": "30.273962, -81.680065",
+    "latlon": "30.27792, -81.66322",
     "enrollment": 631,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3064,6 +3237,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3132,9 +3308,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "218 Synthetic Avenue",
+    "street": "3742 3737-1 Saint Johns Bluff Apartments",
     "zipcode": "32218",
-    "latlon": "30.278885, -81.52166",
+    "latlon": "30.27797, -81.5234",
     "enrollment": 634,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3154,6 +3330,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3179,9 +3358,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "219 Synthetic Avenue",
+    "street": "1861 Tynan Avenue",
     "zipcode": "32219",
-    "latlon": "30.317912, -81.579258",
+    "latlon": "30.31878, -81.57955",
     "enrollment": 637,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3207,6 +3386,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -3233,9 +3415,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "220 Synthetic Avenue",
+    "street": "9780 Arthur Lamb Jr Road",
     "zipcode": "33120",
-    "latlon": "25.746975, -80.148099",
+    "latlon": "25.74515, -80.14601",
     "enrollment": 640,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3258,6 +3440,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -3324,9 +3512,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "221 Synthetic Avenue",
+    "street": "7899 Grove Isle Drive",
     "zipcode": "33121",
-    "latlon": "25.711014, -80.21354",
+    "latlon": "25.73511, -80.22",
     "enrollment": 643,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3341,6 +3529,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3408,9 +3599,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "222 Synthetic Avenue",
+    "street": "6018 Greenridge Road",
     "zipcode": "32222",
-    "latlon": "30.282631, -81.645706",
+    "latlon": "30.28322, -81.64703",
     "enrollment": 646,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3430,6 +3621,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3455,9 +3649,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "223 Synthetic Avenue",
+    "street": "4137 Kellow Circle",
     "zipcode": "32223",
-    "latlon": "30.30347, -81.595924",
+    "latlon": "30.30277, -81.59791",
     "enrollment": 649,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3466,6 +3660,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3532,9 +3729,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "224 Synthetic Avenue",
+    "street": "2256 Sonora Drive North",
     "zipcode": "32224",
-    "latlon": "30.244323, -81.755891",
+    "latlon": "30.24402, -81.75648",
     "enrollment": 652,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3546,6 +3743,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3571,9 +3771,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "225 Synthetic Avenue",
+    "street": "375 West 17th Court",
     "zipcode": "33125",
-    "latlon": "25.866297, -80.318196",
+    "latlon": "25.86601, -80.31766",
     "enrollment": 655,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3591,6 +3791,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -3659,9 +3862,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "226 Synthetic Avenue",
+    "street": "8294 Stuart Avenue",
     "zipcode": "32226",
-    "latlon": "30.317862, -81.75815",
+    "latlon": "30.31755, -81.75795",
     "enrollment": 658,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3684,6 +3887,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -3754,9 +3960,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "227 Synthetic Avenue",
+    "street": "6413 Southwest 89th Terrace",
     "zipcode": "33127",
-    "latlon": "25.687479, -80.308058",
+    "latlon": "25.6874, -80.30667",
     "enrollment": 661,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3765,6 +3971,17 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "K",
+          "open_seats": 4,
+          "waitlist": false,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -3787,9 +4004,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "228 Synthetic Avenue",
+    "street": "4532 8th Di Lido Terrace",
     "zipcode": "33128",
-    "latlon": "25.806238, -80.161025",
+    "latlon": "25.79431, -80.15966",
     "enrollment": 664,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3801,6 +4018,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -3871,9 +4091,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "229 Synthetic Avenue",
+    "street": "2651 Lexington Avenue",
     "zipcode": "32229",
-    "latlon": "30.28405, -81.714763",
+    "latlon": "30.28316, -81.71558",
     "enrollment": 667,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3888,6 +4108,20 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "3/1/2027"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "K",
+          "open_seats": 4,
+          "waitlist": false,
+          "as_of": "2026-09-15"
+        }
       ]
     },
     "esp_text": [
@@ -3959,9 +4193,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "230 Synthetic Avenue",
+    "street": "770 Little Acres Lane East",
     "zipcode": "32230",
-    "latlon": "30.246212, -81.718915",
+    "latlon": "30.24746, -81.71835",
     "enrollment": 670,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -3973,6 +4207,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -4040,9 +4277,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "231 Synthetic Avenue",
+    "street": "8689 Floradell Place",
     "zipcode": "32831",
-    "latlon": "28.568801, -81.444468",
+    "latlon": "28.56966, -81.44438",
     "enrollment": 673,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4060,6 +4297,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -4086,9 +4326,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "232 Synthetic Avenue",
+    "street": "6808 Northeast 15th Court",
     "zipcode": "33132",
-    "latlon": "25.902336, -80.168874",
+    "latlon": "25.90203, -80.16761",
     "enrollment": 676,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4114,6 +4354,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -4136,9 +4379,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "233 Synthetic Avenue",
+    "street": "4927 Northwest 152nd Street",
     "zipcode": "33133",
-    "latlon": "25.913049, -80.235302",
+    "latlon": "25.91277, -80.23602",
     "enrollment": 679,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4147,6 +4390,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -4213,9 +4459,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "234 Synthetic Avenue",
+    "street": "3046 Westgate Drive",
     "zipcode": "32834",
-    "latlon": "28.532026, -81.459017",
+    "latlon": "28.53202, -81.45913",
     "enrollment": 682,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4224,6 +4470,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -4250,9 +4499,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "235 Synthetic Avenue",
+    "street": "1165 Arthur Lamb Jr Road",
     "zipcode": "33135",
-    "latlon": "25.732806, -80.122498",
+    "latlon": "25.7441, -80.14587",
     "enrollment": 685,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4264,6 +4513,12 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/bay-terrace-institute/admissions"
       ]
     },
     "esp_text": [
@@ -4286,9 +4541,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "236 Synthetic Avenue",
+    "street": "9084 Northwest 5th Street",
     "zipcode": "33136",
-    "latlon": "25.779332, -80.2142",
+    "latlon": "25.77838, -80.21375",
     "enrollment": 688,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4300,6 +4555,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cypress-springs-institute/admissions"
       ]
     },
     "esp_text": [
@@ -4326,9 +4587,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "237 Synthetic Avenue",
+    "street": "7203 Fisher Island Drive",
     "zipcode": "33137",
-    "latlon": "25.754884, -80.144559",
+    "latlon": "25.75792, -80.14023",
     "enrollment": 691,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4348,6 +4609,12 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/citrus-meadow-school/admissions"
       ]
     },
     "esp_text": [
@@ -4418,9 +4685,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "238 Synthetic Avenue",
+    "street": "5322 Northeast 16th Court",
     "zipcode": "33138",
-    "latlon": "25.905958, -80.166784",
+    "latlon": "25.90661, -80.16623",
     "enrollment": 694,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4443,6 +4710,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -4509,9 +4779,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "239 Synthetic Avenue",
+    "street": "3441 Blue Jay Lane",
     "zipcode": "32239",
-    "latlon": "30.222049, -81.535809",
+    "latlon": "30.22077, -81.53561",
     "enrollment": 697,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4531,6 +4801,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/maple-trace-academy/admissions"
       ]
     },
     "esp_text": [
@@ -4554,9 +4830,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "240 Synthetic Avenue",
+    "street": "1560 Sandberry Boulevard",
     "zipcode": "32840",
-    "latlon": "28.473775, -81.494771",
+    "latlon": "28.47405, -81.49383",
     "enrollment": 700,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4571,6 +4847,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -4593,9 +4872,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "241 Synthetic Avenue",
+    "street": "9479 Northwest 25th Street",
     "zipcode": "33141",
-    "latlon": "25.798967, -80.291901",
+    "latlon": "25.79573, -80.29998",
     "enrollment": 703,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4618,6 +4897,17 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 15,
+          "waitlist": false,
+          "as_of": "2026-09-15"
+        }
       ]
     },
     "esp_text": [
@@ -4643,9 +4933,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "242 Synthetic Avenue",
+    "street": "7598 Wesconnett Boulevard",
     "zipcode": "32242",
-    "latlon": "30.235084, -81.740374",
+    "latlon": "30.23549, -81.73924",
     "enrollment": 706,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4657,6 +4947,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -4679,9 +4972,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "243 Synthetic Avenue",
+    "street": "5717 Mast Academy Drive",
     "zipcode": "33143",
-    "latlon": "25.754839, -80.165909",
+    "latlon": "25.74204, -80.17079",
     "enrollment": 709,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4699,6 +4992,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-commons-academy/admissions"
       ]
     },
     "esp_text": [
@@ -4766,9 +5065,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "244 Synthetic Avenue",
+    "street": "3836 Tahiti Beach Island Road",
     "zipcode": "33144",
-    "latlon": "25.691822, -80.226369",
+    "latlon": "25.69995, -80.24638",
     "enrollment": 712,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4788,6 +5087,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -4813,9 +5115,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "245 Synthetic Avenue",
+    "street": "1955 Peach Drive",
     "zipcode": "32245",
-    "latlon": "30.28462, -81.548405",
+    "latlon": "30.28592, -81.54858",
     "enrollment": 715,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4824,6 +5126,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/lark-walk-academy/admissions"
       ]
     },
     "esp_text": [
@@ -4847,9 +5155,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "246 Synthetic Avenue",
+    "street": "9874 Vineland Road",
     "zipcode": "32846",
-    "latlon": "28.492764, -81.439749",
+    "latlon": "28.4916, -81.43799",
     "enrollment": 718,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4866,6 +5174,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -4889,9 +5200,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "247 Synthetic Avenue",
+    "street": "7993 Southwest 81st Terrace",
     "zipcode": "33147",
-    "latlon": "25.695536, -80.331873",
+    "latlon": "25.69482, -80.33116",
     "enrollment": 721,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4911,6 +5222,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -4933,9 +5247,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "248 Synthetic Avenue",
+    "street": "6112 North View Drive",
     "zipcode": "33148",
-    "latlon": "25.809256, -80.15427",
+    "latlon": "25.80482, -80.14601",
     "enrollment": 724,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4947,6 +5261,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/pine-trace-school/admissions"
       ]
     },
     "esp_text": [
@@ -4970,9 +5290,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "249 Synthetic Avenue",
+    "street": "4231 Shady Pine Street West",
     "zipcode": "32249",
-    "latlon": "30.215232, -81.731134",
+    "latlon": "30.21736, -81.73002",
     "enrollment": 727,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -4987,6 +5307,20 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 8,
+          "waitlist": false,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -5013,9 +5347,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "250 Synthetic Avenue",
+    "street": "2350 Sinbad Avenue",
     "zipcode": "33150",
-    "latlon": "25.903242, -80.250663",
+    "latlon": "25.90375, -80.25011",
     "enrollment": 730,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5030,6 +5364,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -5055,9 +5392,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "251 Synthetic Avenue",
+    "street": "469 Bowden Road",
     "zipcode": "32251",
-    "latlon": "30.263919, -81.61754",
+    "latlon": "30.26507, -81.61786",
     "enrollment": 733,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5066,6 +5403,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -5133,9 +5473,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "252 Synthetic Avenue",
+    "street": "8388 La Mirada Drive East",
     "zipcode": "32252",
-    "latlon": "30.25476, -81.617144",
+    "latlon": "30.25401, -81.61791",
     "enrollment": 736,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5150,6 +5490,15 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-point-institute/admissions"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -5173,9 +5522,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "253 Synthetic Avenue",
+    "street": "6507 9th Street",
     "zipcode": "33153",
-    "latlon": "25.777194, -80.113923",
+    "latlon": "25.77917, -80.13091",
     "enrollment": 739,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5184,6 +5533,15 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/heron-trace-school/admissions"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -5206,9 +5564,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "254 Synthetic Avenue",
+    "street": "4626 Hastings Street",
     "zipcode": "32854",
-    "latlon": "28.57694, -81.458795",
+    "latlon": "28.57764, -81.45999",
     "enrollment": 742,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5217,6 +5575,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -5241,9 +5602,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "255 Synthetic Avenue",
+    "street": "2745 Barnhill Drive",
     "zipcode": "32255",
-    "latlon": "30.279723, -81.607299",
+    "latlon": "30.28051, -81.60699",
     "enrollment": 745,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5261,6 +5622,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -5328,9 +5692,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "256 Synthetic Avenue",
+    "street": "864 102nd Street",
     "zipcode": "33156",
-    "latlon": "25.892127, -80.137804",
+    "latlon": "25.89148, -80.13716",
     "enrollment": 748,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5345,6 +5709,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/marlin-point-institute/admissions"
       ]
     },
     "esp_text": [
@@ -5370,9 +5740,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "257 Synthetic Avenue",
+    "street": "8783 North Shore Drive",
     "zipcode": "33157",
-    "latlon": "25.863256, -80.152806",
+    "latlon": "25.85838, -80.14413",
     "enrollment": 751,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5381,6 +5751,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/heron-cove-academy/admissions"
       ]
     },
     "esp_text": [
@@ -5448,9 +5824,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "258 Synthetic Avenue",
+    "street": "6902 Delaroche Court",
     "zipcode": "32258",
-    "latlon": "30.280855, -81.777609",
+    "latlon": "30.28178, -81.77784",
     "enrollment": 754,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5462,6 +5838,13 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -5529,9 +5912,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "259 Synthetic Avenue",
+    "street": "5021 East Port Boulevard",
     "zipcode": "33159",
-    "latlon": "25.764215, -80.158517",
+    "latlon": "25.7708, -80.15774",
     "enrollment": 757,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5551,6 +5934,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -5573,9 +5959,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "260 Synthetic Avenue",
+    "street": "3140 Brookside Circle East",
     "zipcode": "32260",
-    "latlon": "30.311097, -81.60969",
+    "latlon": "30.31058, -81.61029",
     "enrollment": 760,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5593,6 +5979,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -5619,9 +6008,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "261 Synthetic Avenue",
+    "street": "1259 Southwest 1st Street",
     "zipcode": "33161",
-    "latlon": "25.770178, -80.251453",
+    "latlon": "25.77103, -80.25122",
     "enrollment": 763,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5630,6 +6019,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -5697,9 +6089,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "262 Synthetic Avenue",
+    "street": "9178 Rustic Lane",
     "zipcode": "32262",
-    "latlon": "30.220736, -81.624827",
+    "latlon": "30.2192, -81.62016",
     "enrollment": 766,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5711,6 +6103,12 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-ridge-school/admissions"
       ]
     },
     "esp_text": [
@@ -5777,9 +6175,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "263 Synthetic Avenue",
+    "street": "7297 Meadow Walk Lane",
     "zipcode": "32263",
-    "latlon": "30.231273, -81.568028",
+    "latlon": "30.23006, -81.56824",
     "enrollment": 769,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5791,6 +6189,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -5814,9 +6215,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "264 Synthetic Avenue",
+    "street": "5416 Northwest 66th Street",
     "zipcode": "33164",
-    "latlon": "25.834945, -80.233499",
+    "latlon": "25.83471, -80.23322",
     "enrollment": 772,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5831,6 +6232,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -5854,9 +6258,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "265 Synthetic Avenue",
+    "street": "3535 Southeast 25th Road",
     "zipcode": "33165",
-    "latlon": "25.727884, -80.19406",
+    "latlon": "25.74909, -80.20154",
     "enrollment": 775,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5871,6 +6275,13 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -5941,9 +6352,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "266 Synthetic Avenue",
+    "street": "1654 Youngerman Circle East",
     "zipcode": "32266",
-    "latlon": "30.194739, -81.734957",
+    "latlon": "30.19395, -81.73739",
     "enrollment": 778,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -5955,6 +6366,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-walk-institute/admissions"
       ]
     },
     "esp_text": [
@@ -6026,9 +6443,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "267 Synthetic Avenue",
+    "street": "9573 Romilly Drive",
     "zipcode": "32267",
-    "latlon": "30.25104, -81.752465",
+    "latlon": "30.25157, -81.75221",
     "enrollment": 781,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6048,6 +6465,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -6074,9 +6494,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "268 Synthetic Avenue",
+    "street": "7692 Northwest 88th Street",
     "zipcode": "33168",
-    "latlon": "25.85391, -80.203118",
+    "latlon": "25.85536, -80.20332",
     "enrollment": 784,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6085,6 +6505,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cypress-crossing-school/admissions"
       ]
     },
     "esp_text": [
@@ -6111,9 +6537,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "269 Synthetic Avenue",
+    "street": "5811 Miami View Drive",
     "zipcode": "33169",
-    "latlon": "25.847282, -80.163172",
+    "latlon": "25.84619, -80.15971",
     "enrollment": 787,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6125,6 +6551,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6150,9 +6579,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "270 Synthetic Avenue",
+    "street": "3930 Northeast 4th Avenue",
     "zipcode": "33170",
-    "latlon": "25.860342, -80.188258",
+    "latlon": "25.86022, -80.18922",
     "enrollment": 790,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6169,6 +6598,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6193,9 +6625,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "271 Synthetic Avenue",
+    "street": "2049 Northwest 20th Street",
     "zipcode": "33171",
-    "latlon": "25.79426, -80.270964",
+    "latlon": "25.79324, -80.27164",
     "enrollment": 793,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6215,6 +6647,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6281,9 +6716,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "272 Synthetic Avenue",
+    "street": "168 Cecil Street",
     "zipcode": "32272",
-    "latlon": "30.285073, -81.78489",
+    "latlon": "30.28557, -81.78467",
     "enrollment": 796,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6295,6 +6730,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6362,9 +6800,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "273 Synthetic Avenue",
+    "street": "8087 Northwest 66th Street",
     "zipcode": "33173",
-    "latlon": "25.832768, -80.320588",
+    "latlon": "25.83347, -80.32025",
     "enrollment": 799,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6379,6 +6817,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6401,9 +6842,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "274 Synthetic Avenue",
+    "street": "6206 Northeast 6th Avenue",
     "zipcode": "33174",
-    "latlon": "25.915778, -80.188621",
+    "latlon": "25.91586, -80.18766",
     "enrollment": 802,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6415,6 +6856,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -6484,9 +6928,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "275 Synthetic Avenue",
+    "street": "4325 Sunrise Drive",
     "zipcode": "33175",
-    "latlon": "25.710254, -80.229116",
+    "latlon": "25.70746, -80.24669",
     "enrollment": 805,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6501,6 +6945,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -6527,9 +6974,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "276 Synthetic Avenue",
+    "street": "2444 Safer Lane",
     "zipcode": "32276",
-    "latlon": "30.316521, -81.595955",
+    "latlon": "30.31655, -81.59591",
     "enrollment": 808,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6546,6 +6993,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6616,9 +7066,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "277 Synthetic Avenue",
+    "street": "563 Goodwin Street",
     "zipcode": "32277",
-    "latlon": "30.299606, -81.677772",
+    "latlon": "30.30941, -81.68191",
     "enrollment": 811,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6630,6 +7080,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6697,9 +7150,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "278 Synthetic Avenue",
+    "street": "8482 Altaloma Avenue",
     "zipcode": "32878",
-    "latlon": "28.554006, -81.359897",
+    "latlon": "28.55403, -81.35895",
     "enrollment": 814,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6711,6 +7164,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6734,9 +7190,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "279 Synthetic Avenue",
+    "street": "6601 Collins Avenue Service Road",
     "zipcode": "33179",
-    "latlon": "25.842059, -80.116753",
+    "latlon": "25.84043, -80.12099",
     "enrollment": 817,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6748,6 +7204,17 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 0,
+          "waitlist": true,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -6819,9 +7286,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "280 Synthetic Avenue",
+    "street": "4720 North Bay Road",
     "zipcode": "33180",
-    "latlon": "25.833423, -80.141044",
+    "latlon": "25.83751, -80.13203",
     "enrollment": 820,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6836,6 +7303,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -6861,9 +7331,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "281 Synthetic Avenue",
+    "street": "2839 Northwest 73rd Street",
     "zipcode": "33181",
-    "latlon": "25.841972, -80.200758",
+    "latlon": "25.84197, -80.20077",
     "enrollment": 823,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6872,6 +7342,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -6942,9 +7415,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "282 Synthetic Avenue",
+    "street": "958 Myra Street",
     "zipcode": "32282",
-    "latlon": "30.314941, -81.701123",
+    "latlon": "30.31586, -81.70008",
     "enrollment": 826,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -6962,6 +7435,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7033,9 +7509,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "283 Synthetic Avenue",
+    "street": "8877 Algonquin Avenue",
     "zipcode": "32283",
-    "latlon": "30.271616, -81.71031",
+    "latlon": "30.27116, -81.71069",
     "enrollment": 829,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7050,6 +7526,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7118,9 +7597,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "284 Synthetic Avenue",
+    "street": "6996 Wells Pond Court",
     "zipcode": "32284",
-    "latlon": "30.19008, -81.717962",
+    "latlon": "30.18985, -81.71962",
     "enrollment": 832,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7140,6 +7619,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7211,9 +7693,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "285 Synthetic Avenue",
+    "street": "5115 Perimeter Drive",
     "zipcode": "33185",
-    "latlon": "25.798671, -80.288856",
+    "latlon": "25.80719, -80.28968",
     "enrollment": 835,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7225,6 +7707,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7248,9 +7733,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "286 Synthetic Avenue",
+    "street": "3234 West 71st Place",
     "zipcode": "33186",
-    "latlon": "25.887091, -80.338414",
+    "latlon": "25.88728, -80.33783",
     "enrollment": 838,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7262,6 +7747,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -7284,9 +7772,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "287 Synthetic Avenue",
+    "street": "1353 Inverness Drive",
     "zipcode": "32287",
-    "latlon": "30.186422, -81.593768",
+    "latlon": "30.18715, -81.59414",
     "enrollment": 841,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7298,6 +7786,17 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "K",
+          "open_seats": 4,
+          "waitlist": false,
+          "as_of": "2026-09-15"
+        }
       ]
     },
     "esp_text": [
@@ -7367,9 +7866,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "288 Synthetic Avenue",
+    "street": "9272 Columbus Boulevard",
     "zipcode": "33188",
-    "latlon": "25.762069, -80.279623",
+    "latlon": "25.76176, -80.27917",
     "enrollment": 844,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7378,6 +7877,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7445,9 +7947,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "289 Synthetic Avenue",
+    "street": "7391 Paschal Street",
     "zipcode": "32289",
-    "latlon": "30.316185, -81.775479",
+    "latlon": "30.31658, -81.77422",
     "enrollment": 847,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7459,6 +7961,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -7529,9 +8034,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "290 Synthetic Avenue",
+    "street": "5510 Northeast 3rd Avenue",
     "zipcode": "33190",
-    "latlon": "25.828008, -80.189565",
+    "latlon": "25.82854, -80.18995",
     "enrollment": 850,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7546,6 +8051,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7613,9 +8121,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "291 Synthetic Avenue",
+    "street": "3629 Carter Street",
     "zipcode": "32891",
-    "latlon": "28.534904, -81.438079",
+    "latlon": "28.53435, -81.43846",
     "enrollment": 853,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7638,6 +8146,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-meadow-institute/admissions"
       ]
     },
     "esp_text": [
@@ -7707,9 +8221,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "292 Synthetic Avenue",
+    "street": "1748 Creston Drive",
     "zipcode": "32892",
-    "latlon": "28.635388, -81.385892",
+    "latlon": "28.6357, -81.38457",
     "enrollment": 856,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7726,6 +8240,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -7751,9 +8268,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "293 Synthetic Avenue",
+    "street": "9667 Yacht Club Road",
     "zipcode": "32293",
-    "latlon": "30.259659, -81.673783",
+    "latlon": "30.2542, -81.6908",
     "enrollment": 859,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7765,6 +8282,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7835,9 +8355,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "294 Synthetic Avenue",
+    "street": "7786 Northwest 2nd Terrace",
     "zipcode": "33194",
-    "latlon": "25.773348, -80.265001",
+    "latlon": "25.77432, -80.26418",
     "enrollment": 862,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7855,6 +8375,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -7924,9 +8447,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "295 Synthetic Avenue",
+    "street": "5905 Arthur Lamb Jr Road",
     "zipcode": "33195",
-    "latlon": "25.745275, -80.158855",
+    "latlon": "25.73971, -80.15772",
     "enrollment": 865,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7946,6 +8469,23 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/river-terrace-institute/admissions"
+      ],
+      "application_deadline_date": [
+        "2/1/2027"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "9",
+          "open_seats": 15,
+          "waitlist": false,
+          "as_of": "2026-08-20"
+        }
       ]
     },
     "esp_text": [
@@ -7971,9 +8511,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "296 Synthetic Avenue",
+    "street": "4024 Northwest 33rd Avenue",
     "zipcode": "33196",
-    "latlon": "25.772966, -80.249712",
+    "latlon": "25.77204, -80.24984",
     "enrollment": 868,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -7991,6 +8531,16 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
       ]
     },
     "esp_text": [
@@ -8014,9 +8564,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "297 Synthetic Avenue",
+    "street": "2143 Northeast 151st Street",
     "zipcode": "33197",
-    "latlon": "25.914089, -80.148658",
+    "latlon": "25.91552, -80.14949",
     "enrollment": 871,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8034,6 +8584,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -8105,9 +8658,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "298 Synthetic Avenue",
+    "street": "262 Southwest 79th Avenue",
     "zipcode": "33198",
-    "latlon": "25.765225, -80.324969",
+    "latlon": "25.76593, -80.32452",
     "enrollment": 874,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8116,6 +8669,20 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/sabal-isle-school/admissions"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "K",
+          "applicants": 180,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -8142,9 +8709,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "299 Synthetic Avenue",
+    "street": "8181 Northwest 67th Avenue",
     "zipcode": "33199",
-    "latlon": "25.804132, -80.304238",
+    "latlon": "25.80259, -80.30521",
     "enrollment": 877,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8159,6 +8726,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8228,9 +8798,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "300 Synthetic Avenue",
+    "street": "6300 Arthur Lamb Jr Road",
     "zipcode": "33100",
-    "latlon": "25.73126, -80.117881",
+    "latlon": "25.74201, -80.14719",
     "enrollment": 880,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8239,6 +8809,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8265,9 +8838,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "301 Synthetic Avenue",
+    "street": "4419 Bal Bay Drive",
     "zipcode": "33101",
-    "latlon": "25.907329, -80.121619",
+    "latlon": "25.89844, -80.12589",
     "enrollment": 883,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8276,6 +8849,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8345,9 +8921,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "302 Synthetic Avenue",
+    "street": "2538 Southwark Drive",
     "zipcode": "32202",
-    "latlon": "30.212918, -81.598201",
+    "latlon": "30.21381, -81.59825",
     "enrollment": 886,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8362,6 +8938,20 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cedar-walk-institute/admissions"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "9",
+          "applicants": 240,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -8387,9 +8977,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "303 Synthetic Avenue",
+    "street": "657 Southwest 22nd Road",
     "zipcode": "33103",
-    "latlon": "25.75171, -80.198048",
+    "latlon": "25.75364, -80.20136",
     "enrollment": 889,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8401,6 +8991,9 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -8424,9 +9017,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "304 Synthetic Avenue",
+    "street": "8576 Hogan Settlement Road",
     "zipcode": "32204",
-    "latlon": "30.296597, -81.77822",
+    "latlon": "30.29573, -81.77805",
     "enrollment": 892,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8441,6 +9034,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -8508,9 +9104,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "305 Synthetic Avenue",
+    "street": "6695 Caljon Road",
     "zipcode": "32205",
-    "latlon": "30.279921, -81.645055",
+    "latlon": "30.27934, -81.64511",
     "enrollment": 895,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8527,6 +9123,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8594,9 +9193,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "306 Synthetic Avenue",
+    "street": "4814 Valencia Drive",
     "zipcode": "32206",
-    "latlon": "30.305305, -81.612882",
+    "latlon": "30.30561, -81.61362",
     "enrollment": 898,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8611,6 +9210,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8636,9 +9238,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "307 Synthetic Avenue",
+    "street": "2933 Mallory Road",
     "zipcode": "32207",
-    "latlon": "30.317008, -81.795512",
+    "latlon": "30.31731, -81.79407",
     "enrollment": 901,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8650,6 +9252,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -8676,9 +9281,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "308 Synthetic Avenue",
+    "street": "1052 Grove Isle Drive",
     "zipcode": "33108",
-    "latlon": "25.722151, -80.195844",
+    "latlon": "25.73524, -80.22017",
     "enrollment": 904,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8693,6 +9298,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -8715,9 +9323,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "309 Synthetic Avenue",
+    "street": "8971 Softwind Trail",
     "zipcode": "32809",
-    "latlon": "28.6199, -81.37557",
+    "latlon": "28.62052, -81.37474",
     "enrollment": 907,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8729,6 +9337,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8755,9 +9366,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "310 Synthetic Avenue",
+    "street": "7090 Miller Oaks Court",
     "zipcode": "32210",
-    "latlon": "30.231963, -81.633429",
+    "latlon": "30.23515, -81.62475",
     "enrollment": 910,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8769,6 +9380,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8836,9 +9450,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "311 Synthetic Avenue",
+    "street": "5209 Northwest 33rd Street",
     "zipcode": "33111",
-    "latlon": "25.807323, -80.21104",
+    "latlon": "25.80715, -80.21153",
     "enrollment": 913,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8858,6 +9472,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8881,9 +9498,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "312 Synthetic Avenue",
+    "street": "3328 Northwest 15th Street",
     "zipcode": "33112",
-    "latlon": "25.786611, -80.255832",
+    "latlon": "25.78791, -80.25578",
     "enrollment": 916,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8903,6 +9520,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -8973,9 +9593,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "313 Synthetic Avenue",
+    "street": "1447 91st Street",
     "zipcode": "33113",
-    "latlon": "25.878243, -80.114981",
+    "latlon": "25.87805, -80.12185",
     "enrollment": 919,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -8984,6 +9604,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9051,9 +9674,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "314 Synthetic Avenue",
+    "street": "9366 Southwest 13th Street",
     "zipcode": "33114",
-    "latlon": "25.757971, -80.304809",
+    "latlon": "25.75872, -80.30419",
     "enrollment": 922,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9073,6 +9696,17 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "9",
+          "applicants": 240,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -9142,9 +9776,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "315 Synthetic Avenue",
+    "street": "7485 South Club Drive",
     "zipcode": "33115",
-    "latlon": "25.691223, -80.104754",
+    "latlon": "25.68622, -80.1572",
     "enrollment": 925,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9167,6 +9801,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -9189,9 +9826,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "316 Synthetic Avenue",
+    "street": "5604 Seville Avenue",
     "zipcode": "32216",
-    "latlon": "30.195826, -81.702685",
+    "latlon": "30.19579, -81.70203",
     "enrollment": 928,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9203,6 +9840,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9229,9 +9869,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "317 Synthetic Avenue",
+    "street": "3723 Southwest 34th Terrace",
     "zipcode": "33117",
-    "latlon": "25.738416, -80.318917",
+    "latlon": "25.738, -80.31811",
     "enrollment": 931,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9246,6 +9886,20 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2027"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "PK",
+          "applicants": 240,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -9271,9 +9925,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "318 Synthetic Avenue",
+    "street": "1842 Pine Hawk Lane",
     "zipcode": "32818",
-    "latlon": "28.495149, -81.278194",
+    "latlon": "28.49581, -81.27861",
     "enrollment": 934,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9288,6 +9942,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9310,9 +9967,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "319 Synthetic Avenue",
+    "street": "9761 Hoyt Street",
     "zipcode": "32219",
-    "latlon": "30.234304, -81.676829",
+    "latlon": "30.22774, -81.67808",
     "enrollment": 937,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9327,6 +9984,16 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/lark-commons-school/admissions"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -9397,9 +10064,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "320 Synthetic Avenue",
+    "street": "7880 Northeast 101st Street",
     "zipcode": "33120",
-    "latlon": "25.868386, -80.169948",
+    "latlon": "25.8683, -80.16986",
     "enrollment": 940,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9414,6 +10081,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -9437,9 +10107,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "321 Synthetic Avenue",
+    "street": "5999 Northeast 117th Terrace",
     "zipcode": "33121",
-    "latlon": "25.884404, -80.173766",
+    "latlon": "25.88396, -80.17355",
     "enrollment": 943,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9451,6 +10121,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/lark-ridge-institute/admissions"
       ]
     },
     "esp_text": [
@@ -9478,9 +10154,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "322 Synthetic Avenue",
+    "street": "4118 Arthur Lamb Jr Road",
     "zipcode": "33122",
-    "latlon": "25.735665, -80.142807",
+    "latlon": "25.74082, -80.148",
     "enrollment": 946,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9489,6 +10165,17 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "K",
+          "applicants": 180,
+          "seats": 40,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -9513,9 +10200,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "323 Synthetic Avenue",
+    "street": "2237 Northeast 17th Avenue",
     "zipcode": "33123",
-    "latlon": "25.878162, -80.165492",
+    "latlon": "25.87845, -80.16583",
     "enrollment": 949,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9524,6 +10211,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -9548,9 +10238,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "324 Synthetic Avenue",
+    "street": "356 24th Street",
     "zipcode": "32824",
-    "latlon": "28.516811, -81.394361",
+    "latlon": "28.51733, -81.39494",
     "enrollment": 952,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9565,6 +10255,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -9634,9 +10327,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "325 Synthetic Avenue",
+    "street": "8275 East Concord Street",
     "zipcode": "32825",
-    "latlon": "28.551464, -81.374226",
+    "latlon": "28.55096, -81.37494",
     "enrollment": 955,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9651,6 +10344,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -9717,9 +10413,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "326 Synthetic Avenue",
+    "street": "6394 Village Wood Drive",
     "zipcode": "32826",
-    "latlon": "28.495416, -81.476361",
+    "latlon": "28.49579, -81.47586",
     "enrollment": 958,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9739,6 +10435,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9766,9 +10465,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "327 Synthetic Avenue",
+    "street": "4513 Vineyard Lake Road North",
     "zipcode": "32227",
-    "latlon": "30.190658, -81.534606",
+    "latlon": "30.18996, -81.53387",
     "enrollment": 961,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9783,6 +10482,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -9806,9 +10508,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "328 Synthetic Avenue",
+    "street": "2632 Mast Academy Drive",
     "zipcode": "33128",
-    "latlon": "25.725997, -80.190239",
+    "latlon": "25.74193, -80.17104",
     "enrollment": 964,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9817,6 +10519,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9886,9 +10591,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "329 Synthetic Avenue",
+    "street": "751 Collins Avenue Service Road",
     "zipcode": "33129",
-    "latlon": "25.824613, -80.109593",
+    "latlon": "25.82487, -80.12198",
     "enrollment": 967,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9908,6 +10613,12 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "3/1/2027"
       ]
     },
     "esp_text": [
@@ -9933,9 +10644,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "330 Synthetic Avenue",
+    "street": "8670 Powell Place",
     "zipcode": "32230",
-    "latlon": "30.303522, -81.689112",
+    "latlon": "30.30535, -81.69077",
     "enrollment": 970,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9947,6 +10658,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -9969,9 +10683,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "331 Synthetic Avenue",
+    "street": "6789 Grapetree Drive",
     "zipcode": "33131",
-    "latlon": "25.686068, -80.146831",
+    "latlon": "25.68468, -80.15737",
     "enrollment": 973,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -9994,6 +10708,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10020,9 +10737,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "332 Synthetic Avenue",
+    "street": "4908 Southwest 22nd Street",
     "zipcode": "33132",
-    "latlon": "25.751341, -80.225771",
+    "latlon": "25.75068, -80.22605",
     "enrollment": 976,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10034,6 +10751,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10061,9 +10781,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "333 Synthetic Avenue",
+    "street": "3027 Northwest 30th Court",
     "zipcode": "33133",
-    "latlon": "25.865219, -80.247644",
+    "latlon": "25.86561, -80.24762",
     "enrollment": 979,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10089,6 +10809,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -10159,9 +10882,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "334 Synthetic Avenue",
+    "street": "1146 Ovella Road",
     "zipcode": "32234",
-    "latlon": "30.223578, -81.736601",
+    "latlon": "30.22443, -81.73712",
     "enrollment": 982,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10170,6 +10893,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cypress-walk-school/admissions"
       ]
     },
     "esp_text": [
@@ -10240,9 +10969,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "335 Synthetic Avenue",
+    "street": "9065 West 81st Street",
     "zipcode": "33135",
-    "latlon": "25.897451, -80.316553",
+    "latlon": "25.89615, -80.31603",
     "enrollment": 985,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10251,6 +10980,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10276,9 +11008,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "336 Synthetic Avenue",
+    "street": "7184 Northwest 116th Street",
     "zipcode": "33136",
-    "latlon": "25.881472, -80.20316",
+    "latlon": "25.88137, -80.20227",
     "enrollment": 988,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10293,6 +11025,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -10319,9 +11054,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "337 Synthetic Avenue",
+    "street": "5303 Sapelo Road",
     "zipcode": "32237",
-    "latlon": "30.308027, -81.590133",
+    "latlon": "30.30804, -81.59062",
     "enrollment": 991,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10330,6 +11065,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10401,9 +11139,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "338 Synthetic Avenue",
+    "street": "3422 Bay Lane",
     "zipcode": "33138",
-    "latlon": "25.693032, -80.172419",
+    "latlon": "25.69283, -80.17242",
     "enrollment": 994,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10412,6 +11150,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -10481,9 +11225,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "339 Synthetic Avenue",
+    "street": "1541 Rickman Street",
     "zipcode": "32239",
-    "latlon": "30.228612, -81.774089",
+    "latlon": "30.22925, -81.77465",
     "enrollment": 997,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10503,6 +11247,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -10573,9 +11320,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "340 Synthetic Avenue",
+    "street": "9460 Wilson Boulevard",
     "zipcode": "32240",
-    "latlon": "30.268116, -81.766968",
+    "latlon": "30.2698, -81.76793",
     "enrollment": 1000,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10590,6 +11337,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10660,9 +11410,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "341 Synthetic Avenue",
+    "street": "7579 Shady Grove Road",
     "zipcode": "32241",
-    "latlon": "30.223248, -81.530392",
+    "latlon": "30.22206, -81.53088",
     "enrollment": 1003,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10671,6 +11421,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10695,9 +11448,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "342 Synthetic Avenue",
+    "street": "5698 Northwest 23rd Court",
     "zipcode": "33142",
-    "latlon": "25.79733, -80.235782",
+    "latlon": "25.79627, -80.23468",
     "enrollment": 1006,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10709,6 +11462,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -10732,9 +11488,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "343 Synthetic Avenue",
+    "street": "3817 Arthur Lamb Junior Road",
     "zipcode": "33143",
-    "latlon": "25.724576, -80.186856",
+    "latlon": "25.73644, -80.16532",
     "enrollment": 1009,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10754,6 +11510,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -10780,9 +11539,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "344 Synthetic Avenue",
+    "street": "1936 Southwest 82nd Street",
     "zipcode": "33144",
-    "latlon": "25.693853, -80.314263",
+    "latlon": "25.69403, -80.31439",
     "enrollment": 1012,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10797,6 +11556,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -10864,9 +11626,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "345 Synthetic Avenue",
+    "street": "9855 Casuarina Concourse",
     "zipcode": "33145",
-    "latlon": "25.689586, -80.234519",
+    "latlon": "25.69288, -80.24974",
     "enrollment": 1015,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10878,6 +11640,12 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/sabal-cove-school/admissions"
       ]
     },
     "esp_text": [
@@ -10948,9 +11716,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "346 Synthetic Avenue",
+    "street": "7974 Bettes Lane",
     "zipcode": "32246",
-    "latlon": "30.281465, -81.69393",
+    "latlon": "30.28038, -81.69881",
     "enrollment": 1018,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -10959,6 +11727,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/indigo-terrace-institute/admissions"
       ]
     },
     "esp_text": [
@@ -11027,9 +11801,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "347 Synthetic Avenue",
+    "street": "6093 Gilbert Street",
     "zipcode": "32247",
-    "latlon": "30.274702, -81.629438",
+    "latlon": "30.27555, -81.6297",
     "enrollment": 1021,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11041,6 +11815,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -11067,9 +11844,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "348 Synthetic Avenue",
+    "street": "4212 Harvard Avenue",
     "zipcode": "32248",
-    "latlon": "30.272468, -81.695837",
+    "latlon": "30.27389, -81.70116",
     "enrollment": 1024,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11087,6 +11864,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11154,9 +11934,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "349 Synthetic Avenue",
+    "street": "2331 Sack Drive East",
     "zipcode": "32249",
-    "latlon": "30.273833, -81.601453",
+    "latlon": "30.27437, -81.60011",
     "enrollment": 1027,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11173,6 +11953,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -11241,9 +12024,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "350 Synthetic Avenue",
+    "street": "450 Frontage Road",
     "zipcode": "32850",
-    "latlon": "28.550383, -81.269509",
+    "latlon": "28.55051, -81.27131",
     "enrollment": 1030,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11255,6 +12038,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11277,9 +12063,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "351 Synthetic Avenue",
+    "street": "8369 Southwest 66th Street",
     "zipcode": "33151",
-    "latlon": "25.708929, -80.307457",
+    "latlon": "25.70898, -80.3061",
     "enrollment": 1033,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11294,6 +12080,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/heron-park-academy/admissions"
       ]
     },
     "esp_text": [
@@ -11364,9 +12156,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "352 Synthetic Avenue",
+    "street": "6488 Lambry Drive",
     "zipcode": "32852",
-    "latlon": "28.410441, -81.355089",
+    "latlon": "28.41072, -81.35319",
     "enrollment": 1036,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11375,6 +12167,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11399,9 +12197,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "353 Synthetic Avenue",
+    "street": "4607 Dunston Road",
     "zipcode": "32253",
-    "latlon": "30.216179, -81.757931",
+    "latlon": "30.21566, -81.76009",
     "enrollment": 1039,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11413,6 +12211,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -11483,9 +12284,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "354 Synthetic Avenue",
+    "street": "2726 Bowden Road",
     "zipcode": "32254",
-    "latlon": "30.266859, -81.619488",
+    "latlon": "30.26514, -81.61975",
     "enrollment": 1042,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11497,6 +12298,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11564,9 +12368,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "355 Synthetic Avenue",
+    "street": "845 Northwest 2nd Street",
     "zipcode": "33155",
-    "latlon": "25.773092, -80.255116",
+    "latlon": "25.77393, -80.25455",
     "enrollment": 1045,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11578,6 +12382,12 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/river-crossing-institute/admissions"
       ]
     },
     "esp_text": [
@@ -11601,9 +12411,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "356 Synthetic Avenue",
+    "street": "8764 Colgate Road",
     "zipcode": "32256",
-    "latlon": "30.260294, -81.636365",
+    "latlon": "30.2595, -81.63677",
     "enrollment": 1048,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11623,6 +12433,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -11692,9 +12505,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "357 Synthetic Avenue",
+    "street": "6883 Vineyard Lake Road North",
     "zipcode": "32257",
-    "latlon": "30.190084, -81.530372",
+    "latlon": "30.18978, -81.52997",
     "enrollment": 1051,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11703,6 +12516,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -11771,9 +12587,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "358 Synthetic Avenue",
+    "street": "5002 Epic Boulevard",
     "zipcode": "32858",
-    "latlon": "28.436194, -81.450713",
+    "latlon": "28.43644, -81.45067",
     "enrollment": 1054,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11785,6 +12601,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -11856,9 +12675,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "359 Synthetic Avenue",
+    "street": "3121 Southwest 64th Court",
     "zipcode": "33159",
-    "latlon": "25.699208, -80.297102",
+    "latlon": "25.69954, -80.29774",
     "enrollment": 1057,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11870,6 +12689,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11893,9 +12715,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "360 Synthetic Avenue",
+    "street": "1240 Northwest 5th Street",
     "zipcode": "33160",
-    "latlon": "25.775898, -80.291917",
+    "latlon": "25.77605, -80.29277",
     "enrollment": 1060,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11910,6 +12732,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -11936,9 +12761,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "361 Synthetic Avenue",
+    "street": "9159 South Park Circle",
     "zipcode": "32861",
-    "latlon": "28.450934, -81.42158",
+    "latlon": "28.4477, -81.42205",
     "enrollment": 1063,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -11953,6 +12778,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -12024,9 +12852,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "362 Synthetic Avenue",
+    "street": "7278 Hilliard Road",
     "zipcode": "32262",
-    "latlon": "30.224365, -81.616854",
+    "latlon": "30.22535, -81.61612",
     "enrollment": 1066,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12035,6 +12863,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -12057,9 +12888,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "363 Synthetic Avenue",
+    "street": "5397 Dowden Road",
     "zipcode": "32863",
-    "latlon": "28.436818, -81.264466",
+    "latlon": "28.43193, -81.2597",
     "enrollment": 1069,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12074,6 +12905,12 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/maple-harbor-institute/admissions"
       ]
     },
     "esp_text": [
@@ -12143,9 +12980,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "364 Synthetic Avenue",
+    "street": "3516 Lumberton Drive",
     "zipcode": "32864",
-    "latlon": "28.487, -81.262514",
+    "latlon": "28.48692, -81.26303",
     "enrollment": 1072,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12157,6 +12994,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12224,9 +13064,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "365 Synthetic Avenue",
+    "street": "1635 North Club Drive",
     "zipcode": "33165",
-    "latlon": "25.68697, -80.153255",
+    "latlon": "25.68879, -80.15749",
     "enrollment": 1075,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12246,6 +13086,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12316,9 +13159,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "366 Synthetic Avenue",
+    "street": "9554 Hibiscus Street",
     "zipcode": "33166",
-    "latlon": "25.734748, -80.249762",
+    "latlon": "25.73493, -80.25033",
     "enrollment": 1078,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12333,6 +13176,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -12355,9 +13201,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "367 Synthetic Avenue",
+    "street": "7673 River Road",
     "zipcode": "32267",
-    "latlon": "30.303119, -81.660392",
+    "latlon": "30.30484, -81.65996",
     "enrollment": 1081,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12369,6 +13215,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -12439,9 +13288,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "368 Synthetic Avenue",
+    "street": "5792 Grand Bay Drive South",
     "zipcode": "33168",
-    "latlon": "25.692511, -80.152278",
+    "latlon": "25.6917, -80.15894",
     "enrollment": 1084,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12456,6 +13305,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -12526,9 +13378,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "369 Synthetic Avenue",
+    "street": "3911 Bayou Bluff Drive",
     "zipcode": "32269",
-    "latlon": "30.203624, -81.608825",
+    "latlon": "30.20228, -81.609",
     "enrollment": 1087,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12537,6 +13389,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12560,9 +13415,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "370 Synthetic Avenue",
+    "street": "2030 Cape Florida Park Boulevard",
     "zipcode": "33170",
-    "latlon": "25.684784, -80.102213",
+    "latlon": "25.67154, -80.15523",
     "enrollment": 1090,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12579,6 +13434,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12646,9 +13504,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "371 Synthetic Avenue",
+    "street": "149 Fisher Island Drive",
     "zipcode": "33171",
-    "latlon": "25.731633, -80.1078",
+    "latlon": "25.75771, -80.138",
     "enrollment": 1093,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12668,6 +13526,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -12735,9 +13596,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "372 Synthetic Avenue",
+    "street": "8068 Rosedale Lane",
     "zipcode": "32272",
-    "latlon": "30.243524, -81.721002",
+    "latlon": "30.24333, -81.72104",
     "enrollment": 1096,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12746,6 +13607,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -12817,9 +13681,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "373 Synthetic Avenue",
+    "street": "6187 30th Street",
     "zipcode": "33173",
-    "latlon": "25.800252, -80.102726",
+    "latlon": "25.80558, -80.12371",
     "enrollment": 1099,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12837,6 +13701,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -12904,9 +13771,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "374 Synthetic Avenue",
+    "street": "4306 Addor Lane",
     "zipcode": "32274",
-    "latlon": "30.316026, -81.799739",
+    "latlon": "30.31712, -81.8003",
     "enrollment": 1102,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -12921,6 +13788,25 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "PK",
+          "open_seats": 8,
+          "waitlist": false,
+          "as_of": "2026-03-15"
+        }
+      ],
+      "applicants_last_year": [
+        {
+          "grade": "PK",
+          "applicants": 240,
+          "seats": 90,
+          "as_of": "2026-03-15"
+        }
       ]
     },
     "esp_text": [
@@ -12991,9 +13877,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "375 Synthetic Avenue",
+    "street": "2425 Seaboard Road",
     "zipcode": "32875",
-    "latlon": "28.583693, -81.437053",
+    "latlon": "28.58177, -81.4376",
     "enrollment": 1105,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13008,6 +13894,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -13033,9 +13922,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "376 Synthetic Avenue",
+    "street": "544 91st Street",
     "zipcode": "33176",
-    "latlon": "25.878587, -80.125434",
+    "latlon": "25.87793, -80.12449",
     "enrollment": 1108,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13050,6 +13939,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -13077,9 +13969,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "377 Synthetic Avenue",
+    "street": "8463 11th Street",
     "zipcode": "33177",
-    "latlon": "25.774932, -80.100729",
+    "latlon": "25.7816, -80.13038",
     "enrollment": 1111,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13091,6 +13983,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13113,9 +14008,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "378 Synthetic Avenue",
+    "street": "6582 Isser Lane",
     "zipcode": "32278",
-    "latlon": "30.208119, -81.640246",
+    "latlon": "30.20438, -81.6388",
     "enrollment": 1114,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13124,6 +14019,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -13150,9 +14048,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "379 Synthetic Avenue",
+    "street": "4701 Casuarina Concourse",
     "zipcode": "33179",
-    "latlon": "25.690536, -80.233793",
+    "latlon": "25.69402, -80.2496",
     "enrollment": 1117,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13161,6 +14059,12 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/river-walk-academy/admissions"
       ]
     },
     "esp_text": [
@@ -13229,9 +14133,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "380 Synthetic Avenue",
+    "street": "2820 Corinthian Avenue",
     "zipcode": "32280",
-    "latlon": "30.273184, -81.707754",
+    "latlon": "30.27359, -81.70643",
     "enrollment": 1120,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13243,6 +14147,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -13269,9 +14176,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "381 Synthetic Avenue",
+    "street": "939 West 27th Street",
     "zipcode": "33181",
-    "latlon": "25.80283, -80.142079",
+    "latlon": "25.80254, -80.14217",
     "enrollment": 1123,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13291,6 +14198,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/osprey-trace-school/admissions"
       ]
     },
     "esp_text": [
@@ -13360,9 +14273,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "382 Synthetic Avenue",
+    "street": "8858 Northeast Bayshore Court",
     "zipcode": "33182",
-    "latlon": "25.843436, -80.169346",
+    "latlon": "25.8457, -80.17374",
     "enrollment": 1126,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13374,6 +14287,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13401,9 +14317,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "383 Synthetic Avenue",
+    "street": "6977 Sierra Madre Drive North",
     "zipcode": "32283",
-    "latlon": "30.233721, -81.614093",
+    "latlon": "30.23332, -81.61558",
     "enrollment": 1129,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13415,6 +14331,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/maple-heights-academy/admissions"
       ]
     },
     "esp_text": [
@@ -13437,9 +14359,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "384 Synthetic Avenue",
+    "street": "5096 Fox Street",
     "zipcode": "32884",
-    "latlon": "28.557517, -81.32963",
+    "latlon": "28.55813, -81.33014",
     "enrollment": 1132,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13456,6 +14378,9 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -13482,9 +14407,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "385 Synthetic Avenue",
+    "street": "3215 Harpers Glen Court",
     "zipcode": "32285",
-    "latlon": "30.209311, -81.527517",
+    "latlon": "30.20986, -81.52763",
     "enrollment": 1135,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13496,6 +14421,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13566,9 +14494,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "386 Synthetic Avenue",
+    "street": "1334 Jaybird Circle West",
     "zipcode": "32286",
-    "latlon": "30.210913, -81.598279",
+    "latlon": "30.21082, -81.59805",
     "enrollment": 1138,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13583,6 +14511,9 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13609,9 +14540,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "387 Synthetic Avenue",
+    "street": "9253 Southwest 82nd Avenue",
     "zipcode": "33187",
-    "latlon": "25.717161, -80.3264",
+    "latlon": "25.71723, -80.32671",
     "enrollment": 1141,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13634,6 +14565,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13660,9 +14594,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "388 Synthetic Avenue",
+    "street": "7372 River Road",
     "zipcode": "32288",
-    "latlon": "30.184612, -81.693607",
+    "latlon": "30.1855, -81.69714",
     "enrollment": 1144,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13677,6 +14611,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_deadline_date": [
+        "1/15/2025"
       ]
     },
     "esp_text": [
@@ -13744,9 +14684,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "389 Synthetic Avenue",
+    "street": "5491 Galiano Street",
     "zipcode": "33189",
-    "latlon": "25.749782, -80.256492",
+    "latlon": "25.74878, -80.25667",
     "enrollment": 1147,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13761,6 +14701,17 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "PK",
+          "open_seats": 15,
+          "waitlist": false,
+          "as_of": "2026-08-20"
+        }
       ]
     },
     "esp_text": [
@@ -13783,9 +14734,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "390 Synthetic Avenue",
+    "street": "3610 Northwest 82nd Avenue",
     "zipcode": "33190",
-    "latlon": "25.901906, -80.332223",
+    "latlon": "25.90174, -80.33247",
     "enrollment": 1150,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13797,6 +14748,12 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/lark-commons-academy/admissions"
       ]
     },
     "esp_text": [
@@ -13823,9 +14780,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "391 Synthetic Avenue",
+    "street": "1729 Jana Lane North",
     "zipcode": "32291",
-    "latlon": "30.258285, -81.773213",
+    "latlon": "30.25768, -81.77315",
     "enrollment": 1153,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13840,6 +14797,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -13906,9 +14866,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "392 Synthetic Avenue",
+    "street": "9648 Hampton Road",
     "zipcode": "32292",
-    "latlon": "30.180693, -81.619466",
+    "latlon": "30.18, -81.62026",
     "enrollment": 1156,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13934,6 +14894,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -13959,9 +14922,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "393 Synthetic Avenue",
+    "street": "7767 Via Abitare Way",
     "zipcode": "33193",
-    "latlon": "25.727451, -80.243108",
+    "latlon": "25.72672, -80.24374",
     "enrollment": 1159,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -13973,6 +14936,15 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/oak-ridge-school/admissions"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14000,9 +14972,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "394 Synthetic Avenue",
+    "street": "5886 Marwood Drive",
     "zipcode": "32894",
-    "latlon": "28.501761, -81.350182",
+    "latlon": "28.50182, -81.34892",
     "enrollment": 1162,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14017,6 +14989,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -14042,9 +15017,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "395 Synthetic Avenue",
+    "street": "4005 Kramer Drive",
     "zipcode": "32295",
-    "latlon": "30.266555, -81.606285",
+    "latlon": "30.26761, -81.60606",
     "enrollment": 1165,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14067,6 +15042,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -14136,9 +15114,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "396 Synthetic Avenue",
+    "street": "2124 Northeast 137th Terrace",
     "zipcode": "33196",
-    "latlon": "25.901976, -80.175351",
+    "latlon": "25.90205, -80.17489",
     "enrollment": 1168,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14153,6 +15131,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14220,9 +15201,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "397 Synthetic Avenue",
+    "street": "243 Chiles Lane",
     "zipcode": "32897",
-    "latlon": "28.539867, -81.307197",
+    "latlon": "28.53811, -81.30688",
     "enrollment": 1171,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14237,6 +15218,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14263,9 +15247,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "398 Synthetic Avenue",
+    "street": "8162 Laguna Circle",
     "zipcode": "33198",
-    "latlon": "25.91243, -80.151005",
+    "latlon": "25.91111, -80.15148",
     "enrollment": 1174,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14285,6 +15269,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -14354,9 +15341,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "399 Synthetic Avenue",
+    "street": "6281 North Bay Road",
     "zipcode": "33199",
-    "latlon": "25.822768, -80.139289",
+    "latlon": "25.82211, -80.13684",
     "enrollment": 1177,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14368,6 +15355,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14438,9 +15428,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "400 Synthetic Avenue",
+    "street": "4400 Chase Meadows Drive West",
     "zipcode": "32200",
-    "latlon": "30.227015, -81.522111",
+    "latlon": "30.22859, -81.51806",
     "enrollment": 1180,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14452,6 +15442,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -14475,9 +15468,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "401 Synthetic Avenue",
+    "street": "2519 Luce Street",
     "zipcode": "32201",
-    "latlon": "30.30458, -81.629132",
+    "latlon": "30.30454, -81.62962",
     "enrollment": 1183,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14492,6 +15485,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -14562,9 +15558,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "402 Synthetic Avenue",
+    "street": "638 Vonderay Road",
     "zipcode": "32802",
-    "latlon": "28.562298, -81.263715",
+    "latlon": "28.5624, -81.26266",
     "enrollment": 1186,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14579,6 +15575,12 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-springs-institute/admissions"
       ]
     },
     "esp_text": [
@@ -14605,9 +15607,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "403 Synthetic Avenue",
+    "street": "8557 Bristol Creek Drive",
     "zipcode": "32803",
-    "latlon": "28.594082, -81.485675",
+    "latlon": "28.59447, -81.48441",
     "enrollment": 1189,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14619,6 +15621,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14686,9 +15691,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "404 Synthetic Avenue",
+    "street": "6676 Forest Boulevard",
     "zipcode": "32204",
-    "latlon": "30.313417, -81.550404",
+    "latlon": "30.3137, -81.55082",
     "enrollment": 1192,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14700,6 +15705,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -14770,9 +15778,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "405 Synthetic Avenue",
+    "street": "4795 4th Street",
     "zipcode": "33105",
-    "latlon": "25.771317, -80.108875",
+    "latlon": "25.77319, -80.13182",
     "enrollment": 1195,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14787,6 +15795,9 @@
       ],
       "tuition": [
         "9000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -14814,9 +15825,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "406 Synthetic Avenue",
+    "street": "2914 Child Street",
     "zipcode": "32206",
-    "latlon": "30.221669, -81.692768",
+    "latlon": "30.22148, -81.6933",
     "enrollment": 1198,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14836,6 +15847,12 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
+      ],
+      "admissions_url": [
+        "https://www.example.org/river-terrace-academy/admissions"
       ]
     },
     "esp_text": [
@@ -14862,9 +15879,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "407 Synthetic Avenue",
+    "street": "1033 10200-1 Belle Rive Ap",
     "zipcode": "32207",
-    "latlon": "30.208556, -81.545543",
+    "latlon": "30.20795, -81.54622",
     "enrollment": 1201,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14873,6 +15890,15 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/cypress-walk-institute/admissions"
+      ],
+      "application_deadline_date": [
+        "10/1/2026"
       ]
     },
     "esp_text": [
@@ -14939,9 +15965,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "408 Synthetic Avenue",
+    "street": "8952 East 10th Street",
     "zipcode": "33108",
-    "latlon": "25.831247, -80.277666",
+    "latlon": "25.83095, -80.27763",
     "enrollment": 1204,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -14956,6 +15982,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15022,9 +16051,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "409 Synthetic Avenue",
+    "street": "7071 Virginia Beach Drive",
     "zipcode": "33109",
-    "latlon": "25.72234, -80.166499",
+    "latlon": "25.73365, -80.16228",
     "enrollment": 1207,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15039,6 +16068,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15109,9 +16141,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "410 Synthetic Avenue",
+    "street": "5190 Virginia Beach Drive",
     "zipcode": "33110",
-    "latlon": "25.731133, -80.176343",
+    "latlon": "25.73386, -80.16197",
     "enrollment": 1210,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15126,6 +16158,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -15196,9 +16231,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "411 Synthetic Avenue",
+    "street": "3309 Harbour Way",
     "zipcode": "33111",
-    "latlon": "25.895601, -80.124284",
+    "latlon": "25.89489, -80.12548",
     "enrollment": 1213,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15213,6 +16248,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15238,9 +16276,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "412 Synthetic Avenue",
+    "street": "1428 Alumni Way",
     "zipcode": "32212",
-    "latlon": "30.274641, -81.527049",
+    "latlon": "30.27523, -81.52797",
     "enrollment": 1216,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15260,6 +16298,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -15282,9 +16323,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "413 Synthetic Avenue",
+    "street": "9347 South Access Road",
     "zipcode": "32813",
-    "latlon": "28.409505, -81.301426",
+    "latlon": "28.41013, -81.30409",
     "enrollment": 1219,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15296,6 +16337,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -15367,9 +16411,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "414 Synthetic Avenue",
+    "street": "7466 Timuquana Road",
     "zipcode": "32214",
-    "latlon": "30.250654, -81.681305",
+    "latlon": "30.24606, -81.68469",
     "enrollment": 1222,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15386,6 +16430,12 @@
         "science_club",
         "robotics",
         "math_club"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "application_deadline_date": [
+        "10/1/2026"
       ]
     },
     "esp_text": [
@@ -15453,9 +16503,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "415 Synthetic Avenue",
+    "street": "5585 5500-1 Firestone Ap",
     "zipcode": "32215",
-    "latlon": "30.246903, -81.762552",
+    "latlon": "30.2474, -81.76451",
     "enrollment": 1225,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15464,6 +16514,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -15487,9 +16540,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "416 Synthetic Avenue",
+    "street": "3704 West 29th Street",
     "zipcode": "33116",
-    "latlon": "25.848897, -80.292784",
+    "latlon": "25.84801, -80.29226",
     "enrollment": 1228,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15498,6 +16551,9 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15521,9 +16577,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "417 Synthetic Avenue",
+    "street": "1823 Southwest 64th Court",
     "zipcode": "33117",
-    "latlon": "25.765291, -80.300725",
+    "latlon": "25.76515, -80.30098",
     "enrollment": 1231,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15538,6 +16594,9 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -15560,9 +16619,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "418 Synthetic Avenue",
+    "street": "9742 Glenview Court",
     "zipcode": "32818",
-    "latlon": "28.618813, -81.30926",
+    "latlon": "28.61982, -81.30802",
     "enrollment": 1234,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15571,6 +16630,17 @@
       ],
       "boarding": [
         "day"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "6",
+          "open_seats": 0,
+          "waitlist": true,
+          "as_of": "2026-08-20"
+        }
       ]
     },
     "esp_text": [
@@ -15637,9 +16707,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "419 Synthetic Avenue",
+    "street": "7861 Commander Drive",
     "zipcode": "32819",
-    "latlon": "28.492196, -81.305151",
+    "latlon": "28.49036, -81.30615",
     "enrollment": 1237,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15665,6 +16735,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -15691,9 +16764,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "420 Synthetic Avenue",
+    "street": "5980 Brickell Bay Drive",
     "zipcode": "33120",
-    "latlon": "25.757608, -80.190101",
+    "latlon": "25.75701, -80.19004",
     "enrollment": 1240,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15708,6 +16781,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -15775,9 +16851,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "421 Synthetic Avenue",
+    "street": "4099 Coronado Drive",
     "zipcode": "33121",
-    "latlon": "25.899367, -80.157194",
+    "latlon": "25.89846, -80.15794",
     "enrollment": 1243,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15797,6 +16873,13 @@
       ],
       "tuition": [
         "11000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "application_requirements": [
+        "application",
+        "interview"
       ]
     },
     "esp_text": [
@@ -15821,9 +16904,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "422 Synthetic Avenue",
+    "street": "2218 Ed Sullivan Drive",
     "zipcode": "33122",
-    "latlon": "25.815859, -80.161146",
+    "latlon": "25.8117, -80.14319",
     "enrollment": 1246,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15835,6 +16918,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -15903,9 +16989,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "423 Synthetic Avenue",
+    "street": "337 Northwest 18th Terrace",
     "zipcode": "33123",
-    "latlon": "25.7923, -80.225077",
+    "latlon": "25.79238, -80.2252",
     "enrollment": 1249,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -15931,6 +17017,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -16001,9 +17090,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "424 Synthetic Avenue",
+    "street": "8256 Northwest 58th Street",
     "zipcode": "33124",
-    "latlon": "25.828763, -80.197306",
+    "latlon": "25.82872, -80.19626",
     "enrollment": 1252,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16015,6 +17104,12 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/harbor-harbor-institute/admissions"
       ]
     },
     "esp_text": [
@@ -16085,9 +17180,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "425 Synthetic Avenue",
+    "street": "6375 Northeast 151st Street",
     "zipcode": "33125",
-    "latlon": "25.915993, -80.192957",
+    "latlon": "25.91376, -80.19318",
     "enrollment": 1255,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16099,6 +17194,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16126,9 +17224,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "426 Synthetic Avenue",
+    "street": "4494 Southwest 79th Street",
     "zipcode": "33126",
-    "latlon": "25.697999, -80.312719",
+    "latlon": "25.69714, -80.31266",
     "enrollment": 1258,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16151,6 +17249,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-ridge-school/admissions"
       ]
     },
     "esp_text": [
@@ -16220,9 +17324,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "427 Synthetic Avenue",
+    "street": "2613 Lomax Street",
     "zipcode": "32227",
-    "latlon": "30.311984, -81.676313",
+    "latlon": "30.31229, -81.67675",
     "enrollment": 1261,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16234,6 +17338,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16301,9 +17408,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "428 Synthetic Avenue",
+    "street": "732 Mustin Road",
     "zipcode": "32228",
-    "latlon": "30.214965, -81.684524",
+    "latlon": "30.21636, -81.68127",
     "enrollment": 1264,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16315,6 +17422,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16385,9 +17495,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "429 Synthetic Avenue",
+    "street": "8651 Florida Rock Road",
     "zipcode": "32829",
-    "latlon": "28.438667, -81.37258",
+    "latlon": "28.43835, -81.3734",
     "enrollment": 1267,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16410,6 +17520,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16436,9 +17549,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "430 Synthetic Avenue",
+    "street": "6770 Arthur Lamb Jr Road",
     "zipcode": "33130",
-    "latlon": "25.719944, -80.112462",
+    "latlon": "25.74003, -80.14907",
     "enrollment": 1270,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16461,6 +17574,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16483,9 +17599,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "431 Synthetic Avenue",
+    "street": "4889 Greenridge Road",
     "zipcode": "32231",
-    "latlon": "30.282144, -81.65001",
+    "latlon": "30.28324, -81.64904",
     "enrollment": 1273,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16508,6 +17624,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16534,9 +17653,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "432 Synthetic Avenue",
+    "street": "3008 Rio Vista Avenue",
     "zipcode": "32832",
-    "latlon": "28.510552, -81.422554",
+    "latlon": "28.5088, -81.42387",
     "enrollment": 1276,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16551,6 +17670,12 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
+      ],
+      "admissions_url": [
+        "https://www.example.org/heron-terrace-academy/admissions"
       ]
     },
     "esp_text": [
@@ -16622,9 +17747,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "433 Synthetic Avenue",
+    "street": "1127 Southwest 59th Street",
     "zipcode": "33133",
-    "latlon": "25.714478, -80.316695",
+    "latlon": "25.71494, -80.31767",
     "enrollment": 1279,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16647,6 +17772,12 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-point-school/admissions"
       ]
     },
     "esp_text": [
@@ -16673,9 +17804,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "434 Synthetic Avenue",
+    "street": "9046 Albermarle Avenue",
     "zipcode": "32234",
-    "latlon": "30.231272, -81.653546",
+    "latlon": "30.22779, -81.66695",
     "enrollment": 1282,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16687,6 +17818,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16712,9 +17846,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "435 Synthetic Avenue",
+    "street": "7165 Tradeport Drive",
     "zipcode": "32835",
-    "latlon": "28.412137, -81.340727",
+    "latlon": "28.41342, -81.34186",
     "enrollment": 1285,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16726,6 +17860,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -16751,9 +17888,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "436 Synthetic Avenue",
+    "street": "5284 Paloma Drive",
     "zipcode": "33136",
-    "latlon": "25.696297, -80.253326",
+    "latlon": "25.69748, -80.25375",
     "enrollment": 1288,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16768,6 +17905,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16791,9 +17931,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "437 Synthetic Avenue",
+    "street": "3403 Western Way",
     "zipcode": "32237",
-    "latlon": "30.203891, -81.557894",
+    "latlon": "30.20396, -81.5578",
     "enrollment": 1291,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16805,6 +17945,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -16830,9 +17973,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "438 Synthetic Avenue",
+    "street": "1522 Northeast 27th Street",
     "zipcode": "33138",
-    "latlon": "25.802289, -80.189388",
+    "latlon": "25.80286, -80.18925",
     "enrollment": 1294,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16847,6 +17990,15 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "choice"
+      ],
+      "admissions_url": [
+        "https://www.example.org/coral-meadow-institute/admissions"
+      ],
+      "application_requirements": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16871,9 +18023,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "439 Synthetic Avenue",
+    "street": "9441 Reyko Road",
     "zipcode": "32239",
-    "latlon": "30.300056, -81.616192",
+    "latlon": "30.3009, -81.61594",
     "enrollment": 1297,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16893,6 +18045,9 @@
       ],
       "tuition": [
         "18000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -16918,9 +18073,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "440 Synthetic Avenue",
+    "street": "7560 Northwest 87th Avenue",
     "zipcode": "33140",
-    "latlon": "25.842989, -80.336973",
+    "latlon": "25.84247, -80.3383",
     "enrollment": 1300,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16943,6 +18098,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -16968,9 +18126,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "441 Synthetic Avenue",
+    "street": "5679 Eaton Avenue",
     "zipcode": "32241",
-    "latlon": "30.316491, -81.588378",
+    "latlon": "30.31689, -81.587",
     "enrollment": 1303,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -16982,6 +18140,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -17048,9 +18209,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "442 Synthetic Avenue",
+    "street": "3798 Southwest 72nd Avenue",
     "zipcode": "33142",
-    "latlon": "25.737706, -80.311071",
+    "latlon": "25.73767, -80.31125",
     "enrollment": 1306,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17062,6 +18223,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -17129,9 +18293,9 @@
     "city_untokenized": "orlando",
     "county": "Orange County",
     "state": "FL",
-    "street": "443 Synthetic Avenue",
+    "street": "1917 Eden Woods Circle",
     "zipcode": "32843",
-    "latlon": "28.629664, -81.435456",
+    "latlon": "28.63019, -81.43483",
     "enrollment": 1309,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17154,6 +18318,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -17180,9 +18347,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "444 Synthetic Avenue",
+    "street": "9836 Loran Drive East",
     "zipcode": "32244",
-    "latlon": "30.272839, -81.602407",
+    "latlon": "30.27327, -81.60345",
     "enrollment": 1312,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17202,6 +18369,17 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "seats_by_grade": [
+        {
+          "grade": "PK",
+          "open_seats": 0,
+          "waitlist": true,
+          "as_of": "2026-08-20"
+        }
       ]
     },
     "esp_text": [
@@ -17272,9 +18450,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "445 Synthetic Avenue",
+    "street": "7955 Wright Street",
     "zipcode": "32245",
-    "latlon": "30.231278, -81.653318",
+    "latlon": "30.22683, -81.66944",
     "enrollment": 1315,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17289,6 +18467,9 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -17314,9 +18495,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "446 Synthetic Avenue",
+    "street": "6074 Northwest 151st Street",
     "zipcode": "33146",
-    "latlon": "25.913031, -80.20979",
+    "latlon": "25.91315, -80.20906",
     "enrollment": 1318,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17328,6 +18509,9 @@
       ],
       "after_school_until": [
         "17:30"
+      ],
+      "admission_type": [
+        "application"
       ]
     },
     "esp_text": [
@@ -17354,9 +18538,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "447 Synthetic Avenue",
+    "street": "4193 Harbor Point",
     "zipcode": "33147",
-    "latlon": "25.698671, -80.200235",
+    "latlon": "25.69159, -80.17437",
     "enrollment": 1321,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17371,6 +18555,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -17397,9 +18584,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "448 Synthetic Avenue",
+    "street": "2312 Mercado Drive",
     "zipcode": "32248",
-    "latlon": "30.257032, -81.742874",
+    "latlon": "30.25757, -81.74378",
     "enrollment": 1324,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17414,6 +18601,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -17440,9 +18630,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "449 Synthetic Avenue",
+    "street": "431 Crandon Boulevard",
     "zipcode": "33149",
-    "latlon": "25.686974, -80.148385",
+    "latlon": "25.68274, -80.15792",
     "enrollment": 1327,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17457,6 +18647,9 @@
       ],
       "transportation": [
         "busses"
+      ],
+      "admission_type": [
+        "choice"
       ]
     },
     "esp_text": [
@@ -17479,9 +18672,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "450 Synthetic Avenue",
+    "street": "8350 Morse Avenue",
     "zipcode": "32250",
-    "latlon": "30.228851, -81.718305",
+    "latlon": "30.22637, -81.71813",
     "enrollment": 1330,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17493,6 +18686,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/palm-landing-institute/admissions"
       ]
     },
     "esp_text": [
@@ -17559,9 +18758,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "451 Synthetic Avenue",
+    "street": "6469 Huntsford Road",
     "zipcode": "32251",
-    "latlon": "30.310056, -81.643095",
+    "latlon": "30.31065, -81.64389",
     "enrollment": 1333,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17573,6 +18772,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "lottery"
       ]
     },
     "esp_text": [
@@ -17596,9 +18798,9 @@
     "city_untokenized": "miami",
     "county": "Miami-Dade County",
     "state": "FL",
-    "street": "452 Synthetic Avenue",
+    "street": "4588 Northeast 4th Avenue",
     "zipcode": "33152",
-    "latlon": "25.875515, -80.190612",
+    "latlon": "25.87623, -80.18994",
     "enrollment": 1336,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17616,6 +18818,9 @@
       ],
       "end_time": [
         "3:15 PM"
+      ],
+      "admission_type": [
+        "zoned"
       ]
     },
     "esp_text": [
@@ -17683,9 +18888,9 @@
     "city_untokenized": "jacksonville",
     "county": "Duval County",
     "state": "FL",
-    "street": "453 Synthetic Avenue",
+    "street": "2707 Dorminy Avenue",
     "zipcode": "32253",
-    "latlon": "30.251791, -81.74079",
+    "latlon": "30.25205, -81.7411",
     "enrollment": 1339,
     "created": "2026-02-01T12:00:00-05:00",
     "osp": {
@@ -17697,6 +18902,12 @@
       ],
       "tuition": [
         "14000"
+      ],
+      "admission_type": [
+        "application"
+      ],
+      "admissions_url": [
+        "https://www.example.org/willow-shores-school/admissions"
       ]
     },
     "esp_text": [

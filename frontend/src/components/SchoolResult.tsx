@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { GettingInLine, type Access } from "../GettingIn";
 import { LEVEL, SOURCE_LABEL, STATUS_LABEL } from "../labels";
 import type { Card, Criterion, Evidence } from "../types";
 
@@ -42,6 +43,8 @@ export function SchoolResult(props: Props) {
       </header>
 
       {card.summary && <p className="summary">{card.summary}</p>}
+
+      <GettingInLine schoolId={card.id} access={(card as Card & { access?: Access }).access} />
 
       <ul className="evidence-list">
         {card.evidence.map((row) => (
