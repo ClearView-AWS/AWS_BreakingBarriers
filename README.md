@@ -77,6 +77,17 @@ Region `us-east-1`. Leave the flags off and the rules engine, the local index, t
 
 Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/state.json` (`GS_STATE_PATH` overrides it). That file is the stand-in for DynamoDB.
 
+### AgentCore Gateway (MCP tools)
+
+`GsGatewayStack` serves four school tools over MCP through an AgentCore Gateway: `find_schools`, `get_school_facts`, `estimate_school_cost`, and `define_term`. They run in one Lambda (`backend/mcp_tools.py`) on the same corpus, funding rules, and glossary as the app. The schemas are in `backend/config/mcp_tools.json`. Callers sign requests with SigV4 (`AWS_IAM`). The demo deploy does not include this stack.
+
+```bash
+cd infra && npx cdk deploy GsGatewayStack -c enableOpenSearch=false
+cd .. && AWS_REGION=us-east-1 .venv/bin/python scripts/gateway_demo.py "Which Jacksonville middle schools have after-school care?"
+```
+
+The script lists the tools and lets the Bedrock agent (`backend/agent/gateway.py`) call them through the gateway. It prints each call. If your credentials come from `aws login`, run `pip install "botocore[crt]"` first.
+
 ## Evaluation
 
 `eval/queries.jsonl` has 42 parent queries, including "how liberal", a city name used in more than one state, Spanish, negations, and "a good school". The latest run is the rules engine with Bedrock off.

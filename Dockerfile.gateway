@@ -1,0 +1,14 @@
+# Lambda image for the AgentCore Gateway tools (backend/mcp_tools.py).
+FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.12
+
+RUN pip install --no-cache-dir "pyyaml>=6.0" "pydantic>=2.6"
+
+# Same layout as the app image so runtime_config finds config/ and the corpus.
+COPY backend ${LAMBDA_TASK_ROOT}/backend
+COPY data ${LAMBDA_TASK_ROOT}/data
+COPY ["Sample Data/", "${LAMBDA_TASK_ROOT}/Sample Data/"]
+
+ENV PYTHONPATH=${LAMBDA_TASK_ROOT}/backend
+ENV GS_TODAY=2026-11-03
+
+CMD ["mcp_tools.handler"]
