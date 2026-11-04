@@ -303,6 +303,14 @@ def faq_ask(faq_id: str, body: FaqIn) -> dict:
         return {**result, "questions": faq.list_faq(state, body.persona)}
 
 
+@app.get("/api/zones")
+def zones(ids: str = "") -> dict:
+    """Demo attendance areas for the schools on the map (see search/zones.py)."""
+    from search.zones import zones_for
+
+    return {"zones": zones_for([value for value in ids.split(",") if value])}
+
+
 @app.post("/api/community/suggest-tags")
 def community_tags(body: TextIn) -> dict:
     return {"tags": suggest_tags(body.text)}
