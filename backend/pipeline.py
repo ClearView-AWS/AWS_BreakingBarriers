@@ -7,7 +7,7 @@ from agent.explainer import model_summaries, public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
 from clarify.clarifier import choose_question
-from contracts import Block, Criterion, Engine, EngineStep, TurnResponse
+from contracts import Block, Criterion, Engine, EngineStep, EvidenceRecord, TurnResponse
 from evidence.engine import evaluate_criterion
 from evidence.scorer import score_school
 from evidence.why_not import explain_absence
@@ -50,7 +50,7 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     if action in {"new_search", "refine"} and message:
         incoming, step = extract(message, known_cities())
         _record(engine, "extract", step)
-        if action == "new_search" and not session["criteria"]:
+        if action == "new_search":
             session["criteria"] = [item.model_dump() for item in incoming]
         else:
             session["criteria"] = _merge(session["criteria"], incoming)
@@ -73,7 +73,7 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     if action == "cost":
         return _cost(session, criteria, schools, programs, state, message, payload)
     if action == "school_detail":
-        return _detail(session, criteria, schools, programs, state, message, payload)
+        return _detail(session, criteria, schools, programs, state, message, payload, engine)
     if action == "save":
         return _save(session, criteria, schools, programs, state, payload, message)
     if action == "ask_school":
@@ -528,7 +528,7 @@ def _cost(session, criteria, schools, programs, state, message, payload) -> Turn
     return TurnResponse(session_id=session["id"], route="cost", criteria=criteria, blocks=blocks)
 
 
-def _detail(session, criteria, schools, programs, state, message, payload) -> TurnResponse:
+def _detail(session, criteria, schools, programs, state, message, payload, engine: Engine) -> TurnResponse:
     ids = list(payload.get("school_ids") or [])
     if not ids and message:
         found = _find_by_name(school_reference(message or "") or message, schools)
@@ -537,19 +537,37 @@ def _detail(session, criteria, schools, programs, state, message, payload) -> Tu
         blocks = [Block(type="message", payload={"text": "Which school should I open?"})]
         return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
     school = _by_id(schools)[ids[0]]
-    card = _score_school(school, criteria, programs, state, session)
-    blocks = [
+    asked = _asked_needs(message, criteria, engine)
+    card = _score_school(school, criteria + asked, programs, state, session)
+    blocks = []
+    if asked and card:
+        asked_ids = {c.id for c in asked}
+        records = [EvidenceRecord(**row) for row in card["evidence"] if row["criterion_id"] in asked_ids]
+        blocks.append(Block(type="message", payload={"text": f"{school['name']}: {public_summary(records, school)}"}))
+    blocks.append(
         Block(
             type="school_detail",
             payload={
                 "school": _profile(school),
                 "card": card,
+                "asked": [c.model_dump() for c in asked],
                 "reviews": _review_topics(school),
                 "cost": estimate_cost(school) if school.get("entity_type") == "private" else None,
             },
         )
-    ]
+    )
     return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
+
+
+def _asked_needs(message: str, criteria: list[Criterion], engine: Engine) -> list[Criterion]:
+    """Needs the parent asked about for one school. They are answered, not added to the search."""
+    if not message:
+        return []
+    incoming, step = extract(message, known_cities())
+    _record(engine, "extract", step)
+    have = {c.need for c in criteria if c.need}
+    asked = [c for c in incoming if c.kind == "need" and c.need and c.need not in have]
+    return [c.model_copy(update={"id": f"q{index}"}) for index, c in enumerate(asked, start=1)]
 
 
 def _save(session, criteria, schools, programs, state, payload, message) -> TurnResponse:

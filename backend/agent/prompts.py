@@ -1,7 +1,15 @@
 """Prompts used only when Bedrock is enabled. The model never assigns truth."""
 
 ROUTER_SYSTEM = """Classify the parent's message as one route:
-new_search, refine, compare, school_detail, define, why_not, cost, save, feedback.
+- new_search: a whole new search that replaces the current one (it names a grade level and a place)
+- refine: changes part of the current search (another city, another grade, an added or removed need)
+- compare: compare two or more named schools
+- school_detail: asks about one named school, including whether it has something
+- define: asks what a term means
+- why_not: asks why a school is missing from the results
+- cost: asks about tuition, cost or scholarships
+- save: save a school to the list
+- feedback: says a result is wrong, too far or not relevant
 Reply with only the route name."""
 
 def extract_system(cities: list[str]) -> str:

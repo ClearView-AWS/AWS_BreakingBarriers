@@ -29,11 +29,30 @@ def _rules_route(text: str, has_session: bool) -> str:
         return "save"
     if re.search(r"\btoo far\b|\bthumbs\b|\bnot relevant\b", normalized):
         return "feedback"
-    if re.search(r"\btell me about\b|\bdetails on\b|\bprofile\b", normalized):
+    if re.search(r"\btell me about\b|\bdetails on\b|\bprofile\b", normalized) or _names_a_school(normalized):
         return "school_detail"
-    if has_session:
+    if has_session and not _states_grade_and_place(text):
         return "refine"
     return "new_search"
+
+
+def _names_a_school(normalized: str) -> bool:
+    from search.corpus import load_schools
+
+    for school in load_schools():
+        name = normalize(school.get("name") or "")
+        if name and re.search(rf"(?<![a-z0-9]){re.escape(name)}(?![a-z0-9])", normalized):
+            return True
+    return False
+
+
+def _states_grade_and_place(text: str) -> bool:
+    """A follow-up that names both a grade level and a place starts a new search."""
+    from agent.extractor import _rules
+    from search.corpus import known_cities
+
+    kinds = {criterion.kind for criterion in _rules(text, known_cities())}
+    return {"grade", "location"} <= kinds
 
 
 def term_from_question(text: str) -> str:

@@ -54,7 +54,10 @@ export function App() {
     try {
       const data = await postTurn({ session_id: sessionId, ...body });
       setSessionId(data.session_id);
-      if (mode === "panel") setPanel(data);
+      // Only a search answer replaces the results. A typed question about a school
+      // (detail, compare, cost, why not, define) opens beside them.
+      const isSearch = data.route === "new_search" || data.route === "refine";
+      if (mode === "panel" || (mode === "replace" && !isSearch)) setPanel(data);
       else if (mode === "replace") {
         setTurn(data);
         setPanel(null);
