@@ -1,8 +1,5 @@
-/* List / Grid / Map. Tabs, map, pins, legend and pin card come from Gagan's Track 3 views (commit 703938b). */
+/* List / Map. Tabs, map, pins, legend and pin card come from Gagan's Track 3 views (commit 703938b). */
 .results-views { margin-top: 8px; }
-.grid-view { display: grid; gap: 10px; margin-top: 12px; }
-.grid-view > .meta { margin: 0; }
-.grid-view .cite { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
 .view-tabs {
   display: inline-flex; gap: 4px; padding: 4px; margin: 6px 0 4px;
   background: var(--card); border: 1px solid var(--line); border-radius: 999px;

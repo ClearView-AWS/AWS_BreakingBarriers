@@ -1,4 +1,4 @@
-// List / Grid / Map for the results on screen. Ported from Gagan's Track 3 views
+// List / Map for the results on screen. Ported from Gagan's Track 3 views
 // (feature/community, commit 703938b) into the chat: the toggle sits on the latest results.
 // Results always open as a list. The app can suggest the map, but only the parent switches.
 // Comparing two schools happens in the chat (compare tray or "compare #1 and #2").
@@ -7,11 +7,11 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./views.css";
 import type { Actions } from "./blocks";
-import { nameOf, sourceLabel, statusLabel } from "./labels";
+import { nameOf, statusLabel } from "./labels";
 import { t, tn, uiLanguage } from "./i18n";
-import type { Card, Criterion, Evidence, ProgramPin } from "./types";
+import type { Card, Criterion, ProgramPin } from "./types";
 
-export type ResultsView = "list" | "grid" | "map";
+export type ResultsView = "list" | "map";
 
 const SUGGEST_MAP_MILES = 10;
 
@@ -49,7 +49,6 @@ export function ViewToggle(props: {
   const suggestMap = props.view !== "map" && props.cards.length > 1 && (aboutPlace || spread > SUGGEST_MAP_MILES);
   const tabs: [ResultsView, string][] = [
     ["list", t("views.list")],
-    ["grid", t("views.grid")],
     ["map", t("views.map")],
   ];
 
@@ -89,83 +88,6 @@ const escapeHtml = (text: string) =>
 
 type Placed = { card: Card; rank: number | null; hollow: boolean };
 type Zone = { school_id: string; kind: "demo_area" | "open" | "choice"; polygon: [number, number][] | null; locator_url: string | null };
-
-type GridSchool = { id: string; name: string };
-type GridCriterion = { id: string; text: string };
-
-/** Schools × criteria with a source on every filled cell (plan M3 Grid). */
-export function GridView(props: {
-  schools: GridSchool[];
-  criteria: GridCriterion[];
-  cells: Record<string, Record<string, Evidence | null | undefined>>;
-}) {
-  if (!props.schools.length || !props.criteria.length) {
-    return <p className="meta">{t("views.grid_empty")}</p>;
-  }
-  return (
-    <section className="grid-view" aria-label={t("views.grid")}>
-      <p className="meta">{t("views.grid_blurb")}</p>
-      <div className="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">{t("views.grid_school")}</th>
-              {props.criteria.map((column) => (
-                <th key={column.id} scope="col">
-                  {column.text}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {props.schools.map((school) => (
-              <tr key={school.id} data-school-id={school.id}>
-                <th scope="row">{school.name}</th>
-                {props.criteria.map((column) => {
-                  const cell = props.cells[school.id]?.[column.id];
-                  return (
-                    <td key={column.id} data-criterion-id={column.id}>
-                      {cell ? (
-                        <>
-                          <span className={`pill ${cell.status}`}>{statusLabel(cell.status)}</span>
-                          {cell.source && (
-                            <p className="cite">
-                              {sourceLabel(cell.source.type)}
-                              {cell.source.as_of ? ` · ${cell.source.as_of}` : ""}
-                            </p>
-                          )}
-                        </>
-                      ) : (
-                        "—"
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
-/** Build a grid from result cards when the turn has no evidence_grid block. */
-export function gridFromCards(cards: Card[], criteria: Criterion[]) {
-  const columns = criteria.filter((item) => item.kind === "need" || item.kind === "budget");
-  const cells: Record<string, Record<string, Evidence | null>> = {};
-  for (const card of cards) {
-    cells[card.id] = {};
-    for (const column of columns) {
-      cells[card.id][column.id] = card.evidence.find((row) => row.criterion_id === column.id) ?? null;
-    }
-  }
-  return {
-    schools: cards.map((card) => ({ id: card.id, name: card.name })),
-    criteria: columns.map((item) => ({ id: item.id, text: nameOf(item) })),
-    cells,
-  };
-}
 
 export function MapView(props: {
   schools: Card[];

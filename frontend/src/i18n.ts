@@ -147,12 +147,8 @@ export const EN = {
   "compare.same": "Same for both: {rows}",
   // Views.tsx
   "views.list": "List",
-  "views.grid": "Grid",
   "views.map": "Map",
   "views.label": "Results view",
-  "views.grid_blurb": "Every cell cites where the answer came from.",
-  "views.grid_school": "School",
-  "views.grid_empty": "No evidence grid for this search.",
   "views.hint_distance": "You mentioned distance, so the map may help.",
   "views.hint_spread": "These schools are spread across about {n} miles, so the map may help.",
   "views.show_map": "Show map",
