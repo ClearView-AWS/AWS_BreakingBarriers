@@ -26,7 +26,7 @@ export function Brief({ criteria, onChange, onApprove }: Props) {
           <h2>Here’s what I’ll look for</h2>
         </div>
         <button type="button" className="btn-primary" onClick={onApprove}>
-          Looks right
+          Looks right — search
         </button>
       </div>
 

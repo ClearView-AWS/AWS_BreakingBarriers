@@ -32,17 +32,28 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<string[]>([]);
   const [resultMode, setResultMode] = useState<ResultMode>("list");
-  const [questionSkipped, setQuestionSkipped] = useState(false);
-  const [briefApproved, setBriefApproved] = useState(false);
   const resultsRef = useRef<HTMLElement | null>(null);
 
   const criteria = turn?.criteria ?? [];
   const blocks = turn?.blocks ?? [];
   const results = blockOf(blocks, "results");
   const grid = blockOf(blocks, "evidence_grid");
+  const questionsBlock = blockOf(blocks, "questions");
   const question = blockOf(blocks, "question");
   const message = blockOf(blocks, "message");
-  const hasResults = Boolean(turn);
+  const hasTurn = Boolean(turn);
+  const hasResults = Boolean(results);
+  const questionItems =
+    (questionsBlock?.items as { id: string; text: string; options: { id: string; label: string }[] }[] | undefined) ??
+    (question
+      ? [
+          {
+            id: String(question.id ?? "q"),
+            text: String(question.text ?? ""),
+            options: (question.options as { id: string; label: string }[]) ?? [],
+          },
+        ]
+      : []);
 
   async function run(body: Record<string, unknown>, mode: "replace" | "panel" | "keep" = "replace") {
     setBusy(true);
@@ -54,8 +65,6 @@ export function App() {
       else if (mode === "replace") {
         setTurn(data);
         setPanel(null);
-        setQuestionSkipped(false);
-        setBriefApproved(false);
       }
       return data;
     } catch (err) {
@@ -102,13 +111,13 @@ export function App() {
   }
 
   useEffect(() => {
-    if (briefApproved && resultsRef.current) {
+    if (hasResults && resultsRef.current) {
       resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [briefApproved]);
+  }, [hasResults]);
 
   return (
-    <div className={`app ${hasResults ? "has-results" : "is-landing"}`}>
+    <div className={`app ${hasTurn ? "has-results" : "is-landing"}`}>
       <header className="topbar">
         <a className="brand" href="/" onClick={(event) => event.preventDefault()}>
           <span className="brand-mark" aria-hidden="true" />
@@ -140,9 +149,9 @@ export function App() {
       <main>
         {view === "search" && (
           <>
-            <section className={`hero ${hasResults ? "compact" : ""}`}>
+            <section className={`hero ${hasTurn ? "compact" : ""}`}>
               <div className="hero-copy">
-                {!hasResults ? (
+                {!hasTurn ? (
                   <>
                     <p className="eyebrow">Florida prototype · synthetic schools</p>
                     <h1>
@@ -192,161 +201,168 @@ export function App() {
               <div className="workspace">
                 <Brief
                   criteria={criteria}
-                  onChange={(next: Criterion[]) => void run({ action: "refresh", criteria: next })}
-                  onApprove={() => setBriefApproved(true)}
+                  onChange={(next: Criterion[]) =>
+                    void run({ event: "brief_edited", action: "refresh", criteria: next })
+                  }
+                  onApprove={() => void run({ event: "brief_approved", action: "refresh" })}
                 />
 
                 {message && <p className="agent-lead">{String(message.text ?? "")}</p>}
 
-                {question && !questionSkipped && (
+                {questionItems.length > 0 && !hasResults && (
                   <QuestionPrompt
-                    text={String(question.text ?? "")}
-                    options={(question.options as { id: string; label: string }[]) ?? []}
-                    onPick={(optionId) =>
+                    items={questionItems}
+                    skipLabel={String(questionsBlock?.skip_label ?? "Just show me results")}
+                    onPick={(questionId, optionId) =>
                       void run({
+                        event: "answers_submitted",
                         action: "refresh",
-                        answer: { question_id: question.id, option_id: optionId },
+                        answer: { question_id: questionId, option_id: optionId },
                       })
                     }
-                    onSkip={() => setQuestionSkipped(true)}
+                    onSkip={() => void run({ event: "skip_to_results", action: "refresh" })}
                   />
                 )}
 
-                <section className="results" ref={resultsRef}>
-                  <div className="results-toolbar">
-                    <div>
-                      <h2>Matches</h2>
-                      <p>Ranked by fit. Coverage is shown beside the match score.</p>
+                {hasResults && (
+                  <section className="results" ref={resultsRef}>
+                    <div className="results-toolbar">
+                      <div>
+                        <h2>Matches</h2>
+                        <p>Ranked by fit. Coverage is shown beside the match score.</p>
+                      </div>
+                      <div className="view-toggle" role="group" aria-label="Result layout">
+                        <button type="button" aria-pressed={resultMode === "list"} onClick={() => setResultMode("list")}>
+                          List
+                        </button>
+                        <button type="button" aria-pressed={resultMode === "grid"} onClick={() => setResultMode("grid")}>
+                          Grid
+                        </button>
+                        <button type="button" disabled title="Map view lands with Amazon Location (M2)">
+                          Map
+                        </button>
+                      </div>
                     </div>
-                    <div className="view-toggle" role="group" aria-label="Result layout">
-                      <button type="button" aria-pressed={resultMode === "list"} onClick={() => setResultMode("list")}>
-                        List
-                      </button>
-                      <button type="button" aria-pressed={resultMode === "grid"} onClick={() => setResultMode("grid")}>
-                        Grid
-                      </button>
-                      <button type="button" disabled title="Map view lands with Amazon Location (M2)">
-                        Map
-                      </button>
-                    </div>
-                  </div>
 
-                  {resultMode === "grid" && grid ? (
-                    <EvidenceGrid payload={grid} />
-                  ) : (
-                    <>
-                      <ResultSection
-                        title="Best matches"
-                        cards={(results?.schools as Card[]) ?? []}
-                        criteria={criteria}
-                        picked={picked}
-                        layout={resultMode}
-                        onPick={setPicked}
-                        onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
-                        onSave={async (id) => {
-                          const data = await run({ action: "save", school_ids: [id] }, "keep");
-                          if (data) await refreshSaved(data.session_id);
-                        }}
-                        onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
-                        onFeedback={(id, vote, reason) =>
-                          void run({ action: "feedback", feedback: { school_id: id, vote, reason } })
-                        }
-                        onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
-                      />
-                      <ResultSection
-                        title="Missing a fact we can ask about"
-                        cards={(results?.gaps as Card[]) ?? []}
-                        criteria={criteria}
-                        picked={picked}
-                        layout={resultMode}
-                        onPick={setPicked}
-                        onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
-                        onSave={async (id) => {
-                          const data = await run({ action: "save", school_ids: [id] }, "keep");
-                          if (data) await refreshSaved(data.session_id);
-                        }}
-                        onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
-                        onFeedback={(id, vote, reason) =>
-                          void run({ action: "feedback", feedback: { school_id: id, vote, reason } })
-                        }
-                        onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
-                      />
-                      <ResultSection
-                        title="Missed a must-have"
-                        cards={(results?.missed as Card[]) ?? []}
-                        criteria={criteria}
-                        picked={picked}
-                        layout={resultMode}
-                        onPick={setPicked}
-                        onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
-                        onSave={async (id) => {
-                          const data = await run({ action: "save", school_ids: [id] }, "keep");
-                          if (data) await refreshSaved(data.session_id);
-                        }}
-                        onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
-                        onFeedback={(id, vote, reason) =>
-                          void run({ action: "feedback", feedback: { school_id: id, vote, reason } })
-                        }
-                        onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
-                      />
-                    </>
-                  )}
+                    {resultMode === "grid" && grid ? (
+                      <EvidenceGrid payload={grid} />
+                    ) : (
+                      <>
+                        <ResultSection
+                          title="Best matches"
+                          cards={(results?.schools as Card[]) ?? []}
+                          criteria={criteria}
+                          picked={picked}
+                          layout={resultMode}
+                          onPick={setPicked}
+                          onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
+                          onSave={async (id) => {
+                            const data = await run({ action: "save", school_ids: [id] }, "keep");
+                            if (data) await refreshSaved(data.session_id);
+                          }}
+                          onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
+                          onFeedback={(id, vote, reason) =>
+                            void run({ action: "feedback", feedback: { school_id: id, vote, reason } })
+                          }
+                          onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+                        />
+                        <ResultSection
+                          title="Missing a fact we can ask about"
+                          cards={(results?.gaps as Card[]) ?? []}
+                          criteria={criteria}
+                          picked={picked}
+                          layout={resultMode}
+                          onPick={setPicked}
+                          onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
+                          onSave={async (id) => {
+                            const data = await run({ action: "save", school_ids: [id] }, "keep");
+                            if (data) await refreshSaved(data.session_id);
+                          }}
+                          onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
+                          onFeedback={(id, vote, reason) =>
+                            void run({ action: "feedback", feedback: { school_id: id, vote, reason } })
+                          }
+                          onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+                        />
+                        <ResultSection
+                          title="Missed a must-have"
+                          cards={(results?.missed as Card[]) ?? []}
+                          criteria={criteria}
+                          picked={picked}
+                          layout={resultMode}
+                          onPick={setPicked}
+                          onOpen={(id) => void run({ action: "school_detail", school_ids: [id] }, "panel")}
+                          onSave={async (id) => {
+                            const data = await run({ action: "save", school_ids: [id] }, "keep");
+                            if (data) await refreshSaved(data.session_id);
+                          }}
+                          onAsk={(id, need) => void run({ action: "ask_school", school_ids: [id], need })}
+                          onFeedback={(id, vote, reason) =>
+                            void run({ action: "feedback", feedback: { school_id: id, vote, reason } })
+                          }
+                          onCost={(id) => void run({ action: "cost", school_ids: [id] }, "panel")}
+                        />
+                      </>
+                    )}
 
-                  {picked.length === 2 && (
-                    <div className="compare-bar">
-                      <p>Two schools selected.</p>
-                      <button
-                        type="button"
-                        className="btn-primary"
-                        onClick={() => void run({ action: "compare", school_ids: picked }, "panel")}
-                      >
-                        Compare these two
+                    {picked.length === 2 && (
+                      <div className="compare-bar">
+                        <p>Two schools selected.</p>
+                        <button
+                          type="button"
+                          className="btn-primary"
+                          onClick={() => void run({ action: "compare", school_ids: picked }, "panel")}
+                        >
+                          Compare these two
+                        </button>
+                      </div>
+                    )}
+                  </section>
+                )}
+
+                {hasResults && (
+                  <section className="followups">
+                    <form className="search-bar slim" onSubmit={(event) => void onRefine(event)}>
+                      <label className="sr-only" htmlFor="refine">
+                        Refine this search
+                      </label>
+                      <input
+                        id="refine"
+                        placeholder="Add something else — smaller classes, bus route, Spanish immersion…"
+                        value={refine}
+                        onChange={(event) => setRefine(event.target.value)}
+                      />
+                      <button className="btn-secondary" type="submit" disabled={busy}>
+                        Refine
                       </button>
-                    </div>
-                  )}
-                </section>
-
-                <section className="followups">
-                  <form className="search-bar slim" onSubmit={(event) => void onRefine(event)}>
-                    <label className="sr-only" htmlFor="refine">
-                      Refine this search
-                    </label>
-                    <input
-                      id="refine"
-                      placeholder="Add something else — smaller classes, bus route, Spanish immersion…"
-                      value={refine}
-                      onChange={(event) => setRefine(event.target.value)}
-                    />
-                    <button className="btn-secondary" type="submit" disabled={busy}>
-                      Refine
-                    </button>
-                  </form>
-                  <form
-                    className="search-bar slim"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      if (why.trim()) {
-                        void run(
-                          { message: why.startsWith("Why") ? why : `Why isn't ${why} here?` },
-                          "panel",
-                        );
-                      }
-                    }}
-                  >
-                    <label className="sr-only" htmlFor="why-not">
-                      Ask why a school is missing
-                    </label>
-                    <input
-                      id="why-not"
-                      placeholder="Why isn’t a school here?"
-                      value={why}
-                      onChange={(event) => setWhy(event.target.value)}
-                    />
-                    <button className="btn-secondary" type="submit">
-                      Explain
-                    </button>
-                  </form>
-                </section>
+                    </form>
+                    <form
+                      className="search-bar slim"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        if (why.trim()) {
+                          void run(
+                            { message: why.startsWith("Why") ? why : `Why isn't ${why} here?` },
+                            "panel",
+                          );
+                        }
+                      }}
+                    >
+                      <label className="sr-only" htmlFor="why-not">
+                        Ask why a school is missing
+                      </label>
+                      <input
+                        id="why-not"
+                        placeholder="Why isn’t a school here?"
+                        value={why}
+                        onChange={(event) => setWhy(event.target.value)}
+                      />
+                      <button className="btn-secondary" type="submit">
+                        Explain
+                      </button>
+                    </form>
+                  </section>
+                )}
               </div>
             )}
           </>

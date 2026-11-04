@@ -93,10 +93,10 @@ def test_reply_without_json_uses_rules(bedrock):
 
 
 def _turn(message: str) -> dict:
-    from pipeline import turn
     from store import _empty
+    from testing_helpers import search_turn
 
-    return turn(_empty(), {"message": message}).model_dump()["engine"]
+    return search_turn(_empty(), {"message": message}).model_dump()["engine"]
 
 
 def test_engine_rules_when_bedrock_is_off():

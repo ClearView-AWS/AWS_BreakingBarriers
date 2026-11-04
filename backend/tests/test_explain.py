@@ -66,8 +66,8 @@ QUERY = "Elementary school in Jacksonville with after-school care until 6pm"
 @pytest.fixture
 def cards(monkeypatch):
     """Run a search turn where only the explain step uses the fake model."""
-    from pipeline import turn
     from store import _empty
+    from testing_helpers import search_turn
 
     def run(explain):
         def answer(model_id, system, user):
@@ -78,7 +78,7 @@ def cards(monkeypatch):
         monkeypatch.setattr(bc, "converse", answer)
         monkeypatch.setattr(bc, "maybe_bedrock_route", lambda text, has_session: (None, bc.EngineStep(engine="rules")))
         monkeypatch.setattr(bc, "maybe_bedrock_criteria", lambda text, cities: (None, bc.EngineStep(engine="rules")))
-        response = turn(_empty(), {"message": QUERY}).model_dump()
+        response = search_turn(_empty(), {"message": QUERY}).model_dump()
         results = next(b for b in response["blocks"] if b["type"] == "results")["payload"]
         return results["schools"] + results["missed"], response["engine"]
 
@@ -112,10 +112,10 @@ def test_true_model_sentence_replaces_code_summary(cards):
 
 
 def test_unknown_must_have_stays_on_the_card(cards):
-    from pipeline import turn
     from store import _empty
+    from testing_helpers import search_turn
 
-    response = turn(_empty(), {"message": QUERY + " and strong STEM"}).model_dump()
+    response = search_turn(_empty(), {"message": QUERY + " and strong STEM"}).model_dump()
     results = next(b for b in response["blocks"] if b["type"] == "results")["payload"]
     unknown = [c for c in results["schools"] if any(r["status"] == "unknown" for r in c["evidence"])]
     assert unknown, "the demo query has schools with unknown after-school care"

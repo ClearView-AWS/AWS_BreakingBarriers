@@ -1,26 +1,47 @@
 type Option = { id: string; label: string };
 
-type Props = {
+export type QuestionItem = {
+  id: string;
   text: string;
   options: Option[];
-  onPick: (optionId: string) => void;
+  default?: string | null;
+};
+
+type Props = {
+  items: QuestionItem[];
+  skipLabel?: string;
+  onPick: (questionId: string, optionId: string) => void;
   onSkip: () => void;
 };
 
-export function QuestionPrompt({ text, options, onPick, onSkip }: Props) {
+export function QuestionPrompt({ items, skipLabel = "Just show me results", onPick, onSkip }: Props) {
+  if (!items.length) return null;
+  const heading = items.length === 1 ? "One quick question" : `${items.length} quick questions`;
+
   return (
     <section className="question" aria-live="polite">
-      <p className="eyebrow">One quick question</p>
-      <h2>{text}</h2>
-      <div className="options">
-        {options.map((option) => (
-          <button key={option.id} type="button" className="option" onClick={() => onPick(option.id)}>
-            {option.label}
-          </button>
+      <p className="eyebrow">{heading}</p>
+      <div className="question-stack">
+        {items.map((item) => (
+          <div key={item.id} className="question-item">
+            <h2>{item.text}</h2>
+            <div className="options">
+              {item.options.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  className="option"
+                  onClick={() => onPick(item.id, option.id)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
       <button type="button" className="linkish" onClick={onSkip}>
-        Just show me results
+        {skipLabel}
       </button>
     </section>
   );

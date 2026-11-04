@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from pipeline import turn
 from store import _empty
+from testing_helpers import search_turn
 
 FIRST = "Elementary school in Jacksonville with after-school care until 6pm"
 
 
 def _follow_up(message: str, **payload) -> dict:
     state = _empty()
-    session_id = turn(state, {"message": FIRST}).session_id
+    session_id = search_turn(state, {"message": FIRST}).session_id
     return turn(state, {"message": message, "session_id": session_id, **payload}).model_dump()
 
 
@@ -79,6 +80,7 @@ def test_route_and_extract_run_at_the_same_time(monkeypatch):
 
     monkeypatch.setattr(bc, "enabled", lambda: True)
     monkeypatch.setattr(bc, "converse", answer)
+    # First message may stop at the brief gate; extract/route still ran.
     response = turn(_empty(), {"message": FIRST}).model_dump()
 
     assert overlapped == [True]

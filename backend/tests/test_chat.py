@@ -43,7 +43,9 @@ def _shown(response: dict) -> list[str]:
 @pytest.fixture()
 def chat() -> Chat:
     conversation = Chat()
-    conversation.send(DEMO)
+    first = conversation.send(DEMO)
+    if not _shown(first):
+        conversation.send(event="skip_to_results", action="refresh")
     return conversation
 
 
@@ -117,8 +119,15 @@ def test_ordinals_become_school_ids_for_detail_compare_and_save(chat):
 
 
 def test_pass_through_matches_the_pipeline():
-    via_chat = Chat().send(DEMO)
-    direct = turn({"sessions": {}, "inbox": [], "overlays": {}}, {"message": DEMO}).model_dump()
+    via = Chat()
+    via_chat = via.send(DEMO)
+    if not _shown(via_chat):
+        via_chat = via.send(event="skip_to_results", action="refresh")
+    state = {"sessions": {}, "inbox": [], "overlays": {}}
+    direct = turn(state, {"message": DEMO})
+    if not any(block.type == "results" for block in direct.blocks):
+        direct = turn(state, {"session_id": direct.session_id, "event": "skip_to_results", "action": "refresh"})
+    direct = direct.model_dump()
     assert via_chat["route"] == direct["route"]
     assert _shown(via_chat) == _shown(direct)
 
