@@ -60,7 +60,7 @@ import pytest
 import agent.bedrock_client as bc
 from agent.prompts import EXPLAIN_SYSTEM
 
-QUERY = "Elementary school in Seattle with after-school care until 6pm"
+QUERY = "Elementary school in Jacksonville with after-school care until 6pm"
 
 
 @pytest.fixture
@@ -115,14 +115,9 @@ def test_unknown_must_have_stays_on_the_card(cards):
     from store import _empty
     from testing_helpers import search_turn
 
-    # In the Seattle data the demo's middle-school query is where a card has after-school
-    # care unknown with nothing else to go on (Arbor Heights STEM Middle).
-    response = search_turn(_empty(), {"message": "Middle school in Seattle with STEM and after-school care until 6pm"}).model_dump()
+    response = search_turn(_empty(), {"message": QUERY + " and strong STEM"}).model_dump()
     results = next(b for b in response["blocks"] if b["type"] == "results")["payload"]
-    unknown = [
-        c for c in results["schools"] + results.get("gaps", [])
-        if any(r["status"] == "unknown" and r["source"] is None for r in c["evidence"])
-    ]
+    unknown = [c for c in results["schools"] if any(r["status"] == "unknown" for r in c["evidence"])]
     assert unknown, "the demo query has schools with unknown after-school care"
     for card in unknown:
         row = next(r for r in card["evidence"] if r["status"] == "unknown")
@@ -173,7 +168,7 @@ def test_model_sees_filter_names(cards):
 
 
 def test_a_name_with_st_is_one_sentence():
-    text = "Fremont STEM Middle is confirmed as a STEM school [[cite:osp.school_sub_type]]."
+    text = "St. Johns STEM Middle is confirmed as a STEM school [[cite:osp.school_sub_type]]."
     assert validate_model_text(text, FACTS, PARENT) == text
 
 

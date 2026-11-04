@@ -357,7 +357,7 @@ def _apply_answer(session: dict, answer: dict, state: dict) -> None:
         )
         _rekey(criteria)
     elif question_id == "q:location_ambiguity" and option == "other":
-        session["note"] = "This prototype only includes Seattle schools in Washington, so I kept the Washington reading."
+        session["note"] = "This prototype only includes Florida schools, so I kept the Florida reading."
     elif question_id.startswith("q:amb:"):
         criterion_id = question_id.split(":")[-1]
         for row in criteria:
@@ -778,12 +778,12 @@ def _cost(session, criteria, schools, programs, state, message, payload) -> Turn
         ids = [school["id"] for school in matched if school.get("entity_type") == "private"][:3]
     by_id = _by_id(schools)
     estimates = [estimate_cost(by_id[sid]) for sid in ids if sid in by_id]
-    lead = "Tuition and where financial aid may come from. Not a promised award."
+    lead = "Likely scholarship eligibility. Not a promised award."
     if estimates and all(row.get("entity_type") in {"public", "charter"} for row in estimates):
-        # Public and charter schools are tuition-free in the data; there is no aid to estimate.
+        # Public and charter schools are tuition-free in the data; there is no scholarship to estimate.
         names = " and ".join(row["school_name"] for row in estimates[:2]) + (" and others" if len(estimates) > 2 else "")
         verb = "is" if len(estimates) == 1 else "are"
-        lead = f"{names} {verb} tuition-free in the data, so there is no cost to estimate."
+        lead = f"{names} {verb} tuition-free in the data, so no scholarship estimate is needed."
     blocks = [
         Block(type="message", payload={"text": lead}),
         Block(type="cost", payload={"schools": estimates}),

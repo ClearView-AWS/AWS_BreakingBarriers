@@ -10,8 +10,8 @@ from pipeline import turn
 from store import _empty
 
 # Haitian Creole: no phrase list covers it, so only translation can make the rules read it.
-CREOLE = "Mwen bezwen yon lekòl primè nan Seattle ak swen apre lekòl"
-CREOLE_EN = "I need an elementary school in Seattle with after-school care"
+CREOLE = "Mwen bezwen yon lekòl primè nan Miami ak swen apre lekòl"
+CREOLE_EN = "I need an elementary school in Miami with after-school care"
 
 
 class FakeTranslate:
@@ -62,14 +62,14 @@ def test_a_message_in_any_language_is_parsed_after_translation(translate_on):
     response = chat_turn(_empty(), {"message": CREOLE})
 
     assert client.calls == [CREOLE], "translated once, not again inside the pipeline"
-    assert {("grade", "e"), ("location", "Seattle"), ("need", "after_care")} <= _criteria(response)
+    assert {("grade", "e"), ("location", "Miami"), ("need", "after_care")} <= _criteria(response)
     assert response["language"] == "ht"
     assert response["history"][0] == {"role": "parent", "kind": "message", "text": CREOLE, "route": None, "school_ids": []}
 
 
 def test_english_keeps_the_parents_exact_words(translate_on):
     message = "elementary school in miami with after-school care"
-    translate_on({message: ("Elementary school in Seattle with after-school care.", "en")})
+    translate_on({message: ("Elementary school in Miami with after-school care.", "en")})
     assert translate.to_english(message) == translate.Reading(message, "en")
 
 

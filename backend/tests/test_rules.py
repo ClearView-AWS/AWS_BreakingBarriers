@@ -76,7 +76,7 @@ def test_old_reviews_count_half():
 
 def test_reviews_do_not_confirm():
     school = {
-        "id": "School wa-1",
+        "id": "School fl-1",
         "name": "Review Only",
         "created": "2026-02-01",
         "reviews_full": [
@@ -90,10 +90,10 @@ def test_reviews_do_not_confirm():
 
 
 def test_missing_field_stays_in_results():
-    rated = {"id": "a", "name": "Rated", "city": "Seattle", "level_codes": ["m"], "summary_rating": 9, "created": "2026-01-01"}
-    missing = {"id": "b", "name": "Unrated", "city": "Seattle", "level_codes": ["m"], "created": "2026-01-01"}
+    rated = {"id": "a", "name": "Rated", "city": "Jacksonville", "level_codes": ["m"], "summary_rating": 9, "created": "2026-01-01"}
+    missing = {"id": "b", "name": "Unrated", "city": "Jacksonville", "level_codes": ["m"], "created": "2026-01-01"}
     criteria = [
-        Criterion(id="c1", text="Seattle", kind="location", value="Seattle", strength="require"),
+        Criterion(id="c1", text="Jacksonville", kind="location", value="Jacksonville", strength="require"),
         Criterion(id="c2", text="middle school", kind="grade", value="m", strength="require"),
         _criterion(id="c3", text="top school", need="high_performing", strength="prefer"),
     ]
@@ -104,7 +104,7 @@ def test_missing_field_stays_in_results():
 
 def test_query_filters_are_only_location_grade_and_type():
     criteria = [
-        Criterion(id="c1", text="Seattle", kind="location", value="Seattle", strength="require"),
+        Criterion(id="c1", text="Jacksonville", kind="location", value="Jacksonville", strength="require"),
         Criterion(id="c2", text="middle school", kind="grade", value="m", strength="require"),
         Criterion(id="c3", text="charter", kind="school_type", value="charter", strength="require"),
         _criterion(need="high_performing", strength="prefer"),
@@ -125,12 +125,12 @@ def test_citation_validator_drops_uncited_sentences():
 
 def test_extractor_demo_query():
     found, _ = extract(
-        "Middle school in Seattle with STEM and after-school care. Money is tight.",
+        "Middle school in Jacksonville with STEM and after-school care. Money is tight.",
         known_cities(),
     )
     by_need = {item.need or item.kind: item for item in found}
     assert by_need["grade"].value == "m"
-    assert by_need["location"].value == "Seattle"
+    assert by_need["location"].value == "Jacksonville"
     assert by_need["stem"].strength == "require"
     assert by_need["after_care"].strength == "require"
     assert by_need["after_care"].ambiguities
@@ -138,11 +138,11 @@ def test_extractor_demo_query():
 
 
 def test_negation_and_liberal_and_spanish():
-    religious, _ = extract("elementary school in Seattle, not religious", known_cities())
+    religious, _ = extract("elementary school in Orlando, not religious", known_cities())
     assert any(item.need == "non_religious" and item.strength == "require" for item in religious)
-    liberal, _ = extract("How liberal are middle schools in Seattle?", known_cities())
+    liberal, _ = extract("How liberal are middle schools in Jacksonville?", known_cities())
     assert any(item.need is None and "liberal" in item.text for item in liberal)
-    spanish, _ = extract("escuela intermedia en Seattle con ciencias", known_cities())
+    spanish, _ = extract("escuela intermedia en Jacksonville con ciencias", known_cities())
     assert any(item.kind == "grade" and item.value == "m" for item in spanish)
     assert any(item.need == "stem" for item in spanish)
 
@@ -152,7 +152,7 @@ def test_demo_turn_asks_before_search_then_skip_keeps_gaps():
     with State() as state:
         first = turn(
             state,
-            {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
+            {"message": "Middle school in Jacksonville with STEM and after-school care. Money is tight."},
         )
         assert not any(block.type == "results" for block in first.blocks)
         questions = next(block.payload for block in first.blocks if block.type == "questions")
@@ -202,7 +202,7 @@ def test_why_not_mariner_is_the_grade_filter():
 
         first = search_turn(
             state,
-            {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
+            {"message": "Middle school in Jacksonville with STEM and after-school care. Money is tight."},
         )
         second = turn(
             state,
@@ -220,7 +220,7 @@ def test_liberal_followup_offers_data_backed_needs():
 
         first = search_turn(
             state,
-            {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
+            {"message": "Middle school in Jacksonville with STEM and after-school care. Money is tight."},
         )
         second = turn(state, {"session_id": first.session_id, "message": "How liberal are these schools?"})
     question = next(block.payload for block in second.blocks if block.type == "question")
@@ -233,11 +233,11 @@ def test_liberal_followup_offers_data_backed_needs():
 def test_cost_does_not_promise_an_award():
     clear_corpus_cache()
     schools = load_schools()
-    private = next(school for school in schools if school["name"] == "Queen Anne Preparatory Middle")
+    private = next(school for school in schools if school["name"] == "Riverside Preparatory Middle")
     with State() as state:
         from testing_helpers import search_turn
 
-        first = search_turn(state, {"message": "Middle school in Seattle"})
+        first = search_turn(state, {"message": "Middle school in Jacksonville"})
         response = turn(
             state,
             {"session_id": first.session_id, "action": "cost", "school_ids": [private["id"]]},
@@ -247,22 +247,21 @@ def test_cost_does_not_promise_an_award():
     assert estimate["net"] is None
     assert estimate["tuition"]
     blob = str(estimate)
-    assert "financial aid" in blob
-    assert "You may qualify" not in blob, "no Washington line promises a scholarship"
-    assert "sbe.wa.gov" in blob
+    assert "You may qualify" in blob
+    assert "fldoe.org" in blob
     assert "15200" in blob or "15,200" in blob
 
 
 def test_save_builds_a_visit_checklist_for_unknowns():
     clear_corpus_cache()
     schools = load_schools()
-    beau = next(school for school in schools if school["name"] == "Arbor Heights STEM Middle")
+    beau = next(school for school in schools if school["name"] == "Beauclerc STEM Middle")
     with State() as state:
         from testing_helpers import search_turn
 
         first = search_turn(
             state,
-            {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
+            {"message": "Middle school in Jacksonville with STEM and after-school care. Money is tight."},
         )
         saved = turn(state, {"session_id": first.session_id, "action": "save", "school_ids": [beau["id"]]})
     checklist = next(block.payload for block in saved.blocks if block.type == "checklist")
@@ -273,13 +272,13 @@ def test_save_builds_a_visit_checklist_for_unknowns():
 def test_school_reply_confirms_the_gap():
     clear_corpus_cache()
     schools = load_schools()
-    beau = next(school for school in schools if school["name"] == "Arbor Heights STEM Middle")
+    beau = next(school for school in schools if school["name"] == "Beauclerc STEM Middle")
     with State() as state:
         from testing_helpers import search_turn
 
         first = search_turn(
             state,
-            {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
+            {"message": "Middle school in Jacksonville with STEM and after-school care. Money is tight."},
         )
         turn(
             state,
@@ -318,7 +317,7 @@ def _need(response, row) -> bool:
 def test_routes():
     assert route_message("What is CTE?", False)[0] == "define"
     assert route_message("Why isn't Bayside listed?", True)[0] == "why_not"
-    assert route_message("compare Cascade and Riverside", True)[0] == "compare"
+    assert route_message("compare Tidewater and Riverside", True)[0] == "compare"
 
 
 def test_a_bare_after_school_time_means_pm():

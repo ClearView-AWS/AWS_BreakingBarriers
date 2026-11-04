@@ -22,8 +22,8 @@ export type Entry =
 
 const EXAMPLES = [
   DEMO_QUERY,
-  "Elementary school in Seattle with after-school care until 6pm",
-  "High school in Seattle with sports",
+  "Elementary school in Jacksonville with after-school care until 6pm",
+  "High school in Miami with sports",
 ];
 
 export function Chat({

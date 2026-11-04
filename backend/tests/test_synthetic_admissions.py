@@ -44,15 +44,15 @@ def test_dates_and_counts_are_well_formed():
 
 
 def test_demo_schools_cover_each_getting_in_case():
-    arbor_heights = BY_NAME["Arbor Heights STEM Middle"]["osp"]
-    assert arbor_heights["admission_type"] == ["lottery"]
-    assert _deadline(BY_NAME["Arbor Heights STEM Middle"]) == date(2027, 1, 15)
-    assert arbor_heights["applicants_last_year"][0] == {"grade": "6", "applicants": 210, "seats": 90, "as_of": "2026-03-15"}
-    assert _deadline(BY_NAME["Queen Anne Preparatory Middle"]) == date(2027, 2, 1)
-    assert BY_NAME["Cascade STEM Charter"]["osp"]["seats_by_grade"][0]["open_seats"] > 0
-    assert _deadline(BY_NAME["Wallingford STEM Academy"]) == date(2026, 10, 1)
-    assert BY_NAME["Rainier Beach STEM Middle"]["osp"]["seats_by_grade"][0]["waitlist"] is True
-    assert _deadline(BY_NAME["Evergreen Hill Christian Middle"]) == date(2025, 1, 15)
+    beauclerc = BY_NAME["Beauclerc STEM Middle"]["osp"]
+    assert beauclerc["admission_type"] == ["lottery"]
+    assert _deadline(BY_NAME["Beauclerc STEM Middle"]) == date(2027, 1, 15)
+    assert beauclerc["applicants_last_year"][0] == {"grade": "6", "applicants": 210, "seats": 90, "as_of": "2026-03-15"}
+    assert _deadline(BY_NAME["Riverside Preparatory Middle"]) == date(2027, 2, 1)
+    assert BY_NAME["Tidewater STEM Charter"]["osp"]["seats_by_grade"][0]["open_seats"] > 0
+    assert _deadline(BY_NAME["Arlington STEM Academy"]) == date(2026, 10, 1)
+    assert BY_NAME["Northside STEM Middle"]["osp"]["seats_by_grade"][0]["waitlist"] is True
+    assert _deadline(BY_NAME["Landmark Christian Middle"]) == date(2025, 1, 15)
 
 
 def test_sample_schools_are_left_alone():

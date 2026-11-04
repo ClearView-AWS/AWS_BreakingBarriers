@@ -57,7 +57,7 @@ export function DetailPanel({ turn, onClose }: Props) {
                           {line.name ? ` ${line.name}.` : ""} {line.eligibility ?? ""}{" "}
                           {line.official_url && (
                             <a href={line.official_url} target="_blank" rel="noreferrer">
-                              {line.link_label ?? "Official page"}
+                              Official page
                             </a>
                           )}
                         </li>

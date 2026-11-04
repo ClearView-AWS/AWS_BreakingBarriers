@@ -11,7 +11,7 @@ from agent.conversation import HISTORY_LIMIT, chat_turn
 from pipeline import turn
 from search.corpus import load_schools
 
-DEMO = "Middle school in Seattle with STEM and after-school care. Money is tight."
+DEMO = "Middle school in Jacksonville with STEM and after-school care. Money is tight."
 BY_NAME = {school["name"]: school for school in load_schools()}
 
 
@@ -69,8 +69,8 @@ def test_a_follow_up_keeps_the_results_and_the_criteria(chat):
 
 
 def test_names_pronouns_and_the_whole_list_resolve(chat):
-    beauclerc = BY_NAME["Arbor Heights STEM Middle"]["id"]
-    named = chat.send("Can my son get into Arbor Heights?")
+    beauclerc = BY_NAME["Beauclerc STEM Middle"]["id"]
+    named = chat.send("Can my son get into Beauclerc?")
     assert _block(named, "answer")["school_ids"] == [beauclerc]
     pronoun = chat.send("How far is it?")
     assert _block(pronoun, "answer")["school_ids"] == [beauclerc]
@@ -81,7 +81,7 @@ def test_names_pronouns_and_the_whole_list_resolve(chat):
 
 
 def test_getting_in_answers_never_estimate_chances(chat):
-    response = chat.send("Will my son get into Arbor Heights? What are his chances?")
+    response = chat.send("Will my son get into Beauclerc? What are his chances?")
     message = _block(response, "message")
     assert _block(response, "answer")["topic"]["kind"] == "access"
     assert "never estimate" in (message["prompt"] or "")
@@ -90,19 +90,19 @@ def test_getting_in_answers_never_estimate_chances(chat):
 
 
 def test_unknown_facts_offer_to_ask_the_school(chat):
-    response = chat.send("Does Arbor Heights have after school care?")
+    response = chat.send("Does Beauclerc have after school care?")
     message = _block(response, "message")
     assert "isn't on file yet" in message["prompt"]
     chips = _block(response, "chips")["items"]
-    assert chips[0]["payload"] == {"action": "ask_school", "school_ids": [BY_NAME["Arbor Heights STEM Middle"]["id"]], "need": "after_care"}
-    # A reply that is only a prompt still shows in the chat, and "it" then means Arbor Heights.
+    assert chips[0]["payload"] == {"action": "ask_school", "school_ids": [BY_NAME["Beauclerc STEM Middle"]["id"]], "need": "after_care"}
+    # A reply that is only a prompt still shows in the chat, and "it" then means Beauclerc.
     assert "isn't on file yet" in chat.session["history"][-1]["text"]
     follow = chat.send("Is it safe?")
-    assert _block(follow, "answer")["school_ids"] == [BY_NAME["Arbor Heights STEM Middle"]["id"]]
+    assert _block(follow, "answer")["school_ids"] == [BY_NAME["Beauclerc STEM Middle"]["id"]]
 
 
 def test_search_changes_and_other_routes_pass_through(chat):
-    assert chat.send("What about Seattle instead?")["route"] == "refine"
+    assert chat.send("What about Miami instead?")["route"] == "refine"
     assert chat.send("I also need a school with arts")["route"] == "refine"
     assert chat.send("What's CTE?")["route"] == "define"
     assert chat.send("Why isn't Mariner Elementary listed?")["route"] == "why_not"

@@ -5,7 +5,7 @@ A guided school-search agent for an empty AWS sandbox. The parent writes in plai
 **Live demo:** [https://dvpvz48phigre.cloudfront.net](https://dvpvz48phigre.cloudfront.net)  
 (CloudFront + Fargate, deployed from `main`. Bedrock and OpenSearch are off unless re-enabled.)
 
-This build also runs locally. Bedrock, OpenSearch, SES, and DynamoDB stay behind flags. The demo city is Seattle, Washington. GreatSchools' 25 sample schools (Florida in the original files) are moved to Seattle by the generator; the original files stay unchanged. The clock the age rules use is 2026-11-03 (`GS_TODAY`).
+This build also runs locally. Bedrock, OpenSearch, SES, and DynamoDB stay behind flags. The demo city is Jacksonville. The clock the age rules use is 2026-11-03 (`GS_TODAY`).
 
 ## How to run
 
@@ -21,9 +21,9 @@ cd backend && ../.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 800
 cd frontend && npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-> Middle school in Seattle with STEM and after-school care. Money is tight.
+> Middle school in Jacksonville with STEM and after-school care. Money is tight.
 
-Then: answer or skip the brief questions, approve the brief, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel says each school sets its own aid, links the State Board of Education, and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far". Highlight any text on a result and tap "Ask" to have it explained from the school's own evidence.
+Then: answer or skip the brief questions, approve the brief, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
 
 Redeploy the hosted demo from `main`:
 
@@ -32,13 +32,11 @@ SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
 ```
 
 ```bash
-.venv/bin/python -m pytest -q
+.venv/bin/python -m pytest backend/tests -q
 .venv/bin/python eval/run_eval.py
 ```
 
-Parent community demo: on the Arbor Heights STEM Middle card, tap "Ask parents at this school". Try posting with a child's name (it is blocked), then post without it. Switch "Viewing as" to School staff, tap "Send digest", and answer the after-care thread. Switch back to Parent A and go back to results. After-school care is now Confirmed, school-reported. See `docs/community.md`.
-
-Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25 sample schools in `Sample Data/` stay unchanged; the generator writes their Seattle copies, 275 more Seattle schools, nearby programs, and one static page per generated school.
+Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25 sample schools in `Sample Data/` stay unchanged. The generator writes 275 more schools, nearby programs, and one static page per generated school.
 
 ## Decisions
 
@@ -46,8 +44,7 @@ Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25
 - Match score and evidence coverage are separate. Unknown scores 0.5. A high-confidence miss on a required criterion moves the school into "Missed a must-have" and keeps it on screen.
 - Reviews can support a criterion. They never confirm one. A school website can fill a gap only up to Partial, and a conflict stays visible.
 - Before the first search, the agent asks up to three skippable questions and shows a brief. Search runs after the parent approves or taps "Just show me results" (defaults apply). After that, refining asks at most one question.
-- Private-school cost lines say each Washington private school sets its own tuition and aid, link the State Board of Education, and note that the federal Education Freedom Tax Credit (from Jan 1, 2027) depends on Washington opting in. The screen does not promise an award amount. Net price stays empty.
-- Getting in follows Seattle Public Schools (attendance area schools, Open Enrollment for School Choice) and Washington law (RCW 28A.710.050 for charter lotteries), each with its official link.
+- Scholarship lines say "You may qualify" and link the Florida Department of Education page. The screen does not promise an award amount. Net price stays empty.
 - School email addresses are on `example.org`. SES sends only when `SES_ENABLED=1`, and only to `SES_VERIFIED_TO`.
 
 ## What code owns
@@ -63,7 +60,6 @@ Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25
 | Route, extract, cite, explain | `backend/agent/` |
 | Search (local hybrid, OpenSearch DSL) | `backend/search/` |
 | Website, inbox, SES | `backend/gaps/` |
-| Parent community, safety check, demand counts | `backend/community/` (see `docs/community.md`) |
 | Blocks the browser renders | `frontend/src/App.tsx` |
 
 GreatSchools can add or change a need by editing `needs.yaml`. A need has phrases (including Spanish), the field conditions for confirmed and partial, search boosts, and the question to ask on a visit. The mapper matches a parent's phrase to those entries. Unmapped phrases such as "how liberal" offer the needs marked `offer_when_unmapped`: inclusion, cultural responsiveness, restorative discipline, and non-religious.
@@ -92,7 +88,6 @@ Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/sta
 | Require / prefer / avoid correct | 100% (39/39) | 85%+ |
 | Ask-or-not decision correct | 100% (39/39) | 80%+ |
 | Claims with a valid citation | 30/30 | 100%, required |
-| Draft posts with personal info that get published | 0/10 | 0, required |
 | Schools dropped for missing data | 0 | 0, required |
 | Turn time, median | 0.02 s | under 6 s |
 

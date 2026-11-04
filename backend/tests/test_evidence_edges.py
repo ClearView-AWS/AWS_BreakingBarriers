@@ -76,20 +76,21 @@ def test_review_thresholds():
 # Sources that can only support ----------------------------------------------
 
 def test_a_school_website_supports_but_never_confirms():
-    record = evaluate_criterion(BY_NAME["Northgate STEM Middle"], _care("on_site"), programs=[])
+    record = evaluate_criterion(BY_NAME["Cedar Creek STEM Middle"], _care("on_site"), programs=[])
     assert record.status == "partial"
     assert record.source is not None and record.source.type == "school_website"
 
 
 def test_a_website_that_disagrees_with_the_profile_is_flagged():
-    record = evaluate_criterion(BY_NAME["Cascade STEM Charter"], _care("on_site"), programs=[])
+    record = evaluate_criterion(BY_NAME["Tidewater STEM Charter"], _care("on_site"), programs=[])
     assert record.conflict is not None
     assert record.conflict.website_value == "16:00"
 
 
 def test_a_program_with_only_past_sessions_does_not_count():
-    # Rainier Beach STEM Middle's only after-care program within the 1-mile radius has past sessions only.
-    record = evaluate_criterion(BY_NAME["Rainier Beach STEM Middle"], _care("nearby_ok"), programs=load_programs())
+    # Marlin Springs' only after-care program within the 1-mile radius has past sessions only.
+    # (The generator's Northside STEM Middle case sits 1.11 miles from its program, so it is out of range.)
+    record = evaluate_criterion(BY_NAME["Marlin Springs School"], _care("nearby_ok"), programs=load_programs())
     assert record.status == "unknown"
     assert "past" in record.note
 

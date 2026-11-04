@@ -88,9 +88,10 @@ TEMPLATE = """<!doctype html>
 <body>
 <div id="map"></div>
 <div class="bar">
-  <button data-go="47.62,-122.33,12">Seattle</button>
-  <button data-go="47.70,-122.33,13">North (Northgate)</button>
-  <button data-go="47.54,-122.33,13">South (Arbor Heights, Rainier Beach)</button>
+  <button data-go="30.30,-81.65,11">Jacksonville</button>
+  <button data-go="25.78,-80.22,11">Miami</button>
+  <button data-go="28.52,-81.38,11">Orlando</button>
+  <button data-go="25.72,-80.15,13">Biggest moves (Miami bay)</button>
   <span class="key"><span style="background:#2563eb"></span>sample (real)
     <span style="background:#ea580c"></span>generated school
     <span style="background:#16a34a"></span>program

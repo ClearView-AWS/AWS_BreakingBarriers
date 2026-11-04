@@ -1,4 +1,4 @@
-"""Private-school cost lines: tuition and where aid may come from. No award amount is promised."""
+"""Private-school cost after likely scholarships. No award amount is promised."""
 
 from __future__ import annotations
 
@@ -37,7 +37,6 @@ def estimate_cost(school: dict) -> dict:
                 "wording": rule["wording"],
                 "eligibility": " ".join(str(rule.get("eligibility") or "").split()),
                 "official_url": rule["official_url"],
-                "link_label": rule.get("link_label"),
                 "cite": rule["cite_path"],
             }
         )
@@ -48,7 +47,7 @@ def estimate_cost(school: dict) -> dict:
         "tuition": tuition,
         "net": None,
         "disclaimer": (
-            "Each private school sets its own tuition and financial aid, "
+            "You may qualify. Award amounts are set by the scholarship funding organization, "
             "so this screen does not subtract a dollar amount from tuition."
         ),
         "lines": lines,

@@ -6,7 +6,7 @@ from store import _empty
 from testing_helpers import results_payload, search_turn
 from pipeline import turn
 
-CARE = "Middle school in Seattle with STEM and after-school care. Money is tight."
+CARE = "Middle school in Jacksonville with STEM and after-school care. Money is tight."
 
 
 def test_pins_compared_returns_comparison():
@@ -37,12 +37,12 @@ def test_area_changed_moves_search_center_and_adds_distance():
         {
             "session_id": first.session_id,
             "event": "area_changed",
-            "area": {"center": [47.62, -122.33], "radius_mi": 5},
+            "area": {"center": [30.345, -81.60], "radius_mi": 5},
         },
     )
     assert moved.route == "refine"
     results = results_payload(moved)
-    assert results["center"] == [47.62, -122.33]
+    assert results["center"] == [30.345, -81.60]
     assert any(row.kind == "distance" for row in moved.criteria)
     message = next(block.payload["text"] for block in moved.blocks if block.type == "message")
     assert "moved the search area" in message.lower()

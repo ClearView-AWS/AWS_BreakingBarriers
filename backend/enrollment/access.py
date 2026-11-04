@@ -173,8 +173,6 @@ def getting_in(
             "name": rule["official_name"],
             "url": rule["official_url"],
             "more_url": rule.get("more_url"),
-            "more_name": rule.get("more_name"),
-            "state": config.get("state"),
             "cite_path": rule["cite_path"],
             "summary": " ".join(rule["summary"].split()),
             "next_step": rule["next_step"],

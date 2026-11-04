@@ -11,8 +11,8 @@ GRADE_OPTIONS = [
     ("m", "Middle"),
     ("h", "High"),
 ]
-CITY_OPTIONS = ["Seattle"]  # the only city with schools in this prototype
-DEFAULT_CITY = "Seattle"
+CITY_OPTIONS = ["Jacksonville", "Miami", "Orlando", "Tampa"]
+DEFAULT_CITY = "Jacksonville"
 DEFAULT_GRADE = "m"
 
 
@@ -81,13 +81,13 @@ def choose_questions(
             "reason": "ambiguous_location",
             "text": (
                 f"{locations[0].value} is in more than one state. "
-                "This prototype only has Seattle schools in Washington. Search Washington?"
+                "This prototype only has Florida schools. Do you mean the Florida one?"
             ),
             "options": [
-                {"id": "washington", "label": "Yes, Washington"},
+                {"id": "florida", "label": f"{locations[0].value}, Florida"},
                 {"id": "other", "label": "A different state"},
             ],
-            "default": "washington",
+            "default": "florida",
         }
     ):
         return found

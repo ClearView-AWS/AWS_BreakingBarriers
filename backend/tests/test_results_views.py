@@ -8,7 +8,7 @@ from search.geo import miles_between
 from store import _empty
 from testing_helpers import results_payload, search_turn
 
-CARE = "Elementary school in Seattle with after-school care until 6pm"
+CARE = "Elementary school in Jacksonville with after-school care until 6pm"
 NEARBY_OK = CARE + ", a nearby program is fine"
 
 
@@ -26,7 +26,7 @@ def _links(results: dict) -> list[dict]:
 
 
 def test_results_carry_the_search_center():
-    assert _results(CARE)["center"] == [47.6062, -122.3321]
+    assert _results(CARE)["center"] == [30.3322, -81.6557]
 
 
 def test_program_pins_match_confirmed_program_evidence_on_shown_cards():

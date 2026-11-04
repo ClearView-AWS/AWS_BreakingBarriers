@@ -11,9 +11,9 @@ import agent.translate as translate
 from agent.conversation import chat_turn
 from store import _empty
 
-SPANISH = "Busco una escuela primaria en Seattle con cuidado después de clases hasta las 6"
-SPANISH_EN = "I'm looking for an elementary school in Seattle with after-school care until 6pm"
-ENGLISH = "elementary school in seattle with after-school care until 6pm"
+SPANISH = "Busco una escuela primaria en Jacksonville con cuidado después de clases hasta las 6"
+SPANISH_EN = "I'm looking for an elementary school in Jacksonville with after-school care until 6pm"
+ENGLISH = "elementary school in jacksonville with after-school care until 6pm"
 
 
 class FakeTranslate:
@@ -86,9 +86,9 @@ def test_a_spanish_message_gets_a_spanish_reply_without_touching_the_facts(fake)
 
 def test_kept_names_get_their_space_back(fake):
     fake()
-    out, error = translate.from_english(["Wallingford STEM Academy is a charter."], "es", keep_names=["Wallingford STEM Academy"])
+    out, error = translate.from_english(["Arlington STEM Academy is a charter."], "es", keep_names=["Arlington STEM Academy"])
     assert error is None
-    assert out == ["Wallingford STEM Academy IS A CHARTER."]
+    assert out == ["Arlington STEM Academy IS A CHARTER."]
 
 
 def test_taps_keep_the_language_and_english_switches_back(fake):

@@ -209,7 +209,7 @@ def _citations() -> tuple[int, int]:
     with State() as state:
         response = turn(
             state,
-            {"message": "Middle school in Seattle with STEM and after-school care. Money is tight."},
+            {"message": "Middle school in Jacksonville with STEM and after-school care. Money is tight."},
         )
     for block in response.blocks:
         if block.type != "results":
@@ -249,7 +249,7 @@ def _dropped_for_missing_data() -> int:
 
     schools = load_schools()
     criteria = [
-        Criterion(id="c1", text="Seattle", kind="location", value="Seattle", strength="require"),
+        Criterion(id="c1", text="Jacksonville", kind="location", value="Jacksonville", strength="require"),
         Criterion(id="c2", text="middle", kind="grade", value="m", strength="require"),
         Criterion(id="c3", text="top school", need="high_performing", strength="require", kind="need"),
     ]

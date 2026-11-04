@@ -13,19 +13,19 @@ BY_NAME = {school["name"]: school for school in load_schools()}
 
 
 def _school(**osp) -> dict:
-    return {"id": "School test", "name": "Test Charter", "entity_type": "charter", "city": "Seattle",
+    return {"id": "School test", "name": "Test Charter", "entity_type": "charter", "city": "Jacksonville",
             "created": "2026-02-01T12:00:00-05:00", "osp": osp}
 
 
 def test_demo_schools_get_each_status():
     expected = {
-        "Arbor Heights STEM Middle": ("partial", "Lottery · apply by Jan 15 (73 days left)"),
-        "Queen Anne Preparatory Middle": ("partial", "Application · apply by Feb 1 (90 days left)"),
-        "Cascade STEM Charter": ("confirmed", "Open seats for 6th grade"),
-        "Wallingford STEM Academy": ("needs_attention", "Deadline passed Oct 1 · ask about mid-year openings"),
-        "Rainier Beach STEM Middle": ("needs_attention", "Waitlist only for 6th grade · ask about openings"),
-        "Evergreen Hill Christian Middle": ("unknown", "Ask about open seats"),
-        "Fremont STEM Middle": ("unknown", "Is this your zoned school?"),
+        "Beauclerc STEM Middle": ("partial", "Lottery · apply by Jan 15 (73 days left)"),
+        "Riverside Preparatory Middle": ("partial", "Application · apply by Feb 1 (90 days left)"),
+        "Tidewater STEM Charter": ("confirmed", "Open seats for 6th grade"),
+        "Arlington STEM Academy": ("needs_attention", "Deadline passed Oct 1 · ask about mid-year openings"),
+        "Northside STEM Middle": ("needs_attention", "Waitlist only for 6th grade · ask about openings"),
+        "Landmark Christian Middle": ("unknown", "Ask about open seats"),
+        "St. Johns STEM Middle": ("unknown", "Is this your zoned school?"),
     }
     for name, (status, line) in expected.items():
         record = getting_in(BY_NAME[name], "m", today=TODAY)
@@ -33,7 +33,7 @@ def test_demo_schools_get_each_status():
 
 
 def test_reported_counts_are_shown_as_reported_with_their_date():
-    record = getting_in(BY_NAME["Arbor Heights STEM Middle"], "m", today=TODAY)
+    record = getting_in(BY_NAME["Beauclerc STEM Middle"], "m", today=TODAY)
     assert record["detail"] == "Last year: 210 applicants for 90 sixth-grade seats"
     assert record["detail_source"] == "School-reported, Mar 2026"
     assert "[[cite:osp.applicants_last_year]]" in record["note"]
@@ -77,13 +77,11 @@ def test_every_line_has_an_official_link_and_type_defaults_by_entity():
 
 
 def test_each_school_links_the_law_that_governs_it():
-    public_lottery = getting_in(BY_NAME["Arbor Heights STEM Middle"], "m", today=TODAY)
-    charter_lottery = getting_in(BY_NAME["Wallingford STEM Academy"], "m", today=TODAY)
-    private = getting_in(BY_NAME["Queen Anne Preparatory Middle"], "m", today=TODAY)
-    # A public school's lottery runs under Seattle's school choice process; a charter
-    # lottery follows Washington's charter enrollment law.
-    assert public_lottery["how"] == "lottery" and public_lottery["official"]["url"].endswith("/school-choice/")
-    assert charter_lottery["official"]["url"].endswith("cite=28A.710.050")
+    public_lottery = getting_in(BY_NAME["Beauclerc STEM Middle"], "m", today=TODAY)
+    charter_lottery = getting_in(BY_NAME["Arlington STEM Academy"], "m", today=TODAY)
+    private = getting_in(BY_NAME["Riverside Preparatory Middle"], "m", today=TODAY)
+    assert public_lottery["how"] == "lottery" and public_lottery["official"]["url"].endswith("/1002.31")
+    assert charter_lottery["official"]["url"].endswith("/1002.33")
     assert "private-schools" in private["official"]["url"]
 
 
@@ -100,15 +98,15 @@ def test_saved_list_puts_the_soonest_open_deadline_first():
 def test_the_api_passes_the_zoned_tap_through():
     from app import TurnIn
 
-    body = TurnIn(session_id="s1", action="refresh", zoned={"school_id": "School wa-180011"})
-    assert body.model_dump()["zoned"] == {"school_id": "School wa-180011"}
+    body = TurnIn(session_id="s1", action="refresh", zoned={"school_id": "School fl-180011"})
+    assert body.model_dump()["zoned"] == {"school_id": "School fl-180011"}
 
 
 def test_zoned_tap_stores_only_the_school_id_and_never_moves_the_match():
     from testing_helpers import search_turn
 
     state = {"sessions": {}, "inbox": [], "overlays": {}}
-    first = search_turn(state, {"message": "Middle school in Seattle with STEM", "action": "new_search"})
+    first = search_turn(state, {"message": "Middle school in Jacksonville with STEM", "action": "new_search"})
     cards = next(block.payload for block in first.blocks if block.type == "results")["schools"]
     target = next(card for card in cards if card["access"]["zoned_prompt"])
     second = turn(state, {"session_id": first.session_id, "zoned": {"school_id": target["id"]}, "action": "refresh"})
