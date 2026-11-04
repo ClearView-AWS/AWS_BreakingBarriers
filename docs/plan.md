@@ -638,7 +638,7 @@ Build in this order. Each stop point is a complete demo, so if time runs out we 
 
 ## Workstreams
 
-Five tracks that can run in parallel once the contracts are agreed. With fewer people, merge A with C and B with D, and start E once M3 is done.
+Six tracks that can run in parallel once the contracts are agreed. With fewer people, merge A with C and B with D, and start E once M3 is done.
 
 | Track | Owns |
 |---|---|
@@ -647,6 +647,7 @@ Five tracks that can run in parallel once the contracts are agreed. With fewer p
 | **C · Evidence and ranking** | `needs.yaml` and evidence rules · Review and post analysis with recency · Scorer and question rules · Cost estimator · Getting in status and deadline math · When to offer the map, pin rules, distance evidence |
 | **D · Frontend** | Block renderer, chat, questions and brief · Result cards and evidence grid · Getting in line and zoned-school buttons · List / Grid / Map toggle, map view and phone layout · Saved list in deadline order · Feedback controls |
 | **E · Community** | Community pages, threads, replies, votes, need tags · Persona switcher · Seed posts · Guardrails check · Ask the school (including open seats) and ask the community, demand counts, SES digest, school answers |
+| **F · Deploy and integration** (Owner: Shubham) | Backend hosting decision (ECS Fargate) · Task IAM role for Bedrock, OpenSearch and DynamoDB · DynamoDB state for sessions, saved lists, feedback and the inbox · Frontend on S3 + CloudFront · Per-request CloudWatch log of criteria and the OpenSearch query · One-command CDK deploy in `infra/` · README |
 
 ---
 

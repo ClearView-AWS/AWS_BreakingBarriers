@@ -247,7 +247,7 @@ Only once the community and "ask the school" work is built (Track 4, task 8). Fi
 
 ## Evaluation
 
-`eval/queries.jsonl` has 42 parent queries, including "how liberal", a city name used in more than one state, Spanish, negations, and "a good school". The latest run (Nov 3, 2026) is the rules engine with Bedrock off.
+`eval/queries.jsonl` has 42 parent queries, including "how liberal", a city name used in more than one state, Spanish, negations, and "a good school". The latest run (Nov 4, 2026) is the rules engine with Bedrock off.
 
 | Check | Result | Target |
 |---|---|---|
@@ -256,10 +256,14 @@ Only once the community and "ask the school" work is built (Track 4, task 8). Fi
 | Require / prefer / avoid correct | 100% (39/39) | 85%+ |
 | Ask-or-not decision correct | 100% (39/39) | 80%+ |
 | Claims with a valid citation | 30/30 | 100%, required |
+| Getting in lines with an official link or school source | 449/449 | 100%, required |
+| Getting in lines that estimate odds or promise a seat | 0 | 0, required |
 | Schools dropped for missing data | 0 | 0, required |
 | Turn time, median | 0.03 s | under 6 s |
 
 These numbers measure the deterministic extractor and the evidence rules, not a live model. Rerun with `BEDROCK_ENABLED=1` in the sandbox to measure the Bedrock path.
+
+In the deployed stack (Nova Lite for routing and extraction, Titan embeddings, OpenSearch), the demo query took 2.9 s end to end: route 0.4 s, extract 1.2 s, OpenSearch 0.16 s with 64 hits (CloudWatch, Nov 4).
 
 ## Teardown
 
