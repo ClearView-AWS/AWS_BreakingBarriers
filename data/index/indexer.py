@@ -91,17 +91,10 @@ def main() -> None:
     if not OPENSEARCH_URL:
         print("OPENSEARCH_URL is not set; skipped the cluster.")
         return
-    import boto3
-    from opensearchpy import AWSV4SignerAuth, OpenSearch, RequestsHttpConnection
+    from search.opensearch_client import get_client
 
-    auth = AWSV4SignerAuth(boto3.Session().get_credentials(), AWS_REGION, "es")
-    client = OpenSearch(
-        hosts=[OPENSEARCH_URL],
-        http_auth=auth,
-        use_ssl=True,
-        verify_certs=True,
-        connection_class=RequestsHttpConnection,
-    )
+    get_client.cache_clear()
+    client = get_client()
     mappings = json.loads((INDEX_DIR / "mappings.json").read_text())
     for name, body in mappings.items():
         if client.indices.exists(index=name):
@@ -109,6 +102,7 @@ def main() -> None:
         client.indices.create(index=name, body=body)
     for row in rows:
         client.index(index=row["index"], id=row["id"], body=row["body"])
+    client.indices.refresh(index="schools")
     print("indexed into OpenSearch")
 
 

@@ -1,6 +1,6 @@
-"""In-memory hybrid search.
+"""Hybrid search: OpenSearch when OPENSEARCH_URL is set, otherwise in-memory.
 
-The OpenSearch DSL is still built for every turn. This engine applies the same
+The OpenSearch DSL is built for every turn. The local engine applies the same
 hard filters and uses boosts only to rank. It does not drop a school because a
 rated field is missing. Keyword and vector scores are capped so they cannot
 outrank a real need boost.
@@ -8,13 +8,17 @@ outrank a real need boost.
 
 from __future__ import annotations
 
+import logging
 import re
 
 from evidence.engine import field_meets, program_support
-from mapping.embedder import cosine, embed_hash
+from mapping.embedder import cosine, embed_hash, embed_texts
 from mapping.mapper import normalize
 from search.geo import distance_from_city
+from search.opensearch_client import opensearch_configured, search_school_ids
 from search.query import build_query
+
+log = logging.getLogger(__name__)
 
 _TOKEN = re.compile(r"[a-z0-9]+")
 _STOP = {
@@ -113,9 +117,67 @@ def search_schools(
     location, grade, and type.
     """
     readings = readings or {}
-    # Build the DSL even though the local engine applies it itself, so a bad
-    # filter shows up in tests and in logs.
-    build_query(criteria, query_text)
+    size = 100 if limit is None else max(limit, 100)
+    vector = embed_texts([query_text or " "])[0] if (query_text or "").strip() else None
+    query = build_query(criteria, query_text, size=size, vector=vector)
+
+    if opensearch_configured():
+        try:
+            remote = _search_opensearch(schools, programs, criteria, readings, query, limit)
+            if remote is not None:
+                return remote
+        except Exception as exc:
+            log.warning("OpenSearch search failed; falling back to local: %s", exc)
+
+    return _search_local(schools, programs, criteria, query_text, readings, limit)
+
+
+def _search_opensearch(
+    schools: list[dict],
+    programs: list[dict],
+    criteria: list,
+    readings: dict,
+    query: dict,
+    limit: int | None,
+) -> list[dict] | None:
+    ids = search_school_ids(query)
+    if not ids:
+        # Empty can be a real zero-hit query; still stamp distances via local path.
+        return _search_local(schools, programs, criteria, "", readings, limit)
+
+    by_id = {school["id"]: school for school in schools}
+    city = next((c.value for c in criteria if c.kind == "location"), None)
+    ranked: list[tuple[float, str, dict]] = []
+    for school_id in ids:
+        school = by_id.get(school_id)
+        if not school:
+            continue
+        # Evidence / need boosts still need the full local document.
+        if not passes_hard_filters(school, criteria):
+            continue
+        school["_distance_miles"] = distance_from_city(school, city)
+        # Re-score with the same need boosts so ranking stays consistent with cards.
+        score = 0.0
+        for criterion in criteria:
+            if criterion.kind != "need":
+                continue
+            reading = readings.get(criterion.id) or criterion.resolved_reading
+            score += _need_boost(school, programs, criterion, reading)
+        ranked.append((score, school.get("name") or "", school))
+    ranked.sort(key=lambda row: (-row[0], row[1]))
+    if limit is not None:
+        ranked = ranked[:limit]
+    return [row[2] for row in ranked]
+
+
+def _search_local(
+    schools: list[dict],
+    programs: list[dict],
+    criteria: list,
+    query_text: str,
+    readings: dict,
+    limit: int | None,
+) -> list[dict]:
     matched = []
     for school in schools:
         if not passes_hard_filters(school, criteria):

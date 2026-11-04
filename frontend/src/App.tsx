@@ -7,10 +7,12 @@ import { InboxView } from "./components/InboxView";
 import { QuestionPrompt } from "./components/QuestionPrompt";
 import { SavedView } from "./components/SavedView";
 import { SchoolResult } from "./components/SchoolResult";
+import { CommunityHome, CommunityPage, PersonaSwitcher, type CommunityTarget } from "./Community";
 import { onZonedTap } from "./GettingIn";
 import { DEMO_QUERY, type Block, type Card, type Criterion, type Turn } from "./types";
+import "./community.css";
 
-type View = "search" | "saved" | "inbox";
+type View = "search" | "saved" | "inbox" | "community";
 type ResultMode = "list" | "grid";
 
 function blockOf(blocks: Block[], type: string) {
@@ -32,6 +34,8 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<string[]>([]);
   const [resultMode, setResultMode] = useState<ResultMode>("list");
+  const [persona, setPersona] = useState("parent_a");
+  const [community, setCommunity] = useState<CommunityTarget | null>(null);
   const resultsRef = useRef<HTMLElement | null>(null);
 
   const criteria = turn?.criteria ?? [];
@@ -143,7 +147,18 @@ export function App() {
           <button type="button" aria-pressed={view === "inbox"} onClick={() => void openInbox()}>
             School inbox
           </button>
+          <button
+            type="button"
+            aria-pressed={view === "community"}
+            onClick={() => {
+              setCommunity(null);
+              setView("community");
+            }}
+          >
+            Community
+          </button>
         </nav>
+        <PersonaSwitcher value={persona} onChange={setPersona} />
       </header>
 
       <main>
@@ -371,6 +386,22 @@ export function App() {
         {view === "saved" && <SavedView saved={saved} checklist={checklist} />}
         {view === "inbox" && (
           <InboxView items={inbox} onAnswered={() => void openInbox().then(() => run({ action: "refresh" }))} />
+        )}
+        {view === "community" && !community && (
+          <CommunityHome onOpen={(schoolId) => setCommunity({ schoolId, from: "home" })} />
+        )}
+        {view === "community" && community && (
+          <CommunityPage
+            key={`${community.schoolId}-${community.draftNeed ?? ""}-${community.filterNeed ?? ""}`}
+            schoolId={community.schoolId}
+            persona={persona}
+            sessionId={sessionId}
+            draftNeed={community.draftNeed}
+            filterNeed={community.filterNeed}
+            backLabel={community.from === "results" ? "Back to results" : "All schools"}
+            onBack={() => (community.from === "results" ? setView("search") : setCommunity(null))}
+            onChanged={() => undefined}
+          />
         )}
       </main>
 
