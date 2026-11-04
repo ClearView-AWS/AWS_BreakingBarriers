@@ -88,7 +88,9 @@ def test_a_website_that_disagrees_with_the_profile_is_flagged():
 
 
 def test_a_program_with_only_past_sessions_does_not_count():
-    record = evaluate_criterion(BY_NAME["Northside STEM Middle"], _care("nearby_ok"), programs=load_programs())
+    # Marlin Springs' only after-care program within the 1-mile radius has past sessions only.
+    # (The generator's Northside STEM Middle case sits 1.11 miles from its program, so it is out of range.)
+    record = evaluate_criterion(BY_NAME["Marlin Springs School"], _care("nearby_ok"), programs=load_programs())
     assert record.status == "unknown"
     assert "past" in record.note
 

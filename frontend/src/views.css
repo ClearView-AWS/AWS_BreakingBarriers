@@ -1,0 +1,54 @@
+/* List / Map / Compare. Tabs, map, pins, legend and pin card come from Gagan's Track 3 views (commit 703938b). */
+.results-views { margin-top: 8px; }
+.view-tabs {
+  display: inline-flex; gap: 4px; padding: 4px; margin: 6px 0 4px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+}
+.view-tabs button { border: 0; background: transparent; border-radius: 999px; padding: 7px 16px; color: var(--ink); }
+.view-tabs button[aria-selected="true"] { background: var(--teal); color: #fff; }
+.map-hint { color: var(--muted); margin: 8px 2px; }
+.map-hint .texty { padding: 4px 10px; color: var(--teal-dark); }
+.map-view { display: grid; gap: 10px; margin-top: 12px; }
+.map-view > .meta { margin: 0; }
+.map-box {
+  height: 440px; border-radius: 18px; border: 1px solid var(--line); overflow: hidden;
+  background: #e8e4da; z-index: 0;
+}
+.pin-wrap { background: none; border: 0; }
+.pin {
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  color: #fff; font-weight: 700; font-size: 14px; border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+.pin.hollow { background: #fff; border-width: 3px; border-style: solid; color: var(--ink); }
+.pin-you span {
+  display: inline-block; white-space: nowrap; background: var(--ink); color: #fff;
+  border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 640;
+}
+.map-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; list-style: none; padding: 0; margin: 0; color: var(--muted); font-size: 13px; }
+.map-legend .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: -1px; margin-right: 4px; }
+.map-legend .dot.hollow { border: 2px solid var(--attention); background: #fff; }
+.pin-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+  box-shadow: var(--shadow); padding: 14px 16px;
+}
+.pin-card header { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+.pin-card h3 { margin: 0; font-family: Fraunces, Georgia, serif; font-size: 20px; }
+.pin-card .meta { margin: 4px 0 8px; }
+.pin-evidence { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+
+@media (max-width: 720px) {
+  .map-box { height: 360px; }
+  .view-tabs { display: flex; }
+  .view-tabs button { flex: 1; }
+}
+
+/* Nearby programs on the map */
+.pin-program {
+  display: grid; place-items: center; width: 22px; height: 22px;
+  color: var(--teal-dark); font-size: 20px; line-height: 1;
+  text-shadow: 0 0 2px #fff, 0 0 4px #fff;
+}
+.program-link { stroke: var(--teal-dark); stroke-width: 2; stroke-dasharray: 4 6; fill: none; }
+.legend-program { color: var(--teal-dark); margin-right: 4px; }
+.pin-program-line { color: var(--teal-dark); }

@@ -3,27 +3,12 @@
 // clarifying question as buttons, and detail, compare, cost, why-not and
 // definitions inline.
 import { useEffect, useMemo, useState } from "react";
-import type { Block, Card, Criterion, Evidence, Turn } from "./types";
+import type { Block, Card, Criterion, Evidence, ProgramPin, Turn } from "./types";
 import { GettingInDetail, GettingInLine, type Access } from "./GettingIn";
 import type { CommunityTarget } from "./Community";
+import { SOURCE_LABEL, STATUS_LABEL, STATUS_MARK, nameOf } from "./labels";
+import { MapView, ViewToggle, type ResultsView } from "./Views";
 
-export const STATUS_LABEL: Record<string, string> = {
-  confirmed: "Confirmed",
-  partial: "Partial",
-  needs_attention: "Needs attention",
-  unknown: "Unknown",
-};
-const STATUS_MARK: Record<string, string> = { confirmed: "✓", partial: "~", needs_attention: "!", unknown: "?" };
-const SOURCE_LABEL: Record<string, string> = {
-  state_data: "State data",
-  school_reported: "School-reported",
-  school_website: "School website",
-  parent_reviews: "Parent reviews",
-  community: "Parents say",
-  program: "Nearby program",
-  funding_rule: "Scholarship rule",
-  computed: "Computed from the school's location",
-};
 const LEVEL: Record<string, string> = { p: "Pre-K", e: "Elementary", m: "Middle", h: "High" };
 const SHOWN_FIRST = 3;
 
@@ -37,6 +22,9 @@ export type Actions = {
   setPicked: (next: Picked[]) => void;
   /** Open a school's community page in the Community tab. */
   openCommunity?: (target: CommunityTarget) => void;
+  /** List or Map for the results on screen. Starts as List and sticks for the session. */
+  resultsView: ResultsView;
+  setResultsView: (view: ResultsView) => void;
 };
 
 export function blockOf(blocks: Block[], type: string) {
@@ -84,10 +72,11 @@ function AgentBlock({ block, turn, latest, current, actions }: { block: Block; t
       // Chips name a school and an action ("Open the full profile"), so they still work later.
       return <Chips items={(payload.items as ChatChip[]) ?? []} disabled={actions.busy} onAction={actions.send} />;
     case "results":
-      return <Results payload={payload} criteria={turn.criteria} current={current} actions={actions} grid={blockOf(turn.blocks, "evidence_grid")} />;
+      return <Results payload={payload} criteria={turn.criteria} current={current} actions={actions} />;
     case "evidence_grid":
-      // A search shows its grid under "Show all"; compare shows it right away.
-      return turn.blocks.some((other) => other.type === "results") ? null : <Grid payload={payload} />;
+      // The grid only repeats the cards' statuses. A search shows its list and map; a compare
+      // shows where the schools differ (the comparison block).
+      return null;
     case "why_not": {
       const why = payload as { school_name?: string; text?: string; change?: string };
       return (
@@ -113,7 +102,7 @@ function AgentBlock({ block, turn, latest, current, actions }: { block: Block; t
     case "school_detail":
       return <SchoolDetail payload={payload as unknown as DetailPayload} />;
     case "comparison":
-      return <Comparison schools={(payload.schools as Card[]) ?? []} />;
+      return <Comparison schools={(payload.schools as Card[]) ?? []} criteria={turn.criteria} />;
     default:
       // criteria (the bar above the input), answer (data behind a cited reply), checklist (Saved tab).
       return null;
@@ -157,11 +146,6 @@ function Question({ payload, disabled, onPick }: { payload: Record<string, unkno
   );
 }
 
-/** The filter's name ("STEM-focused"), falling back to the parent's words for anything that maps to no filter. */
-function nameOf(item: Pick<Criterion, "text" | "label">): string {
-  return item.label || item.text;
-}
-
 export function ChipRow({ criteria, disabled, onChange }: { criteria: Criterion[]; disabled: boolean; onChange: (next: Criterion[]) => void }) {
   const cycle: Record<string, Criterion["strength"]> = { require: "prefer", prefer: "avoid", avoid: "require" };
   return (
@@ -195,17 +179,17 @@ function Results({
   criteria,
   current,
   actions,
-  grid,
 }: {
   payload: Record<string, unknown>;
   criteria: Criterion[];
   current: boolean;
   actions: Actions;
-  grid: Record<string, unknown> | null;
 }) {
   const schools = (payload.schools as Card[]) ?? [];
   const gaps = (payload.gaps as Card[]) ?? [];
   const missed = (payload.missed as Card[]) ?? [];
+  const center = (payload.center as [number, number] | null) ?? null;
+  const programs = (payload.programs as ProgramPin[]) ?? [];
   const total = schools.length + gaps.length + missed.length;
   const [open, setOpen] = useState(current);
   const [all, setAll] = useState(false);
@@ -228,7 +212,7 @@ function Results({
   const card = (item: Card, number?: number) => (
     <SchoolCard key={item.id} card={item} number={number} criteria={criteria} actions={actions} />
   );
-  return (
+  const list = (
     <div className="results">
       {!current && (
         <button type="button" className="texty results-fold" onClick={() => setOpen(false)}>
@@ -248,13 +232,22 @@ function Results({
           <div className="cards">{missed.map((item) => card(item))}</div>
         </>
       )}
-      {all && grid && <Grid payload={grid} />}
       {rest > 0 && (
         <button type="button" className="texty results-more" onClick={() => setAll((value) => !value)}>
           {all ? "Show fewer" : `Show all ${total}` + describeRest(Math.max(hidden, 0), gaps.length, missed.length)}
         </button>
       )}
     </div>
+  );
+  // Earlier results the parent reopened stay a plain list; the views belong to the list on screen now.
+  if (!current) return list;
+  return (
+    <ViewToggle view={actions.resultsView} onChange={actions.setResultsView} cards={[...schools, ...gaps]} criteria={criteria}>
+      {{
+        list,
+        map: <MapView schools={schools} gaps={gaps} missed={missed} criteria={criteria} center={center} programs={programs} actions={actions} />,
+      }}
+    </ViewToggle>
   );
 }
 
@@ -437,45 +430,6 @@ function EvidenceRow({ row, label, onAsk, onAskParents }: { row: Evidence; label
 
 // --- inline answers ----------------------------------------------------------
 
-function Grid({ payload }: { payload: Record<string, unknown> }) {
-  const schools = (payload.schools as { id: string; name: string }[]) ?? [];
-  const criteria = (payload.criteria as Pick<Criterion, "id" | "text" | "label">[]) ?? [];
-  const cells = (payload.cells as Record<string, Record<string, Evidence | null>>) ?? {};
-  if (!schools.length) return null;
-  return (
-    <div className="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>School</th>
-            {criteria.map((column) => <th key={column.id}>{nameOf(column)}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {schools.map((school) => (
-            <tr key={school.id}>
-              <th>{school.name}</th>
-              {criteria.map((column) => {
-                const cell = cells[school.id]?.[column.id];
-                return (
-                  <td key={column.id}>
-                    {cell ? (
-                      <>
-                        <span className={`pill ${cell.status}`}>{STATUS_LABEL[cell.status]}</span>
-                        <div className="source">{cell.source ? `${SOURCE_LABEL[cell.source.type] ?? cell.source.type}${cell.source.as_of ? ` · ${cell.source.as_of}` : ""}` : ""}</div>
-                      </>
-                    ) : "—"}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 function Cost({ schools }: { schools: Record<string, unknown>[] }) {
   return (
     <div className="inline-panel">
@@ -534,15 +488,107 @@ function SchoolDetail({ payload }: { payload: DetailPayload }) {
   );
 }
 
-function Comparison({ schools }: { schools: Card[] }) {
+// --- compare: where two schools differ ----------------------------------------
+
+type CompareCell = { text: string; status?: string; source?: string };
+type CompareRow = { label: string; cells: CompareCell[] };
+
+/** "18:00" -> "6:00 PM"; null for anything that isn't a clock time. */
+function clockText(value: string): string | null {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(value);
+  if (!match) return null;
+  const hour = Number(match[1]);
+  return `${hour % 12 || 12}:${match[2]} ${hour < 12 ? "AM" : "PM"}`;
+}
+
+/** What the evidence actually says, so "Confirmed" and "Confirmed" can still differ. */
+function evidenceCell(row: Evidence | undefined): CompareCell {
+  if (!row || row.status === "unknown") return { text: "Not on file", status: "unknown" };
+  const value = row.value == null ? "" : String(row.value);
+  const time = clockText(value);
+  const text =
+    row.source?.type === "program" ? `Nearby program: ${value}` : time ? `Until ${time}` : value || (STATUS_LABEL[row.status] ?? row.status);
+  const source = row.source ? `${SOURCE_LABEL[row.source.type] ?? row.source.type}${row.source.as_of ? ` · ${row.source.as_of}` : ""}` : undefined;
+  return { text, status: row.status, source };
+}
+
+function compareRows(schools: Card[], criteria: Criterion[]): CompareRow[] {
+  const rows: CompareRow[] = [
+    { label: "Match", cells: schools.map((s) => ({ text: s.match == null ? "—" : `${Math.round(s.match * 100)}% · verified ${s.verified}` })) },
+  ];
+  for (const criterion of criteria) {
+    if (!((criterion.kind === "need" && criterion.need) || criterion.kind === "distance")) continue;
+    rows.push({
+      label: nameOf(criterion),
+      cells: schools.map((s) => evidenceCell(s.evidence.find((row) => row.criterion_id === criterion.id))),
+    });
+  }
+  // How and by when, in one line, so two lotteries with different deadlines still differ.
+  const gettingIn = (s: Card) => {
+    const access = (s as Card & { access?: Access }).access;
+    if (!access) return "—";
+    return access.line.startsWith(access.how_label) ? access.line : `${access.how_label} · ${access.line}`;
+  };
+  rows.push(
+    { label: "Getting in", cells: schools.map((s) => ({ text: gettingIn(s) })) },
+    { label: "Distance", cells: schools.map((s) => ({ text: s.distance_miles != null ? `${s.distance_miles} miles from the city center` : "—" })) },
+    { label: "Type", cells: schools.map((s) => ({ text: s.entity_type ? s.entity_type[0].toUpperCase() + s.entity_type.slice(1) : "—" })) },
+  );
+  if (schools.some((s) => s.tuition != null)) {
+    rows.push({ label: "Listed tuition", cells: schools.map((s) => ({ text: s.tuition != null ? `$${Number(s.tuition).toLocaleString()} a year` : "None listed" })) });
+  }
+  rows.push({
+    label: "Parent community",
+    cells: schools.map((s) => {
+      const info = s.community;
+      if (!info?.threads) return { text: "No threads yet" };
+      const topics = info.discussed.map((row) => row.label).join(", ");
+      return { text: `${info.threads} thread${info.threads === 1 ? "" : "s"}${topics ? ` (${topics})` : ""}` };
+    }),
+  });
+  return rows.filter((row) => row.cells.some((cell) => cell.text !== "—"));
+}
+
+/** Two schools side by side, leading with what differs. Rows that read the same fold into one line. */
+function Comparison({ schools, criteria }: { schools: Card[]; criteria: Criterion[] }) {
+  if (schools.length < 2) return null;
+  const rows = compareRows(schools, criteria);
+  const key = (cell: CompareCell) => `${cell.status ?? ""}|${cell.text}`;
+  const differ = rows.filter((row) => new Set(row.cells.map(key)).size > 1);
+  const same = rows.filter((row) => new Set(row.cells.map(key)).size === 1);
   return (
     <div className="comparison">
-      {schools.map((school) => (
-        <article key={school.id} className="card compact">
-          <h3>{school.name}</h3>
-          <p className="summary">{school.summary}</p>
-        </article>
-      ))}
+      <h4>{differ.length ? "Where they differ" : "They match on everything on file"}</h4>
+      {differ.length > 0 && (
+        <div className="table-wrap">
+          <table className="side-by-side">
+            <thead>
+              <tr>
+                <th />
+                {schools.map((school) => <th key={school.id} scope="col">{school.name}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {differ.map((row) => (
+                <tr key={row.label}>
+                  <th scope="row">{row.label}</th>
+                  {row.cells.map((cell, index) => (
+                    <td key={index}>
+                      {cell.status && <span className={`pill ${cell.status}`}>{STATUS_MARK[cell.status]}</span>} {cell.text}
+                      {cell.source && <div className="source">{cell.source}</div>}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {same.length > 0 && (
+        <p className="meta">
+          Same for both: {same.map((row) => `${row.label} (${row.cells[0].text})`).join(" · ")}
+        </p>
+      )}
     </div>
   );
 }

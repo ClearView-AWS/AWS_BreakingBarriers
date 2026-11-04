@@ -101,7 +101,15 @@ button.pill { border: 0; cursor: pointer; font: inherit; font-size: 13px; font-w
   padding: 8px 12px;
   color: var(--muted, #5d6876);
 }
-.comparison { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+/* Compare: two schools side by side, differences first */
+.comparison { display: grid; gap: 8px; }
+.comparison h4 { margin: 0; }
+.comparison > .meta { margin: 0; }
+.comparison .table-wrap { margin-top: 0; }
+.side-by-side { min-width: 0; table-layout: fixed; }
+.side-by-side thead th:first-child { width: 28%; }
+.side-by-side td, .side-by-side th { vertical-align: top; overflow-wrap: anywhere; }
+.side-by-side .pill { margin-right: 4px; }
 
 /* The composer: what you're searching for, the compare tray, and the input. */
 .composer {

@@ -4,6 +4,7 @@ import { SavedDeadline, onZonedTap, type Access } from "./GettingIn";
 import { Chat, newTapLine, type Entry, type HistoryEntry } from "./Chat";
 import type { Actions, Picked } from "./blocks";
 import { CommunityHome, CommunityPage, PersonaSwitcher, type CommunityTarget } from "./Community";
+import type { ResultsView } from "./Views";
 
 type View = "search" | "saved" | "community";
 type ChatTurn = Turn & { history?: HistoryEntry[] };
@@ -25,6 +26,8 @@ export function App() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<Picked[]>([]);
+  // Results open as a list; once the parent picks Map or Compare, it sticks for the session.
+  const [resultsView, setResultsView] = useState<ResultsView>("list");
   const [saved, setSaved] = useState<{ id: string; name: string; city?: string }[]>([]);
   const [checklist, setChecklist] = useState<{ school_name: string; question: string }[]>([]);
   // The persona switcher stands in for logins: Parent A, Parent B or School staff.
@@ -78,7 +81,7 @@ export function App() {
     communityChanged.current = false;
   }
 
-  const actions: Actions = { send: (body) => void send(body), busy, picked, setPicked, openCommunity };
+  const actions: Actions = { send: (body) => void send(body), busy, picked, setPicked, openCommunity, resultsView, setResultsView };
 
   async function refreshSaved(nextSession = sessionId) {
     if (!nextSession) return;

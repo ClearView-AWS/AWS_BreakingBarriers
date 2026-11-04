@@ -22,7 +22,7 @@ from gaps.ses_mailer import send_school_question
 from mapping.mapper import normalize
 from search.corpus import known_cities, load_programs, load_schools
 from search.engine import search_schools
-from search.geo import distance_from_city
+from search.geo import CITY_CENTROIDS, distance_from_city, miles_between
 
 _LEVELS = {"p": "pre-k", "e": "elementary", "m": "middle", "h": "high"}
 
@@ -396,6 +396,8 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
     ]
     if question:
         blocks.append(Block(type="question", payload=question))
+    city = next((c for c in criteria if c.kind == "location"), None)
+    centroid = CITY_CENTROIDS.get(str(city.value or city.text).casefold()) if city else None
     blocks.append(
         Block(
             type="results",
@@ -404,6 +406,9 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
                 "missed": missed,
                 "gaps": gaps,
                 "matched_count": len(scored_rows),
+                # The searched city's center, for the map's "Search area" marker. Never a home address.
+                "center": list(centroid) if centroid else None,
+                "programs": _program_pins(main + gaps + missed, programs),
             },
         )
     )
@@ -417,6 +422,40 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
         blocks=blocks,
         assumption=assumption,
     )
+
+
+def _program_pins(cards: list[dict], programs: list[dict]) -> list[dict]:
+    """Nearby programs to pin on the map: only ones that fill a criterion on a shown card.
+
+    A program counts only when the evidence engine confirmed it (a live program the parent
+    accepted, within PROGRAM_RADIUS_MILES), so the map never shows a program the cards don't.
+    """
+    by_id = {str(program.get("id")): program for program in programs}
+    pins: dict[str, dict] = {}
+    for card in cards:
+        if card.get("lat") is None or card.get("lon") is None:
+            continue
+        for row in card["evidence"]:
+            source = row.get("source") or {}
+            path = str(source.get("path") or "")
+            if source.get("type") != "program" or row["status"] != "confirmed" or not path.startswith("programs/"):
+                continue
+            program = by_id.get(path.split("/", 1)[1])
+            if not program or program.get("_lat") is None:
+                continue
+            point = (program["_lat"], program["_lon"])
+            pin = pins.setdefault(
+                path,
+                {"id": str(program["id"]), "name": program.get("name"), "lat": point[0], "lon": point[1], "links": []},
+            )
+            pin["links"].append(
+                {
+                    "school_id": card["id"],
+                    "criterion_id": row["criterion_id"],
+                    "miles": round(miles_between((card["lat"], card["lon"]), point), 1),
+                }
+            )
+    return list(pins.values())
 
 
 def _grid(cards: list[dict], criteria: list[Criterion]) -> dict:
