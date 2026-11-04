@@ -2,7 +2,10 @@
 
 A guided school-search agent for an empty AWS sandbox. The parent writes in plain language. Code decides what is true. Every fact on a card cites the field or review it came from.
 
-This build runs locally through the demo script (milestones M1–M4). Bedrock, OpenSearch, SES, and DynamoDB stay behind flags so the same code can move into the sandbox later. The demo city is Jacksonville. The clock the age rules use is 2026-11-03 (`GS_TODAY`).
+**Live demo:** [https://dvpvz48phigre.cloudfront.net](https://dvpvz48phigre.cloudfront.net)  
+(CloudFront + Fargate, deployed from `main`. Bedrock and OpenSearch are off unless re-enabled.)
+
+This build also runs locally. Bedrock, OpenSearch, SES, and DynamoDB stay behind flags. The demo city is Jacksonville. The clock the age rules use is 2026-11-03 (`GS_TODAY`).
 
 ## How to run
 
@@ -18,11 +21,17 @@ cd backend && ../.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 800
 cd frontend && npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-Open http://127.0.0.1:5173. The demo query is:
+Open the live demo above, or http://127.0.0.1:5173 locally. The demo query is:
 
 > Middle school in Jacksonville with STEM and after-school care. Money is tight.
 
-Then: answer the care question, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
+Then: answer or skip the brief questions, approve the brief, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
+
+Redeploy the hosted demo from `main`:
+
+```bash
+SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
+```
 
 ```bash
 .venv/bin/python -m pytest backend/tests -q
@@ -36,7 +45,7 @@ Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25
 - Hard filters are location, grade, and school type. Every other criterion is scored, so a missing field never drops a school.
 - Match score and evidence coverage are separate. Unknown scores 0.5. A high-confidence miss on a required criterion moves the school into "Missed a must-have" and keeps it on screen.
 - Reviews can support a criterion. They never confirm one. A school website can fill a gap only up to Partial, and a conflict stays visible.
-- The agent asks at most one question per turn, and only when the answer would change the top results, a required fact is unknown for many of them, or the phrase does not map to a need. Results show in the same turn, with the assumption stated.
+- Before the first search, the agent asks up to three skippable questions and shows a brief. Search runs after the parent approves or taps "Just show me results" (defaults apply). After that, refining asks at most one question.
 - Scholarship lines say "You may qualify" and link the Florida Department of Education page. The screen does not promise an award amount. Net price stays empty.
 - School email addresses are on `example.org`. SES sends only when `SES_ENABLED=1`, and only to `SES_VERIFIED_TO`.
 

@@ -19,7 +19,7 @@
 
 | 항목 | 값 |
 |---|---|
-| **CloudFront URL** | https://dvpvz48phigre.cloudfront.net |
+| **CloudFront URL** | https://dvpvz48phigre.cloudfront.net (redeployed from `main` after PR #18) |
 | ALB (직접) | `http://GsAppS-ApiLB-mkXviaySO4Qm-551537671.us-east-1.elb.amazonaws.com` |
 | 스택 | `GsAppStack` (`us-east-1`) |
 | Bedrock | **꺼짐** (`BedrockEnabled=0`) |

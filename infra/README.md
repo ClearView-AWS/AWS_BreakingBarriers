@@ -28,6 +28,7 @@ SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
 ```
 
 Outputs include `CloudFrontURL` — that is the parent-facing link (no IP).
+Current demo: https://dvpvz48phigre.cloudfront.net
 
 Turn Bedrock on after model access is approved:
 
