@@ -1,4 +1,4 @@
-// List / Grid / Map for the results on screen. Ported from Gagan's Track 3 views
+// List / Map for the results on screen. Ported from Gagan's Track 3 views
 // (feature/community, commit 703938b) into the chat: the toggle sits on the latest results.
 // Results always open as a list. The app can suggest the map, but only the parent switches.
 // Comparing two schools happens in the chat (compare tray or "compare #1 and #2").
@@ -7,13 +7,14 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./views.css";
 import type { Actions } from "./blocks";
-import { nameOf, sourceLabel, statusLabel } from "./labels";
+import { nameOf, statusLabel } from "./labels";
 import { t, tn, uiLanguage } from "./i18n";
-import type { Card, Criterion, Evidence, ProgramPin } from "./types";
+import type { Card, Criterion, ProgramPin } from "./types";
 
-export type ResultsView = "list" | "grid" | "map";
+export type ResultsView = "list" | "map";
 
 const SUGGEST_MAP_MILES = 10;
+const MAP_LIMIT = 5;
 
 function milesBetween(a: [number, number], b: [number, number]) {
   const rad = Math.PI / 180;
@@ -49,7 +50,6 @@ export function ViewToggle(props: {
   const suggestMap = props.view !== "map" && props.cards.length > 1 && (aboutPlace || spread > SUGGEST_MAP_MILES);
   const tabs: [ResultsView, string][] = [
     ["list", t("views.list")],
-    ["grid", t("views.grid")],
     ["map", t("views.map")],
   ];
 
@@ -88,83 +88,7 @@ const escapeHtml = (text: string) =>
   text.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch] as string);
 
 type Placed = { card: Card; rank: number | null; hollow: boolean };
-
-type GridSchool = { id: string; name: string };
-type GridCriterion = { id: string; text: string };
-
-/** Schools × criteria with a source on every filled cell (plan M3 Grid). */
-export function GridView(props: {
-  schools: GridSchool[];
-  criteria: GridCriterion[];
-  cells: Record<string, Record<string, Evidence | null | undefined>>;
-}) {
-  if (!props.schools.length || !props.criteria.length) {
-    return <p className="meta">{t("views.grid_empty")}</p>;
-  }
-  return (
-    <section className="grid-view" aria-label={t("views.grid")}>
-      <p className="meta">{t("views.grid_blurb")}</p>
-      <div className="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">{t("views.grid_school")}</th>
-              {props.criteria.map((column) => (
-                <th key={column.id} scope="col">
-                  {column.text}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {props.schools.map((school) => (
-              <tr key={school.id}>
-                <th scope="row">{school.name}</th>
-                {props.criteria.map((column) => {
-                  const cell = props.cells[school.id]?.[column.id];
-                  return (
-                    <td key={column.id}>
-                      {cell ? (
-                        <>
-                          <span className={`pill ${cell.status}`}>{statusLabel(cell.status)}</span>
-                          {cell.source && (
-                            <p className="cite">
-                              {sourceLabel(cell.source.type)}
-                              {cell.source.as_of ? ` · ${cell.source.as_of}` : ""}
-                            </p>
-                          )}
-                        </>
-                      ) : (
-                        "—"
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
-/** Build a grid from result cards when the turn has no evidence_grid block. */
-export function gridFromCards(cards: Card[], criteria: Criterion[]) {
-  const columns = criteria.filter((item) => item.kind === "need" || item.kind === "budget");
-  const cells: Record<string, Record<string, Evidence | null>> = {};
-  for (const card of cards) {
-    cells[card.id] = {};
-    for (const column of columns) {
-      cells[card.id][column.id] = card.evidence.find((row) => row.criterion_id === column.id) ?? null;
-    }
-  }
-  return {
-    schools: cards.map((card) => ({ id: card.id, name: card.name })),
-    criteria: columns.map((item) => ({ id: item.id, text: nameOf(item) })),
-    cells,
-  };
-}
+type Zone = { school_id: string; kind: "demo_area" | "open" | "choice"; polygon: [number, number][] | null; locator_url: string | null };
 
 export function MapView(props: {
   schools: Card[];
@@ -178,6 +102,8 @@ export function MapView(props: {
   const box = useRef<HTMLDivElement | null>(null);
   const map = useRef<L.Map | null>(null);
   const layer = useRef<L.LayerGroup | null>(null);
+  const zoneLayer = useRef<L.LayerGroup | null>(null);
+  const [zones, setZones] = useState<Map<string, Zone>>(new Map());
   const youMarker = useRef<L.Marker | null>(null);
   const draftCenter = useRef<[number, number] | null>(props.center);
   const [selected, setSelected] = useState<string | null>(null);
@@ -187,15 +113,18 @@ export function MapView(props: {
     draftCenter.current = props.center;
   }, [props.center]);
 
-  // Numbers match the list. "Missing a fact" schools are plain pins; missed must-haves are hollow.
+  // Only the top MAP_LIMIT schools go on the map, numbered as in the list.
   const ranked = useMemo<Placed[]>(
-    () => [
-      ...props.schools.map((card, index) => ({ card, rank: index + 1, hollow: false })),
-      ...props.gaps.map((card) => ({ card, rank: null, hollow: false })),
-      ...props.missed.map((card) => ({ card, rank: null, hollow: true })),
-    ],
-    [props.schools, props.gaps, props.missed],
+    () => props.schools.slice(0, MAP_LIMIT).map((card, index) => ({ card, rank: index + 1, hollow: false })),
+    [props.schools],
   );
+  // Nearby programs only for the schools on the map.
+  const programs = useMemo(() => {
+    const shown = new Set(ranked.map((row) => row.card.id));
+    return props.programs
+      .map((program) => ({ ...program, links: program.links.filter((link) => shown.has(link.school_id)) }))
+      .filter((program) => program.links.length > 0);
+  }, [props.programs, ranked]);
   const placed = ranked.filter((row) => pointOf(row.card));
   const unplaced = ranked.length - placed.length;
   const labels = useMemo(() => new Map(props.criteria.map((item) => [item.id, nameOf(item)])), [props.criteria]);
@@ -208,6 +137,7 @@ export function MapView(props: {
       maxZoom: 18,
       attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map.current);
+    zoneLayer.current = L.layerGroup().addTo(map.current);
     layer.current = L.layerGroup().addTo(map.current);
     return () => {
       map.current?.remove();
@@ -244,7 +174,7 @@ export function MapView(props: {
       bounds.push(you);
     }
     // Programs first, so school pins sit on top of the dashed lines.
-    for (const program of props.programs) {
+    for (const program of programs) {
       const point: [number, number] = [program.lat, program.lon];
       const fills = program.links
         .map((link) => {
@@ -289,7 +219,34 @@ export function MapView(props: {
     else if (bounds.length === 1) current.setView(bounds[0], 12);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     // uiLanguage(): rebuild the pins' titles and tooltips when the UI language changes.
-  }, [props.schools, props.gaps, props.missed, props.center, props.programs, uiLanguage()]);
+  }, [ranked, props.center, programs, uiLanguage()]);
+
+  // Demo attendance areas come from the backend (search/zones.py); the data has no real boundaries.
+  const zoneIds = placed.map((row) => row.card.id).join(",");
+  useEffect(() => {
+    if (!zoneIds) return;
+    let live = true;
+    fetch(`/api/zones?ids=${encodeURIComponent(zoneIds)}`)
+      .then((response) => (response.ok ? response.json() : { zones: [] }))
+      .then((data: { zones: Zone[] }) => live && setZones(new Map(data.zones.map((zone) => [zone.school_id, zone]))))
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [zoneIds]);
+
+  useEffect(() => {
+    const group = zoneLayer.current;
+    if (!group) return;
+    group.clearLayers();
+    for (const row of placed) {
+      const zone = zones.get(row.card.id);
+      if (!zone?.polygon) continue;
+      const on = row.card.id === selected;
+      L.polygon(zone.polygon, { className: on ? "zone is-on" : "zone", interactive: false }).addTo(group);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zones, selected, zoneIds]);
 
   useEffect(() => {
     // The map can be created before the chat lays it out; recompute its size once it has one.
@@ -298,8 +255,9 @@ export function MapView(props: {
   }, []);
 
   const chosen = selected ? byId.get(selected) ?? null : null;
+  const chosenZone = chosen ? zones.get(chosen.card.id) ?? null : null;
   const chosenPrograms = chosen
-    ? props.programs.flatMap((program) =>
+    ? programs.flatMap((program) =>
         program.links.filter((link) => link.school_id === chosen.card.id).map((link) => ({ program, link })),
       )
     : [];
@@ -335,7 +293,7 @@ export function MapView(props: {
     <div className="map-view">
       <p className="meta">
         {tn("views.on_map", placed.length)} {t("views.numbers")}
-        {props.programs.length > 0 ? ` ${t("views.programs_note")}` : ""}
+        {programs.length > 0 ? ` ${t("views.programs_note")}` : ""}
         {unplaced > 0 ? ` ${tn("views.unplaced", unplaced)}` : ""}
       </p>
       <div className="map-toolbar">
@@ -361,8 +319,8 @@ export function MapView(props: {
         <li><span className="dot" style={{ background: "var(--confirmed)" }} /> {t("views.legend_high")}</li>
         <li><span className="dot" style={{ background: "var(--partial)" }} /> {t("views.legend_mid")}</li>
         <li><span className="dot" style={{ background: "var(--attention)" }} /> {t("views.legend_low")}</li>
-        <li><span className="dot hollow" /> {t("views.legend_missed")}</li>
-        {props.programs.length > 0 && <li><span className="legend-program">◆</span> {t("views.legend_program")}</li>}
+        {programs.length > 0 && <li><span className="legend-program">◆</span> {t("views.legend_program")}</li>}
+        {[...zones.values()].some((zone) => zone.polygon) && <li><span className="legend-zone" /> {t("views.legend_zone")}</li>}
       </ul>
       {chosen && (
         <article className="pin-card" aria-live="polite" data-school-id={chosen.card.id}>
@@ -378,6 +336,17 @@ export function MapView(props: {
             {chosen.card.distance_miles != null ? ` · ${t("blocks.miles", { n: chosen.card.distance_miles })}` : ""}
             {chosen.hollow ? ` · ${t("views.pin_missed")}` : ""}
           </p>
+          {chosenZone && (
+            <p className="pin-zone">
+              {t(chosenZone.kind === "demo_area" ? "views.zone_demo" : chosenZone.kind === "open" ? "views.zone_open" : "views.zone_choice")}
+              {chosenZone.kind === "demo_area" && chosenZone.locator_url && (
+                <>
+                  {" "}
+                  <a href={chosenZone.locator_url} target="_blank" rel="noreferrer">{t("views.zone_find")} ↗</a>
+                </>
+              )}
+            </p>
+          )}
           <ul className="pin-evidence">
             {chosen.card.evidence.map((row) => (
               <li key={row.criterion_id}>

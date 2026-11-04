@@ -309,6 +309,9 @@ def _named(text: str, schools: list[dict], prefer: list[str]) -> list[dict]:
         distinctive = [w for w in normalize(school.get("name") or "").split() if w not in _GENERIC and len(w) > 3]
         if distinctive and all(_phrase_in(text, w) for w in distinctive[:2]):
             found.append(school)
+    # "Arbor Heights" names Arbor Heights STEM Middle, not every school whose only long word is "Heights".
+    widest = max((min(2, len([w for w in normalize(s.get("name") or "").split() if w not in _GENERIC and len(w) > 3])) for s in found), default=0)
+    found = [s for s in found if min(2, len([w for w in normalize(s.get("name") or "").split() if w not in _GENERIC and len(w) > 3])) == widest]
     # A distinctive word shared by several schools ("Cedar") doesn't identify one; keep the shown one if any.
     shown = [s for s in found if s["id"] in prefer]
     return (shown or found)[:2] if len(found) > 1 else found

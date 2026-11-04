@@ -11,6 +11,12 @@ data/runtime/
 data/index/documents.jsonl
 *.log
 .DS_Store
+__pycache__/
+.pytest_cache/
+.venv/
+node_modules/
+frontend/dist/
+data/runtime/
 .env
 .env.*
 !.env.example

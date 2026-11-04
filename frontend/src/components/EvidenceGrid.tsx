@@ -29,12 +29,12 @@ export function EvidenceGrid({ payload }: Props) {
           </thead>
           <tbody>
             {schools.map((school) => (
-              <tr key={school.id}>
+              <tr key={school.id} data-school-id={school.id}>
                 <th scope="row">{school.name}</th>
                 {criteria.map((column) => {
                   const cell = cells[school.id]?.[column.id];
                   return (
-                    <td key={column.id}>
+                    <td key={column.id} data-criterion-id={column.id}>
                       {cell ? (
                         <>
                           <span className={`pill ${cell.status}`}>{STATUS_LABEL[cell.status]}</span>

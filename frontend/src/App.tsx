@@ -1,4 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { HighlightAssistant } from "./Assistant";
+import { FaqWidget } from "./Faq";
 import type { Turn } from "./types";
 import { SavedDeadline, onZonedTap, type Access } from "./GettingIn";
 import { Chat, newTapLine, type Entry, type HistoryEntry } from "./Chat";
@@ -24,6 +26,16 @@ async function postChat(body: Record<string, unknown>): Promise<ChatTurn> {
 export function App() {
   const [view, setView] = useState<View>("search");
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [theme, setTheme] = useState<Theme>(savedTheme);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try {
+      localStorage.setItem("gs-theme", theme);
+    } catch {
+      // Storage can be blocked; the theme still applies for this visit.
+    }
+  }, [theme]);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<Picked[]>([]);
@@ -119,6 +131,15 @@ export function App() {
           <button type="button" aria-pressed={view === "community"} onClick={() => openCommunity(null)}>{t("app.community")}</button>
         </nav>
         <PersonaSwitcher value={persona} onChange={setPersona} />
+        <button
+          type="button"
+          className="theme-switch"
+          aria-pressed={theme === "dark"}
+          aria-label="Dark mode"
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        >
+          {theme === "light" ? "☾ Dark mode" : "☀ Light mode"}
+        </button>
       </header>
       <main className={view === "search" ? "chat-main" : "wrap"}>
         {view === "search" && (
@@ -164,6 +185,22 @@ export function App() {
           />
         )}
       </main>
+      <HighlightAssistant sessionId={sessionId} rootSelector="#root" />
+      <FaqWidget persona={persona} />
     </div>
   );
+}
+
+
+type Theme = "dark" | "light";
+
+// A choice the parent made wins; otherwise follow the device's light or dark setting.
+function savedTheme(): Theme {
+  try {
+    const saved = localStorage.getItem("gs-theme");
+    if (saved === "dark" || saved === "light") return saved;
+  } catch {
+    // Storage can be blocked; fall through to the device setting.
+  }
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }

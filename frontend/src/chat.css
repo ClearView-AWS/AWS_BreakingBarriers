@@ -5,10 +5,10 @@
    (styles.css) renamed them, so map the old names onto its palette. */
 :root {
   --card: #fff;
-  --bg: var(--mist, #eef4f1);
+  --bg: var(--mist, var(--mist));
   --shadow: 0 10px 30px rgba(16, 32, 51, 0.08);
-  --teal: var(--leaf, #1f8a4c);
-  --teal-dark: var(--leaf-deep, #146338);
+  --teal: var(--leaf, var(--leaf));
+  --teal-dark: var(--leaf-deep, var(--leaf-deep));
 }
 
 /* Rules the redesign dropped that the chat, Saved and Community screens still use. */
@@ -41,7 +41,7 @@
   gap: 18px;
 }
 .chat-entry { display: grid; gap: 6px; min-width: 0; scroll-margin-top: 12px; }
-.chat-who { font-size: 12px; font-weight: 640; letter-spacing: 0.02em; color: var(--muted, #5d6876); }
+.chat-who { font-size: 12px; font-weight: 640; letter-spacing: 0.02em; color: var(--muted, var(--muted)); }
 .chat-text { white-space: pre-line; line-height: 1.45; }
 
 .chat-parent { justify-self: end; max-width: 80%; }
@@ -49,40 +49,40 @@
   display: block;
   padding: 10px 14px;
   border-radius: 16px 16px 4px 16px;
-  background: var(--teal, #0e6b62);
-  color: white;
+  background: var(--teal, var(--leaf));
+  color: var(--on-leaf);
 }
 .chat-parent.chat-event { justify-self: center; max-width: 100%; }
-.chat-parent.chat-event .chat-text { font-size: 13px; color: var(--muted, #5d6876); }
+.chat-parent.chat-event .chat-text { font-size: 13px; color: var(--muted, var(--muted)); }
 .chat-system { justify-self: stretch; }
-.chat-thinking .chat-text { color: var(--muted, #5d6876); animation: chat-pulse 1.2s ease-in-out infinite; }
+.chat-thinking .chat-text { color: var(--muted, var(--muted)); animation: chat-pulse 1.2s ease-in-out infinite; }
 @keyframes chat-pulse { 50% { opacity: 0.45; } }
 @media (prefers-reduced-motion: reduce) { .chat-thinking .chat-text { animation: none; } }
 
 /* A Guide reply: text, then whatever blocks the turn returned. */
 .agent-blocks { display: grid; gap: 12px; min-width: 0; }
-.read-from { margin: 0; color: var(--muted, #5d6876); font-size: 13px; }
+.read-from { margin: 0; color: var(--muted, var(--muted)); font-size: 13px; }
 .agent-text p { margin: 0 0 6px; font-size: 17px; line-height: 1.5; white-space: pre-line; }
 .agent-text p:last-child { margin-bottom: 0; }
-.agent-prompt { color: var(--muted, #5d6876); }
+.agent-prompt { color: var(--muted, var(--muted)); }
 .chat-agent .question { margin: 0; padding: 14px 16px; box-shadow: none; }
 .chat-agent .question p { font-size: 17px; }
 .chat-agent .table-wrap { margin-top: 0; box-shadow: none; }
 
 .chat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chat-chips button {
-  border: 1px solid var(--line, #e3d9c6);
-  background: var(--card, #fffdf8);
+  border: 1px solid var(--line, var(--line-solid));
+  background: var(--card, var(--paper-solid));
   border-radius: 999px;
   padding: 7px 12px;
   text-align: left;
 }
-.chat-chips a { color: var(--teal, #0e6b62); font-size: 14px; align-self: center; }
+.chat-chips a { color: var(--teal, var(--leaf)); font-size: 14px; align-self: center; }
 button:disabled { cursor: default; opacity: 0.55; }
 
 .inline-panel {
-  background: var(--card, #fffdf8);
-  border: 1px solid var(--line, #e3d9c6);
+  background: var(--card, var(--paper-solid));
+  border: 1px solid var(--line, var(--line-solid));
   border-radius: 14px;
   padding: 14px 16px;
   min-width: 0;
@@ -97,7 +97,7 @@ button:disabled { cursor: default; opacity: 0.55; }
 .card.compact { padding: 14px 16px; box-shadow: none; border-radius: 14px; min-width: 0; }
 .card.compact h3 { font-size: 20px; display: flex; align-items: baseline; gap: 8px; }
 .card.compact .score strong { font-size: 22px; }
-.card.compact .score span { font-size: 12px; color: var(--muted, #5d6876); white-space: nowrap; }
+.card.compact .score span { font-size: 12px; color: var(--muted, var(--muted)); white-space: nowrap; }
 .card.compact .summary { margin: 8px 0; }
 .card.compact .getting-in { margin: 2px 0 8px; }
 .card-number {
@@ -115,17 +115,17 @@ button.pill { border: 0; cursor: pointer; font: inherit; font-size: 13px; font-w
 .card.compact .row-actions { margin-top: 10px; gap: 6px; }
 .card.compact .row-actions button, .card.compact .reasons button { padding: 6px 10px; font-size: 14px; }
 .card.compact .evidence { margin-top: 4px; }
-.results-group { margin: 6px 0 0; font-size: 14px; color: var(--muted, #5d6876); font-weight: 640; }
+.results-group { margin: 6px 0 0; font-size: 14px; color: var(--muted, var(--muted)); font-weight: 640; }
 .results-more, .results-fold { justify-self: start; font-size: 14px; padding: 6px 12px; }
 .results-folded {
   justify-self: start;
   max-width: 100%;
   text-align: left;
-  border: 1px dashed var(--line, #e3d9c6);
+  border: 1px dashed var(--line, var(--line-solid));
   background: transparent;
   border-radius: 12px;
   padding: 8px 12px;
-  color: var(--muted, #5d6876);
+  color: var(--muted, var(--muted));
 }
 /* Compare: two schools side by side, differences first */
 .comparison { display: grid; gap: 8px; }
@@ -140,8 +140,8 @@ button.pill { border: 0; cursor: pointer; font: inherit; font-size: 13px; font-w
 /* The composer: what you're searching for, the compare tray, and the input. */
 .composer {
   flex: none;
-  border-top: 1px solid var(--line, #e3d9c6);
-  background: rgba(255, 253, 248, 0.96);
+  border-top: 1px solid var(--line, var(--line-solid));
+  background: var(--paper-solid);
   padding: 10px 16px 14px;
   display: grid;
   gap: 8px;
@@ -149,20 +149,20 @@ button.pill { border: 0; cursor: pointer; font: inherit; font-size: 13px; font-w
 .composer > * { width: min(880px, 100%); margin: 0 auto; }
 .composer .chips { margin: 0 auto; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; }
 .composer .chip { flex: none; padding: 4px 6px 4px 10px; font-size: 14px; }
-.compare-tray { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted, #5d6876); }
+.compare-tray { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--muted, var(--muted)); }
 .compare-tray .primary { padding: 8px 14px; }
 .chat-input {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 8px;
-  background: var(--card, #fffdf8);
-  border: 1px solid var(--line, #e3d9c6);
+  background: var(--card, var(--paper-solid));
+  border: 1px solid var(--line, var(--line-solid));
   border-radius: 16px;
   padding: 6px;
   box-shadow: var(--shadow, none);
 }
 .chat-input input { min-width: 0; border: 0; background: transparent; outline: none; padding: 10px 12px; font-size: 17px; }
-.chat-input:focus-within { border-color: var(--teal, #0e6b62); }
+.chat-input:focus-within { border-color: var(--teal, var(--leaf)); }
 
 /* Header: logo left, tabs in the middle, "Viewing as" right. */
 .topbar { display: grid; grid-template-columns: 1fr auto 1fr; }

@@ -7,15 +7,15 @@
   align-items: start;
   margin: 4px 0 12px;
   padding: 10px 0 2px;
-  border-top: 1px solid var(--line, #e3d9c6);
+  border-top: 1px solid var(--line, var(--line-solid));
 }
 .gi-head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
-.gi-title { font-size: 13px; font-weight: 640; color: var(--muted, #5d6876); }
+.gi-title { font-size: 13px; font-weight: 640; color: var(--muted, var(--muted)); }
 .gi-line { font-weight: 600; }
 .gi-detail { margin-top: 2px; }
 .gi-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 8px; }
-.gi-actions a { color: var(--teal, #0e6b62); font-size: 14px; }
-.gi-detail-panel { margin: 14px 0; padding-top: 10px; border-top: 1px solid var(--line, #e3d9c6); }
+.gi-actions a { color: var(--teal, var(--leaf)); font-size: 14px; }
+.gi-detail-panel { margin: 14px 0; padding-top: 10px; border-top: 1px solid var(--line, var(--line-solid)); }
 .gi-detail-panel h3 { margin: 0 0 8px; }
 .gi-saved { display: block; margin-top: 4px; }
 

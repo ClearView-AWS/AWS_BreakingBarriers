@@ -18,9 +18,9 @@
 .demand-chip { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; }
 .demand-chip b { margin-left: 4px; color: var(--teal-dark); }
 .demand-chip[aria-pressed="true"], .options button[aria-pressed="true"], .tag-pick button[aria-pressed="true"] {
-  background: var(--teal); border-color: var(--teal); color: #fff;
+  background: var(--teal); border-color: var(--teal); color: var(--on-leaf);
 }
-.demand-chip[aria-pressed="true"] b { color: #fff; }
+.demand-chip[aria-pressed="true"] b { color: var(--on-leaf); }
 .staff-bar {
   display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
   background: var(--confirmed-bg); border: 1px solid var(--line); border-radius: 18px; padding: 12px 14px;

@@ -275,6 +275,42 @@ def community_vote(post_id: str, body: VoteIn) -> dict:
         return community.vote(state, post_id, body.persona)
 
 
+import faq  # noqa: E402
+
+
+class FaqIn(BaseModel):
+    persona: str = "parent_a"
+    text: str = ""
+
+
+@app.get("/api/faq")
+def faq_list(persona: str | None = None, q: str | None = None) -> dict:
+    with State() as state:
+        return {"questions": faq.list_faq(state, persona), "similar": faq.similar(state, q) if q else []}
+
+
+@app.post("/api/faq")
+def faq_add(body: FaqIn) -> dict:
+    with State() as state:
+        result = faq.add_question(state, body.persona, body.text)
+        return {**result, "questions": faq.list_faq(state, body.persona)}
+
+
+@app.post("/api/faq/{faq_id}/ask")
+def faq_ask(faq_id: str, body: FaqIn) -> dict:
+    with State() as state:
+        result = faq.toggle_ask(state, faq_id, body.persona)
+        return {**result, "questions": faq.list_faq(state, body.persona)}
+
+
+@app.get("/api/zones")
+def zones(ids: str = "") -> dict:
+    """Demo attendance areas for the schools on the map (see search/zones.py)."""
+    from search.zones import zones_for
+
+    return {"zones": zones_for([value for value in ids.split(",") if value])}
+
+
 @app.post("/api/community/suggest-tags")
 def community_tags(body: TextIn) -> dict:
     return {"tags": suggest_tags(body.text)}
@@ -295,3 +331,36 @@ def community_digest(school_id: str) -> dict:
         return {"error": "unknown school"}
     with State() as state:
         return community.digest(state, school)
+
+
+# ---------- Highlight assistant ----------
+
+from agent.assistant import assist  # noqa: E402
+from contracts import Criterion as _Criterion  # noqa: E402
+
+
+class AssistIn(BaseModel):
+    session_id: str | None = None
+    text: str = Field(default="", max_length=2000)
+    question: str = Field(default="", max_length=1000)
+    school_id: str | None = None
+    criterion_id: str | None = None
+
+
+@app.post("/api/assist")
+def post_assist(body: AssistIn) -> dict:
+    """Explain highlighted text from the school's own evidence. Read-only: it never changes the session."""
+    from pipeline import _score_school, _stamp_distances
+    from search.corpus import load_programs
+
+    with State() as state:
+        session = state["sessions"].get(body.session_id or "") or {}
+        criteria = [_Criterion(**row) for row in session.get("criteria") or []]
+        card = None
+        if body.school_id:
+            schools = load_schools()
+            _stamp_distances(schools, criteria)
+            school = next((row for row in schools if row["id"] == body.school_id), None)
+            if school:
+                card = _score_school(school, criteria, load_programs(), state, session)
+        return assist(body.text, body.question, card, criteria, body.criterion_id)

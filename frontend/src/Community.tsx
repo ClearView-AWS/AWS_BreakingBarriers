@@ -125,7 +125,7 @@ export function CommunityPage(props: {
   const filterLabel = filter ? threads.flatMap((t) => t.needs.map((n, i) => [n, t.need_labels[i]])).find(([n]) => n === filter)?.[1] ?? filter : null;
 
   return (
-    <section className="community">
+    <section className="community" data-school-id={schoolId}>
       <button className="ghost" onClick={props.onBack}>{props.backLabel ?? t("app.back_results")}</button>
       <header className="community-head">
         <div>

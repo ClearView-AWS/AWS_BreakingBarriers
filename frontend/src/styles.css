@@ -38,8 +38,8 @@ body,
 body {
   margin: 0;
   background:
-    radial-gradient(1200px 600px at 8% -10%, rgba(31, 138, 76, 0.18), transparent 55%),
-    radial-gradient(900px 500px at 92% 0%, rgba(61, 140, 180, 0.22), transparent 50%),
+    radial-gradient(1200px 600px at 8% -10%, rgba(26, 157, 209, 0.18), transparent 55%),
+    radial-gradient(900px 500px at 92% 0%, rgba(26, 157, 209, 0.12), transparent 50%),
     linear-gradient(180deg, #e8f2ee 0%, #f4f7f5 42%, #eef2f6 100%);
   background-attachment: fixed;
 }
@@ -96,7 +96,7 @@ a {
   top: 0;
   z-index: 20;
   backdrop-filter: blur(14px);
-  background: rgba(247, 250, 248, 0.72);
+  background: var(--paper);
   border-bottom: 1px solid var(--line);
 }
 
@@ -124,7 +124,7 @@ a {
   position: absolute;
   inset: 9px 8px 8px 9px;
   border-radius: 999px 999px 4px 4px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--paper);
   clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%);
 }
 
@@ -163,7 +163,7 @@ a {
 }
 
 .nav button[aria-pressed="true"] {
-  background: rgba(31, 138, 76, 0.12);
+  background: rgba(26, 157, 209, 0.12);
   color: var(--leaf-deep);
 }
 
@@ -233,7 +233,7 @@ main {
   gap: 10px;
   padding: 10px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--paper);
   border-radius: 16px;
   backdrop-filter: blur(8px);
 }
@@ -260,7 +260,7 @@ main {
 
 .btn-primary {
   background: var(--leaf);
-  color: white;
+  color: var(--on-leaf);
 }
 
 .btn-primary:hover {
@@ -312,7 +312,7 @@ main {
   padding: 20px 22px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 250, 248, 0.9));
+  background: linear-gradient(180deg, var(--paper), var(--paper));
 }
 
 .brief-head {
@@ -378,7 +378,7 @@ main {
 }
 
 .chip.strength-require {
-  border-color: rgba(31, 138, 76, 0.35);
+  border-color: rgba(26, 157, 209, 0.35);
   background: var(--confirmed-bg);
 }
 
@@ -416,7 +416,7 @@ main {
 .question {
   padding: 20px 22px;
   border-left: 3px solid var(--leaf);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--paper);
   border-radius: 0 var(--radius) var(--radius) 0;
   animation: slide 0.4s ease both;
 }
@@ -495,7 +495,7 @@ main {
   display: inline-flex;
   padding: 4px;
   gap: 2px;
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 12px;
 }
@@ -511,7 +511,7 @@ main {
 
 .view-toggle button[aria-pressed="true"] {
   background: var(--ink);
-  color: white;
+  color: var(--on-leaf);
 }
 
 .view-toggle button:disabled {
@@ -547,7 +547,7 @@ main {
 }
 
 .school.is-picked {
-  background: linear-gradient(90deg, rgba(31, 138, 76, 0.08), transparent 55%);
+  background: linear-gradient(90deg, rgba(26, 157, 209, 0.08), transparent 55%);
   padding-left: 12px;
   border-left: 3px solid var(--leaf);
 }
@@ -685,7 +685,7 @@ main {
 .school-actions button,
 .reasons button {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--paper);
   border-radius: 10px;
   padding: 8px 12px;
   font-weight: 600;
@@ -704,7 +704,7 @@ main {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  border: 1px solid rgba(31, 138, 76, 0.28);
+  border: 1px solid rgba(26, 157, 209, 0.28);
   background: var(--confirmed-bg);
   border-radius: var(--radius);
 }
@@ -934,4 +934,167 @@ th {
   .topbar {
     flex-wrap: wrap;
   }
+}
+
+
+/* ---------- GreatSchools colours, light and dark ----------
+   Measured from greatschools.org: warm gray page, white cards, navy actions,
+   rating blue for accents. Dark keeps the same blues on navy. The layout above
+   is unchanged; only the colour variables move. */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ink: #1a1812;
+  --muted: #6e6657;
+  --line: #dad6ce;
+  --line-solid: #dad6ce;
+  --paper: #ffffff;
+  --paper-solid: #ffffff;
+  --leaf: #033e5c;
+  --leaf-deep: #033751;
+  --sky: #e3f3fa;
+  --mist: #edeae5;
+  --accent: #1a9dd1;
+  --accent-text: #0b74a3;
+  --confirmed: #0a6890;
+  --confirmed-bg: #e3f3fa;
+  --partial: #7a4f00;
+  --partial-bg: #fdf1d8;
+  --attention: #a8281b;
+  --attention-bg: #fbe8e5;
+  --unknown: #6e6657;
+  --unknown-bg: #f3f1ed;
+  --on-leaf: #ffffff;
+  --map-tiles: none;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #eef3f6;
+  --muted: #a3b5c0;
+  --line: #1e3442;
+  --line-solid: #1e3442;
+  --paper: #10232f;
+  --paper-solid: #10232f;
+  --leaf: #5cc4ee;
+  --leaf-deep: #8fd6f3;
+  --sky: #0f3346;
+  --mist: #0a1a24;
+  --accent: #5cc4ee;
+  --accent-text: #5cc4ee;
+  --confirmed: #5cc4ee;
+  --confirmed-bg: #0f3346;
+  --partial: #f0b84a;
+  --partial-bg: #2a1f08;
+  --attention: #ff7a6b;
+  --attention-bg: #2c1210;
+  --unknown: #a3b5c0;
+  --unknown-bg: #16293a;
+  --on-leaf: #032233;
+  --map-tiles: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.35);
+}
+:root { background: var(--mist); }
+body { background: var(--mist); }
+body::before { display: none; }
+.leaflet-tile-pane { filter: var(--map-tiles); }
+
+.theme-switch {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px;
+  border: 1px solid var(--muted); border-radius: 999px; background: var(--paper-solid); color: var(--ink);
+  font: inherit; font-size: 0.875rem; cursor: pointer;
+}
+.theme-switch:hover { border-color: var(--leaf); color: var(--leaf); }
+
+/* ---------- Highlight assistant ---------- */
+.assist-bubble {
+  position: fixed; z-index: 1200; height: 34px; display: inline-flex; align-items: center; gap: 6px;
+  padding: 0 12px 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper-solid);
+  color: var(--ink); font: inherit; font-size: 0.875rem; font-weight: 500; box-shadow: 0 8px 24px rgba(16, 32, 51, 0.25); cursor: pointer;
+}
+.assist-bubble svg { color: var(--accent); }
+.assist-bubble:hover { border-color: var(--leaf); }
+.assist-panel {
+  position: fixed; z-index: 1200; max-height: min(540px, calc(100vh - 16px)); display: grid;
+  grid-template-rows: auto auto 1fr auto auto; gap: 12px; padding: 16px; background: var(--paper-solid); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 16px 40px rgba(16, 32, 51, 0.3); outline: none;
+}
+.assist-panel header { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.assist-panel header > div { display: grid; gap: 2px; }
+.assist-panel .icon { min-width: 32px; min-height: 32px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; }
+.assist-eyebrow { display: inline-flex; align-items: center; gap: 4px; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-text); }
+.assist-school { font-weight: 600; }
+.assist-quote {
+  margin: 0; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--sky); border-radius: 4px;
+  font-size: 0.8125rem; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.assist-thread { position: relative; overflow-y: auto; display: grid; gap: 12px; align-content: start; min-height: 48px; }
+.assist-turn { display: grid; gap: 8px; }
+.assist-turn + .assist-turn { border-top: 1px solid var(--line); padding-top: 12px; }
+.assist-question { justify-self: end; margin: 0; max-width: 85%; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 0.875rem; }
+.assist-sentence { margin: 0; font-size: 0.9375rem; line-height: 1.5; }
+.assist-cite { display: inline-block; margin-left: 8px; padding: 0 4px; font-family: ui-monospace, Menlo, monospace; font-size: 0.6875rem; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; vertical-align: 1px; }
+.assist-next { margin: 0; padding: 8px 12px; font-size: 0.875rem; color: var(--ink); background: var(--partial-bg); border: 1px solid var(--partial); border-radius: 8px; }
+.assist-mode { margin: 0; font-size: 0.75rem; color: var(--muted); }
+.assist-loading { display: flex; gap: 6px; padding: 8px 0; }
+.assist-loading span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.4; }
+@media (prefers-reduced-motion: no-preference) {
+  .assist-loading span { animation: assist-dot 900ms infinite ease-in-out; }
+  .assist-loading span:nth-child(2) { animation-delay: 150ms; }
+  .assist-loading span:nth-child(3) { animation-delay: 300ms; }
+}
+@keyframes assist-dot { 50% { opacity: 1; } }
+.assist-followups { display: flex; flex-wrap: wrap; gap: 8px; }
+.assist-followups button { min-height: 32px; padding: 0 12px; font: inherit; font-size: 0.8125rem; color: var(--leaf); background: transparent; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; }
+.assist-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.assist-form input { min-height: 40px; padding: 0 12px; border: 1px solid var(--muted); border-radius: 8px; background: var(--paper-solid); color: var(--ink); font: inherit; }
+.assist-form button { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--leaf); background: var(--leaf); color: var(--on-leaf); font: inherit; font-weight: 600; cursor: pointer; }
+.assist-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+@media (max-width: 720px) {
+  .assist-panel { left: 0 !important; right: 0; bottom: 0; top: auto !important; width: auto !important; max-height: 70vh; border-radius: 12px 12px 0 0; }
+}
+
+/* Dark mode for the chat screens: their card and composer tokens, and the browser's default button fill. */
+:root[data-theme="dark"] {
+  --card: var(--paper);
+  --paper-solid: var(--paper);
+}
+:where(:root[data-theme="dark"]) button {
+  background-color: var(--mist);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+/* FAQ: round button in the bottom right and a sidebar of common questions. */
+.faq-fab {
+  position: fixed; right: 20px; bottom: 112px; z-index: 1100; width: 52px; height: 52px; border-radius: 50%;
+  border: 0; background: var(--leaf); color: var(--on-leaf); font-size: 1.5rem; font-weight: 700; line-height: 1;
+  box-shadow: 0 8px 24px rgba(16, 32, 51, 0.25); cursor: pointer;
+}
+.faq-fab:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.faq-panel {
+  position: fixed; top: 72px; right: 0; bottom: 0; z-index: 1090; width: min(380px, 100vw); overflow-y: auto;
+  display: flex; flex-direction: column; gap: 14px; padding: 20px 20px 180px; background: var(--paper-solid); color: var(--ink);
+  border-left: 1px solid var(--line); box-shadow: -12px 0 32px rgba(16, 32, 51, 0.18);
+}
+.faq-panel h2 { margin: 0; font-size: 1.125rem; }
+.faq-panel header p { margin: 4px 0 0; color: var(--muted); font-size: 0.875rem; }
+.faq-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.faq-list li { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
+.faq-q { all: unset; cursor: pointer; font-weight: 600; color: var(--ink); }
+.faq-q:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
+.faq-a p { margin: 0 0 4px; font-size: 0.9375rem; line-height: 1.45; }
+.faq-source, .faq-pending { color: var(--muted); font-size: 0.8125rem !important; }
+.faq-ask { justify-self: start; min-height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--leaf); font-size: 0.8125rem; cursor: pointer; }
+.faq-ask.is-on { background: var(--sky); border-color: var(--leaf); }
+.faq-unanswered .faq-q::after { content: " · unanswered"; font-weight: 400; color: var(--muted); font-size: 0.8125rem; }
+.faq-form { display: grid; gap: 8px; }
+.faq-form label { font-weight: 600; }
+.faq-form textarea { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper-solid); color: var(--ink); resize: vertical; }
+.faq-form .primary { justify-self: start; min-height: 38px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--leaf); color: var(--on-leaf); font-weight: 600; }
+.faq-form .primary:disabled { opacity: 0.5; }
+.faq-matches { display: grid; gap: 4px; font-size: 0.8125rem; color: var(--muted); }
+.faq-matches button { all: unset; cursor: pointer; color: var(--leaf); text-decoration: underline; }
+.faq-note { margin: 0; font-size: 0.875rem; color: var(--muted); }
+@media (max-width: 640px) {
+  .faq-fab { right: 14px; bottom: 132px; width: 46px; height: 46px; }
+  .faq-panel { top: auto; height: 80vh; width: 100vw; border-radius: 12px 12px 0 0; border-left: 0; padding-bottom: 200px; }
 }

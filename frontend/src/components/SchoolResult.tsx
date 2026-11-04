@@ -25,7 +25,7 @@ export function SchoolResult(props: Props) {
   const levels = (card.level_codes ?? []).map((code) => LEVEL[code] ?? code).join(" · ");
 
   return (
-    <article className={`school ${layout} ${selected ? "is-picked" : ""}`}>
+    <article className={`school ${layout} ${selected ? "is-picked" : ""}`} data-school-id={card.id}>
       <header className="school-head">
         <div>
           <button type="button" className="school-name" onClick={() => onOpen(card.id)}>
@@ -113,7 +113,7 @@ export function SchoolResult(props: Props) {
 function EvidenceItem({ row, label, onAsk }: { row: Evidence; label: string; onAsk?: () => void }) {
   const source = row.source;
   return (
-    <li className={`ev status-${row.status}`}>
+    <li className={`ev status-${row.status}`} data-criterion-id={row.criterion_id}>
       <div className="ev-status">
         <span className={`pill ${row.status}`}>{STATUS_LABEL[row.status] ?? row.status}</span>
         <strong>{label}</strong>

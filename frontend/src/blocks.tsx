@@ -8,7 +8,7 @@ import { GettingInDetail, GettingInLine, type Access } from "./GettingIn";
 import type { CommunityTarget } from "./Community";
 import { STATUS_MARK, nameOf, sourceLabel, statusLabel } from "./labels";
 import { languageName, t, tn } from "./i18n";
-import { GridView, MapView, ViewToggle, gridFromCards, type ResultsView } from "./Views";
+import { MapView, ViewToggle, type ResultsView } from "./Views";
 import { Brief } from "./components/Brief";
 import { QuestionPrompt, type QuestionItem } from "./components/QuestionPrompt";
 
@@ -139,9 +139,10 @@ function AgentBlock({
       // Chips name a school and an action ("Open the full profile"), so they still work later.
       return <Chips items={(payload.items as ChatChip[]) ?? []} disabled={actions.busy} onAction={actions.send} />;
     case "results":
-      return <Results payload={payload} turn={turn} criteria={turn.criteria} current={current} actions={actions} />;
+      return <Results payload={payload} criteria={turn.criteria} current={current} actions={actions} />;
     case "evidence_grid":
-      // Drawn inside the results List / Grid / Map toggle, not as its own chat block.
+      // The grid only repeats the cards' statuses. A search shows its list and map; a compare
+      // shows where the schools differ (the comparison block).
       return null;
     case "why_not": {
       const why = payload as { school_name?: string; text?: string; change?: string };
@@ -217,13 +218,11 @@ function Question({ payload, disabled, onPick }: { payload: Record<string, unkno
 
 function Results({
   payload,
-  turn,
   criteria,
   current,
   actions,
 }: {
   payload: Record<string, unknown>;
-  turn: Turn;
   criteria: Criterion[];
   current: boolean;
   actions: Actions;
@@ -239,16 +238,6 @@ function Results({
   // Fold when a newer search replaces this one as the list the parent is looking at.
   useEffect(() => setOpen(current), [current]);
   if (!total) return null;
-
-  const gridBlock = turn.blocks.find((block) => block.type === "evidence_grid")?.payload;
-  const gridCards = [...schools, ...gaps, ...missed];
-  const grid = gridBlock
-    ? {
-        schools: (gridBlock.schools as { id: string; name: string }[]) ?? [],
-        criteria: (gridBlock.criteria as { id: string; text: string }[]) ?? [],
-        cells: (gridBlock.cells as Record<string, Record<string, Evidence | null>>) ?? {},
-      }
-    : gridFromCards(gridCards, criteria);
 
   if (!current && !open) {
     const about = criteria.map(nameOf).join(" · ");
@@ -298,7 +287,6 @@ function Results({
     <ViewToggle view={actions.resultsView} onChange={actions.setResultsView} cards={[...schools, ...gaps]} criteria={criteria}>
       {{
         list,
-        grid: <GridView schools={grid.schools} criteria={grid.criteria} cells={grid.cells} />,
         map: <MapView schools={schools} gaps={gaps} missed={missed} criteria={criteria} center={center} programs={programs} actions={actions} />,
       }}
     </ViewToggle>
@@ -334,7 +322,7 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
       : undefined;
   };
   return (
-    <article className={selected ? "card compact compare-on" : "card compact"}>
+    <article className={selected ? "card compact compare-on" : "card compact"} data-school-id={card.id}>
       <header>
         <div>
           <h3>
@@ -359,11 +347,11 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
             const label = `${STATUS_MARK[row.status] ?? ""} ${labels.get(row.criterion_id) ?? row.criterion_id}`;
             const onAsk = ask(row);
             return onAsk ? (
-              <button key={row.criterion_id} className={`pill ${row.status}`} disabled={busy} title={t("blocks.not_on_file_ask")} onClick={onAsk}>
+              <button key={row.criterion_id} data-criterion-id={row.criterion_id} className={`pill ${row.status}`} disabled={busy} title={t("blocks.not_on_file_ask")} onClick={onAsk}>
                 {label} · {t("blocks.ask_short")}
               </button>
             ) : (
-              <span key={row.criterion_id} className={`pill ${row.status}`} title={statusLabel(row.status)}>{label}</span>
+              <span key={row.criterion_id} data-criterion-id={row.criterion_id} className={`pill ${row.status}`} title={statusLabel(row.status)}>{label}</span>
             );
           })}
         </div>
@@ -452,7 +440,7 @@ function CommunityLine({ card, onCommunity }: { card: Card; onCommunity: (target
 function EvidenceRow({ row, label, onAsk, onAskParents }: { row: Evidence; label: string; onAsk?: () => void; onAskParents?: () => void }) {
   const source = row.source;
   return (
-    <div className="ev">
+    <div className="ev" data-criterion-id={row.criterion_id}>
       <div>
         <span className={`pill ${row.status}`}>{statusLabel(row.status)}</span>
         <div>{label}</div>
@@ -516,7 +504,7 @@ type DetailPayload = {
 function SchoolDetail({ payload }: { payload: DetailPayload }) {
   const school = payload.school;
   return (
-    <div className="inline-panel">
+    <div className="inline-panel" data-school-id={String(school.id)}>
       <h3>{String(school.name)}</h3>
       <p className="meta">{String(school.street ?? "")} {String(school.city ?? "")} {String(school.state ?? "")}</p>
       <p>
