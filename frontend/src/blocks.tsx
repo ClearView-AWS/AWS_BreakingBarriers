@@ -8,7 +8,7 @@ import { GettingInDetail, GettingInLine, type Access } from "./GettingIn";
 import type { CommunityTarget } from "./Community";
 import { STATUS_MARK, nameOf, sourceLabel, statusLabel } from "./labels";
 import { languageName, t, tn } from "./i18n";
-import { MapView, ViewToggle, type ResultsView } from "./Views";
+import { GridView, MapView, ViewToggle, gridFromCards, type ResultsView } from "./Views";
 import { Brief } from "./components/Brief";
 import { QuestionPrompt, type QuestionItem } from "./components/QuestionPrompt";
 
@@ -139,10 +139,9 @@ function AgentBlock({
       // Chips name a school and an action ("Open the full profile"), so they still work later.
       return <Chips items={(payload.items as ChatChip[]) ?? []} disabled={actions.busy} onAction={actions.send} />;
     case "results":
-      return <Results payload={payload} criteria={turn.criteria} current={current} actions={actions} />;
+      return <Results payload={payload} turn={turn} criteria={turn.criteria} current={current} actions={actions} />;
     case "evidence_grid":
-      // The grid only repeats the cards' statuses. A search shows its list and map; a compare
-      // shows where the schools differ (the comparison block).
+      // Drawn inside the results List / Grid / Map toggle, not as its own chat block.
       return null;
     case "why_not": {
       const why = payload as { school_name?: string; text?: string; change?: string };
@@ -218,11 +217,13 @@ function Question({ payload, disabled, onPick }: { payload: Record<string, unkno
 
 function Results({
   payload,
+  turn,
   criteria,
   current,
   actions,
 }: {
   payload: Record<string, unknown>;
+  turn: Turn;
   criteria: Criterion[];
   current: boolean;
   actions: Actions;
@@ -238,6 +239,16 @@ function Results({
   // Fold when a newer search replaces this one as the list the parent is looking at.
   useEffect(() => setOpen(current), [current]);
   if (!total) return null;
+
+  const gridBlock = turn.blocks.find((block) => block.type === "evidence_grid")?.payload;
+  const gridCards = [...schools, ...gaps, ...missed];
+  const grid = gridBlock
+    ? {
+        schools: (gridBlock.schools as { id: string; name: string }[]) ?? [],
+        criteria: (gridBlock.criteria as { id: string; text: string }[]) ?? [],
+        cells: (gridBlock.cells as Record<string, Record<string, Evidence | null>>) ?? {},
+      }
+    : gridFromCards(gridCards, criteria);
 
   if (!current && !open) {
     const about = criteria.map(nameOf).join(" · ");
@@ -287,6 +298,7 @@ function Results({
     <ViewToggle view={actions.resultsView} onChange={actions.setResultsView} cards={[...schools, ...gaps]} criteria={criteria}>
       {{
         list,
+        grid: <GridView schools={grid.schools} criteria={grid.criteria} cells={grid.cells} />,
         map: <MapView schools={schools} gaps={gaps} missed={missed} criteria={criteria} center={center} programs={programs} actions={actions} />,
       }}
     </ViewToggle>
