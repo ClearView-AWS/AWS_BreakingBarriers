@@ -162,7 +162,7 @@ export const EN = {
   "views.pin_missed": "missed a must-have",
   "views.on_map_one": "{n} school on the map.",
   "views.on_map_other": "{n} schools on the map.",
-  "views.numbers": "Numbers match the list. Hollow pins missed a must-have.",
+  "views.numbers": "The top 5 from the list, numbered the same way.",
   "views.programs_note": "◆ marks a nearby program that fills a gap, with a dashed line to its school.",
   "views.unplaced_one": "{n} school has no map point and is only in the list.",
   "views.unplaced_other": "{n} schools have no map point and are only in the list.",

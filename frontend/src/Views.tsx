@@ -14,6 +14,7 @@ import type { Card, Criterion, ProgramPin } from "./types";
 export type ResultsView = "list" | "map";
 
 const SUGGEST_MAP_MILES = 10;
+const MAP_LIMIT = 5;
 
 function milesBetween(a: [number, number], b: [number, number]) {
   const rad = Math.PI / 180;
@@ -112,15 +113,18 @@ export function MapView(props: {
     draftCenter.current = props.center;
   }, [props.center]);
 
-  // Numbers match the list. "Missing a fact" schools are plain pins; missed must-haves are hollow.
+  // Only the top MAP_LIMIT schools go on the map, numbered as in the list.
   const ranked = useMemo<Placed[]>(
-    () => [
-      ...props.schools.map((card, index) => ({ card, rank: index + 1, hollow: false })),
-      ...props.gaps.map((card) => ({ card, rank: null, hollow: false })),
-      ...props.missed.map((card) => ({ card, rank: null, hollow: true })),
-    ],
-    [props.schools, props.gaps, props.missed],
+    () => props.schools.slice(0, MAP_LIMIT).map((card, index) => ({ card, rank: index + 1, hollow: false })),
+    [props.schools],
   );
+  // Nearby programs only for the schools on the map.
+  const programs = useMemo(() => {
+    const shown = new Set(ranked.map((row) => row.card.id));
+    return props.programs
+      .map((program) => ({ ...program, links: program.links.filter((link) => shown.has(link.school_id)) }))
+      .filter((program) => program.links.length > 0);
+  }, [props.programs, ranked]);
   const placed = ranked.filter((row) => pointOf(row.card));
   const unplaced = ranked.length - placed.length;
   const labels = useMemo(() => new Map(props.criteria.map((item) => [item.id, nameOf(item)])), [props.criteria]);
@@ -170,7 +174,7 @@ export function MapView(props: {
       bounds.push(you);
     }
     // Programs first, so school pins sit on top of the dashed lines.
-    for (const program of props.programs) {
+    for (const program of programs) {
       const point: [number, number] = [program.lat, program.lon];
       const fills = program.links
         .map((link) => {
@@ -215,7 +219,7 @@ export function MapView(props: {
     else if (bounds.length === 1) current.setView(bounds[0], 12);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     // uiLanguage(): rebuild the pins' titles and tooltips when the UI language changes.
-  }, [props.schools, props.gaps, props.missed, props.center, props.programs, uiLanguage()]);
+  }, [ranked, props.center, programs, uiLanguage()]);
 
   // Demo attendance areas come from the backend (search/zones.py); the data has no real boundaries.
   const zoneIds = placed.map((row) => row.card.id).join(",");
@@ -253,7 +257,7 @@ export function MapView(props: {
   const chosen = selected ? byId.get(selected) ?? null : null;
   const chosenZone = chosen ? zones.get(chosen.card.id) ?? null : null;
   const chosenPrograms = chosen
-    ? props.programs.flatMap((program) =>
+    ? programs.flatMap((program) =>
         program.links.filter((link) => link.school_id === chosen.card.id).map((link) => ({ program, link })),
       )
     : [];
@@ -289,7 +293,7 @@ export function MapView(props: {
     <div className="map-view">
       <p className="meta">
         {tn("views.on_map", placed.length)} {t("views.numbers")}
-        {props.programs.length > 0 ? ` ${t("views.programs_note")}` : ""}
+        {programs.length > 0 ? ` ${t("views.programs_note")}` : ""}
         {unplaced > 0 ? ` ${tn("views.unplaced", unplaced)}` : ""}
       </p>
       <div className="map-toolbar">
@@ -315,8 +319,7 @@ export function MapView(props: {
         <li><span className="dot" style={{ background: "var(--confirmed)" }} /> {t("views.legend_high")}</li>
         <li><span className="dot" style={{ background: "var(--partial)" }} /> {t("views.legend_mid")}</li>
         <li><span className="dot" style={{ background: "var(--attention)" }} /> {t("views.legend_low")}</li>
-        <li><span className="dot hollow" /> {t("views.legend_missed")}</li>
-        {props.programs.length > 0 && <li><span className="legend-program">◆</span> {t("views.legend_program")}</li>}
+        {programs.length > 0 && <li><span className="legend-program">◆</span> {t("views.legend_program")}</li>}
         {[...zones.values()].some((zone) => zone.polygon) && <li><span className="legend-zone" /> {t("views.legend_zone")}</li>}
       </ul>
       {chosen && (
