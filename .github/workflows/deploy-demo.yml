@@ -4,6 +4,9 @@
 # Optional secret:
 #   OPENSEARCH_ENDPOINT — existing domain hostname (no https://). Without it the
 #   app keeps the local in-memory search engine.
+#   VOICE_INSTANCE_ID, VOICE_FLOW_ID, VOICE_SOURCE, VOICE_VERIFIED_TO — Amazon Connect
+#   ids from scripts/setup_voice.py and the one number school calls may reach. Without
+#   all four the "Have AI call" button emails the school instead.
 name: Deploy demo
 
 on:
@@ -30,6 +33,10 @@ jobs:
       BEDROCK: "1"
       SKIP_OPENSEARCH: "1"
       OPENSEARCH_ENDPOINT: ${{ secrets.OPENSEARCH_ENDPOINT }}
+      VOICE_INSTANCE_ID: ${{ secrets.VOICE_INSTANCE_ID }}
+      VOICE_FLOW_ID: ${{ secrets.VOICE_FLOW_ID }}
+      VOICE_SOURCE: ${{ secrets.VOICE_SOURCE }}
+      VOICE_VERIFIED_TO: ${{ secrets.VOICE_VERIFIED_TO }}
 
     steps:
       - name: Checkout

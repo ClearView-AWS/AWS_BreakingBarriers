@@ -6,7 +6,8 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      "/api": "http://127.0.0.1:8000",
+      // API_URL lets a second checkout run its API on another port.
+      "/api": process.env.API_URL ?? "http://127.0.0.1:8000",
     },
   },
 });

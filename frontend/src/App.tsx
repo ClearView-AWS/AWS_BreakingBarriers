@@ -96,7 +96,7 @@ export function App() {
     communityChanged.current = false;
   }
 
-  const actions: Actions = { send: (body) => void send(body), busy, picked, setPicked, openCommunity, resultsView, setResultsView };
+  const actions: Actions = { send: (body) => void send(body), busy, picked, setPicked, openCommunity, resultsView, setResultsView, sessionId };
 
   async function refreshSaved(nextSession = sessionId) {
     if (!nextSession) return;
