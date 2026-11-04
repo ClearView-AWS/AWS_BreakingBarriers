@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
+
 from catalog import glossary, needs
 from agent.explainer import model_summaries, public_summary
 from agent.extractor import extract
@@ -39,17 +41,16 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     session = _session(state, payload.get("session_id"))
     message = (payload.get("message") or "").strip()
     action = payload.get("action")
+    prefetched = None
     if not action and message:
-        action, step = route_message(message, bool(session["criteria"]))
-        _record(engine, "route", step)
+        action, prefetched = _route_and_extract(message, bool(session["criteria"]), engine)
     action = action or "refresh"
 
     if payload.get("criteria") is not None:
         session["criteria"] = payload["criteria"]
 
     if action in {"new_search", "refine"} and message:
-        incoming, step = extract(message, known_cities())
-        _record(engine, "extract", step)
+        incoming = _extract_once(message, prefetched, engine)
         if action == "new_search":
             session["criteria"] = [item.model_dump() for item in incoming]
         else:
@@ -73,7 +74,8 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     if action == "cost":
         return _cost(session, criteria, schools, programs, state, message, payload)
     if action == "school_detail":
-        return _detail(session, criteria, schools, programs, state, message, payload, engine)
+        incoming = _extract_once(message, prefetched, engine) if message else []
+        return _detail(session, criteria, schools, programs, state, message, payload, incoming)
     if action == "save":
         return _save(session, criteria, schools, programs, state, payload, message)
     if action == "ask_school":
@@ -93,6 +95,21 @@ def _session(state: dict, session_id: str | None) -> dict:
     from store import new_session
 
     return new_session(state)
+
+
+def _route_and_extract(message: str, has_session: bool, engine: Engine) -> tuple[str, tuple[list[Criterion], EngineStep]]:
+    """Route and extract at the same time. The route decides whether the extract is used."""
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        pending = pool.submit(extract, message, known_cities())
+        action, step = route_message(message, has_session)
+        _record(engine, "route", step)
+        return action, pending.result()
+
+
+def _extract_once(message: str, prefetched: tuple[list[Criterion], EngineStep] | None, engine: Engine) -> list[Criterion]:
+    incoming, step = prefetched or extract(message, known_cities())
+    _record(engine, "extract", step)
+    return incoming
 
 
 def _merge(existing: list[dict], incoming: list[Criterion]) -> list[dict]:
@@ -528,7 +545,7 @@ def _cost(session, criteria, schools, programs, state, message, payload) -> Turn
     return TurnResponse(session_id=session["id"], route="cost", criteria=criteria, blocks=blocks)
 
 
-def _detail(session, criteria, schools, programs, state, message, payload, engine: Engine) -> TurnResponse:
+def _detail(session, criteria, schools, programs, state, message, payload, incoming: list[Criterion]) -> TurnResponse:
     ids = list(payload.get("school_ids") or [])
     if not ids and message:
         found = _find_by_name(school_reference(message or "") or message, schools)
@@ -537,7 +554,7 @@ def _detail(session, criteria, schools, programs, state, message, payload, engin
         blocks = [Block(type="message", payload={"text": "Which school should I open?"})]
         return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
     school = _by_id(schools)[ids[0]]
-    asked = _asked_needs(message, criteria, engine)
+    asked = _asked_needs(incoming, criteria)
     card = _score_school(school, criteria + asked, programs, state, session)
     blocks = []
     if asked and card:
@@ -559,12 +576,8 @@ def _detail(session, criteria, schools, programs, state, message, payload, engin
     return TurnResponse(session_id=session["id"], route="school_detail", criteria=criteria, blocks=blocks)
 
 
-def _asked_needs(message: str, criteria: list[Criterion], engine: Engine) -> list[Criterion]:
+def _asked_needs(incoming: list[Criterion], criteria: list[Criterion]) -> list[Criterion]:
     """Needs the parent asked about for one school. They are answered, not added to the search."""
-    if not message:
-        return []
-    incoming, step = extract(message, known_cities())
-    _record(engine, "extract", step)
     have = {c.need for c in criteria if c.need}
     asked = [c for c in incoming if c.kind == "need" and c.need and c.need not in have]
     return [c.model_copy(update={"id": f"q{index}"}) for index, c in enumerate(asked, start=1)]
