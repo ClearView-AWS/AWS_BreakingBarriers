@@ -49,12 +49,15 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     if payload.get("criteria") is not None:
         session["criteria"] = payload["criteria"]
 
+    unchanged = False
     if action in {"new_search", "refine"} and message:
         incoming = _extract_once(message, prefetched, engine)
         if action == "new_search":
             session["criteria"] = [item.model_dump() for item in incoming]
         else:
-            session["criteria"] = _merge(session["criteria"], incoming)
+            before = session["criteria"]
+            session["criteria"] = _merge(before, incoming)
+            unchanged = session["criteria"] == before
 
     _apply_answer(session, payload.get("answer") or {}, state)
     _apply_feedback(session, payload.get("feedback") or {})
@@ -86,7 +89,14 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
         response.route = "new_search"
     elif action in {"refine", "refresh", "feedback"}:
         response.route = "refine"
+    if unchanged:
+        _prefix_lead(response, f"I couldn't turn \"{message}\" into a change to your search, so these are the same results.")
     return response
+
+
+def _prefix_lead(response: TurnResponse, text: str) -> None:
+    lead = next(block for block in response.blocks if block.type == "message")
+    lead.payload["text"] = f"{text} {lead.payload['text']}"
 
 
 def _session(state: dict, session_id: str | None) -> dict:

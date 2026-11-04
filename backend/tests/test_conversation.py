@@ -84,3 +84,20 @@ def test_route_and_extract_run_at_the_same_time(monkeypatch):
     assert overlapped == [True]
     assert response["engine"]["route"] == "bedrock"
     assert response["engine"]["extract"] == "bedrock"
+
+
+def _lead(response: dict) -> str:
+    return next(b["payload"]["text"] for b in response["blocks"] if b["type"] == "message")
+
+
+def test_follow_up_that_changes_nothing_says_so():
+    response = _follow_up("which one has the smallest classes?")
+    assert response["route"] == "refine"
+    assert _criteria(response) == {("grade", "e"), ("location", "Jacksonville"), ("need", "after_care")}
+    assert _lead(response).startswith("I couldn't turn \"which one has the smallest classes?\" into a change to your search")
+
+
+def test_follow_up_that_changes_the_search_has_no_notice():
+    response = _follow_up("what about ones with arts?")
+    assert ("need", "arts") in _criteria(response)
+    assert "couldn't" not in _lead(response)
