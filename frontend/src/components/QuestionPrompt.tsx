@@ -1,3 +1,5 @@
+import { t, tn } from "../i18n";
+
 type Option = { id: string; label: string };
 
 export type QuestionItem = {
@@ -14,9 +16,9 @@ type Props = {
   onSkip: () => void;
 };
 
-export function QuestionPrompt({ items, skipLabel = "Just show me results", onPick, onSkip }: Props) {
+export function QuestionPrompt({ items, skipLabel = t("questions.skip"), onPick, onSkip }: Props) {
   if (!items.length) return null;
-  const heading = items.length === 1 ? "One quick question" : `${items.length} quick questions`;
+  const heading = tn("questions.quick", items.length);
 
   return (
     <section className="question" aria-live="polite">

@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import re
 
-from agent.citations import allowed_citations, known_numbers, strip_cites, validate_model_text, validate_text
+from agent.citations import allowed_citations, known_numbers, split_sentences, strip_cites, validate_model_text, validate_text
 from contracts import Criterion, EngineStep, EvidenceRecord
 from evidence.engine import get_path
 
@@ -78,7 +78,7 @@ def _card_input(card: dict, criteria: list[Criterion]) -> dict:
 
 def _sentence_count(text: str) -> int:
     """Sentences with the citations taken out, so "A. [[cite:x]] B." and "A [[cite:x]]. B." both count 2."""
-    return len([s for s in re.split(r"(?<=[.!?])\s+", strip_cites(text)) if s])
+    return len([s for s in split_sentences(strip_cites(text)) if s])
 
 
 def model_summaries(cards: list[dict], schools_by_id: dict[str, dict], criteria: list[Criterion]) -> tuple[dict[str, str], EngineStep]:

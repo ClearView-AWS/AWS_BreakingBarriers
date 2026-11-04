@@ -24,7 +24,7 @@ stem:
   label: STEM
   display: STEM-focused
   default_strength: require
-  phrases: [stem, robotics, coding, science and math, science & math, ciencias, stem program, science focus]
+  phrases: [stem, robotics, coding, science and math, science & math, ciencias, stem program, science focus, robotica, programacion, tecnologia]
   evidence:
     - field: osp.school_sub_type
       source: school_reported
@@ -42,7 +42,7 @@ stem:
 after_care:
   label: After-school care
   default_strength: require
-  phrases: [after-school care, after school care, afterschool care, after care, afterschool, cuidado despues de la escuela, cuidado después de la escuela, after-school program]
+  phrases: [after-school care, after school care, afterschool care, after care, afterschool, cuidado despues de la escuela, cuidado después de la escuela, after-school program, cuidado despues de clases]
   program_fill: true
   program_match: [after school, after-school, homework help, afterschool, extended care]
   evidence:
@@ -84,7 +84,7 @@ low_cost:
   label: Low cost
   default_strength: prefer
   handler: low_cost
-  phrases: [money is tight, low cost, affordable, inexpensive, cheap, tuition free, tuition-free, beca, low tuition, not expensive]
+  phrases: [money is tight, low cost, affordable, inexpensive, cheap, tuition free, tuition-free, beca, low tuition, not expensive, barato, gratis, no tenemos mucho dinero]
   evidence: []
   search_boost:
     entity_type: { terms: [public, charter] }
@@ -95,7 +95,7 @@ low_cost:
 small_classes:
   label: Small classes
   default_strength: prefer
-  phrases: [small class, small classes, small class size, class size]
+  phrases: [small class, small classes, small class size, class size, clases pequenas]
   evidence:
     - field: class_size.tier
       source: state_data
@@ -410,7 +410,7 @@ before_care:
 dual_language:
   label: Dual language
   default_strength: prefer
-  phrases: [dual language, bilingual, two-way immersion, immersion]
+  phrases: [dual language, bilingual, two-way immersion, immersion, bilingue, bilingüe]
   evidence:
     - field: osp.foreign_language
       source: school_reported

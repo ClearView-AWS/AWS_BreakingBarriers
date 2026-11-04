@@ -171,3 +171,5 @@ class TurnResponse(BaseModel):
     blocks: list[Block] = Field(default_factory=list)
     assumption: str | None = None
     engine: Engine = Field(default_factory=Engine)
+    # The language the parent wrote in ("es", "ht"...), when Amazon Translate read the message.
+    language: str | None = None

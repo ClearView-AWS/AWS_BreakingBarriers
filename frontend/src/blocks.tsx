@@ -6,10 +6,18 @@ import { useEffect, useMemo, useState } from "react";
 import type { Block, Card, Criterion, Evidence, ProgramPin, Turn } from "./types";
 import { GettingInDetail, GettingInLine, type Access } from "./GettingIn";
 import type { CommunityTarget } from "./Community";
-import { SOURCE_LABEL, STATUS_LABEL, STATUS_MARK, nameOf } from "./labels";
+import { STATUS_MARK, nameOf, sourceLabel, statusLabel } from "./labels";
+import { languageName, t, tn } from "./i18n";
 import { MapView, ViewToggle, type ResultsView } from "./Views";
+import { Brief } from "./components/Brief";
+import { QuestionPrompt, type QuestionItem } from "./components/QuestionPrompt";
 
-const LEVEL: Record<string, string> = { p: "Pre-K", e: "Elementary", m: "Middle", h: "High" };
+/** "public" -> "Public" in the UI language; anything else as written. */
+function typeLabel(type: string | null | undefined): string {
+  if (!type) return "";
+  const text = t(`type.${type}`);
+  return text === `type.${type}` ? type : text;
+}
 const SHOWN_FIRST = 3;
 
 export type Picked = { id: string; name: string };
@@ -36,17 +44,45 @@ export function blockOf(blocks: Block[], type: string) {
  * make sense for the newest reply. `current` marks the results the parent is
  * looking at now; older results fold to one line so "#2" always means one list.
  */
-export function AgentBlocks({ turn, latest, current, actions }: { turn: Turn; latest: boolean; current: boolean; actions: Actions }) {
+export function AgentBlocks({
+  turn,
+  latest,
+  current,
+  briefHere = false,
+  actions,
+}: {
+  turn: Turn;
+  latest: boolean;
+  current: boolean;
+  /** This reply holds the newest brief, so it draws it. */
+  briefHere?: boolean;
+  actions: Actions;
+}) {
   return (
     <div className="agent-blocks">
+      {turn.read_from && <p className="read-from">{t("blocks.read_from", { language: languageName(turn.read_from) })}</p>}
       {turn.blocks.map((block, index) => (
-        <AgentBlock key={index} block={block} turn={turn} latest={latest} current={current} actions={actions} />
+        <AgentBlock key={index} block={block} turn={turn} latest={latest} current={current} briefHere={briefHere} actions={actions} />
       ))}
     </div>
   );
 }
 
-function AgentBlock({ block, turn, latest, current, actions }: { block: Block; turn: Turn; latest: boolean; current: boolean; actions: Actions }) {
+function AgentBlock({
+  block,
+  turn,
+  latest,
+  current,
+  briefHere,
+  actions,
+}: {
+  block: Block;
+  turn: Turn;
+  latest: boolean;
+  current: boolean;
+  briefHere: boolean;
+  actions: Actions;
+}) {
   const payload = block.payload;
   switch (block.type) {
     case "message": {
@@ -61,6 +97,8 @@ function AgentBlock({ block, turn, latest, current, actions }: { block: Block; t
       );
     }
     case "question":
+      // Before the first search the same question also comes in the `questions` block, drawn above.
+      if (turn.blocks.some((other) => other.type === "questions")) return null;
       return (
         <Question
           payload={payload}
@@ -68,6 +106,35 @@ function AgentBlock({ block, turn, latest, current, actions }: { block: Block; t
           onPick={(optionId) => actions.send({ action: "refresh", answer: { question_id: payload.id, option_id: optionId } })}
         />
       );
+    case "brief": {
+      // The parent's search: must / nice / avoid. Only the newest brief is drawn. Before the first
+      // search it waits for approval; after that, editing a chip re-runs the search. It's the one
+      // place the search is shown and edited.
+      const approved = Boolean(payload.approved);
+      if (!briefHere) return null;
+      return (
+        <Brief
+          criteria={turn.criteria}
+          approved={approved}
+          onChange={(next) => actions.send({ event: "brief_edited", action: "refresh", criteria: next })}
+          onApprove={() => actions.send({ event: "brief_approved", action: "refresh" })}
+        />
+      );
+    }
+    case "questions": {
+      // Up to three questions that would change the results, each skippable.
+      if (!latest || turn.blocks.some((other) => other.type === "results")) return null;
+      return (
+        <QuestionPrompt
+          items={(payload.items as QuestionItem[]) ?? []}
+          skipLabel={payload.skip_label ? String(payload.skip_label) : undefined}
+          onPick={(questionId, optionId) =>
+            actions.send({ event: "answers_submitted", action: "refresh", answer: { question_id: questionId, option_id: optionId } })
+          }
+          onSkip={() => actions.send({ event: "skip_to_results", action: "refresh" })}
+        />
+      );
+    }
     case "chips":
       // Chips name a school and an action ("Open the full profile"), so they still work later.
       return <Chips items={(payload.items as ChatChip[]) ?? []} disabled={actions.busy} onAction={actions.send} />;
@@ -93,7 +160,7 @@ function AgentBlock({ block, turn, latest, current, actions }: { block: Block; t
         <div className="inline-panel">
           <h3>{term.title ?? term.term}</h3>
           <p>{term.text}</p>
-          <p className="source">Source: {term.cite}</p>
+          <p className="source">{t("blocks.source", { cite: String(term.cite ?? "") })}</p>
         </div>
       );
     }
@@ -146,31 +213,6 @@ function Question({ payload, disabled, onPick }: { payload: Record<string, unkno
   );
 }
 
-export function ChipRow({ criteria, disabled, onChange }: { criteria: Criterion[]; disabled: boolean; onChange: (next: Criterion[]) => void }) {
-  const cycle: Record<string, Criterion["strength"]> = { require: "prefer", prefer: "avoid", avoid: "require" };
-  return (
-    <div className="chips" aria-label="Your search">
-      {criteria.map((item) => (
-        <span className="chip" key={item.id} title={item.label && item.label !== item.text ? `You said: “${item.text}”` : undefined}>
-          <b>{nameOf(item)}</b>
-          {item.kind === "need" || item.kind === "distance" ? (
-            <button
-              className={`strength-${item.strength}`}
-              disabled={disabled}
-              title="Change how much this matters"
-              onClick={() => onChange(criteria.map((row) => (row.id === item.id ? { ...row, strength: cycle[row.strength] } : row)))}
-            >
-              {item.strength}
-            </button>
-          ) : (
-            <span>{item.kind === "grade" ? "grade" : item.kind === "location" ? "city" : "type"}</span>
-          )}
-          <button aria-label={`Remove ${nameOf(item)}`} disabled={disabled} onClick={() => onChange(criteria.filter((row) => row.id !== item.id))}>×</button>
-        </span>
-      ))}
-    </div>
-  );
-}
 
 // --- results -----------------------------------------------------------------
 
@@ -201,8 +243,8 @@ function Results({
     const about = criteria.map(nameOf).join(" · ");
     return (
       <button type="button" className="results-folded" onClick={() => setOpen(true)}>
-        Earlier results: {total} school{total === 1 ? "" : "s"}
-        {about ? ` for ${about}` : ""} · Show
+        {tn("blocks.earlier", total)}
+        {about ? ` ${t("blocks.earlier_for", { about })}` : ""} · {t("blocks.show")}
       </button>
     );
   }
@@ -216,25 +258,25 @@ function Results({
     <div className="results">
       {!current && (
         <button type="button" className="texty results-fold" onClick={() => setOpen(false)}>
-          Earlier results · Hide
+          {t("blocks.earlier_hide")}
         </button>
       )}
       <div className="cards">{schools.slice(0, all ? undefined : SHOWN_FIRST).map((item, index) => card(item, index + 1))}</div>
       {all && gaps.length > 0 && (
         <>
-          <h4 className="results-group">Missing a fact we can ask about</h4>
+          <h4 className="results-group">{t("blocks.group_gaps")}</h4>
           <div className="cards">{gaps.map((item) => card(item))}</div>
         </>
       )}
       {all && missed.length > 0 && (
         <>
-          <h4 className="results-group">Missed a must-have</h4>
+          <h4 className="results-group">{t("blocks.group_missed")}</h4>
           <div className="cards">{missed.map((item) => card(item))}</div>
         </>
       )}
       {rest > 0 && (
         <button type="button" className="texty results-more" onClick={() => setAll((value) => !value)}>
-          {all ? "Show fewer" : `Show all ${total}` + describeRest(Math.max(hidden, 0), gaps.length, missed.length)}
+          {all ? t("blocks.show_fewer") : t("blocks.show_all", { total }) + describeRest(Math.max(hidden, 0), gaps.length, missed.length)}
         </button>
       )}
     </div>
@@ -253,9 +295,9 @@ function Results({
 
 function describeRest(more: number, gaps: number, missed: number): string {
   const parts = [
-    more ? `${more} more match${more === 1 ? "" : "es"}` : "",
-    gaps ? `${gaps} missing a fact` : "",
-    missed ? `${missed} missed a must-have` : "",
+    more ? tn("blocks.more", more) : "",
+    gaps ? t("blocks.rest_gaps", { n: gaps }) : "",
+    missed ? t("blocks.rest_missed", { n: missed }) : "",
   ].filter(Boolean);
   return parts.length ? ` (${parts.join(", ")})` : "";
 }
@@ -267,7 +309,7 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
   const needs = useMemo(() => new Map(criteria.map((item) => [item.id, item.need])), [criteria]);
   const { send, busy, picked, setPicked, openCommunity } = actions;
   const selected = picked.some((item) => item.id === card.id);
-  const levels = (card.level_codes ?? []).map((code) => LEVEL[code] ?? code).join(", ");
+  const levels = (card.level_codes ?? []).map((code) => (t(`level.${code}`) === `level.${code}` ? code : t(`level.${code}`))).join(", ");
   const ask = (row: Evidence) => {
     const need = needs.get(row.criterion_id);
     return row.status === "unknown" && need ? () => send({ action: "ask_school", school_ids: [card.id], need }) : undefined;
@@ -288,28 +330,28 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
             <button onClick={() => send({ action: "school_detail", school_ids: [card.id] })}>{card.name}</button>
           </h3>
           <div className="meta">
-            {[card.city, card.entity_type, levels, card.distance_miles != null ? `${card.distance_miles} miles` : ""].filter(Boolean).join(" · ")}
+            {[card.city, typeLabel(card.entity_type), levels, card.distance_miles != null ? t("blocks.miles", { n: card.distance_miles }) : ""].filter(Boolean).join(" · ")}
           </div>
         </div>
         <div className="score">
           <strong>{Math.round(card.match * 100)}%</strong>
-          <span>Verified {card.verified}</span>
+          <span>{t("blocks.verified", { verified: card.verified })}</span>
         </div>
       </header>
       {card.summary && <p className="summary">{card.summary}</p>}
       <GettingInLine schoolId={card.id} access={(card as Card & { access?: Access }).access} />
       {openCommunity && <CommunityLine card={card} onCommunity={openCommunity} />}
       {!evidence && (
-        <div className="pills" aria-label="Evidence at a glance">
+        <div className="pills" aria-label={t("blocks.at_a_glance")}>
           {card.evidence.map((row) => {
             const label = `${STATUS_MARK[row.status] ?? ""} ${labels.get(row.criterion_id) ?? row.criterion_id}`;
             const onAsk = ask(row);
             return onAsk ? (
-              <button key={row.criterion_id} className={`pill ${row.status}`} disabled={busy} title="Not on file. Ask the school." onClick={onAsk}>
-                {label} · ask
+              <button key={row.criterion_id} className={`pill ${row.status}`} disabled={busy} title={t("blocks.not_on_file_ask")} onClick={onAsk}>
+                {label} · {t("blocks.ask_short")}
               </button>
             ) : (
-              <span key={row.criterion_id} className={`pill ${row.status}`} title={STATUS_LABEL[row.status]}>{label}</span>
+              <span key={row.criterion_id} className={`pill ${row.status}`} title={statusLabel(row.status)}>{label}</span>
             );
           })}
         </div>
@@ -328,35 +370,35 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
         </div>
       )}
       <div className="row-actions">
-        <button aria-expanded={evidence} onClick={() => setEvidence((value) => !value)}>{evidence ? "Hide evidence" : "Show evidence"}</button>
-        <button disabled={busy} onClick={() => send({ action: "save", school_ids: [card.id] })}>Save</button>
+        <button aria-expanded={evidence} onClick={() => setEvidence((value) => !value)}>{evidence ? t("blocks.hide_evidence") : t("blocks.show_evidence")}</button>
+        <button disabled={busy} onClick={() => send({ action: "save", school_ids: [card.id] })}>{t("blocks.save")}</button>
         <button
           aria-pressed={selected}
           onClick={() =>
             setPicked(selected ? picked.filter((item) => item.id !== card.id) : [...picked, { id: card.id, name: card.name }].slice(-2))
           }
         >
-          {selected ? "Selected" : "Compare"}
+          {selected ? t("blocks.selected") : t("blocks.compare")}
         </button>
         {card.entity_type === "private" && (
-          <button disabled={busy} onClick={() => send({ action: "cost", school_ids: [card.id] })}>Cost after scholarships</button>
+          <button disabled={busy} onClick={() => send({ action: "cost", school_ids: [card.id] })}>{t("blocks.cost_after")}</button>
         )}
         {openCommunity && (
           <button onClick={() => openCommunity({ schoolId: card.id, from: "results" })}>
-            Community{card.community?.threads ? ` (${card.community.threads})` : ""}
+            {t("blocks.community")}{card.community?.threads ? ` (${card.community.threads})` : ""}
           </button>
         )}
-        <button disabled={busy} aria-label="Thumbs up" onClick={() => send({ action: "feedback", feedback: { school_id: card.id, vote: "up" } })}>👍</button>
-        <button aria-label="Thumbs down" aria-expanded={reasons} onClick={() => setReasons((value) => !value)}>👎</button>
+        <button disabled={busy} aria-label={t("blocks.thumbs_up")} onClick={() => send({ action: "feedback", feedback: { school_id: card.id, vote: "up" } })}>👍</button>
+        <button aria-label={t("blocks.thumbs_down")} aria-expanded={reasons} onClick={() => setReasons((value) => !value)}>👎</button>
       </div>
       {reasons && (
         <div className="reasons">
           {[
-            ["too_far", "Too far"],
-            ["too_expensive", "Too expensive"],
-            ["missing_program", "Missing a program"],
-            ["wrong_grade", "Wrong grade"],
-          ].map(([id, label]) => (
+            "too_far",
+            "too_expensive",
+            "missing_program",
+            "wrong_grade",
+          ].map((id) => (
             <button
               key={id}
               disabled={busy}
@@ -365,7 +407,7 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
                 setReasons(false);
               }}
             >
-              {label}
+              {t(`reason.${id}`)}
             </button>
           ))}
         </div>
@@ -383,12 +425,12 @@ function CommunityLine({ card, onCommunity }: { card: Card; onCommunity: (target
     <div className="community-line">
       {info.discussed.map((row) => (
         <button key={row.need} className="texty" onClick={() => onCommunity({ schoolId: card.id, filterNeed: row.need, from: "results" })}>
-          {row.parents} parent{row.parents === 1 ? "" : "s"} discussed {row.label.toLowerCase()} here
+          {tn("blocks.discussed", row.parents, { topic: row.label.toLowerCase() })}
         </button>
       ))}
       {topDemand && (
         <span className="meta">
-          {topDemand.count} parent{topDemand.count === 1 ? "" : "s"} asked about {topDemand.label.toLowerCase()} this month
+          {tn("blocks.asked", topDemand.count, { topic: topDemand.label.toLowerCase() })}
         </span>
       )}
     </div>
@@ -400,27 +442,27 @@ function EvidenceRow({ row, label, onAsk, onAskParents }: { row: Evidence; label
   return (
     <div className="ev">
       <div>
-        <span className={`pill ${row.status}`}>{STATUS_LABEL[row.status] ?? row.status}</span>
+        <span className={`pill ${row.status}`}>{statusLabel(row.status)}</span>
         <div>{label}</div>
       </div>
       <div>
-        <div>{row.value != null && row.value !== "" ? String(row.value) : "No value on file"}</div>
+        <div>{row.value != null && row.value !== "" ? String(row.value) : t("blocks.no_value")}</div>
         {source && (
           <div className="source">
-            {SOURCE_LABEL[source.type] ?? source.type} · {source.path}
-            {source.as_of ? ` · as of ${source.as_of}` : ""}
-            {source.confidence ? ` · ${source.confidence} confidence` : ""}
+            {sourceLabel(source.type)} · {source.path}
+            {source.as_of ? ` · ${t("blocks.as_of", { date: source.as_of })}` : ""}
+            {source.confidence ? ` · ${t("blocks.confidence", { level: source.confidence })}` : ""}
           </div>
         )}
         {row.conflict && (
           <div className="conflict">
-            Website says {String(row.conflict.website_value)}; the profile says {String(row.conflict.profile_value)}.
+            {t("blocks.conflict", { website: String(row.conflict.website_value), profile: String(row.conflict.profile_value) })}
           </div>
         )}
         {(onAsk || onAskParents) && (
           <div className="ask-row">
-            {onAsk && <button onClick={onAsk}>Ask the school</button>}
-            {onAskParents && <button onClick={onAskParents}>Ask parents at this school</button>}
+            {onAsk && <button onClick={onAsk}>{t("blocks.ask_school")}</button>}
+            {onAskParents && <button onClick={onAskParents}>{t("blocks.ask_parents")}</button>}
           </div>
         )}
       </div>
@@ -433,17 +475,17 @@ function EvidenceRow({ row, label, onAsk, onAskParents }: { row: Evidence; label
 function Cost({ schools }: { schools: Record<string, unknown>[] }) {
   return (
     <div className="inline-panel">
-      <h3>{schools.some((school) => school.entity_type === "private") ? "Cost after likely scholarships" : "Tuition"}</h3>
+      <h3>{schools.some((school) => school.entity_type === "private") ? t("blocks.cost_title") : t("blocks.tuition")}</h3>
       {schools.map((school) => (
         <div key={String(school.school_id)}>
           <h4>{String(school.school_name)}</h4>
-          {school.tuition != null && <p>Listed tuition: ${String(school.tuition)}. This is not a net price.</p>}
+          {school.tuition != null && <p>{t("blocks.listed_tuition", { n: String(school.tuition) })}</p>}
           <p>{String(school.disclaimer ?? "")}</p>
           <ul className="checklist">
             {((school.lines as Record<string, string>[]) ?? []).map((line, index) => (
               <li key={index}>
                 <strong>{line.wording}</strong> {line.name ? ` ${line.name}.` : ""} {line.eligibility ?? ""}{" "}
-                {line.official_url && <a href={line.official_url} target="_blank" rel="noreferrer">Official page</a>}
+                {line.official_url && <a href={line.official_url} target="_blank" rel="noreferrer">{t("blocks.official_page")}</a>}
               </li>
             ))}
           </ul>
@@ -466,24 +508,24 @@ function SchoolDetail({ payload }: { payload: DetailPayload }) {
       <h3>{String(school.name)}</h3>
       <p className="meta">{String(school.street ?? "")} {String(school.city ?? "")} {String(school.state ?? "")}</p>
       <p>
-        {String(school.entity_type)} · summary rating {school.summary_rating == null ? "unknown" : String(school.summary_rating)}
-        {school.synthetic ? " · synthetic profile" : ""}
+        {typeLabel(String(school.entity_type))} · {t("blocks.rating", { rating: school.summary_rating == null ? t("blocks.rating_unknown") : String(school.summary_rating) })}
+        {school.synthetic ? ` · ${t("blocks.synthetic")}` : ""}
       </p>
       {((school.esp_text as string[]) ?? []).map((line) => <p key={line}>{line}</p>)}
       <GettingInDetail access={(payload.card as (Card & { access?: Access }) | null | undefined)?.access} />
-      {payload.reviews.length > 0 && <h4>Reviews by topic</h4>}
+      {payload.reviews.length > 0 && <h4>{t("blocks.reviews_by_topic")}</h4>}
       <div className="quotes">
         {payload.reviews.map((topic) => (
           <div key={topic.topic} className="quote">
-            <strong>{topic.topic}</strong> · {topic.positive} positive · {topic.negative} negative
-            {topic.earliest ? ` · ${topic.earliest} to ${topic.latest}` : ""}
+            <strong>{topic.topic}</strong> · {t("blocks.review_counts", { positive: topic.positive, negative: topic.negative })}
+            {topic.earliest ? ` · ${t("blocks.review_range", { start: topic.earliest, end: topic.latest ?? "" })}` : ""}
             {topic.quotes.map((quote, index) => (
               <p key={index}>{quote.date} · {quote.side}: {quote.text}</p>
             ))}
           </div>
         ))}
       </div>
-      <p className="source">Review scores in the file are sentiment, not stars, so they are not shown as a rating.</p>
+      <p className="source">{t("blocks.reviews_note")}</p>
     </div>
   );
 }
@@ -503,18 +545,18 @@ function clockText(value: string): string | null {
 
 /** What the evidence actually says, so "Confirmed" and "Confirmed" can still differ. */
 function evidenceCell(row: Evidence | undefined): CompareCell {
-  if (!row || row.status === "unknown") return { text: "Not on file", status: "unknown" };
+  if (!row || row.status === "unknown") return { text: t("compare.not_on_file"), status: "unknown" };
   const value = row.value == null ? "" : String(row.value);
   const time = clockText(value);
   const text =
-    row.source?.type === "program" ? `Nearby program: ${value}` : time ? `Until ${time}` : value || (STATUS_LABEL[row.status] ?? row.status);
-  const source = row.source ? `${SOURCE_LABEL[row.source.type] ?? row.source.type}${row.source.as_of ? ` · ${row.source.as_of}` : ""}` : undefined;
+    row.source?.type === "program" ? t("compare.nearby_program", { name: value }) : time ? t("compare.until", { time }) : value || statusLabel(row.status);
+  const source = row.source ? `${sourceLabel(row.source.type)}${row.source.as_of ? ` · ${row.source.as_of}` : ""}` : undefined;
   return { text, status: row.status, source };
 }
 
 function compareRows(schools: Card[], criteria: Criterion[]): CompareRow[] {
   const rows: CompareRow[] = [
-    { label: "Match", cells: schools.map((s) => ({ text: s.match == null ? "—" : `${Math.round(s.match * 100)}% · verified ${s.verified}` })) },
+    { label: t("compare.match"), cells: schools.map((s) => ({ text: s.match == null ? "—" : t("compare.match_value", { pct: Math.round(s.match * 100), verified: s.verified }) })) },
   ];
   for (const criterion of criteria) {
     if (!((criterion.kind === "need" && criterion.need) || criterion.kind === "distance")) continue;
@@ -530,20 +572,20 @@ function compareRows(schools: Card[], criteria: Criterion[]): CompareRow[] {
     return access.line.startsWith(access.how_label) ? access.line : `${access.how_label} · ${access.line}`;
   };
   rows.push(
-    { label: "Getting in", cells: schools.map((s) => ({ text: gettingIn(s) })) },
-    { label: "Distance", cells: schools.map((s) => ({ text: s.distance_miles != null ? `${s.distance_miles} miles from the city center` : "—" })) },
-    { label: "Type", cells: schools.map((s) => ({ text: s.entity_type ? s.entity_type[0].toUpperCase() + s.entity_type.slice(1) : "—" })) },
+    { label: t("compare.getting_in"), cells: schools.map((s) => ({ text: gettingIn(s) })) },
+    { label: t("compare.distance"), cells: schools.map((s) => ({ text: s.distance_miles != null ? t("compare.distance_value", { n: s.distance_miles }) : "—" })) },
+    { label: t("compare.type"), cells: schools.map((s) => ({ text: typeLabel(s.entity_type) || "—" })) },
   );
   if (schools.some((s) => s.tuition != null)) {
-    rows.push({ label: "Listed tuition", cells: schools.map((s) => ({ text: s.tuition != null ? `$${Number(s.tuition).toLocaleString()} a year` : "None listed" })) });
+    rows.push({ label: t("compare.tuition"), cells: schools.map((s) => ({ text: s.tuition != null ? t("compare.tuition_value", { n: Number(s.tuition).toLocaleString() }) : t("compare.none_listed") })) });
   }
   rows.push({
-    label: "Parent community",
+    label: t("compare.community"),
     cells: schools.map((s) => {
       const info = s.community;
-      if (!info?.threads) return { text: "No threads yet" };
+      if (!info?.threads) return { text: t("compare.no_threads") };
       const topics = info.discussed.map((row) => row.label).join(", ");
-      return { text: `${info.threads} thread${info.threads === 1 ? "" : "s"}${topics ? ` (${topics})` : ""}` };
+      return { text: `${tn("compare.threads", info.threads)}${topics ? ` (${topics})` : ""}` };
     }),
   });
   return rows.filter((row) => row.cells.some((cell) => cell.text !== "—"));
@@ -558,7 +600,7 @@ function Comparison({ schools, criteria }: { schools: Card[]; criteria: Criterio
   const same = rows.filter((row) => new Set(row.cells.map(key)).size === 1);
   return (
     <div className="comparison">
-      <h4>{differ.length ? "Where they differ" : "They match on everything on file"}</h4>
+      <h4>{differ.length ? t("compare.differ") : t("compare.all_same")}</h4>
       {differ.length > 0 && (
         <div className="table-wrap">
           <table className="side-by-side">
@@ -586,7 +628,7 @@ function Comparison({ schools, criteria }: { schools: Card[]; criteria: Criterio
       )}
       {same.length > 0 && (
         <p className="meta">
-          Same for both: {same.map((row) => `${row.label} (${row.cells[0].text})`).join(" · ")}
+          {t("compare.same", { rows: same.map((row) => `${row.label} (${row.cells[0].text})`).join(" · ") })}
         </p>
       )}
     </div>

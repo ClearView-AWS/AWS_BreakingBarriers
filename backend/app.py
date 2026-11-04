@@ -48,6 +48,20 @@ def health() -> dict:
     return {"ok": True, "schools": len(load_schools())}
 
 
+class UiTextIn(BaseModel):
+    language: str
+    strings: dict[str, str]
+
+
+@app.post("/api/ui-text")
+def ui_text(body: UiTextIn) -> dict:
+    """The frontend's buttons, tabs and labels in the parent's language. Cached per language."""
+    from agent.translate import translate_ui
+
+    strings, error = translate_ui(body.strings, body.language)
+    return {"language": body.language, "strings": strings, "error": error}
+
+
 @app.post("/api/turn")
 def post_turn(body: TurnIn) -> dict:
     with State() as state:
@@ -77,13 +91,19 @@ def get_session(session_id: str) -> dict:
                               "access": access, "days_left": access["days_left"]})
         # The saved list reads as a to-do list: the soonest open deadline first.
         saved = by_deadline(saved)
-        return {
-            "session_id": session_id,
-            "criteria": session.get("criteria") or [],
-            "saved": saved,
-            "checklist": items,
-            "asked": session.get("asked") or [],
-        }
+        from agent.localize import localize_response
+
+        # In the parent's language, like the chat (the session remembers it).
+        return localize_response(
+            {
+                "session_id": session_id,
+                "criteria": session.get("criteria") or [],
+                "saved": saved,
+                "checklist": items,
+                "asked": session.get("asked") or [],
+            },
+            session.get("language"),
+        )
 
 
 @app.post("/api/chat")

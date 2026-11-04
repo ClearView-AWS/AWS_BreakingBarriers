@@ -8,6 +8,7 @@ from catalog import glossary, needs
 from agent.explainer import model_summaries, public_summary
 from agent.extractor import extract
 from agent.router import route_message, school_reference, term_from_question
+from agent.translate import to_english
 from clarify.clarifier import (
     apply_question_defaults,
     brief_payload,
@@ -33,8 +34,16 @@ _LEVELS = {"p": "pre-k", "e": "elementary", "m": "middle", "h": "high"}
 
 def turn(state: dict, payload: dict) -> TurnResponse:
     engine = Engine()
+    language = payload.get("_language")
+    if payload.get("message") and not payload.get("_translated"):
+        # /api/turn: read the message in English. The chat (/api/chat) has already done this.
+        reading = to_english(str(payload["message"]))
+        payload = {**payload, "message": reading.text}
+        language = reading.language
+        if reading.error:
+            engine.errors.append(reading.error)
     response = _turn(state, payload, engine)
-    return response.model_copy(update={"engine": engine})
+    return response.model_copy(update={"engine": engine, "language": language})
 
 
 def _record(engine: Engine, step_name: str, step: EngineStep) -> None:

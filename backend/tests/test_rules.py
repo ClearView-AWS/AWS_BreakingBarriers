@@ -318,3 +318,12 @@ def test_routes():
     assert route_message("What is CTE?", False)[0] == "define"
     assert route_message("Why isn't Bayside listed?", True)[0] == "why_not"
     assert route_message("compare Tidewater and Riverside", True)[0] == "compare"
+
+
+def test_a_bare_after_school_time_means_pm():
+    from agent.extractor import _until_param
+
+    assert _until_param("after-school care until 5:30") == "17:30"
+    assert _until_param("after-school care until 6") == "18:00"
+    assert _until_param("after-school care until 6pm") == "18:00"
+    assert _until_param("after-school care until 12") == "12:00"

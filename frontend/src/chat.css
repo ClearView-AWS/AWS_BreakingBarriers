@@ -1,6 +1,31 @@
 /* The search as a chat. Uses the shared color tokens from styles.css, with
    fallbacks so it stays readable if a theme renames them. */
 
+/* The chat, map and community styles were written against the earlier tokens. The redesign
+   (styles.css) renamed them, so map the old names onto its palette. */
+:root {
+  --card: #fff;
+  --bg: var(--mist, #eef4f1);
+  --shadow: 0 10px 30px rgba(16, 32, 51, 0.08);
+  --teal: var(--leaf, #1f8a4c);
+  --teal-dark: var(--leaf-deep, #146338);
+}
+
+/* Rules the redesign dropped that the chat, Saved and Community screens still use. */
+.wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 64px; }
+.search { display: grid; grid-template-columns: 1fr auto; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 10px; box-shadow: var(--shadow); }
+.search input { border: 0; padding: 12px 14px; background: transparent; outline: none; font-size: 18px; }
+.icon { border: 0; background: var(--bg); border-radius: 999px; padding: 4px 8px; }
+.source { color: var(--muted); font-size: 13px; }
+.compare-on { outline: 2px solid var(--teal); }
+.quotes { display: grid; gap: 8px; margin-top: 8px; }
+.checklist { margin: 0; padding-left: 18px; }
+.checklist li { margin: 8px 0; }
+@media (max-width: 720px) {
+  .wrap { width: min(1120px, calc(100% - 24px)); padding-left: 0; padding-right: 0; }
+  .search { grid-template-columns: 1fr; }
+}
+
 /* Full height: the conversation scrolls, the composer stays at the bottom. */
 .app.chat-mode { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
 .chat-main { flex: 1; min-height: 0; display: flex; }
@@ -36,6 +61,7 @@
 
 /* A Guide reply: text, then whatever blocks the turn returned. */
 .agent-blocks { display: grid; gap: 12px; min-width: 0; }
+.read-from { margin: 0; color: var(--muted, #5d6876); font-size: 13px; }
 .agent-text p { margin: 0 0 6px; font-size: 17px; line-height: 1.5; white-space: pre-line; }
 .agent-text p:last-child { margin-bottom: 0; }
 .agent-prompt { color: var(--muted, #5d6876); }
@@ -138,9 +164,15 @@ button.pill { border: 0; cursor: pointer; font: inherit; font-size: 13px; font-w
 .chat-input input { min-width: 0; border: 0; background: transparent; outline: none; padding: 10px 12px; font-size: 17px; }
 .chat-input:focus-within { border-color: var(--teal, #0e6b62); }
 
+/* Header: logo left, tabs in the middle, "Viewing as" right. */
+.topbar { display: grid; grid-template-columns: 1fr auto 1fr; }
+.topbar .brand { justify-self: start; }
+.topbar .persona { justify-self: end; }
+
 @media (max-width: 720px) {
-  .chat-mode .top { flex-wrap: wrap; gap: 8px; padding: 10px 16px; }
-  .chat-mode .brand span { display: none; }
+  .topbar { grid-template-columns: auto 1fr; gap: 8px; padding: 10px 16px; }
+  .topbar .nav { grid-column: 1 / -1; grid-row: 2; justify-content: center; }
+  .topbar .brand-text em { display: none; }
   .chat-mode .nav button { padding: 6px 10px; font-size: 14px; }
   .chat-log { padding-top: 16px; }
   .chat-parent { max-width: 90%; }

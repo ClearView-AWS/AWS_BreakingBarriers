@@ -8,8 +8,21 @@ from catalog import funding_rules, glossary
 from contracts import EvidenceRecord
 from evidence.engine import get_path
 
-_CITE = re.compile(r"\[\[cite:([^\]]+)\]\]")
+# A path can hold brackets ("reviews_full[1]"), so a citation ends at the last "]]" in a run of "]".
+_CITE = re.compile(r"\[\[cite:(.+?)\]\](?!\])")
 _SENTENCE = re.compile(r"(?<=[.!?])\s+")
+# A period after these is part of a name or title, not the end of a sentence ("St. Johns STEM Middle").
+_ABBREVIATIONS = ("st.", "mt.", "ft.", "dr.", "mr.", "mrs.", "ms.", "jr.", "sr.")
+
+
+def split_sentences(text: str) -> list[str]:
+    parts: list[str] = []
+    for part in _SENTENCE.split(text):
+        if parts and parts[-1].casefold().endswith(_ABBREVIATIONS):
+            parts[-1] = f"{parts[-1]} {part}"
+        else:
+            parts.append(part)
+    return parts
 
 
 def citations_in(text: str) -> list[str]:
@@ -40,7 +53,7 @@ def allowed_citations(records: list[EvidenceRecord], school: dict | None = None)
 def _attach_trailing_cites(text: str) -> str:
     """A citation written after a period belongs to the sentence it follows."""
     return re.sub(
-        r"([.!?])(\s*)((?:\[\[cite:[^\]]+\]\]\s*)+)",
+        r"([.!?])(\s*)((?:\[\[cite:.+?\]\](?!\])\s*)+)",
         lambda match: f" {match.group(3).strip()}{match.group(1)}{match.group(2)}",
         text,
     )
@@ -50,7 +63,7 @@ def validate_text(text: str, allowed: set[str]) -> str:
     if not text:
         return ""
     kept = []
-    for sentence in _SENTENCE.split(_attach_trailing_cites(text).strip()):
+    for sentence in split_sentences(_attach_trailing_cites(text).strip()):
         cites = citations_in(sentence)
         if cites and all(cite in allowed for cite in cites):
             kept.append(sentence.strip())
@@ -119,7 +132,7 @@ def validate_model_text(text: str, facts: dict[str, set[str]], extra: set[str]) 
     `extra` holds readings any sentence may use, such as the parent's own criteria.
     """
     kept = []
-    for sentence in _SENTENCE.split(validate_text(text, set(facts))):
+    for sentence in split_sentences(validate_text(text, set(facts))):
         if not sentence:
             continue
         allowed = set(extra)

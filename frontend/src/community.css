@@ -71,13 +71,9 @@
 .reply-form .primary { justify-self: start; }
 
 @media (max-width: 720px) {
-  .top { flex-direction: column; align-items: flex-start; }
   .nav { flex-wrap: wrap; }
   .thread { grid-template-columns: 44px 1fr; padding: 12px; }
 }
-
-/* Header: the nav and the "Viewing as" switcher sit together on the right. */
-.top-right { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; justify-content: flex-end; }
 
 /* Community tab home */
 .community-home { display: grid; gap: 14px; }

@@ -20,5 +20,7 @@ FRESH_MONTHS = 18
 REVIEW_FULL_WEIGHT_YEARS = 5
 
 BEDROCK_ENABLED = os.environ.get("BEDROCK_ENABLED", "").lower() in {"1", "true", "yes"}
+# Amazon Translate reads the parent's message in any language and hands the pipeline English.
+TRANSLATE_ENABLED = os.environ.get("TRANSLATE_ENABLED", "").lower() in {"1", "true", "yes"}
 OPENSEARCH_URL = os.environ.get("OPENSEARCH_URL", "").strip()
 AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")

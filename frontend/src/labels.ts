@@ -1,5 +1,6 @@
 // Names for evidence statuses, sources and criteria. Shared by the chat blocks and the
-// List / Map / Compare views so a school reads the same everywhere.
+// List / Map views so a school reads the same everywhere, in the parent's language.
+import { t } from "./i18n";
 import type { Criterion } from "./types";
 
 export const STATUS_LABEL: Record<string, string> = {
@@ -16,6 +17,14 @@ export const STATUS_MARK: Record<string, string> = {
   unknown: "?",
 };
 
+/** "Confirmed", "Needs attention"... in the UI language. Unknown codes show as written. */
+export function statusLabel(status: string): string {
+  const key = `status.${status}`;
+  const text = t(key);
+  return text === key ? status : text;
+}
+
+/** English source names, for components that don't translate (components/EvidenceGrid, SchoolResult). */
 export const SOURCE_LABEL: Record<string, string> = {
   state_data: "State data",
   school_reported: "School-reported",
@@ -26,6 +35,13 @@ export const SOURCE_LABEL: Record<string, string> = {
   funding_rule: "Scholarship rule",
   computed: "Computed from the school's location",
 };
+
+/** "School-reported", "Nearby program"... in the UI language. Unknown types show as written. */
+export function sourceLabel(type: string): string {
+  const key = `source.${type}`;
+  const text = t(key);
+  return text === key ? type : text;
+}
 
 export const LEVEL: Record<string, string> = {
   p: "Pre-K",

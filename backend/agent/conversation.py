@@ -30,6 +30,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from agent.citations import allowed_citations, strip_cites, validate_text
+from agent.localize import localize_response
+from agent.translate import to_english
 from catalog import needs
 from contracts import Criterion, EngineStep, EvidenceRecord
 from enrollment.access import getting_in
@@ -121,16 +123,25 @@ def chat_turn(state: dict, payload: dict) -> dict:
     payload = {**payload, "session_id": session["id"]}
     history = session.setdefault("history", [])
     focus = session.setdefault("focus", {"results": [], "all": [], "school": None})
-    message = (payload.get("message") or "").strip()
+    written = (payload.get("message") or "").strip()
     schools = load_schools()
     by_id = {school["id"]: school for school in schools}
 
-    if message:
-        _remember(history, "parent", "message", message)
+    tap = None
+    if written:
+        # The chat keeps the parent's own words; everything below reads the English.
+        _remember(history, "parent", "message", written)
     else:
         tap = _tap_text(payload, by_id)
         if tap:
             _remember(history, "parent", "event", tap)
+
+    reading = to_english(written) if written else None
+    message = reading.text.strip() if reading else ""
+    if reading and reading.language:
+        session["language"] = reading.language
+    if reading:
+        payload = {**payload, "message": message, "_translated": True, "_language": reading.language}
 
     plan, step = _interpret(session, message, schools, by_id) if message and not payload.get("action") else (None, None)
     if plan is not None and plan.intent == "ask_about":
@@ -140,6 +151,13 @@ def chat_turn(state: dict, payload: dict) -> dict:
             payload = {**payload, **plan.pipeline_payload}
         response = turn(state, payload).model_dump()
     _record_route(response, plan, step)
+    if reading and reading.error:
+        engine = response.setdefault("engine", {"route": None, "extract": None, "explain": None, "errors": []})
+        engine.setdefault("errors", []).append(reading.error)
+    # The reply follows the language of the parent's latest typed message; taps keep it.
+    language = session.get("language")
+    response["language"] = language
+    response["read_from"] = reading.language if reading and reading.language not in (None, "en") else None
 
     _fold_unchanged(response, focus, payload, message)
     _update_focus(focus, response)
@@ -148,7 +166,10 @@ def chat_turn(state: dict, payload: dict) -> dict:
         _remember(history, "agent", "message", reply, route=response.get("route"), school_ids=response.get("_school_ids") or [])
     response.pop("_school_ids", None)
     response["history"] = history[-HISTORY_LIMIT:]
-    return response
+    # This turn's tap line, so the chat can show it in the parent's language.
+    response["tap"] = tap
+    # Last: translate what the parent reads. The stored history stays English.
+    return localize_response(response, language)
 
 
 # --- history -----------------------------------------------------------------

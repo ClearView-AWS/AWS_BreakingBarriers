@@ -1,13 +1,16 @@
-import { STRENGTH_CYCLE, STRENGTH_LABEL } from "../labels";
+import { STRENGTH_CYCLE, nameOf } from "../labels";
+import { t } from "../i18n";
 import type { Criterion } from "../types";
 
 type Props = {
   criteria: Criterion[];
   onChange: (next: Criterion[]) => void;
   onApprove: () => void;
+  /** Already approved: the results are on screen, so editing re-runs the search and there's nothing to approve. */
+  approved?: boolean;
 };
 
-export function Brief({ criteria, onChange, onApprove }: Props) {
+export function Brief({ criteria, onChange, onApprove, approved = false }: Props) {
   if (!criteria.length) return null;
 
   // Hard filters (location/grade/type) always belong in must-have for the brief.
@@ -19,20 +22,22 @@ export function Brief({ criteria, onChange, onApprove }: Props) {
   const avoid = criteria.filter((c) => c.kind === "need" && c.strength === "avoid");
 
   return (
-    <section className="brief" aria-label="Search brief">
+    <section className="brief" aria-label={t("brief.label")}>
       <div className="brief-head">
         <div>
-          <p className="eyebrow">Search brief</p>
-          <h2>Here’s what I’ll look for</h2>
+          <p className="eyebrow">{t("brief.label")}</p>
+          <h2>{t("brief.title")}</h2>
         </div>
-        <button type="button" className="btn-primary" onClick={onApprove}>
-          Looks right — search
-        </button>
+        {!approved && (
+          <button type="button" className="btn-primary" onClick={onApprove}>
+            {t("brief.approve")}
+          </button>
+        )}
       </div>
 
       <div className="brief-grid">
         <BriefColumn
-          title={STRENGTH_LABEL.require}
+          title={t("brief.must")}
           empty="—"
           items={must}
           onCycle={(id) =>
@@ -47,7 +52,7 @@ export function Brief({ criteria, onChange, onApprove }: Props) {
           onRemove={(id) => onChange(criteria.filter((row) => row.id !== id))}
         />
         <BriefColumn
-          title={STRENGTH_LABEL.prefer}
+          title={t("brief.nice")}
           empty="—"
           items={nice}
           onCycle={(id) =>
@@ -60,7 +65,7 @@ export function Brief({ criteria, onChange, onApprove }: Props) {
           onRemove={(id) => onChange(criteria.filter((row) => row.id !== id))}
         />
         <BriefColumn
-          title={STRENGTH_LABEL.avoid}
+          title={t("brief.avoid")}
           empty="—"
           items={avoid}
           onCycle={(id) =>
@@ -73,7 +78,7 @@ export function Brief({ criteria, onChange, onApprove }: Props) {
           onRemove={(id) => onChange(criteria.filter((row) => row.id !== id))}
         />
       </div>
-      <p className="brief-hint">Tap a need to cycle must / nice / avoid. Remove anything that doesn’t belong.</p>
+      <p className="brief-hint">{t("brief.hint")}</p>
     </section>
   );
 }
@@ -105,11 +110,11 @@ function BriefColumn({
                 className={`chip strength-${item.strength}`}
                 onClick={() => onCycle(item.id)}
                 disabled={item.kind !== "need" && item.kind !== "distance"}
-                title={item.kind === "need" || item.kind === "distance" ? "Cycle strength" : undefined}
+                title={item.kind === "need" || item.kind === "distance" ? t("brief.cycle") : undefined}
               >
-                {item.text}
+                {nameOf(item)}
               </button>
-              <button type="button" className="chip-x" aria-label={`Remove ${item.text}`} onClick={() => onRemove(item.id)}>
+              <button type="button" className="chip-x" aria-label={t("blocks.remove", { name: nameOf(item) })} onClick={() => onRemove(item.id)}>
                 ×
               </button>
             </li>
