@@ -27,7 +27,7 @@ export function App() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<Picked[]>([]);
-  // Results open as a list; once the parent picks Map or Compare, it sticks for the session.
+  // Results open as a list; once the parent picks Grid or Map, it sticks for the session.
   const [resultsView, setResultsView] = useState<ResultsView>("list");
   const [saved, setSaved] = useState<{ id: string; name: string; city?: string }[]>([]);
   const [checklist, setChecklist] = useState<{ school_name: string; question: string }[]>([]);
