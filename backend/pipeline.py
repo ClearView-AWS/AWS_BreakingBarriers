@@ -27,7 +27,7 @@ from gaps.ses_mailer import send_school_question
 from mapping.mapper import normalize
 from search.corpus import known_cities, load_programs, load_schools
 from search.engine import search_schools
-from search.geo import CITY_CENTROIDS, distance_from_city, miles_between
+from search.geo import CITY_CENTROIDS, distance_from_city, distance_from_point, miles_between
 
 _LEVELS = {"p": "pre-k", "e": "elementary", "m": "middle", "h": "high"}
 
@@ -60,6 +60,13 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     prefetched = None
     if not action and not event and message:
         action, prefetched = _route_and_extract(message, bool(session["criteria"]), engine)
+    # Map taps are structured events: no LLM. Map them onto the same actions the chat uses.
+    if event == "pin_selected":
+        action = "school_detail"
+    elif event == "pins_compared":
+        action = "compare"
+    elif event == "area_changed":
+        action = "refine"
     action = action or "refresh"
 
     if payload.get("criteria") is not None:
@@ -73,6 +80,7 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
             session["asked"] = []
             session["pending_questions"] = []
             session["assumptions"] = []
+            session.pop("search_center", None)
         else:
             session["criteria"] = _merge(session["criteria"], incoming)
 
@@ -81,11 +89,12 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
     _apply_feedback(session, payload.get("feedback") or {})
     _apply_zoned(session, payload.get("zoned") or {})
     _apply_brief_event(session, event, state)
+    _apply_area(session, event, payload.get("area") or {})
 
     criteria = [Criterion(**row) for row in session["criteria"]]
     schools = load_schools()
     programs = load_programs()
-    _stamp_distances(schools, criteria)
+    _stamp_distances(schools, criteria, _search_center(session))
 
     if action == "compare" or _wants(action, "compare"):
         return _compare(session, criteria, schools, programs, state, payload, message)
@@ -116,7 +125,9 @@ def _turn(state: dict, payload: dict, engine: Engine) -> TurnResponse:
         # No pre-search questions — show the brief with results in the same turn.
         session["brief_approved"] = True
 
-    response = _search_response(session, criteria, schools, programs, state, message or "Showing your current search.", engine)
+    reply = message or session.get("note") or "Showing your current search."
+    response = _search_response(session, criteria, schools, programs, state, reply, engine)
+    session.pop("note", None)
     session["pending_questions"] = []
     if action == "new_search":
         response.route = "new_search"
@@ -150,6 +161,57 @@ def _apply_brief_event(session: dict, event: str | None, state: dict) -> None:
     elif event == "brief_edited":
         # Criteria already replaced from payload; approval unchanged.
         pass
+    elif event == "area_changed":
+        # Parent already has results; moving the search area is a refine.
+        session["brief_approved"] = True
+
+
+def _search_center(session: dict) -> tuple[float, float] | None:
+    center = session.get("search_center")
+    if isinstance(center, (list, tuple)) and len(center) == 2:
+        try:
+            return float(center[0]), float(center[1])
+        except (TypeError, ValueError):
+            return None
+    return None
+
+
+def _apply_area(session: dict, event: str | None, area: dict) -> None:
+    """Map 'Search this area' / drag-you: keep a point (never an address) and a distance chip."""
+    if event != "area_changed" or not isinstance(area, dict):
+        return
+    center = area.get("center")
+    if not isinstance(center, (list, tuple)) or len(center) != 2:
+        return
+    try:
+        point = [float(center[0]), float(center[1])]
+    except (TypeError, ValueError):
+        return
+    session["search_center"] = point
+    try:
+        radius = float(area.get("radius_mi") or 5)
+    except (TypeError, ValueError):
+        radius = 5.0
+    radius = max(1.0, min(radius, 40.0))
+    updated = False
+    for row in session.get("criteria") or []:
+        if row.get("kind") == "distance":
+            row.setdefault("params", {})["max_miles"] = radius
+            row["text"] = f"Within {radius:g} miles"
+            row["strength"] = row.get("strength") or "prefer"
+            updated = True
+    if not updated:
+        session.setdefault("criteria", []).append(
+            Criterion(
+                id="tmp",
+                text=f"Within {radius:g} miles",
+                kind="distance",
+                strength="prefer",
+                params={"max_miles": radius},
+            ).model_dump()
+        )
+        _rekey(session["criteria"])
+    session["note"] = f"You moved the search area. Ranking schools within about {radius:g} miles of that point."
 
 
 def _brief_gate_response(session, criteria, schools, programs, state, engine: Engine) -> TurnResponse | None:
@@ -388,10 +450,17 @@ def _rank_key(card: dict) -> tuple:
     return (-card["match"], card["name"])
 
 
-def _stamp_distances(schools: list[dict], criteria: list[Criterion]) -> None:
+def _stamp_distances(
+    schools: list[dict],
+    criteria: list[Criterion],
+    center: tuple[float, float] | None = None,
+) -> None:
     city = next((c.value for c in criteria if c.kind == "location"), None)
     for school in schools:
-        school["_distance_miles"] = distance_from_city(school, city)
+        if center:
+            school["_distance_miles"] = distance_from_point(school, center)
+        else:
+            school["_distance_miles"] = distance_from_city(school, city)
 
 
 def _overlays_for(state: dict, school_id: str) -> dict:
@@ -524,6 +593,7 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
         blocks.append(Block(type="question", payload=question))
     city = next((c for c in criteria if c.kind == "location"), None)
     centroid = CITY_CENTROIDS.get(str(city.value or city.text).casefold()) if city else None
+    map_center = _search_center(session) or (centroid if centroid else None)
     blocks.append(
         Block(
             type="results",
@@ -532,8 +602,8 @@ def _search_response(session, criteria, schools, programs, state, message: str, 
                 "missed": missed,
                 "gaps": gaps,
                 "matched_count": len(scored_rows),
-                # The searched city's center, for the map's "Search area" marker. Never a home address.
-                "center": list(centroid) if centroid else None,
+                # Search-area marker: a city center or a point the parent moved on the map. Never a home address.
+                "center": list(map_center) if map_center else None,
                 "programs": _program_pins(main + gaps + missed, programs),
             },
         )

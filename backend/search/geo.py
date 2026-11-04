@@ -49,3 +49,10 @@ def distance_from_city(school: dict, city: str | None) -> float | None:
     if not centroid:
         return None
     return miles_between((school["_lat"], school["_lon"]), centroid)
+
+
+def distance_from_point(school: dict, center: tuple[float, float] | None) -> float | None:
+    """Straight-line miles from a map search point (never a home address)."""
+    if not center or school.get("_lat") is None:
+        return None
+    return miles_between((school["_lat"], school["_lon"]), center)

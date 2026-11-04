@@ -34,8 +34,11 @@ class TurnIn(BaseModel):
     need: str | None = None
     # "Yes, it's my zoned school" on a public card: {"school_id": "...", "value": true}.
     zoned: dict | None = None
-    # M2 UI events: brief_approved | brief_edited | skip_to_results | answers_submitted
+    # M2/M3 UI events: brief_* | skip_to_results | answers_submitted
+    # | pin_selected | pins_compared | area_changed
     event: str | None = None
+    # area_changed: { "center": [lat, lon], "radius_mi": 5 }
+    area: dict | None = None
 
 
 class ReplyIn(BaseModel):

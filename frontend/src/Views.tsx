@@ -1,4 +1,4 @@
-// List / Map for the results on screen. Ported from Gagan's Track 3 views
+// List / Grid / Map for the results on screen. Ported from Gagan's Track 3 views
 // (feature/community, commit 703938b) into the chat: the toggle sits on the latest results.
 // Results always open as a list. The app can suggest the map, but only the parent switches.
 // Comparing two schools happens in the chat (compare tray or "compare #1 and #2").
@@ -7,11 +7,11 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./views.css";
 import type { Actions } from "./blocks";
-import { nameOf, statusLabel } from "./labels";
+import { nameOf, sourceLabel, statusLabel } from "./labels";
 import { t, tn, uiLanguage } from "./i18n";
-import type { Card, Criterion, ProgramPin } from "./types";
+import type { Card, Criterion, Evidence, ProgramPin } from "./types";
 
-export type ResultsView = "list" | "map";
+export type ResultsView = "list" | "grid" | "map";
 
 const SUGGEST_MAP_MILES = 10;
 
@@ -47,7 +47,11 @@ export function ViewToggle(props: {
   const spread = useMemo(() => spreadMiles(props.cards), [props.cards]);
   const aboutPlace = props.criteria.some((item) => item.kind === "distance");
   const suggestMap = props.view !== "map" && props.cards.length > 1 && (aboutPlace || spread > SUGGEST_MAP_MILES);
-  const tabs: [ResultsView, string][] = [["list", t("views.list")], ["map", t("views.map")]];
+  const tabs: [ResultsView, string][] = [
+    ["list", t("views.list")],
+    ["grid", t("views.grid")],
+    ["map", t("views.map")],
+  ];
 
   return (
     <section className="results-views">
@@ -85,6 +89,83 @@ const escapeHtml = (text: string) =>
 
 type Placed = { card: Card; rank: number | null; hollow: boolean };
 
+type GridSchool = { id: string; name: string };
+type GridCriterion = { id: string; text: string };
+
+/** Schools × criteria with a source on every filled cell (plan M3 Grid). */
+export function GridView(props: {
+  schools: GridSchool[];
+  criteria: GridCriterion[];
+  cells: Record<string, Record<string, Evidence | null | undefined>>;
+}) {
+  if (!props.schools.length || !props.criteria.length) {
+    return <p className="meta">{t("views.grid_empty")}</p>;
+  }
+  return (
+    <section className="grid-view" aria-label={t("views.grid")}>
+      <p className="meta">{t("views.grid_blurb")}</p>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{t("views.grid_school")}</th>
+              {props.criteria.map((column) => (
+                <th key={column.id} scope="col">
+                  {column.text}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {props.schools.map((school) => (
+              <tr key={school.id}>
+                <th scope="row">{school.name}</th>
+                {props.criteria.map((column) => {
+                  const cell = props.cells[school.id]?.[column.id];
+                  return (
+                    <td key={column.id}>
+                      {cell ? (
+                        <>
+                          <span className={`pill ${cell.status}`}>{statusLabel(cell.status)}</span>
+                          {cell.source && (
+                            <p className="cite">
+                              {sourceLabel(cell.source.type)}
+                              {cell.source.as_of ? ` · ${cell.source.as_of}` : ""}
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+/** Build a grid from result cards when the turn has no evidence_grid block. */
+export function gridFromCards(cards: Card[], criteria: Criterion[]) {
+  const columns = criteria.filter((item) => item.kind === "need" || item.kind === "budget");
+  const cells: Record<string, Record<string, Evidence | null>> = {};
+  for (const card of cards) {
+    cells[card.id] = {};
+    for (const column of columns) {
+      cells[card.id][column.id] = card.evidence.find((row) => row.criterion_id === column.id) ?? null;
+    }
+  }
+  return {
+    schools: cards.map((card) => ({ id: card.id, name: card.name })),
+    criteria: columns.map((item) => ({ id: item.id, text: nameOf(item) })),
+    cells,
+  };
+}
+
 export function MapView(props: {
   schools: Card[];
   gaps: Card[];
@@ -97,8 +178,14 @@ export function MapView(props: {
   const box = useRef<HTMLDivElement | null>(null);
   const map = useRef<L.Map | null>(null);
   const layer = useRef<L.LayerGroup | null>(null);
+  const youMarker = useRef<L.Marker | null>(null);
+  const draftCenter = useRef<[number, number] | null>(props.center);
   const [selected, setSelected] = useState<string | null>(null);
   const { send, busy, picked, setPicked } = props.actions;
+
+  useEffect(() => {
+    draftCenter.current = props.center;
+  }, [props.center]);
 
   // Numbers match the list. "Missing a fact" schools are plain pins; missed must-haves are hollow.
   const ranked = useMemo<Placed[]>(
@@ -133,14 +220,28 @@ export function MapView(props: {
     const group = layer.current;
     if (!current || !group) return;
     group.clearLayers();
+    youMarker.current = null;
     const bounds: L.LatLngExpression[] = [];
-    if (props.center) {
-      L.marker(props.center, {
-        icon: L.divIcon({ className: "pin-you", html: `<span>${escapeHtml(t("views.search_area"))}</span>`, iconSize: [96, 24], iconAnchor: [48, 12] }),
-        keyboard: false,
-        interactive: false,
-      }).addTo(group);
-      bounds.push(props.center);
+    const you = draftCenter.current ?? props.center;
+    if (you) {
+      const marker = L.marker(you, {
+        draggable: true,
+        icon: L.divIcon({
+          className: "pin-you",
+          html: `<span>${escapeHtml(t("views.search_area"))}</span>`,
+          iconSize: [96, 24],
+          iconAnchor: [48, 12],
+        }),
+        title: t("views.drag_you"),
+        riseOnHover: true,
+      });
+      marker.on("dragend", () => {
+        const next = marker.getLatLng();
+        draftCenter.current = [next.lat, next.lng];
+      });
+      marker.addTo(group);
+      youMarker.current = marker;
+      bounds.push(you);
     }
     // Programs first, so school pins sit on top of the dashed lines.
     for (const program of props.programs) {
@@ -183,6 +284,7 @@ export function MapView(props: {
       marker.addTo(group);
       bounds.push(point);
     }
+    // Keep the parent's dragged point; only fit bounds when the result set changes.
     if (bounds.length > 1) current.fitBounds(L.latLngBounds(bounds), { padding: [36, 36], maxZoom: 13 });
     else if (bounds.length === 1) current.setView(bounds[0], 12);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -203,6 +305,32 @@ export function MapView(props: {
     : [];
   const isPicked = chosen ? picked.some((item) => item.id === chosen.card.id) : false;
 
+  function searchThisArea() {
+    const fromYou = youMarker.current?.getLatLng();
+    const mapCenter = map.current?.getCenter();
+    const point: [number, number] | null = fromYou
+      ? [fromYou.lat, fromYou.lng]
+      : draftCenter.current
+        ? draftCenter.current
+        : mapCenter
+          ? [mapCenter.lat, mapCenter.lng]
+          : null;
+    if (!point) return;
+    draftCenter.current = point;
+    send({
+      event: "area_changed",
+      action: "refine",
+      area: { center: point, radius_mi: 5 },
+    });
+  }
+
+  function toggleCompare(card: Card) {
+    const next = picked.some((item) => item.id === card.id)
+      ? picked.filter((item) => item.id !== card.id)
+      : [...picked, { id: card.id, name: card.name }].slice(-2);
+    setPicked(next);
+  }
+
   return (
     <div className="map-view">
       <p className="meta">
@@ -210,6 +338,24 @@ export function MapView(props: {
         {props.programs.length > 0 ? ` ${t("views.programs_note")}` : ""}
         {unplaced > 0 ? ` ${tn("views.unplaced", unplaced)}` : ""}
       </p>
+      <div className="map-toolbar">
+        <button type="button" disabled={busy || !map.current} onClick={searchThisArea}>
+          {t("views.search_this_area")}
+        </button>
+        {picked.length === 2 && (
+          <button
+            type="button"
+            className="primary"
+            disabled={busy}
+            onClick={() => {
+              send({ event: "pins_compared", action: "compare", school_ids: picked.map((item) => item.id) });
+              setPicked([]);
+            }}
+          >
+            {t("chat.compare_pair", { a: picked[0].name, b: picked[1].name })}
+          </button>
+        )}
+      </div>
       <div className="map-box" ref={box} aria-label={t("views.map_label")} role="region" />
       <ul className="map-legend" aria-hidden="true">
         <li><span className="dot" style={{ background: "var(--confirmed)" }} /> {t("views.legend_high")}</li>
@@ -246,18 +392,14 @@ export function MapView(props: {
             ))}
           </ul>
           <div className="row-actions">
-            <button disabled={busy} onClick={() => send({ action: "school_detail", school_ids: [chosen.card.id] })}>{t("views.details")}</button>
-            <button disabled={busy} onClick={() => send({ action: "save", school_ids: [chosen.card.id] })}>{t("blocks.save")}</button>
             <button
-              aria-pressed={isPicked}
-              onClick={() =>
-                setPicked(
-                  isPicked
-                    ? picked.filter((item) => item.id !== chosen.card.id)
-                    : [...picked, { id: chosen.card.id, name: chosen.card.name }].slice(-2),
-                )
-              }
+              disabled={busy}
+              onClick={() => send({ event: "pin_selected", action: "school_detail", school_ids: [chosen.card.id] })}
             >
+              {t("views.details")}
+            </button>
+            <button disabled={busy} onClick={() => send({ action: "save", school_ids: [chosen.card.id] })}>{t("blocks.save")}</button>
+            <button aria-pressed={isPicked} onClick={() => toggleCompare(chosen.card)}>
               {isPicked ? t("blocks.selected") : t("blocks.compare")}
             </button>
           </div>
