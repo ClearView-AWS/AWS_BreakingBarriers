@@ -75,9 +75,9 @@ export function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "light" ? "#f4f6f3" : "#050807");
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "light" ? "#ffffff" : "#0a1a24");
     try {
-      localStorage.setItem("theme", theme);
+      localStorage.setItem("gs-theme", theme);
     } catch {
       // Storage can be blocked; the theme still applies for this visit.
     }
@@ -205,10 +205,10 @@ export function App() {
           <PersonaSwitcher value={persona} onChange={setPersona} />
           <button
             className="theme-switch"
-            aria-label={`Theme: ${theme === "light" ? "Light" : "Midnight"}. Switch theme`}
-            onClick={() => setTheme(theme === "light" ? "midnight" : "light")}
+            aria-label={`Theme: ${theme === "light" ? "Light" : "Dark"}. Switch theme`}
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           >
-            {theme === "light" ? "Light" : "Midnight"}
+            {theme === "light" ? "Light" : "Dark"}
           </button>
         </nav>
       </header>
@@ -399,14 +399,14 @@ export function App() {
   );
 }
 
-type Theme = "midnight" | "light";
+type Theme = "dark" | "light";
 
-// Midnight is the default for everyone; Light is the alternative.
+// Light (GreatSchools colours) is the default; Dark is the alternative.
 function savedTheme(): Theme {
   try {
-    return localStorage.getItem("theme") === "light" ? "light" : "midnight";
+    return localStorage.getItem("gs-theme") === "dark" ? "dark" : "light";
   } catch {
-    return "midnight";
+    return "light";
   }
 }
 
