@@ -118,12 +118,12 @@ export function GridView(props: {
           </thead>
           <tbody>
             {props.schools.map((school) => (
-              <tr key={school.id}>
+              <tr key={school.id} data-school-id={school.id}>
                 <th scope="row">{school.name}</th>
                 {props.criteria.map((column) => {
                   const cell = props.cells[school.id]?.[column.id];
                   return (
-                    <td key={column.id}>
+                    <td key={column.id} data-criterion-id={column.id}>
                       {cell ? (
                         <>
                           <span className={`pill ${cell.status}`}>{statusLabel(cell.status)}</span>
