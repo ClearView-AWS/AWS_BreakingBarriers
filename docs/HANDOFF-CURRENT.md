@@ -1,17 +1,18 @@
 # 인수인계 (현재) — 프론트 리디자인 + AWS 데모 배포
 
-*작성일: 2026-11-04 (저녁 갱신: `main` = PR #23) · 계정: `767828752508` (Workshop Studio / `WSParticipantRole`)*
+*작성일: 2026-11-04 · 저녁 이후 갱신: `main` ≈ `6d72514` (grade10 PRs #31–#35 머지) · 계정: `767828752508` (Workshop Studio / `WSParticipantRole`)*
 
-이전 배경·코드 갭·OpenSearch 이슈는 [`HANDOFF.md`](./HANDOFF.md)를 보세요.  
-**이 문서는 오늘(11/04) 세션에서 실제로 한 일과, 지금 열린 데모 URL을 기준으로 이어가기 위한 문서입니다.**
+이전 오전 스냅샷(보관용)은 [`HANDOFF.md`](./HANDOFF.md)를 보세요 — **아키텍처 진실은 [`infra.md`](./infra.md) + [`README.md`](../README.md) + [`how-it-works.md`](./how-it-works.md).**  
+**이 문서는 라이브 데모 URL과, grade10 이후 실제로 머지된 것을 기준으로 이어가기 위한 문서입니다.**
 
 ---
 
 ## 1. 한 줄 요약
 
-- 프론트를 plan.md 방향(브리프 / Just show me results / List·Grid)으로 리디자인함.
+- 프론트를 plan.md 방향(브리프 / Just show me results / List·Map)으로 리디자인함. 지도는 **Leaflet + OSM** (Amazon Location 없음).
 - FastAPI를 **Fargate + ALB**, React를 **S3 + CloudFront**로 올려 **HTTPS 데모 URL**을 확보함.
-- 저녁 기준: **Bedrock·OpenSearch·DynamoDB·Translate 모두 라이브에 연결됨** (PR #21, #22). `main` 머지 시 GitHub Actions가 자동 재배포 (OIDC).
+- **Bedrock·OpenSearch·DynamoDB(RuntimeState 1테이블)·Translate·Guardrails** 라이브. CDK는 4스택: `GsAppStack`, `GsOpenSearchStack`, `GsGatewayStack`, `GsVoiceStack` (Gateway/Voice는 기본 배포 off).
+- `main` 머지 시 GitHub Actions가 자동 재배포 (OIDC).
 
 ---
 
@@ -24,9 +25,12 @@
 | 스택 | `GsAppStack` (`us-east-1`) |
 | Bedrock | **켜짐** (`BEDROCK_ENABLED=1`, route/extract가 `bedrock`으로 응답) |
 | OpenSearch | **연결됨** — `GsOpenSearchStack` 도메인 `searchdomainfdc-imug9ulee6sc`, `schools` 인덱스 적재 |
-| DynamoDB | `GsAppStack`의 `RuntimeState` 테이블 (세션·인박스). `/tmp/gs-state.json`은 테이블 없을 때만 쓰는 폴백 |
+| DynamoDB | `GsAppStack`의 **단일** `RuntimeState` 테이블 (`pk`/`sk` + `data_json`: 세션·인박스·콜). `/tmp/gs-state.json`은 테이블 없을 때만 쓰는 폴백 |
 | Translate | 켜짐 |
 | Bedrock Guardrails | 켜짐 — `GsAppStack`이 커뮤니티 글 PII 가드레일을 만들고 `BEDROCK_GUARDRAIL_ID`로 넘김 |
+| Maps | Leaflet + OpenStreetMap tiles (`frontend/src/Views.tsx`) — **not** Amazon Location / MapLibre |
+| SES | 앱 플래그 `SES_ENABLED` (CDK가 SES를 만들지 않음). 기본 배포에서는 보통 off |
+| Voice | `GsVoiceStack` 코드는 `main`에 있음. 기본 CI는 `DEPLOY_VOICE` off — Connect 인스턴스 + env 필요 |
 
 예전 `InfraStack`(두 번째 OpenSearch 도메인, 미사용)은 11/04 저녁에 삭제함.
 
@@ -43,8 +47,9 @@ curl -s https://dvpvz48phigre.cloudfront.net/api/health
 
 ## 3. 브랜치 / 커밋 상태
 
-- 이 문서의 리디자인·배포 작업은 PR #18로 `main`에 머지됨. 이후 #21 (Translate), #22 (OpenSearch + DynamoDB + 자동 배포), #23 (Grid/Map 이벤트)까지 머지.
-- 열린 것: PR #24 (하이라이트 어시스턴트, 다크 모드, FAQ), 이슈 #15 (대화 루프).
+- 리디자인·배포: PR #18. 이후 #21 (Translate), #22 (OpenSearch + DynamoDB + 자동 배포), #23 (Grid/Map 이벤트).
+- **grade10 (머지됨):** #35 Voice-as-code (`GsVoiceStack`), #34 eval rigor (holdout + Bedrock cost metering), #33 pitch kit (`docs/pitch/`), #32 feasibility (answer freshness, call limits / `calls.yaml`, school controls, inbound voice stub), #31 a11y/mobile (Playwright axe `npm run test:a11y`, WCAG polish, screenshots).
+- 이슈 #15 (대화 루프) 등은 제품 백로그로 남을 수 있음 — 최신은 GitHub 이슈 보드를 보세요.
 
 ### 자동 배포
 
@@ -96,15 +101,19 @@ API는 기존 `POST /api/turn` 등 그대로.
 | `infra/README.md` | 배포/정리 요약 |
 | `data/index/indexer.py` | hard filter 필드(`city_untokenized`, `level_codes`, `entity_type` 등) 포함하도록 보완 |
 
-아키텍처 (오늘 올린 것):
+아키텍처 (라이브):
 
 ```text
 Browser → CloudFront (HTTPS)
-            ├─ /*      → S3 (frontend/dist)
-            └─ /api/*  → ALB → ECS Fargate (FastAPI, 로컬 검색 + JSON state)
+            ├─ /*      → S3 (frontend/dist)  + Leaflet/OSM map in the SPA
+            └─ /api/*  → ALB → ECS Fargate (FastAPI)
+                              ├─ DynamoDB RuntimeState (pk/sk)
+                              ├─ Bedrock / Guardrails / Translate
+                              └─ OpenSearch when OPENSEARCH_URL is set
+Optional: GsVoiceStack (Connect→Lex→Lambda), GsGatewayStack (MCP), SES flag
 ```
 
-다이어그램의 Lambda/API Gateway 대신, 기존 FastAPI를 살리려고 **Fargate**를 선택함.
+기존 FastAPI를 살리려고 **Fargate**를 선택함 (API Gateway+Lambda 전면 교체 아님).
 
 ### 4-4. 배포 중 겪은 이슈 (다시 밟지 말 것)
 
@@ -152,7 +161,7 @@ cd frontend && npm run dev -- --host 127.0.0.1 --port 5173
 
 ```bash
 cd infra
-npx cdk destroy GsAppStack GsOpenSearchStack --force
+npx cdk destroy GsAppStack GsOpenSearchStack GsGatewayStack GsVoiceStack --force
 aws iam detach-role-policy --role-name GsGitHubDeploy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
 aws iam delete-role --role-name GsGitHubDeploy
 ```
@@ -161,17 +170,24 @@ OpenSearch는 유휴 시에도 시간당 과금이 큼.
 
 ---
 
-## 6. 아직 안 된 것 / 다음 할 일
+## 6. grade10 이후 상태 / 남은 일
 
-우선순위 제안:
+**머지되어 `main`에 있는 것 (요약):**
 
-1~3 (커밋, Bedrock, OpenSearch), 5 (DynamoDB)는 완료. 남은 것:
+| 영역 | 내용 | 위치 |
+|---|---|---|
+| Voice as code | Connect / Lex / voice Lambda CDK | `infra/lib/voice-stack.ts`, `DEPLOY_VOICE` |
+| Pitch kit | Impact / cost / RAI / demo script / judge Q&A | `docs/pitch/` |
+| A11y + mobile | axe Playwright gate, skip links, 44px targets, screenshots | `frontend/tests/a11y.spec.ts`, `npm run test:a11y` |
+| Eval rigor | Holdout set + Bedrock token/cost metering | `eval/holdout.jsonl`, `eval/run_eval.py --set holdout` |
+| Feasibility | Answer freshness (`max_age_days` / stale), call limits, school do-not-call, inbound voice stub | `backend/config/calls.yaml`, evidence engine, phone paths |
 
-1. PR #24 리뷰·머지 (머지하면 자동 배포).
-2. 이슈 #15 — 대화 루프.
-3. plan.md 평가 갭 — 지도 제안 판단, 개인정보 포함 게시글 약 20개 안전 필터 셋, “붙을까요?” 질문 약 10개 (확률·약속 0).
+**아직 / 선택:**
 
-방향 합의(plan vs 현재 코드)는 예전 HANDOFF §6 그대로 열려 있음. 오늘은 **데모 URL 확보**를 우선했음.
+1. 샌드박스에 `GsVoiceStack` + Connect 인스턴스를 실제로 붙이고 데모 콜 검증.
+2. SES를 AppStack에 first-class로 넣을지, 문서처럼 플래그-only로 둘지 (별도 grade11 태스크).
+3. 이슈 #15 대화 루프 등 UX 폴리시.
+4. plan.md에 남은 평가 셋(안전 필터 게시글, “붙을까요?” 등) — 필요 시.
 
 ---
 
@@ -179,11 +195,13 @@ OpenSearch는 유휴 시에도 시간당 과금이 큼.
 
 | 문서 | 용도 |
 |---|---|
-| **이 파일** (`HANDOFF-CURRENT.md`) | 오늘 작업 + 라이브 URL + 재배포 |
-| [`HANDOFF.md`](./HANDOFF.md) | 11/04 오전 기준 전체 코드/갭/eval |
-| [`plan.md`](./plan.md) | 목표 UX·마일스톤 (코드보다 앞선 설계) |
-| [`infra.md`](./infra.md) | 목표 AWS 아키텍처 (Fargate/CF 등) |
+| **이 파일** (`HANDOFF-CURRENT.md`) | 라이브 URL + 재배포 + grade10 이후 상태 |
+| [`HANDOFF.md`](./HANDOFF.md) | 11/04 **오전** 보관용 (배너 참고) |
+| [`how-it-works.md`](./how-it-works.md) | 심사/설명용 스택 내러티브 |
+| [`plan.md`](./plan.md) | 목표 UX·마일스톤 (코드보다 앞선 설계일 수 있음) |
+| [`infra.md`](./infra.md) | **현재** AWS 아키텍처 (4 stacks, 1 DynamoDB table, Leaflet) |
 | [`infra/README.md`](../infra/README.md) | CDK 스택 짧은 운영 메모 |
+| [`docs/pitch/`](./pitch/) | Impact / Originality 피치 키트 |
 
 ---
 

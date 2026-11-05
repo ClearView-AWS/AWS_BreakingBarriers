@@ -69,4 +69,23 @@ test.describe("accessibility", () => {
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await assertNoSerious(page, "dark-landing");
   });
+
+  test("persona switcher stays behind demo mode", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("button", { name: /Demo controls/i })).toBeVisible();
+    await expect(page.getByLabel(/Viewing as/i)).toHaveCount(0);
+
+    await page.getByRole("button", { name: /Demo controls/i }).click();
+    await expect(page.getByLabel(/Viewing as/i)).toBeVisible();
+    await expect(page.getByLabel(/Viewing as/i)).toHaveValue("parent_a");
+    await page.getByLabel(/Viewing as/i).selectOption("school_staff");
+    await expect(page.getByLabel(/Viewing as/i)).toHaveValue("school_staff");
+
+    await page.getByRole("button", { name: /Demo controls/i }).click();
+    await expect(page.getByLabel(/Viewing as/i)).toHaveCount(0);
+
+    await page.goto("/?demo=1");
+    await expect(page.getByLabel(/Viewing as/i)).toBeVisible();
+    await assertNoSerious(page, "demo-mode-landing");
+  });
 });

@@ -84,7 +84,7 @@ Region `us-east-1`. Leave the flags off and the rules engine, the local index, t
 |---|---|
 | `BEDROCK_ENABLED=1` | Converse for routing, extraction, and explanations, using the ids in `models.yaml`. A failed parse falls back to the rules engine. Embeddings use Titan Text Embeddings V2; otherwise a fixed hash embedder keeps mapping repeatable. |
 | `OPENSEARCH_URL` | `data/index/indexer.py` pushes the `schools` and `programs` documents. Search still builds the hybrid DSL (keyword plus vector, hard filters only on city, level, and type) and applies it locally when the domain is absent. |
-| `SES_ENABLED=1` plus `SES_SOURCE` and `SES_VERIFIED_TO` | The inbox records a message and also sends it through SES in sandbox mode. |
+| `SES_ENABLED=1` plus `SES_SOURCE` and `SES_VERIFIED_TO` | The inbox records a message and also sends it through SES in sandbox mode. Off in the default deploy. Turn on with `SES=1` (and the two addresses) in `./scripts/deploy-demo.sh`, or `-c sesEnabled=true` after verifying both identities in the SES console — CDK wires IAM `ses:SendEmail` and the task env; it does not create identities. |
 | `BEDROCK_GUARDRAIL_ID` (with `BEDROCK_ENABLED=1`) | Every community post and reply also goes through Bedrock Guardrails `ApplyGuardrail` (names, emails, phones, addresses). Either layer can block. A Guardrails address hit without a house number (a neighborhood, a street, a school name) is ignored. `GsAppStack` creates the guardrail when Bedrock is on; for local runs use `scripts/create_guardrail.sh`. |
 | `TRANSLATE_ENABLED=1` | Amazon Translate detects the language of each parent message and hands the pipeline English, so every language Translate supports works with the same rules and prompts. The chat keeps the parent's own words and shows "Read from Spanish". A failed call reads the message as written. The role needs `translate:TranslateText` and `comprehend:DetectDominantLanguage` (used by automatic detection). |
 
@@ -94,10 +94,12 @@ Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/sta
 
 | Stack | What | In the default demo deploy? |
 |---|---|---|
-| `GsAppStack` | CloudFront + S3 frontend, ALB + Fargate API, DynamoDB, Guardrail | Yes (`./scripts/deploy-demo.sh`) |
+| `GsAppStack` | CloudFront + S3 frontend, ALB + Fargate API, DynamoDB, Guardrail; optional SES (flag-gated) | Yes (`./scripts/deploy-demo.sh`; SES off unless `SES=1`) |
 | `GsOpenSearchStack` | OpenSearch domain | Optional (`SKIP_OPENSEARCH=1` skips it in CI) |
 | `GsGatewayStack` | AgentCore Gateway + school-tools Lambda | No — set repo variable `DEPLOY_GATEWAY=1`, or deploy by hand |
 | `GsVoiceStack` | Voice-turn Lambda, Lex V2 bot, Connect contact flow | No — set repo variable `DEPLOY_VOICE=1`, or deploy by hand |
+
+Architecture detail (one DynamoDB table, Leaflet/OSM maps, SES optional): [`docs/infra.md`](docs/infra.md). Judge-facing narrative: [`docs/how-it-works.md`](docs/how-it-works.md). Ops: [`infra/README.md`](infra/README.md).
 
 The Connect instance and its phone number are imported by id (context `voiceInstanceId` / `VOICE_INSTANCE_ID`): an instance needs an alias and outbound unlock, and deleting it with the stack would drop the claimed number. Claiming a number in CDK is off (`voiceClaimNumber=true` to opt in).
 
@@ -126,7 +128,13 @@ Stack outputs include `FlowId` (set as `VOICE_FLOW_ID` on the API). `scripts/set
 
 ## Evaluation
 
-`eval/queries.jsonl` has 42 parent queries, including "how liberal", a city name used in more than one state, Spanish, negations, and "a good school". The latest run is the rules engine with Bedrock off.
+`eval/queries.jsonl` (42) is the set we tune against. `eval/holdout.jsonl` (30) is never tuned against — report those scores honestly. The CI / local gate is **rules-only** (`eval/run_eval.py` with Bedrock off). For call economics vs eval token cost, see [`docs/pitch/cost.md`](docs/pitch/cost.md).
+
+### Tuned `queries` — rules only
+
+```bash
+.venv/bin/python eval/run_eval.py --set queries
+```
 
 | Check | Result | Target |
 |---|---|---|
@@ -134,8 +142,47 @@ Stack outputs include `FlowId` (set as `VOICE_FLOW_ID` on the API). `scripts/set
 | Criteria correct (precision) | 100% (110/110) | 85%+ |
 | Require / prefer / avoid correct | 100% (39/39) | 85%+ |
 | Ask-or-not decision correct | 100% (39/39) | 80%+ |
-| Claims with a valid citation | 30/30 | 100%, required |
+| Cited claims kept (full suite) | 33/33 | 100%, required |
 | Schools dropped for missing data | 0 | 0, required |
-| Turn time, median | 0.02 s | under 6 s |
+| Median first turn | 0.01 s | under 6 s |
 
 These numbers measure the deterministic extractor and the evidence rules, not a live model.
+
+### Holdout — rules only
+
+```bash
+.venv/bin/python eval/run_eval.py --set holdout
+```
+
+| Check | Result |
+|---|---|
+| Queries | 30 |
+| Criteria found (recall) | 55.6% (55/99) |
+| Criteria correct (precision) | 89.5% (51/57) |
+| Require / prefer / avoid correct | 66.7% (8/12) |
+| Ask-or-not decision correct | 40.0% (12/30) |
+| Median first turn | 0.01 s |
+
+### Holdout — Bedrock on
+
+```bash
+.venv/bin/python eval/run_eval.py --set holdout --bedrock
+```
+
+Requires AWS credentials that can call Bedrock Runtime, plus `pip install "botocore[crt]"` when using login/SSO-style providers. Metered from `eval/prices.yaml`.
+
+| Check | Result |
+|---|---|
+| Queries | 30 |
+| Criteria found (recall) | 97.0% (96/99) |
+| Criteria correct (precision) | 80.4% (82/102) |
+| Require / prefer / avoid correct | 58.8% (20/34) |
+| Ask-or-not decision correct | 80.0% (24/30) |
+| Median first turn | 4.72 s |
+| Extract fell back to rules | 0 |
+| Est. cost per first turn | $0.00702 |
+| Bedrock calls | 108 |
+| Bedrock tokens in / out | 94486 / 24123 |
+| Bedrock latency per call, mean | 2.07 s |
+| Est. Bedrock cost, whole set | $0.2801 |
+| Wall time | 202.5 s |

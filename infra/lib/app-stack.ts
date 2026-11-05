@@ -20,6 +20,16 @@ export interface AppStackProps extends cdk.StackProps {
   bedrockEnabled?: boolean;
   /** Amazon Translate: read and answer parents in any language. On unless set to false. */
   translateEnabled?: boolean;
+  /**
+   * Amazon SES sandbox mailer (backend/gaps/ses_mailer.py). Off by default.
+   * When on, SES_SOURCE and SES_VERIFIED_TO must be set (props or env). Identities
+   * are verified by hand in the console — CDK does not create them.
+   */
+  sesEnabled?: boolean;
+  /** Verified From address. Falls back to process.env.SES_SOURCE. */
+  sesSource?: string;
+  /** Verified To address (sandbox delivers only here). Falls back to process.env.SES_VERIFIED_TO. */
+  sesVerifiedTo?: string;
 }
 
 export function repoRootFrom(start: string): string {
@@ -46,6 +56,15 @@ export class AppStack extends cdk.Stack {
     const repoRoot = repoRootFrom(__dirname);
     const bedrockEnabled = props.bedrockEnabled ?? false;
     const translateEnabled = props.translateEnabled ?? true;
+    const sesEnabled = props.sesEnabled ?? false;
+    const sesSource = props.sesSource || process.env.SES_SOURCE || '';
+    const sesVerifiedTo = props.sesVerifiedTo || process.env.SES_VERIFIED_TO || '';
+    if (sesEnabled && (!sesSource || !sesVerifiedTo)) {
+      throw new Error(
+        'sesEnabled requires SES_SOURCE and SES_VERIFIED_TO (props or env). ' +
+          'Verify both addresses in the SES console first (sandbox delivers only to verified identities).',
+      );
+    }
 
     const vpc = new ec2.Vpc(this, 'Vpc', {
       maxAzs: 2,
@@ -74,8 +93,13 @@ export class AppStack extends cdk.Stack {
       AWS_REGION: cdk.Stack.of(this).region,
       BEDROCK_ENABLED: bedrockEnabled ? '1' : '0',
       TRANSLATE_ENABLED: translateEnabled ? '1' : '0',
+      SES_ENABLED: sesEnabled ? '1' : '0',
       GS_DYNAMODB_TABLE: stateTable.tableName,
     };
+    if (sesEnabled) {
+      environment.SES_SOURCE = sesSource;
+      environment.SES_VERIFIED_TO = sesVerifiedTo;
+    }
     // Bedrock Guardrails: second check on every community post (backend/community/safety.py).
     let guardrail: bedrock.CfnGuardrail | undefined;
     if (bedrockEnabled) {
@@ -179,6 +203,18 @@ export class AppStack extends cdk.Stack {
         resources: ['*'],
       }),
     );
+    // Amazon SES sandbox (backend/gaps/ses_mailer.py). Identities stay out of CDK so a
+    // deploy never emails an unverified address; verify Source and To in the console first.
+    if (sesEnabled) {
+      const identityArn = (address: string) =>
+        `arn:aws:ses:${this.region}:${this.account}:identity/${address}`;
+      service.taskDefinition.addToTaskRolePolicy(
+        new iam.PolicyStatement({
+          actions: ['ses:SendEmail', 'ses:SendRawEmail'],
+          resources: [identityArn(sesSource), identityArn(sesVerifiedTo)],
+        }),
+      );
+    }
     service.taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ['es:ESHttpGet', 'es:ESHttpPost', 'es:ESHttpPut', 'es:ESHttpHead'],

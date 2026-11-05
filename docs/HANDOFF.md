@@ -1,11 +1,21 @@
 # 인수인계 문서 (Handoff)
 
-> **오늘(11/04) 오후 이후 작업·라이브 CloudFront URL·재배포는 [`HANDOFF-CURRENT.md`](./HANDOFF-CURRENT.md)를 먼저 보세요.** 이 문서는 오전 기준 코드/갭 정리입니다.
+> ## ⚠️ HISTORICAL — pre–Nov 4 afternoon (do not trust for “what ships”)
+>
+> This file is a **morning-of-2026-11-04** snapshot (`infra/opensearch` @ `beabe0f`). Many claims below are **stale** after grade10 merges on `main` (~`6d72514`).
+>
+> **Source of truth for live architecture and ops:**
+> - [`HANDOFF-CURRENT.md`](./HANDOFF-CURRENT.md) — demo URL, stacks, redeploy
+> - [`README.md`](../README.md) — flags, local run, CDK table
+> - [`how-it-works.md`](./how-it-works.md) — judge-facing stack narrative
+> - [`infra.md`](./infra.md) — AWS as shipped (4 stacks, one DynamoDB table, Leaflet/OSM)
+>
+> **Dangerous claims in this file (corrected):** OpenSearch **is** on the request path when `OPENSEARCH_URL` is set (`backend/search/engine.py`). DynamoDB is **one** `RuntimeState` (`pk`/`sk` + `data_json`), not six tables. Maps are **Leaflet + OSM**, not Amazon Location. SES is optional (`SES_ENABLED`), not always-on.
 
-*작성일: 2026-11-04 · 기준 브랜치: `infra/opensearch` (HEAD `beabe0f`) · 대상: 이 프로젝트를 이어서 개발할 사람*
+*작성일: 2026-11-04 · 기준 브랜치: `infra/opensearch` (HEAD `beabe0f`) · 대상: 이 프로젝트를 이어서 개발할 사람 · **보관용***
 
 이 문서 하나만 읽고 바로 이어서 개발할 수 있도록, **지금까지 한 일 / 지금 실제로 동작하는 것 / 문서와 코드가 어긋난 곳 / 다음에 할 일**을 정리했습니다.
-"동작한다"고 적은 항목은 모두 2026-11-04에 직접 실행해서 확인한 결과입니다. 확인하지 못한 항목은 **미확인**으로 표시했습니다.
+"동작한다"고 적은 항목은 모두 2026-11-04 **오전**에 직접 실행해서 확인한 결과입니다. 확인하지 못한 항목은 **미확인**으로 표시했습니다. **오후 이후 배포·OpenSearch 연결·DynamoDB·Voice·pitch/a11y/eval은 위 배너의 현재 문서를 보세요.**
 
 ---
 
@@ -161,8 +171,8 @@ http://127.0.0.1:5173 에서 데모 쿼리: *"Middle school in Jacksonville with
 - 당장은 `backend/`에서 실행하세요.
 
 ### 7-3. OpenSearch는 요청 경로에 연결되어 있지 않음
-- **증거:** `backend/search/engine.py:118`에서 `build_query(...)`를 호출하지만 **반환값을 버림**. 백엔드 어디에도 OpenSearch 클라이언트 호출 없음. `query.py`의 `knn.vector`는 빈 배열 `[]`.
-- README의 "도메인이 없을 때 로컬로 적용"은 사실상 **"항상 로컬로 적용"** 입니다. `OPENSEARCH_URL`은 인덱서만 사용.
+- **⚠️ SUPERSEDED (post–Nov 4):** live `main` calls OpenSearch when `OPENSEARCH_URL` is set (`search_school_ids` in `backend/search/engine.py` + `opensearch_client.py`). The morning note below is historical only.
+- **당시 증거 (오전):** `backend/search/engine.py`에서 `build_query(...)` 반환값을 버리고 클라이언트 호출이 없었음. `OPENSEARCH_URL`은 인덱서만 사용.
 
 ### 7-4. 인덱서가 하드 필터 필드를 넣지 않음
 - **증거:** `data/index/indexer.py`는 `id`, `search_text`, `embedding`만 인덱싱. 그런데 `query.py`의 하드 필터는 `city_untokenized`, `level_codes`, `entity_type` 사용 (`mappings.json`에는 정의됨).
