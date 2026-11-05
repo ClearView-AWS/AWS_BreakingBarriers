@@ -78,9 +78,20 @@ Region `us-east-1`. Leave the flags off and the rules engine, the local index, t
 
 Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/state.json` (`GS_STATE_PATH` overrides it). That file is the stand-in for DynamoDB.
 
+### CDK stacks
+
+| Stack | What | In the default demo deploy? |
+|---|---|---|
+| `GsAppStack` | CloudFront + S3 frontend, ALB + Fargate API, DynamoDB, Guardrail | Yes (`./scripts/deploy-demo.sh`) |
+| `GsOpenSearchStack` | OpenSearch domain | Optional (`SKIP_OPENSEARCH=1` skips it in CI) |
+| `GsGatewayStack` | AgentCore Gateway + school-tools Lambda | No — set repo variable `DEPLOY_GATEWAY=1`, or deploy by hand |
+| `GsVoiceStack` | Voice-turn Lambda, Lex V2 bot, Connect contact flow | No — set repo variable `DEPLOY_VOICE=1`, or deploy by hand |
+
+The Connect instance and its phone number are imported by id (context `voiceInstanceId` / `VOICE_INSTANCE_ID`): an instance needs an alias and outbound unlock, and deleting it with the stack would drop the claimed number. Claiming a number in CDK is off (`voiceClaimNumber=true` to opt in).
+
 ### AgentCore Gateway (MCP tools)
 
-`GsGatewayStack` serves four school tools over MCP through an AgentCore Gateway: `find_schools`, `get_school_facts`, `estimate_school_cost`, and `define_term`. They run in one Lambda (`backend/mcp_tools.py`) on the same corpus, funding rules, and glossary as the app. The schemas are in `backend/config/mcp_tools.json`. Callers sign requests with SigV4 (`AWS_IAM`). The demo deploy does not include this stack.
+`GsGatewayStack` serves four school tools over MCP through an AgentCore Gateway: `find_schools`, `get_school_facts`, `estimate_school_cost`, and `define_term`. They run in one Lambda (`backend/mcp_tools.py`) on the same corpus, funding rules, and glossary as the app. The schemas are in `backend/config/mcp_tools.json`. Callers sign requests with SigV4 (`AWS_IAM`).
 
 ```bash
 cd infra && npx cdk deploy GsGatewayStack -c enableOpenSearch=false
@@ -88,6 +99,18 @@ cd .. && AWS_REGION=us-east-1 .venv/bin/python scripts/gateway_demo.py "Which Ja
 ```
 
 The script lists the tools and lets the Bedrock agent (`backend/agent/gateway.py`) call them through the gateway. It prints each call. If your credentials come from `aws login`, run `pip install "botocore[crt]"` first.
+
+### School phone call (Connect + Lex + Lambda)
+
+`GsVoiceStack` defines the voice-turn Lambda (`backend/voice/lex_turn.py`), Lex V2 bot/alias, Connect contact flow, Lex association, and CloudWatch log groups. Pass the existing Connect instance id and the app's RuntimeState table:
+
+```bash
+cd infra && npx cdk deploy GsVoiceStack \
+  -c voiceInstanceId=$VOICE_INSTANCE_ID \
+  -c voiceStateTable=<GsAppStack RuntimeState table name>
+```
+
+Stack outputs include `FlowId` (set as `VOICE_FLOW_ID` on the API). `scripts/setup_voice.py` remains as a legacy imperative path and prints the same env vars.
 
 ## Evaluation
 

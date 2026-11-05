@@ -5,8 +5,13 @@
 #   OPENSEARCH_ENDPOINT — existing domain hostname (no https://). Without it the
 #   app keeps the local in-memory search engine.
 #   VOICE_INSTANCE_ID, VOICE_FLOW_ID, VOICE_SOURCE, VOICE_VERIFIED_TO — Amazon Connect
-#   ids from scripts/setup_voice.py and the one number school calls may reach. Without
-#   all four the "Have AI call" button emails the school instead.
+#   ids from GsVoiceStack (or the legacy scripts/setup_voice.py) and the one number
+#   school calls may reach. Without all four the "Have AI call" button emails the
+#   school instead.
+# Optional repo variables (off by default; default demo deploy is unchanged):
+#   DEPLOY_GATEWAY=1 — also deploy GsGatewayStack (AgentCore MCP tools)
+#   DEPLOY_VOICE=1 — also deploy GsVoiceStack (Connect flow, Lex, voice Lambda).
+#     Needs secrets.VOICE_INSTANCE_ID and the RuntimeState table name from GsAppStack.
 name: Deploy demo
 
 on:
@@ -75,3 +80,20 @@ jobs:
 
       - name: Deploy demo stack
         run: ./scripts/deploy-demo.sh
+
+      - name: Deploy GsGatewayStack
+        if: vars.DEPLOY_GATEWAY == '1'
+        working-directory: infra
+        run: npx cdk deploy GsGatewayStack -c enableOpenSearch=false --require-approval never
+
+      - name: Deploy GsVoiceStack
+        if: vars.DEPLOY_VOICE == '1'
+        working-directory: infra
+        run: |
+          TABLE="$(aws cloudformation describe-stacks --stack-name GsAppStack \
+            --query "Stacks[0].Outputs[?OutputKey=='StateTableName'].OutputValue" --output text 2>/dev/null || true)"
+          if [[ -z "${TABLE}" || "${TABLE}" == "None" ]]; then
+            TABLE="$(aws dynamodb list-tables --query "TableNames[?contains(@, 'RuntimeState')] | [0]" --output text)"
+          fi
+          CONTEXT=(-c "voiceInstanceId=${VOICE_INSTANCE_ID}" -c "voiceStateTable=${TABLE}")
+          npx cdk deploy GsVoiceStack "${CONTEXT[@]}" --require-approval never

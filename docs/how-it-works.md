@@ -18,7 +18,7 @@ The goal, in GreatSchools' words: move parents from a one-time *search* into an 
 
 ## 2. Tech stack
 
-The app runs on 19 AWS services in `us-east-1`, all defined in code (AWS CDK) and redeployed from `main` by GitHub Actions. Every AWS feature sits behind a flag, so the same code also runs offline with a rules engine, a local index and a JSON file in place of each service.
+The app runs on 19 AWS services in `us-east-1`, defined in AWS CDK across four stacks (`GsAppStack`, `GsOpenSearchStack`, `GsGatewayStack`, `GsVoiceStack`). The default demo deploy from `main` ships `GsAppStack` (and optionally OpenSearch); Gateway and Voice stay off unless repo variables `DEPLOY_GATEWAY=1` / `DEPLOY_VOICE=1` are set. Every AWS feature sits behind a flag, so the same code also runs offline with a rules engine, a local index and a JSON file in place of each service.
 
 ```mermaid
 flowchart LR
@@ -51,18 +51,18 @@ The browser reaches one FastAPI service on Fargate. The phone loop runs outside 
 | AI reasoning | **Amazon Bedrock** — Claude Haiku 5.5 (fast), Claude Sonnet 5.5 (strong) via the Converse API | Routes each message, extracts criteria (require / prefer / avoid), drafts card summaries, and runs the phone conversation. Output is untrusted: code validates it and falls back to rules on any failure | `backend/agent/bedrock_client.py`, `backend/voice/lex_turn.py` |
 | AI embeddings | **Amazon Bedrock** — Titan Text Embeddings V2 (256 dims) | Maps a parent's phrase to a need, and powers the vector half of search | `backend/mapping/embedder.py` |
 | AI safety | **Amazon Bedrock Guardrails** (ApplyGuardrail, PII filter) | Second check on every parent community post: blocks names, emails, phone numbers and addresses | `backend/community/safety.py`, `infra/lib/app-stack.ts` |
-| Agent tools | **Amazon Bedrock AgentCore Gateway** + AWS Lambda | Exposes school-data tools over MCP for other agents (deployed as `GsGatewayStack`) | separate stack |
-| Phone calls | **Amazon Connect** (outbound voice, toll-free number, contact flow, flow logs) | Places the call to the school, plays the AI disclosure and consent question | `scripts/setup_voice.py` |
-| Speech | **Amazon Lex V2** (speech-to-text, turn-taking) | Turns what the school says into text; no barge-in, waits 5 s for an answer | `scripts/setup_voice.py` |
-| Voice | **Amazon Polly** (Neural voice "Joanna") | Speaks every AI line on the call | Connect flow + Lex locale |
-| Call logic | **AWS Lambda** (Python 3.12) | One invocation per thing the school says: asks Bedrock for the next line and saves the transcript | `backend/voice/lex_turn.py` |
+| Agent tools | **Amazon Bedrock AgentCore Gateway** + AWS Lambda | Exposes school-data tools over MCP for other agents | `infra/lib/gateway-stack.ts` (`GsGatewayStack`, not in the default demo deploy) |
+| Phone calls | **Amazon Connect** (outbound voice, contact flow, flow logs; instance + number imported) | Places the call to the school, plays the AI disclosure and consent question | `infra/lib/voice-stack.ts` (`GsVoiceStack`) |
+| Speech | **Amazon Lex V2** (speech-to-text, turn-taking) | Turns what the school says into text; no barge-in, waits 5 s for an answer | `infra/lib/voice-stack.ts` |
+| Voice | **Amazon Polly** (Neural voice "Joanna") | Speaks every AI line on the call | Connect flow + Lex locale in `GsVoiceStack` |
+| Call logic | **AWS Lambda** (Python 3.12) | One invocation per thing the school says: asks Bedrock for the next line and saves the transcript | `backend/voice/lex_turn.py`, `infra/lib/voice-stack.ts` |
 | Languages | **Amazon Translate** + **Amazon Comprehend** (language detection) | Reads a parent's message in any language and answers in it; the UI follows the parent's language | `backend/agent/translate.py` |
 | Search | **Amazon OpenSearch Service** | Hybrid search: keyword (`multi_match`) plus k-NN vectors; only city, grade and school type are hard filters | `backend/search/query.py`, `data/index/indexer.py` |
 | State | **Amazon DynamoDB** (on-demand, one `pk`/`sk` table) | Sessions, saved lists, the school question inbox, school-reported facts, and call transcripts | `backend/store.py` |
 | Email | **Amazon SES** (sandbox) | Sends grouped parent questions to schools when no call is made; only to a verified address | `backend/gaps/ses_mailer.py` |
 | API compute | **AWS Fargate** on **Amazon ECS** + **Application Load Balancer** | Runs the FastAPI backend as a container with health checks | `infra/lib/app-stack.ts`, `Dockerfile` |
 | Web delivery | **Amazon CloudFront** + **Amazon S3** | Serves the React app over HTTPS and routes `/api/*` to the load balancer | `infra/lib/app-stack.ts` |
-| Infrastructure | **AWS CDK** (TypeScript) + **AWS CloudFormation** | Three stacks: `GsAppStack`, `GsOpenSearchStack`, `GsGatewayStack` | `infra/` |
+| Infrastructure | **AWS CDK** (TypeScript) + **AWS CloudFormation** | Four stacks: `GsAppStack`, `GsOpenSearchStack`, `GsGatewayStack`, `GsVoiceStack` (demo deploy = App; Gateway/Voice opt-in) | `infra/` |
 | Security | **AWS IAM** + GitHub OIDC role `GsGitHubDeploy` | Least-privilege task roles (Connect calls scoped to one instance); deploys with no stored AWS keys | `.github/workflows/deploy-demo.yml` |
 | Observability | **Amazon CloudWatch Logs** | Lambda logs and Connect flow logs show where a call went | `/aws/connect/...`, `/aws/lambda/GsVoiceTurn` |
 
