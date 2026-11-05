@@ -18,7 +18,7 @@ export const EN = {
   "source.funding_rule": "Scholarship rule",
   "source.computed": "Computed from the school's location",
   // App.tsx
-  "app.tagline": "Florida prototype · synthetic schools · facts come from the data",
+  "app.tagline": "Washington OSPI + Florida demo · facts come from the data",
   "app.search": "Search",
   "app.saved": "Saved ({n})",
   "app.community": "Community",
