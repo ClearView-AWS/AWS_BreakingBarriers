@@ -1,12 +1,12 @@
-# How admission works, by admission type, in Florida and the three demo districts.
+# How admission works, by state and admission type.
 # Each rule explains and keeps its official link beside it. Like funding_rules.yaml,
 # it never promises a seat or estimates a family's chances.
 #
-# Checked 2026-11-03. Rule wording follows the 2025 Florida Statutes on flsenate.gov.
-# fldoe.org blocks automated readers, so its pages were confirmed through search
-# results; they are kept as the parent-friendly link where they exist.
-checked: "2026-11-03"
+# FL wording follows the 2025 Florida Statutes (checked 2026-11-03).
+# WA wording follows OSPI / OEO enrollment pages (checked 2026-11-04).
+checked: "2026-11-04"
 
+# Florida rules (synthetic Jacksonville / Miami / Orlando corpus).
 rules:
   zoned:
     label: Zoned school
@@ -16,6 +16,7 @@ rules:
     next_step: Check which school your address is zoned for.
     official_name: Florida school choice options (Florida Department of Education)
     official_url: https://www.fldoe.org/schools/school-choice/
+    agency: Florida Department of Education
     cite_path: enrollment.zoned
 
   choice:
@@ -29,6 +30,7 @@ rules:
     official_name: Florida Statutes 1002.31, controlled open enrollment
     official_url: https://www.flsenate.gov/Laws/Statutes/2025/1002.31
     more_url: https://www.fldoe.org/schools/school-choice/other-school-choice-options/controlled-open-enrollment.stml
+    agency: Florida Department of Education
     cite_path: enrollment.choice
 
   lottery:
@@ -41,6 +43,7 @@ rules:
     next_step: Apply by the deadline; if there are more applicants than seats, a lottery decides.
     official_name: Florida Statutes 1002.33(10), charter school admission
     official_url: https://www.flsenate.gov/Laws/Statutes/2025/1002.33
+    agency: Florida Department of Education
     cite_path: enrollment.lottery
 
   application:
@@ -52,7 +55,64 @@ rules:
     next_step: Apply to the school directly and ask about its deadline.
     official_name: Choosing a private school (Florida Department of Education)
     official_url: https://www.fldoe.org/schools/school-choice/private-schools/choosing-a-private-school.stml
+    agency: Florida Department of Education
     cite_path: enrollment.application
+
+# Washington OSPI Report Card corpus (Seattle, Tacoma, Spokane, …).
+by_state:
+  WA:
+    checked: "2026-11-04"
+    rules:
+      zoned:
+        label: Zoned school
+        summary: >
+          In Washington, a student’s resident school district is based on where
+          they live. Districts usually assign a neighborhood (attendance-area)
+          school; check your district’s enrollment page for the current map.
+        next_step: Check your district’s school assignment or enrollment services page.
+        official_name: School enrollment (WA Office of the Education Ombuds)
+        official_url: https://www.oeo.wa.gov/en/education-issues/school-enrollment
+        more_url: https://ospi.k12.wa.us/student-success/support-programs/student-transfers
+        agency: Washington OSPI
+        cite_path: enrollment.zoned
+
+      choice:
+        label: School choice
+        summary: >
+          Washington families can request a choice (nonresident) transfer to attend
+          a public school outside their resident district. Both the resident and
+          nonresident districts must approve. Many districts also run open enrollment
+          within the district.
+        next_step: Ask your district about open enrollment, or start a choice transfer.
+        official_name: Student transfers (Washington OSPI)
+        official_url: https://ospi.k12.wa.us/student-success/support-programs/student-transfers
+        more_url: https://eds.ospi.k12.wa.us/ChoiceTransferRequest/
+        agency: Washington OSPI
+        cite_path: enrollment.choice
+
+      lottery:
+        label: Lottery
+        summary: >
+          Some Washington charter and choice programs admit by application and use
+          a lottery when there are more applicants than seats. District policies
+          set the window and how seats are filled.
+        next_step: Apply by the program deadline; a lottery may decide if seats are limited.
+        official_name: School choice / transfers (WA Office of the Education Ombuds)
+        official_url: https://www.oeo.wa.gov/en/education-issues/school-choice-transfers
+        more_url: https://ospi.k12.wa.us/student-success/support-programs/student-transfers
+        agency: Washington OSPI
+        cite_path: enrollment.lottery
+
+      application:
+        label: Application
+        summary: >
+          Private schools in Washington set their own admission process and
+          deadlines. Families apply to the school directly.
+        next_step: Apply to the school directly and ask about its deadline.
+        official_name: School enrollment (WA Office of the Education Ombuds)
+        official_url: https://www.oeo.wa.gov/en/education-issues/school-enrollment
+        agency: Washington OSPI
+        cite_path: enrollment.application
 
 # District pages for each demo metro. locator_url opens the district's official
 # "find my zoned school" tool; null means none was found, so the card hides that button.
