@@ -252,6 +252,10 @@ export class AppStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'LoadBalancerDNS', {
       value: service.loadBalancer.loadBalancerDnsName,
     });
+    new cdk.CfnOutput(this, 'StateTableName', {
+      value: stateTable.tableName,
+      description: 'Pass as voiceStateTable to GsVoiceStack',
+    });
     new cdk.CfnOutput(this, 'BedrockEnabled', {
       value: environment.BEDROCK_ENABLED,
     });

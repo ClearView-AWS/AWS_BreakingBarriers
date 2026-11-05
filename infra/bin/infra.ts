@@ -3,6 +3,7 @@ import * as cdk from 'aws-cdk-lib/core';
 import { AppStack } from '../lib/app-stack';
 import { GatewayStack } from '../lib/gateway-stack';
 import { InfraStack } from '../lib/infra-stack';
+import { VoiceStack } from '../lib/voice-stack';
 
 const app = new cdk.App();
 
@@ -40,4 +41,16 @@ new AppStack(app, 'GsAppStack', {
 new GatewayStack(app, 'GsGatewayStack', {
   env,
   description: 'GreatSchools guided search — AgentCore Gateway (MCP school tools)',
+});
+
+// Not in the default demo deploy. Connect instance is imported by id (see lib/voice-stack.ts).
+const context = (key: string, envKey: string) =>
+  (app.node.tryGetContext(key) as string | undefined) || process.env[envKey] || undefined;
+new VoiceStack(app, 'GsVoiceStack', {
+  env,
+  description: 'GreatSchools guided search — school phone call (Connect, Lex V2, Lambda)',
+  instanceId: context('voiceInstanceId', 'VOICE_INSTANCE_ID'),
+  stateTableName: context('voiceStateTable', 'GS_DYNAMODB_TABLE'),
+  modelId: context('voiceModelId', 'VOICE_MODEL_ID'),
+  claimNumber: String(app.node.tryGetContext('voiceClaimNumber') ?? 'false') === 'true',
 });

@@ -1,6 +1,19 @@
-"""Set up the school phone call: Lambda, Lex bot, and the Amazon Connect flow.
+"""Legacy path for the school phone call.
 
-Run again at any time; each step reuses what already exists.
+Prefer the CDK stack instead:
+
+    cd infra
+    npx cdk deploy GsVoiceStack \\
+      -c voiceInstanceId=$VOICE_INSTANCE_ID \\
+      -c voiceStateTable=<GsAppStack RuntimeState table name>
+
+That creates the voice-turn Lambda, Lex V2 bot, Connect contact flow, and
+CloudWatch log groups. Outputs include VOICE_FLOW_ID (and VOICE_SOURCE if you
+pass -c voiceClaimNumber=true). The Connect instance itself is imported by id —
+see infra/lib/voice-stack.ts for why.
+
+This script still works if you need the old imperative setup. Each step reuses
+what already exists.
 
     VOICE_INSTANCE_ID=<connect instance id> .venv/bin/python scripts/setup_voice.py
 
@@ -270,6 +283,11 @@ def source_number() -> str:
 
 
 def main() -> None:
+    print(
+        "Legacy setup. Prefer: cd infra && npx cdk deploy GsVoiceStack "
+        f"-c voiceInstanceId={INSTANCE_ID} -c voiceStateTable=<RuntimeState table>",
+        flush=True,
+    )
     table = state_table()
     lambda_arn = lambda_function(table)
     alias_arn = bot(lambda_arn)

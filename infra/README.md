@@ -1,11 +1,13 @@
 # GreatSchools Guided Search — AWS infra
 
-Two stacks:
+Four stacks:
 
 | Stack | What | When |
 |---|---|---|
 | **GsAppStack** | CloudFront + S3 frontend, ALB + Fargate FastAPI | Deploy first → demo URL today |
 | **GsOpenSearchStack** | OpenSearch domain | Parallel / after; billed while idle |
+| **GsGatewayStack** | AgentCore Gateway + school-tools Lambda | Optional; not in the default demo deploy |
+| **GsVoiceStack** | Voice Lambda, Lex V2, Connect contact flow | Optional; imports Connect instance by id |
 
 ## Prerequisites
 
@@ -56,8 +58,10 @@ The workflow signs in with GitHub OIDC, so no AWS keys are stored and nothing ex
 |---|---|---|
 | `vars.AWS_DEPLOY_ROLE_ARN` | yes | `arn:aws:iam::<account>:role/GsGitHubDeploy` |
 | `secrets.OPENSEARCH_ENDPOINT` | no | Hostname only. Without it the script reads `GsOpenSearchStack`. |
+| `vars.DEPLOY_GATEWAY` | no | Set to `1` to also deploy `GsGatewayStack` (off by default). |
+| `vars.DEPLOY_VOICE` | no | Set to `1` to also deploy `GsVoiceStack` (needs `secrets.VOICE_INSTANCE_ID`). |
 
-Default flags in CI: `BEDROCK=1`, `SKIP_OPENSEARCH=1` (does not recreate the OpenSearch domain).
+Default flags in CI: `BEDROCK=1`, `SKIP_OPENSEARCH=1` (does not recreate the OpenSearch domain). Gateway and Voice stay off unless those variables are set.
 
 ## Teardown (stop the bill)
 
