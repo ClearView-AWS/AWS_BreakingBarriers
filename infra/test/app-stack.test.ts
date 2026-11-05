@@ -2,7 +2,15 @@ import * as cdk from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { AppStack } from '../lib/app-stack';
 
-function synth(props: { translateEnabled?: boolean; bedrockEnabled?: boolean } = {}): Template {
+type SynthProps = {
+  translateEnabled?: boolean;
+  bedrockEnabled?: boolean;
+  sesEnabled?: boolean;
+  sesSource?: string;
+  sesVerifiedTo?: string;
+};
+
+function synth(props: SynthProps = {}): Template {
   const app = new cdk.App();
   const stack = new AppStack(app, 'TestAppStack', { env: { account: '111111111111', region: 'us-east-1' }, ...props });
   return Template.fromStack(stack);
@@ -55,4 +63,44 @@ test('Bedrock on creates the post guardrail and lets the task apply it', () => {
 
 test('Bedrock off creates no guardrail', () => {
   template.resourceCountIs('AWS::Bedrock::Guardrail', 0);
+});
+
+test('SES is off by default with no SendEmail permission', () => {
+  template.hasResourceProperties('AWS::ECS::TaskDefinition', {
+    ContainerDefinitions: Match.arrayWith([
+      Match.objectLike({ Environment: Match.arrayWith([{ Name: 'SES_ENABLED', Value: '0' }]) }),
+    ]),
+  });
+  const policies = JSON.stringify(template.findResources('AWS::IAM::Policy'));
+  expect(policies).not.toContain('ses:SendEmail');
+  const task = JSON.stringify(template.findResources('AWS::ECS::TaskDefinition'));
+  expect(task).not.toContain('SES_SOURCE');
+  expect(task).not.toContain('SES_VERIFIED_TO');
+});
+
+test('SES on sets env and scopes SendEmail to the verified identities', () => {
+  const withSes = synth({
+    sesEnabled: true,
+    sesSource: 'sender@example.com',
+    sesVerifiedTo: 'verified@example.com',
+  });
+  withSes.hasResourceProperties('AWS::ECS::TaskDefinition', {
+    ContainerDefinitions: Match.arrayWith([
+      Match.objectLike({
+        Environment: Match.arrayWith([
+          { Name: 'SES_ENABLED', Value: '1' },
+          { Name: 'SES_SOURCE', Value: 'sender@example.com' },
+          { Name: 'SES_VERIFIED_TO', Value: 'verified@example.com' },
+        ]),
+      }),
+    ]),
+  });
+  const policies = JSON.stringify(withSes.findResources('AWS::IAM::Policy'));
+  expect(policies).toContain('ses:SendEmail');
+  expect(policies).toContain('identity/sender@example.com');
+  expect(policies).toContain('identity/verified@example.com');
+});
+
+test('SES on without addresses fails at synth', () => {
+  expect(() => synth({ sesEnabled: true })).toThrow(/SES_SOURCE and SES_VERIFIED_TO/);
 });

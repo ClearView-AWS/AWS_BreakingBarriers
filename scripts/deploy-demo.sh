@@ -4,6 +4,7 @@
 #   ./scripts/deploy-demo.sh
 #   BEDROCK=0 ./scripts/deploy-demo.sh        # rules engine only (Bedrock is on by default)
 #   TRANSLATE=0 ./scripts/deploy-demo.sh      # turn off Amazon Translate (on by default)
+#   SES=1 SES_SOURCE=a@x SES_VERIFIED_TO=b@x ./scripts/deploy-demo.sh  # SES sandbox (off by default)
 #   SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh   # URL first; OpenSearch later
 #   OPENSEARCH_ENDPOINT=none ./scripts/deploy-demo.sh  # local search even if a domain exists
 
@@ -56,6 +57,13 @@ if [[ "${BEDROCK:-1}" != "0" ]]; then
 fi
 if [[ "${TRANSLATE:-}" == "0" ]]; then
   CONTEXT+=(-c translateEnabled=false)
+fi
+if [[ "${SES:-}" == "1" ]]; then
+  if [[ -z "${SES_SOURCE:-}" || -z "${SES_VERIFIED_TO:-}" ]]; then
+    echo "SES=1 requires SES_SOURCE and SES_VERIFIED_TO (verified in the SES console first)." >&2
+    exit 1
+  fi
+  CONTEXT+=(-c sesEnabled=true)
 fi
 # Without an endpoint the app falls back to local search, so reuse the
 # deployed domain unless the caller set one (OPENSEARCH_ENDPOINT=none opts out).

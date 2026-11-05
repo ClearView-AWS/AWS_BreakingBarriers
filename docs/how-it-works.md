@@ -59,7 +59,7 @@ The browser reaches one FastAPI service on Fargate. The phone loop runs outside 
 | Languages | **Amazon Translate** + **Amazon Comprehend** (language detection) | Reads a parent's message in any language and answers in it; the UI follows the parent's language | `backend/agent/translate.py` |
 | Search | **Amazon OpenSearch Service** | Hybrid search: keyword (`multi_match`) plus k-NN vectors; only city, grade and school type are hard filters | `backend/search/query.py`, `data/index/indexer.py` |
 | State | **Amazon DynamoDB** (on-demand, one `pk`/`sk` table) | Sessions, saved lists, the school question inbox, school-reported facts, and call transcripts | `backend/store.py` |
-| Email | **Amazon SES** (sandbox) | Sends grouped parent questions to schools when no call is made; only to a verified address | `backend/gaps/ses_mailer.py` |
+| Email | **Amazon SES** (sandbox, optional) | Flag-gated digest when no call is made; CDK wires IAM + env only when `sesEnabled` is on; only to a verified address | `backend/gaps/ses_mailer.py`, `infra/lib/app-stack.ts` |
 | API compute | **AWS Fargate** on **Amazon ECS** + **Application Load Balancer** | Runs the FastAPI backend as a container with health checks | `infra/lib/app-stack.ts`, `Dockerfile` |
 | Web delivery | **Amazon CloudFront** + **Amazon S3** | Serves the React app over HTTPS and routes `/api/*` to the load balancer | `infra/lib/app-stack.ts` |
 | Infrastructure | **AWS CDK** (TypeScript) + **AWS CloudFormation** | Four stacks: `GsAppStack`, `GsOpenSearchStack`, `GsGatewayStack`, `GsVoiceStack` (demo deploy = App; Gateway/Voice opt-in) | `infra/` |

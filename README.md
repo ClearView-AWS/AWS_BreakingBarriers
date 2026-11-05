@@ -84,7 +84,7 @@ Region `us-east-1`. Leave the flags off and the rules engine, the local index, t
 |---|---|
 | `BEDROCK_ENABLED=1` | Converse for routing, extraction, and explanations, using the ids in `models.yaml`. A failed parse falls back to the rules engine. Embeddings use Titan Text Embeddings V2; otherwise a fixed hash embedder keeps mapping repeatable. |
 | `OPENSEARCH_URL` | `data/index/indexer.py` pushes the `schools` and `programs` documents. Search still builds the hybrid DSL (keyword plus vector, hard filters only on city, level, and type) and applies it locally when the domain is absent. |
-| `SES_ENABLED=1` plus `SES_SOURCE` and `SES_VERIFIED_TO` | The inbox records a message and also sends it through SES in sandbox mode. |
+| `SES_ENABLED=1` plus `SES_SOURCE` and `SES_VERIFIED_TO` | The inbox records a message and also sends it through SES in sandbox mode. Off in the default deploy. Turn on with `SES=1` (and the two addresses) in `./scripts/deploy-demo.sh`, or `-c sesEnabled=true` after verifying both identities in the SES console — CDK wires IAM `ses:SendEmail` and the task env; it does not create identities. |
 | `BEDROCK_GUARDRAIL_ID` (with `BEDROCK_ENABLED=1`) | Every community post and reply also goes through Bedrock Guardrails `ApplyGuardrail` (names, emails, phones, addresses). Either layer can block. A Guardrails address hit without a house number (a neighborhood, a street, a school name) is ignored. `GsAppStack` creates the guardrail when Bedrock is on; for local runs use `scripts/create_guardrail.sh`. |
 | `TRANSLATE_ENABLED=1` | Amazon Translate detects the language of each parent message and hands the pipeline English, so every language Translate supports works with the same rules and prompts. The chat keeps the parent's own words and shows "Read from Spanish". A failed call reads the message as written. The role needs `translate:TranslateText` and `comprehend:DetectDominantLanguage` (used by automatic detection). |
 
@@ -94,7 +94,7 @@ Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/sta
 
 | Stack | What | In the default demo deploy? |
 |---|---|---|
-| `GsAppStack` | CloudFront + S3 frontend, ALB + Fargate API, DynamoDB, Guardrail | Yes (`./scripts/deploy-demo.sh`) |
+| `GsAppStack` | CloudFront + S3 frontend, ALB + Fargate API, DynamoDB, Guardrail; optional SES (flag-gated) | Yes (`./scripts/deploy-demo.sh`; SES off unless `SES=1`) |
 | `GsOpenSearchStack` | OpenSearch domain | Optional (`SKIP_OPENSEARCH=1` skips it in CI) |
 | `GsGatewayStack` | AgentCore Gateway + school-tools Lambda | No — set repo variable `DEPLOY_GATEWAY=1`, or deploy by hand |
 | `GsVoiceStack` | Voice-turn Lambda, Lex V2 bot, Connect contact flow | No — set repo variable `DEPLOY_VOICE=1`, or deploy by hand |

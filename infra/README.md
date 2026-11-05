@@ -36,6 +36,8 @@ Bedrock is on by default; `BEDROCK=0` deploys the rules engine only. If `GsOpenS
 
 With Bedrock on, `GsAppStack` also creates the Bedrock Guardrail for community posts and passes `BEDROCK_GUARDRAIL_ID` / `BEDROCK_GUARDRAIL_VERSION` to the task.
 
+SES is off by default. `SES=1 SES_SOURCE=… SES_VERIFIED_TO=… ./scripts/deploy-demo.sh` (or `-c sesEnabled=true`) grants the task `ses:SendEmail` on those identities and sets the mailer env. Verify both addresses in the SES console first — the stack does not create identities.
+
 ## OpenSearch later
 
 ```bash
