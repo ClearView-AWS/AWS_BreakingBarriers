@@ -1,20 +1,34 @@
 """Score extraction, the ask-or-not decision, citations, and dropped schools.
 
-Run from the repo root:  python eval/run_eval.py
-Bedrock stays off. The rules engine is what this file measures.
+Run from the repo root:
+  python eval/run_eval.py                      all checks, rules only (the CI gate)
+  python eval/run_eval.py --set holdout        one set, printed as a table
+  python eval/run_eval.py --set holdout --bedrock
+
+Sets: queries (tuned against), holdout (never tuned against), conversations,
+paraphrased. --bedrock turns on BEDROCK_ENABLED=1 and records latency, tokens
+and an estimated cost per turn from eval/prices.yaml.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
 import time
 from pathlib import Path
 
+# The flag has to be set before the backend reads it at import time.
+if __name__ == "__main__" and "--bedrock" in sys.argv:
+    os.environ["BEDROCK_ENABLED"] = "1"
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
 
+import yaml
+
+from agent import bedrock_client
 from agent.citations import citations_in, validate_text
 from agent.extractor import extract
 from agent.router import route_message
@@ -23,29 +37,86 @@ from pipeline import turn
 from search.corpus import known_cities, load_schools
 from search.engine import passes_hard_filters, search_schools
 from store import State
+from testing_helpers import search_turn
 
 QUERIES = ROOT / "eval" / "queries.jsonl"
+HOLDOUT = ROOT / "eval" / "holdout.jsonl"
+CONVERSATIONS = ROOT / "eval" / "conversations.jsonl"
+PARAPHRASED = ROOT / "eval" / "conversations_paraphrased.jsonl"
 POST_DRAFTS = ROOT / "eval" / "post_drafts.jsonl"
+PRICES = ROOT / "eval" / "prices.yaml"
+SETS = ("all", "queries", "holdout", "conversations", "paraphrased")
 
 
-def main() -> None:
-    rows = [json.loads(line) for line in QUERIES.read_text().splitlines() if line.strip()]
+class Meter:
+    """Counts Bedrock Converse calls, tokens and seconds while the eval runs."""
+
+    def __init__(self) -> None:
+        self.calls = self.input_tokens = self.output_tokens = 0
+        self.seconds = 0.0
+        self.cost = 0.0
+        self.prices = yaml.safe_load(PRICES.read_text()) if PRICES.exists() else {}
+
+    def snapshot(self) -> tuple[int, float, float]:
+        return self.calls, self.cost, self.seconds
+
+    def converse(self, model_id: str, system: str, user: str) -> str:
+        import boto3
+
+        from catalog import models
+
+        client = boto3.client("bedrock-runtime", region_name=models().get("region", "us-east-1"))
+        started = time.perf_counter()
+        response = client.converse(
+            modelId=model_id,
+            system=[{"text": system}],
+            messages=[{"role": "user", "content": [{"text": user}]}],
+        )
+        self.seconds += time.perf_counter() - started
+        usage = response.get("usage") or {}
+        price = self.prices.get(model_id) or {}
+        self.calls += 1
+        self.input_tokens += usage.get("inputTokens", 0)
+        self.output_tokens += usage.get("outputTokens", 0)
+        self.cost += (usage.get("inputTokens", 0) * price.get("input", 0) + usage.get("outputTokens", 0) * price.get("output", 0)) / 1e6
+        blocks = response["output"]["message"]["content"]
+        return "".join(block.get("text", "") for block in blocks)
+
+
+METER = Meter()
+
+
+def _reader() -> str:
+    return "bedrock" if bedrock_client.enabled() else "rules only"
+
+
+def score_queries(path: Path = QUERIES) -> dict:
+    """Extraction, strength and ask-or-not scores for one query file."""
+    rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
     cities = known_cities()
     need_hit = need_total = 0
     extra = predicted = 0
     strength_hit = strength_total = 0
     ask_hit = ask_total = 0
+    route_hit = route_total = 0
+    fallbacks = 0
     failures = []
     durations = []
+    turn_costs = []
+    extracted = {}
 
     for row in rows:
         if row.get("route"):
+            route_total += 1
             got, _ = route_message(row["query"], has_session=True)
             if got != row["route"]:
                 failures.append(f"{row['id']} route {got} != {row['route']}")
+            else:
+                route_hit += 1
             continue
-        started = time.perf_counter()
-        found, _ = extract(row["query"], cities)
+        found, step = extract(row["query"], cities)
+        extracted[row["id"]] = found
+        fallbacks += step.engine == "rules_fallback"
         expected = row.get("needs") or {}
         got_needs = {item.need: item.strength for item in found if item.need}
         for need, strength in expected.items():
@@ -76,6 +147,8 @@ def main() -> None:
             if got != want:
                 failures.append(f"{row['id']} {label} {got} != {want}")
                 predicted += 1
+                if want is not None:
+                    need_total += 1
             elif want is not None:
                 need_hit += 1
                 need_total += 1
@@ -93,9 +166,12 @@ def main() -> None:
         elif row.get("unmapped"):
             need_total += 1
 
+        started = time.perf_counter()
+        before = METER.snapshot()
         with State() as state:
             response = turn(state, {"message": row["query"]})
         durations.append(time.perf_counter() - started)
+        turn_costs.append(METER.cost - before[1])
         asked = any(block.type == "question" for block in response.blocks)
         ask_total += 1
         if asked == bool(row.get("ask")):
@@ -104,19 +180,16 @@ def main() -> None:
             reason = next((block.payload.get("reason") for block in response.blocks if block.type == "question"), None)
             failures.append(f"{row['id']} ask {asked} ({reason}) != {row.get('ask')}")
 
-    recall = need_hit / need_total if need_total else 0
     # Precision uses needs that were expected and matched, over needs we emitted.
     emitted = 0
     matched = 0
     for row in rows:
         if row.get("route"):
             continue
-        found, _ = extract(row["query"], cities)
-        expected = row.get("needs") or {}
-        for item in found:
+        for item in extracted[row["id"]]:
             if item.kind == "need" and item.need:
                 emitted += 1
-                if expected.get(item.need) == item.strength:
+                if (row.get("needs") or {}).get(item.need) == item.strength:
                     matched += 1
             elif item.kind == "need" and item.need is None:
                 emitted += 1
@@ -134,9 +207,94 @@ def main() -> None:
                 emitted += 1
                 if item.value == row.get("school_type"):
                     matched += 1
-    precision = matched / emitted if emitted else 0
-    strength = strength_hit / strength_total if strength_total else 0
-    ask = ask_hit / ask_total if ask_total else 0
+    durations.sort()
+    return {
+        "rows": len(rows),
+        "need_hit": need_hit,
+        "need_total": need_total,
+        "matched": matched,
+        "emitted": emitted,
+        "strength_hit": strength_hit,
+        "strength_total": strength_total,
+        "ask_hit": ask_hit,
+        "ask_total": ask_total,
+        "route_hit": route_hit,
+        "route_total": route_total,
+        "fallbacks": fallbacks,
+        "median": durations[len(durations) // 2] if durations else 0,
+        "cost_per_turn": sum(turn_costs) / len(turn_costs) if turn_costs else 0,
+        "failures": failures,
+    }
+
+
+def _pct(hit: int, total: int) -> str:
+    return f"{hit / total:.1%} ({hit}/{total})" if total else "n/a"
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--set", choices=SETS, default="all", dest="which")
+    parser.add_argument("--bedrock", action="store_true", help="run with BEDROCK_ENABLED=1 and meter the calls")
+    args = parser.parse_args(argv)
+    if args.bedrock:
+        if not bedrock_client.enabled():
+            sys.exit("--bedrock must be given on the command line so it is set before the backend loads")
+        bedrock_client.converse = METER.converse
+    if args.which == "all":
+        _run_all()
+    else:
+        _run_set(args.which)
+
+
+def _run_set(which: str) -> None:
+    """One set, as a markdown table. Held-out sets are measured, not gated."""
+    started = time.perf_counter()
+    print(f"set: {which}  reader: {_reader()}")
+    print("| Check | Result |")
+    print("|---|---|")
+    if which in {"queries", "holdout"}:
+        scores = score_queries(QUERIES if which == "queries" else HOLDOUT)
+        misses = scores["failures"]
+        print(f"| Queries | {scores['rows']} |")
+        print(f"| Criteria found (recall) | {_pct(scores['need_hit'], scores['need_total'])} |")
+        print(f"| Criteria correct (precision) | {_pct(scores['matched'], scores['emitted'])} |")
+        print(f"| Require / prefer / avoid correct | {_pct(scores['strength_hit'], scores['strength_total'])} |")
+        print(f"| Ask-or-not decision correct | {_pct(scores['ask_hit'], scores['ask_total'])} |")
+        if scores["route_total"]:
+            print(f"| Routing | {_pct(scores['route_hit'], scores['route_total'])} |")
+        print(f"| Median first turn | {scores['median']:.2f} s |")
+        if bedrock_client.enabled():
+            print(f"| Extract fell back to rules | {scores['fallbacks']} |")
+            print(f"| Est. cost per first turn | ${scores['cost_per_turn']:.5f} |")
+    else:
+        misses = []
+        convo = _conversations(misses, CONVERSATIONS if which == "conversations" else PARAPHRASED)
+        print(f"| Follow-up routing | {_pct(convo['route_ok'], convo['route_total'])} |")
+        print(f"| Follow-up school and topic | {_pct(convo['ref_ok'], convo['ref_total'])} |")
+        print(f"| Answer lines with a citation | {convo['cited_ok']}/{convo['cited_total']} |")
+        print(f"| Answers that estimate odds | {convo['odds']} |")
+    if bedrock_client.enabled():
+        calls = METER.calls or 1
+        print(f"| Bedrock calls | {METER.calls} |")
+        print(f"| Bedrock tokens in / out | {METER.input_tokens} / {METER.output_tokens} |")
+        print(f"| Bedrock latency per call, mean | {METER.seconds / calls:.2f} s |")
+        print(f"| Est. Bedrock cost, whole set | ${METER.cost:.4f} |")
+    print(f"| Wall time | {time.perf_counter() - started:.1f} s |")
+    for line in misses:
+        print("   miss:", line)
+
+
+def _run_all() -> None:
+    scores = score_queries(QUERIES)
+    failures = scores["failures"]
+    recall = scores["need_hit"] / scores["need_total"] if scores["need_total"] else 0
+    precision = scores["matched"] / scores["emitted"] if scores["emitted"] else 0
+    strength = scores["strength_hit"] / scores["strength_total"] if scores["strength_total"] else 0
+    ask = scores["ask_hit"] / scores["ask_total"] if scores["ask_total"] else 0
+    need_hit, need_total = scores["need_hit"], scores["need_total"]
+    matched, emitted = scores["matched"], scores["emitted"]
+    strength_hit, strength_total = scores["strength_hit"], scores["strength_total"]
+    ask_hit, ask_total = scores["ask_hit"], scores["ask_total"]
 
     citation_ok, citation_total = _citations()
     dropped = _dropped_for_missing_data()
@@ -149,10 +307,8 @@ def main() -> None:
     # Paraphrased follow-ups measure how well the message is read, so the rules alone
     # are expected to miss some. Misses are listed, but they don't fail the run.
     paraphrase_misses: list[str] = []
-    paraphrased = _conversations(paraphrase_misses, ROOT / "eval" / "conversations_paraphrased.jsonl")
-    durations.sort()
-    median = durations[len(durations) // 2] if durations else 0
-
+    paraphrased = _conversations(paraphrase_misses, PARAPHRASED)
+    median = scores["median"]
     print(f"criteria recall: {recall:.1%} ({need_hit}/{need_total}) target 90%")
     print(f"criteria precision: {precision:.1%} ({matched}/{emitted}) target 85%")
     print(f"strength accuracy: {strength:.1%} ({strength_hit}/{strength_total}) target 85%")
@@ -163,7 +319,7 @@ def main() -> None:
     print(f"follow-up school and topic: {convo['ref_ok']}/{convo['ref_total']} target 90%")
     print(f"follow-up answer lines with a citation: {convo['cited_ok']}/{convo['cited_total']} target 100%")
     print(f"follow-up answers that estimate odds: {convo['odds']} target 0")
-    reader = "bedrock" if os.environ.get("BEDROCK_ENABLED", "").lower() in {"1", "true", "yes"} else "rules only"
+    reader = _reader()
     print(
         f"paraphrased follow-ups ({reader}): routing {paraphrased['route_ok']}/{paraphrased['route_total']}, "
         f"school and topic {paraphrased['ref_ok']}/{paraphrased['ref_total']} target 90% with Bedrock"
@@ -207,7 +363,8 @@ def _post_safety() -> tuple[int, int, int, int]:
 def _citations() -> tuple[int, int]:
     kept = total = 0
     with State() as state:
-        response = turn(
+        # search_turn presses "skip to results" if the brief gate holds them back.
+        response = search_turn(
             state,
             {"message": "Middle school in Jacksonville with STEM and after-school care. Money is tight."},
         )
@@ -299,7 +456,7 @@ def _conversations(failures: list[str], path: Path | None = None) -> dict:
     odds_words = re.compile(r"\b(likely|probab\w*|percent|odds of|chance of|you will get in|guarantee\w*)\b|%")
     out = {"route_ok": 0, "route_total": 0, "ref_ok": 0, "ref_total": 0, "cited_ok": 0, "cited_total": 0, "odds": 0}
     by_name = {school["name"]: school["id"] for school in load_schools()}
-    path = path or ROOT / "eval" / "conversations.jsonl"
+    path = path or CONVERSATIONS
     for row in (json.loads(line) for line in path.read_text().splitlines() if line.strip()):
         state = {"sessions": {}, "inbox": [], "overlays": {}}
         session_id = None
@@ -307,6 +464,9 @@ def _conversations(failures: list[str], path: Path | None = None) -> dict:
             shown = list(state["sessions"][session_id]["focus"]["results"]) if session_id else []
             response = chat_turn(state, {"session_id": session_id, "message": spec["say"]})
             session_id = response["session_id"]
+            if step == 0 and not any(b["type"] == "results" for b in response["blocks"]):
+                # The first search stops at the brief; press "skip to results" like a parent would.
+                chat_turn(state, {"session_id": session_id, "event": "skip_to_results", "action": "refresh"})
             label = f"{row['id']} turn {step}"
             if "route" in spec:
                 out["route_total"] += 1

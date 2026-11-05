@@ -1,0 +1,6 @@
+# USD per million tokens, used only to estimate eval cost per turn.
+# Sonnet 5.5 is Anthropic's list price; Bedrock on-demand pricing may differ.
+# Haiku 5.5 had no published price when this was written, so it uses the
+# Haiku 4.5 rate as a stand-in. Check https://aws.amazon.com/bedrock/pricing/.
+us.anthropic.claude-sonnet-5-5: { input: 2.00, output: 10.00 }
+us.anthropic.claude-haiku-5-5: { input: 1.00, output: 5.00 }
