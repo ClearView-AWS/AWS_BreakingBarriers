@@ -128,7 +128,13 @@ Stack outputs include `FlowId` (set as `VOICE_FLOW_ID` on the API). `scripts/set
 
 ## Evaluation
 
-`eval/queries.jsonl` has 42 parent queries, including "how liberal", a city name used in more than one state, Spanish, negations, and "a good school". The latest run is the rules engine with Bedrock off.
+`eval/queries.jsonl` (42) is the set we tune against. `eval/holdout.jsonl` (30) is never tuned against — report those scores honestly. The CI / local gate is **rules-only** (`eval/run_eval.py` with Bedrock off). For call economics vs eval token cost, see [`docs/pitch/cost.md`](docs/pitch/cost.md).
+
+### Tuned `queries` — rules only
+
+```bash
+.venv/bin/python eval/run_eval.py --set queries
+```
 
 | Check | Result | Target |
 |---|---|---|
@@ -136,8 +142,47 @@ Stack outputs include `FlowId` (set as `VOICE_FLOW_ID` on the API). `scripts/set
 | Criteria correct (precision) | 100% (110/110) | 85%+ |
 | Require / prefer / avoid correct | 100% (39/39) | 85%+ |
 | Ask-or-not decision correct | 100% (39/39) | 80%+ |
-| Claims with a valid citation | 30/30 | 100%, required |
+| Cited claims kept (full suite) | 33/33 | 100%, required |
 | Schools dropped for missing data | 0 | 0, required |
-| Turn time, median | 0.02 s | under 6 s |
+| Median first turn | 0.01 s | under 6 s |
 
 These numbers measure the deterministic extractor and the evidence rules, not a live model.
+
+### Holdout — rules only
+
+```bash
+.venv/bin/python eval/run_eval.py --set holdout
+```
+
+| Check | Result |
+|---|---|
+| Queries | 30 |
+| Criteria found (recall) | 55.6% (55/99) |
+| Criteria correct (precision) | 89.5% (51/57) |
+| Require / prefer / avoid correct | 66.7% (8/12) |
+| Ask-or-not decision correct | 40.0% (12/30) |
+| Median first turn | 0.01 s |
+
+### Holdout — Bedrock on
+
+```bash
+.venv/bin/python eval/run_eval.py --set holdout --bedrock
+```
+
+Requires AWS credentials that can call Bedrock Runtime, plus `pip install "botocore[crt]"` when using login/SSO-style providers. Metered from `eval/prices.yaml`.
+
+| Check | Result |
+|---|---|
+| Queries | 30 |
+| Criteria found (recall) | 97.0% (96/99) |
+| Criteria correct (precision) | 80.4% (82/102) |
+| Require / prefer / avoid correct | 58.8% (20/34) |
+| Ask-or-not decision correct | 80.0% (24/30) |
+| Median first turn | 4.72 s |
+| Extract fell back to rules | 0 |
+| Est. cost per first turn | $0.00702 |
+| Bedrock calls | 108 |
+| Bedrock tokens in / out | 94486 / 24123 |
+| Bedrock latency per call, mean | 2.07 s |
+| Est. Bedrock cost, whole set | $0.2801 |
+| Wall time | 202.5 s |
