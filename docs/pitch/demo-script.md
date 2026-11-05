@@ -19,10 +19,10 @@ Total talk time: **3:00**. Leave ~15 s slack for judges' screens to load.
 
 ## 0:20–1:10 — Guided search (Technical + UI)
 
-**Type exactly:**
+**Type exactly (or tap the first example chip):**
 
 ```text
-Middle school in Jacksonville with STEM and after-school care. Money is tight.
+Middle school in Seattle with STEM and after-school care. Money is tight.
 ```
 
 **Click / do:**
@@ -30,14 +30,13 @@ Middle school in Jacksonville with STEM and after-school care. Money is tight.
 1. Answer or **skip** clarifying questions (≤3).
 2. Approve the brief (or tap **Just show me results**).
 
-**Say while it loads:** "Hard filters are only city, grade, type. Missing after-care never drops a school — Unknown scores 0.5 and stays on screen."
+**Say while it loads:** "Hard filters are only city, grade, type. Washington rows are public OSPI Report Card data. Missing after-care never drops a school — Unknown scores 0.5 and stays on screen."
 
 **Judges notice:**
 
-- Brief they can edit.
-- Cards with Confirmed / Partial / **Unknown** and citations.
-- Beauclerc (or peer) shows after-care **Unknown**.
-- Cost line says **You may qualify** with Florida links — no fake award amount.
+- Brief they can edit; city chips include Seattle / Tacoma / Spokane, not Florida-only.
+- Cards with Confirmed / Partial / **Unknown** and citations (ELL often filled from OSPI; after-care usually Unknown).
+- Optional second beat: same flow for Jacksonville to show the synthetic gap-fill / AI-call demo.
 - Median rules-engine turn in eval is **0.02 s** (mention; don't wait for a stopwatch).
 
 ---
@@ -101,7 +100,7 @@ SES inbox digest is a second backup: "Ask the school" without voice.
 | :t | Shot | Audio / VO |
 | --- | --- | --- |
 | 0–8 | Title card: Guided Search · GreatSchools | "We investigate. You decide." |
-| 8–25 | Screen: paste the Jacksonville STEM + after-care query → brief → results | "Plain language in; ranked schools out. Missing facts stay visible." |
+| 8–25 | Screen: paste the Seattle STEM + after-care query → brief → results | "Plain language in; ranked schools out. Missing facts stay visible." |
 | 25–40 | Zoom card: after-care **Unknown** + citation UI | "Filters would hide this school. We don't." |
 | 40–55 | Community: **13 parents** asked Beauclerc after-care | "One question, thirteen families." |
 | 55–80 | Call button → dialing → transcript → consent line → after-care Confirmed with quote | "Connect, Lex, Polly, Bedrock — one AI call updates every parent." |

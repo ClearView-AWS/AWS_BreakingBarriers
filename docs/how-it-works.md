@@ -2,7 +2,7 @@
 
 Nov 4, 2026 · Living version: [Claude Docs](https://claude.ai/artifact/H1djgmm2mA1oqTGCDwPTTZ)
 
-Guided Search is a school-search agent that investigates for parents. It turns a plain-language need into ranked schools and cites the field behind every fact. When a fact is missing, it phones the school with an AI assistant and updates the card for every parent who asked. It runs end to end on AWS (Bedrock, Connect, Lex, Lambda, Translate, OpenSearch, DynamoDB, Fargate, CloudFront) and is live at [dvpvz48phigre.cloudfront.net](https://dvpvz48phigre.cloudfront.net), with Jacksonville, FL as the demo city.
+Guided Search is a school-search agent that investigates for parents. It turns a plain-language need into ranked schools and cites the field behind every fact. When a fact is missing, it phones the school with an AI assistant and updates the card for every parent who asked. It runs end to end on AWS (Bedrock, Connect, Lex, Lambda, Translate, OpenSearch, DynamoDB, Fargate, CloudFront) and is live at [dvpvz48phigre.cloudfront.net](https://dvpvz48phigre.cloudfront.net). Demo metros include **Seattle (public OSPI data)** and Jacksonville (sample + synthetic gap-fill).
 
 ## 1. The problem we solve
 
@@ -83,7 +83,7 @@ Today's search filters and stops at what's on file; ours explains every fact, ke
 
 |  | Today: filter-based school search | Guided Search |
 | --- | --- | --- |
-| How a parent starts | Picks location, grade, rating filters | Writes one sentence, in any language: "Middle school in Jacksonville with STEM and after-school care. Money is tight." |
+| How a parent starts | Picks location, grade, rating filters | Writes one sentence, in any language: "Middle school in Seattle with STEM and after-school care. Money is tight." |
 | Understanding the need | Parent must know the right filter and term | Agent extracts must-haves, nice-to-haves and things to avoid, asks up to 3 skippable questions, and shows a brief to approve |
 | A fact that isn't on file | School is filtered out and the parent never knows | School stays on screen in "Missing a fact we can ask about"; unknown scores 0.5, never a fail |
 | Filling the gap | Parent phones each office in work hours | **One tap: the AI phones the school**, asks every open question parents have, and updates the card for all of them |

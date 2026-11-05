@@ -44,14 +44,18 @@ getting_in:
 cost:
   question: Where do the cost and scholarship notes come from?
   answer: >
-    Tuition comes from the school's profile. Scholarship notes say which Florida
-    programs a family may qualify for and link to the official page. The scholarship
-    funding organization sets the award, so no amount is promised.
+    Tuition comes from the school's profile when it is on file. For Florida private
+    schools, scholarship notes say which state programs a family may qualify for and
+    link to the official page — no award amount is promised. Washington public schools
+    from the OSPI Report Card are tuition-free for resident families; aid notes still
+    never invent a dollar figure.
   source: Scholarship rules (config/funding_rules.yaml)
 
 data:
   question: Is this real school data?
   answer: >
-    This is a Florida prototype. It uses a GreatSchools sample and synthetic
-    schools made for the demo, so do not use it to choose a real school.
-  source: Demo data (data/synthetic/generate.py)
+    Mixed. Washington schools come from the public OSPI Report Card (enrollment and
+    graduation). Florida still uses a GreatSchools sample plus synthetic schools for
+    the gap-fill demo. Treat Unknown facts as Unknown, and do not use this sandbox
+    alone to choose a real school.
+  source: Demo data (data/wa/ + data/synthetic/)

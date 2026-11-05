@@ -7,7 +7,7 @@
       "properties": {
         "city": {
           "type": "string",
-          "description": "City name, for example Jacksonville"
+          "description": "City name, for example Seattle or Jacksonville"
         },
         "level": {
           "type": "string",

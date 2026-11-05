@@ -86,5 +86,5 @@ export const DEMO_QUERY =
 export const FALLBACK_EXAMPLES = [
   DEMO_QUERY,
   "Elementary school in Tacoma with English learner support",
-  "High school in Jacksonville with sports",
+  "High school in Spokane with sports",
 ];

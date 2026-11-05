@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 
 from agent.gateway import GatewayClient, ask_agent  # noqa: E402
 
-QUESTION = "Find a middle school in Jacksonville with after-school care. How late does the care run, and what would it cost us?"
+QUESTION = "Find a middle school in Seattle with English learner support. Which schools fit, and what is still unknown?"
 
 
 def gateway_url() -> str:
