@@ -14,7 +14,7 @@ Prices looked up **2026-11-04** from AWS public pricing pages (US East / N. Virg
 | AWS Lambda request | **$0.20 / 1M requests** | [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/) |
 | AWS Lambda duration (x86, first tier) | **$0.0000166667 / GB-second** | Same |
 | Claude Haiku 5.5 (≤100k prompt) | **$0.10 / 1M input · $0.50 / 1M output** | [Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing); Bedrock bills via Marketplace — confirm live rate on [Bedrock pricing](https://aws.amazon.com/bedrock/pricing/) |
-| Search turn (rules-first, Bedrock off) | **median 0.02 s** wall time | README evaluation table / `eval/run_eval.py` |
+| Search turn (rules-first, Bedrock off) | **median 0.01 s** wall time | README evaluation table / `eval/run_eval.py` |
 
 Voice stack in this app: Connect outbound + Lex V2 + Polly Neural "Joanna" + Lambda `GsVoiceTurn` (256 MB, 20 s timeout) + Bedrock Haiku (`backend/config/models.yaml`, `scripts/setup_voice.py`).
 
