@@ -17,7 +17,14 @@ export type Access = {
   detail?: string | null;
   detail_source?: string | null;
   source?: { type: string; path: string; as_of?: string | null } | null;
-  official: { name: string; url: string; more_url?: string | null; summary?: string; next_step?: string };
+  official: {
+    name: string;
+    url: string;
+    more_url?: string | null;
+    agency?: string | null;
+    summary?: string;
+    next_step?: string;
+  };
   admissions_url?: string | null;
   district?: {
     name: string;
@@ -134,7 +141,9 @@ export function GettingInDetail({ access }: { access?: Access | null }) {
       )}
       <div className="gi-actions">
         <External href={access.official.url}>{access.official.name}</External>
-        {access.official.more_url && <External href={access.official.more_url}>{t("gi.fdoe")}</External>}
+        {access.official.more_url && (
+          <External href={access.official.more_url}>{access.official.agency || t("gi.state_ed")}</External>
+        )}
         {district?.choice_url && <External href={district.choice_url}>{t("gi.district_choice", { district: district.name })}</External>}
         {district?.locator_url && access.how === "zoned" && <External href={district.locator_url}>{t("gi.find_zoned")}</External>}
         {admissions && <External href={admissions}>{t("gi.admissions")}</External>}

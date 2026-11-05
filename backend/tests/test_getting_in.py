@@ -25,11 +25,14 @@ def test_demo_schools_get_each_status():
         "Arlington STEM Academy": ("needs_attention", "Deadline passed Oct 1 · ask about mid-year openings"),
         "Northside STEM Middle": ("needs_attention", "Waitlist only for 6th grade · ask about openings"),
         "Landmark Christian Middle": ("unknown", "Ask about open seats"),
-        "St. Johns STEM Middle": ("unknown", "Is this your zoned school?"),
+        "St. Johns STEM Middle": ("partial", "Zoned neighborhood school · check your address"),
     }
     for name, (status, line) in expected.items():
         record = getting_in(BY_NAME[name], "m", today=TODAY)
         assert (record["status"], record["line"]) == (status, line), name
+    zoned = getting_in(BY_NAME["St. Johns STEM Middle"], "m", today=TODAY)
+    assert zoned["label"] == "Zoned school"
+    assert zoned["zoned_prompt"] is True
 
 
 def test_reported_counts_are_shown_as_reported_with_their_date():
@@ -83,6 +86,23 @@ def test_each_school_links_the_law_that_governs_it():
     assert public_lottery["how"] == "lottery" and public_lottery["official"]["url"].endswith("/1002.31")
     assert charter_lottery["official"]["url"].endswith("/1002.33")
     assert "private-schools" in private["official"]["url"]
+
+
+def test_wa_schools_use_washington_enrollment_rules():
+    seattle = next(
+        school
+        for school in load_schools()
+        if school.get("city") == "Seattle" and school.get("state") == "WA" and "m" in (school.get("level_codes") or [])
+    )
+    record = getting_in(seattle, "m", today=TODAY)
+    assert record["how"] == "zoned"
+    assert record["status"] == "partial"
+    assert record["line"] == "Zoned neighborhood school · check your address"
+    assert record["label"] == "Zoned school"
+    assert "oeo.wa.gov" in record["official"]["url"]
+    assert record["official"]["agency"] == "Washington OSPI"
+    assert record["district"]["name"] == "Seattle Public Schools"
+    assert "seattleschools.org" in (record["district"].get("locator_url") or "")
 
 
 def test_saved_list_puts_the_soonest_open_deadline_first():

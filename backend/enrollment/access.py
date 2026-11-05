@@ -48,6 +48,15 @@ def enrollment_rules() -> dict[str, Any]:
     return yaml.safe_load((CONFIG_DIR / "enrollment_rules.yaml").read_text())
 
 
+def _state_pack(school: dict, config: dict[str, Any]) -> tuple[dict[str, Any], str | None]:
+    """Admission rules + checked date for the school's state (WA OSPI vs FL demo)."""
+    state = str(school.get("state") or "").upper()
+    pack = (config.get("by_state") or {}).get(state) or {}
+    rules = pack.get("rules") or config["rules"]
+    checked = pack.get("checked") or config.get("checked")
+    return rules, checked
+
+
 def parse_deadline(value: object) -> date | None:
     """The sample writes deadlines as M/D/YYYY; school answers may use ISO dates."""
     if not isinstance(value, str) or not value.strip():
@@ -120,7 +129,7 @@ def getting_in(
     today = today or TODAY
     overlays = overlays or {}
     config = enrollment_rules()
-    rules = config["rules"]
+    rules, checked = _state_pack(school, config)
     osp = school.get("osp") or {}
     entity = school.get("entity_type")
 
@@ -168,11 +177,12 @@ def getting_in(
         "deadline": None,
         "days_left": None,
         "detail": None,
-        "source": {"type": "enrollment_rule", "path": rule["cite_path"], "as_of": config.get("checked"), "confidence": "high"},
+        "source": {"type": "enrollment_rule", "path": rule["cite_path"], "as_of": checked, "confidence": "high"},
         "official": {
             "name": rule["official_name"],
             "url": rule["official_url"],
             "more_url": rule.get("more_url"),
+            "agency": rule.get("agency"),
             "cite_path": rule["cite_path"],
             "summary": " ".join(rule["summary"].split()),
             "next_step": rule["next_step"],
@@ -183,6 +193,7 @@ def getting_in(
         "ask_open_seats": False,
     }
 
+    pill_label: str | None = None
     if how == "zoned" and school["id"] in (zoned_ids or set()):
         status, line = "confirmed", "Your zoned school"
         record["source"] = {"type": "parent", "path": "session.zoned", "as_of": today.isoformat(), "confidence": "high"}
@@ -190,12 +201,12 @@ def getting_in(
         sentences.append("You told us this is your zoned school [[cite:session.zoned]].")
     elif open_rows:
         row = open_rows[0]
-        label = _ordinal(str(row["grade"]))
-        status, line = "confirmed", f"Open seats for {label}"
+        grade_name = _ordinal(str(row["grade"]))
+        status, line = "confirmed", f"Open seats for {grade_name}"
         record["source"] = {"type": seats_type, "path": "osp.seats_by_grade", "as_of": row.get("as_of") or seats_answered, "confidence": "high"}
         allowed.add("osp.seats_by_grade")
         sentences.append(
-            f"The school reported {row['open_seats']} open seats for {label} as of "
+            f"The school reported {row['open_seats']} open seats for {grade_name} as of "
             f"{_month(parse_date(row.get('as_of')))} [[cite:osp.seats_by_grade]]."
         )
     elif deadline and deadline >= today:
@@ -215,22 +226,22 @@ def getting_in(
         )
     elif wait_rows:
         row = wait_rows[0]
-        label = _ordinal(str(row["grade"]))
-        status, line = "needs_attention", f"Waitlist only for {label} · ask about openings"
+        grade_name = _ordinal(str(row["grade"]))
+        status, line = "needs_attention", f"Waitlist only for {grade_name} · ask about openings"
         record["ask_open_seats"] = True
         record["source"] = {"type": seats_type, "path": "osp.seats_by_grade", "as_of": row.get("as_of") or seats_answered, "confidence": "high"}
         allowed.add("osp.seats_by_grade")
         sentences.append(
-            f"The school reported a waitlist only for {label} as of {_month(parse_date(row.get('as_of')))} [[cite:osp.seats_by_grade]]."
+            f"The school reported a waitlist only for {grade_name} as of {_month(parse_date(row.get('as_of')))} [[cite:osp.seats_by_grade]]."
         )
+    elif how == "zoned":
+        # Known admission type — not an evidence Unknown. Offer the district locator.
+        status, line = "partial", "Zoned neighborhood school · check your address"
+        record["zoned_prompt"] = True
+        pill_label = rules[how]["label"]
     else:
-        status = "unknown"
-        if how == "zoned":
-            line = "Is this your zoned school?"
-            record["zoned_prompt"] = True
-        else:
-            line = "Ask about open seats"
-            record["ask_open_seats"] = True
+        status, line = "unknown", "Ask about open seats"
+        record["ask_open_seats"] = True
         old = parse_deadline(_first(deadline_value))
         if old and (today - old).days > STALE_DEADLINE_DAYS:
             allowed.add("osp.application_deadline_date")
@@ -241,19 +252,25 @@ def getting_in(
     applicants = _rows_for_grade(applicants_value, grades)
     if applicants:
         row = applicants[0]
-        label = _grade_adjective(str(row["grade"]))
+        grade_label = _grade_adjective(str(row["grade"]))
         when = parse_date(row.get("as_of"))
-        record["detail"] = f"Last year: {row['applicants']} applicants for {row['seats']} {label} seats"
+        record["detail"] = f"Last year: {row['applicants']} applicants for {row['seats']} {grade_label} seats"
         record["detail_as_of"] = row.get("as_of")
         record["detail_source"] = f"School-reported, {_month(when)}" if when else "School-reported"
         allowed.add("osp.applicants_last_year")
         sentences.append(
-            f"Last year the school reported {row['applicants']} applicants for {row['seats']} {label} seats "
+            f"Last year the school reported {row['applicants']} applicants for {row['seats']} {grade_label} seats "
             f"[[cite:osp.applicants_last_year]]."
         )
 
     cited = validate_text(" ".join(sentences), allowed)
-    record.update(status=status, label=LABELS[status], line=line, note=cited, text=strip_cites(cited))
+    record.update(
+        status=status,
+        label=pill_label or LABELS[status],
+        line=line,
+        note=cited,
+        text=strip_cites(cited),
+    )
     return record
 
 
