@@ -32,11 +32,12 @@ export interface VoiceStackProps extends cdk.StackProps {
 
 const VOICE = 'Joanna';
 // Same as backend/voice/lex_turn.py: the AI always finishes its sentence (no barge-in),
-// then waits 5 s for the first word and 1.5 s of silence before a reply is done.
+// then waits 5 s for the first word and 1 s of silence before a reply is done. With the
+// 1 s "One moment" delay below, the caller hears it 2 s after they stop talking.
 const LISTEN: Record<string, string> = {
   'x-amz-lex:allow-interrupt:*:*': 'false',
   'x-amz-lex:audio:start-timeout-ms:*:*': '5000',
-  'x-amz-lex:audio:end-timeout-ms:*:*': '1500',
+  'x-amz-lex:audio:end-timeout-ms:*:*': '1000',
 };
 
 /**

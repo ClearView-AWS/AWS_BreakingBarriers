@@ -41,11 +41,11 @@ BOT_NAME = "GsSchoolCaller"
 FLOW_NAME = "GS school call"
 VOICE = "Joanna"
 # The AI always finishes its sentence (no barge-in), then waits 5 s for the first word
-# and 1.5 s of silence before a reply is done.
+# and 1 s of silence before a reply is done.
 LISTEN = {
     "x-amz-lex:allow-interrupt:*:*": "false",
     "x-amz-lex:audio:start-timeout-ms:*:*": "5000",
-    "x-amz-lex:audio:end-timeout-ms:*:*": "1500",
+    "x-amz-lex:audio:end-timeout-ms:*:*": "1000",
 }
 HANDLER = Path(__file__).resolve().parents[1] / "backend" / "voice" / "lex_turn.py"
 

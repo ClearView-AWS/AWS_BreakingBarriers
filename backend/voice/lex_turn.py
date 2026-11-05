@@ -20,11 +20,11 @@ MODEL_ID = os.environ.get("VOICE_MODEL_ID", "us.anthropic.claude-haiku-5-5")
 TABLE = os.environ.get("GS_DYNAMODB_TABLE", "")
 REGION = os.environ.get("AWS_REGION", "us-east-1")
 MAX_TURNS = 12
-# Same as the Connect flow: never cut the AI off, wait 5 s for an answer, 1.5 s of silence ends it.
+# Same as the Connect flow: never cut the AI off, wait 5 s for an answer, 1 s of silence ends it.
 LISTEN = {
     "x-amz-lex:allow-interrupt:*:*": "false",
     "x-amz-lex:audio:start-timeout-ms:*:*": "5000",
-    "x-amz-lex:audio:end-timeout-ms:*:*": "1500",
+    "x-amz-lex:audio:end-timeout-ms:*:*": "1000",
 }
 
 SYSTEM = """You are an automated AI assistant on a phone call with a school's front office,
