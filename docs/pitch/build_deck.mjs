@@ -15,6 +15,7 @@ import JSZip from "jszip";
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(HERE, "Guided-Search-8min.pptx");
 const SPEAKERS = path.join(HERE, "speakers");
+const TEAM = "ClearView";
 const LIVE_URL = "dvpvz48phigre.cloudfront.net";
 
 const THEME = {
@@ -86,7 +87,7 @@ const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5 in
 pres.title = "Guided Search — 8-minute pitch";
 pres.subject = "We investigate. You decide.";
-pres.author = "ClearView-AWS";
+pres.author = TEAM;
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 const C = pres.SchemeColor;
 const W = 13.333;
@@ -96,7 +97,7 @@ pres.defineSlideMaster({
   title: "Dark",
   background: { color: C.text2 },
   objects: [
-    { text: { text: LIVE_URL, options: { x: M, y: 6.75, w: 6, h: 0.35, margin: 0, fontSize: 12, color: C.accent6, isTextBox: true } } },
+    { text: { text: `${TEAM} · ${LIVE_URL}`, options: { x: M, y: 6.75, w: 6, h: 0.35, margin: 0, fontSize: 12, color: C.accent6, isTextBox: true } } },
     { placeholder: { options: { name: "kicker", type: "body", x: M, y: 1.35, w: 7.2, h: 0.45, margin: 0, fontSize: 16, bold: true, color: C.accent1, charSpacing: 2 }, text: "" } },
     { placeholder: { options: { name: "title", type: "title", x: M, y: 1.9, w: 7.2, h: 2.0, margin: 0, fontSize: 54, bold: true, color: C.background1, align: "left", valign: "top" }, text: "" } },
     { placeholder: { options: { name: "body", type: "body", x: M, y: 4.1, w: 6.6, h: 1.5, margin: 0, fontSize: 20, color: C.accent6, valign: "top" }, text: "" } },
@@ -107,7 +108,7 @@ pres.defineSlideMaster({
   title: "Content",
   background: { color: C.background1 },
   objects: [
-    { text: { text: "Guided Search · We investigate. You decide.", options: { x: M, y: 6.95, w: 8, h: 0.3, margin: 0, fontSize: 10, color: C.accent5, isTextBox: true } } },
+    { text: { text: `${TEAM} · Guided Search · We investigate. You decide.`, options: { x: M, y: 6.95, w: 8, h: 0.3, margin: 0, fontSize: 10, color: C.accent5, isTextBox: true } } },
     { placeholder: { options: { name: "title", type: "title", x: M, y: 0.45, w: W - 2 * M, h: 0.9, margin: 0, fontSize: 36, bold: true, color: C.text1, align: "left", valign: "middle" }, text: "" } },
   ],
   slideNumber: { x: W - M - 0.6, y: 6.95, w: 0.6, h: 0.3, fontSize: 10, color: C.accent5, align: "right" },
@@ -153,7 +154,7 @@ const E = splitSay("05-closer.md", /^## Part 2: Close.*$/m, "GreatSchools alread
 pres.addSection({ title: "A · Host / Impact" });
 {
   const s = pres.addSlide({ masterName: "Dark", sectionTitle: "A · Host / Impact" });
-  s.addText("GUIDED SEARCH FOR GREATSCHOOLS", { placeholder: "kicker" });
+  s.addText(`TEAM ${TEAM.toUpperCase()} · GUIDED SEARCH FOR GREATSCHOOLS`, { placeholder: "kicker" });
   s.addText("We investigate.\nYou decide.", { placeholder: "title" });
   s.addText("Missing facts stay on the screen. When parents share a question, we get the answer once — for everyone.", { placeholder: "body" });
 
