@@ -3,7 +3,7 @@
 // The backend keeps the history too (POST /api/chat, backend/agent/conversation.py).
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { AgentBlocks, type Actions } from "./blocks";
-import { FALLBACK_EXAMPLES, type Turn } from "./types";
+import { DEMO_QUERY, FALLBACK_EXAMPLES, type Turn } from "./types";
 import { t } from "./i18n";
 import "./chat.css";
 
@@ -133,6 +133,14 @@ export function Chat({
                 <h1 id="search-hero-title">{t("chat.hero_title")}</h1>
                 <p>{t("chat.hero_intro")}</p>
                 {renderInput(true)}
+                <button
+                  type="button"
+                  className="hero-try"
+                  disabled={busy}
+                  onClick={() => onSend(DEMO_QUERY)}
+                >
+                  <span>{t("chat.try")}:</span> {DEMO_QUERY}
+                </button>
                 <div className="hero-start">
                   <span>{t("chat.start_with")}</span>
                   <div className="chat-chips" role="group" aria-label={t("chat.start_with")}>
