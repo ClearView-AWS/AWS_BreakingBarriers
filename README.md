@@ -99,6 +99,8 @@ Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/sta
 | `GsGatewayStack` | AgentCore Gateway + school-tools Lambda | No — set repo variable `DEPLOY_GATEWAY=1`, or deploy by hand |
 | `GsVoiceStack` | Voice-turn Lambda, Lex V2 bot, Connect contact flow | No — set repo variable `DEPLOY_VOICE=1`, or deploy by hand |
 
+Architecture detail (one DynamoDB table, Leaflet/OSM maps, SES optional): [`docs/infra.md`](docs/infra.md). Judge-facing narrative: [`docs/how-it-works.md`](docs/how-it-works.md). Ops: [`infra/README.md`](infra/README.md).
+
 The Connect instance and its phone number are imported by id (context `voiceInstanceId` / `VOICE_INSTANCE_ID`): an instance needs an alias and outbound unlock, and deleting it with the stack would drop the claimed number. Claiming a number in CDK is off (`voiceClaimNumber=true` to opt in).
 
 ### AgentCore Gateway (MCP tools)
