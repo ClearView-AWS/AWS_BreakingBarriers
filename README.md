@@ -78,15 +78,16 @@ Region `us-east-1`. Leave the flags off and the rules engine, the local index, t
 
 Sessions, saved lists, and the school inbox are a JSON file at `data/runtime/state.json` (`GS_STATE_PATH` overrides it). That file is the stand-in for DynamoDB.
 
-## Calling a school (in progress)
+### AgentCore Gateway (MCP tools)
 
-When a fact isn't on file, an AI assistant can phone the school and ask. Amazon Connect places the call and reads the opening (it says it is an AI and asks to transcribe). Lex turns each reply into text and calls `backend/voice/lex_turn.py`, a Lambda that asks Bedrock for the next line and writes the transcript to the state table under `pk=CALLS`. The model's reading of the answers is untrusted; the app will check them in code before a card changes.
+`GsGatewayStack` serves four school tools over MCP through an AgentCore Gateway: `find_schools`, `get_school_facts`, `estimate_school_cost`, and `define_term`. They run in one Lambda (`backend/mcp_tools.py`) on the same corpus, funding rules, and glossary as the app. The schemas are in `backend/config/mcp_tools.json`. Callers sign requests with SigV4 (`AWS_IAM`). The demo deploy does not include this stack.
 
 ```bash
-VOICE_INSTANCE_ID=<connect instance id> .venv/bin/python scripts/setup_voice.py
+cd infra && npx cdk deploy GsGatewayStack -c enableOpenSearch=false
+cd .. && AWS_REGION=us-east-1 .venv/bin/python scripts/gateway_demo.py "Which Jacksonville middle schools have after-school care?"
 ```
 
-The script creates or updates the roles, the Lambda, the Lex bot, and the Connect flow, then prints `VOICE_INSTANCE_ID`, `VOICE_FLOW_ID`, and `VOICE_SOURCE`. The number to call is never in the repo: set `VOICE_VERIFIED_TO` on the API only, and calls go only to that number.
+The script lists the tools and lets the Bedrock agent (`backend/agent/gateway.py`) call them through the gateway. It prints each call. If your credentials come from `aws login`, run `pip install "botocore[crt]"` first.
 
 ## Evaluation
 

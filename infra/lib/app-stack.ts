@@ -22,7 +22,7 @@ export interface AppStackProps extends cdk.StackProps {
   translateEnabled?: boolean;
 }
 
-function repoRootFrom(start: string): string {
+export function repoRootFrom(start: string): string {
   let dir = start;
   for (let i = 0; i < 8; i++) {
     if (fs.existsSync(path.join(dir, 'Dockerfile')) && fs.existsSync(path.join(dir, 'frontend'))) {

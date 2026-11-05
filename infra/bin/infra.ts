@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib/core';
 import { AppStack } from '../lib/app-stack';
+import { GatewayStack } from '../lib/gateway-stack';
 import { InfraStack } from '../lib/infra-stack';
 
 const app = new cdk.App();
@@ -34,4 +35,9 @@ new AppStack(app, 'GsAppStack', {
   openSearchEndpoint,
   bedrockEnabled,
   translateEnabled,
+});
+
+new GatewayStack(app, 'GsGatewayStack', {
+  env,
+  description: 'GreatSchools guided search — AgentCore Gateway (MCP school tools)',
 });

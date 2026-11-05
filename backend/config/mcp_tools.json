@@ -1,0 +1,78 @@
+[
+  {
+    "name": "find_schools",
+    "description": "List schools in a city, optionally filtered by level and school type. Returns ids to pass to the other tools.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string",
+          "description": "City name, for example Jacksonville"
+        },
+        "level": {
+          "type": "string",
+          "description": "elementary, middle, high, or preschool"
+        },
+        "school_type": {
+          "type": "string",
+          "description": "public, charter, or private"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Most schools to return (default 5, max 20)"
+        }
+      },
+      "required": [
+        "city"
+      ]
+    }
+  },
+  {
+    "name": "get_school_facts",
+    "description": "Profile facts for one school (type, grades, address, ratings, programs, after-school care, admissions). Each fact names its source field.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "school_id": {
+          "type": "string",
+          "description": "School id, for example 'School fl-180003'"
+        }
+      },
+      "required": [
+        "school_id"
+      ]
+    }
+  },
+  {
+    "name": "estimate_school_cost",
+    "description": "Tuition and the Florida scholarships a family may qualify for at one school, with official links. Never promises an award amount.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "school_id": {
+          "type": "string",
+          "description": "School id"
+        }
+      },
+      "required": [
+        "school_id"
+      ]
+    }
+  },
+  {
+    "name": "define_term",
+    "description": "Plain-language definition of a school term such as CTE, charter school, ESA, or summary rating.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "term": {
+          "type": "string",
+          "description": "The term to define"
+        }
+      },
+      "required": [
+        "term"
+      ]
+    }
+  }
+]
