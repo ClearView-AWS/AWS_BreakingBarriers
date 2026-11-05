@@ -57,16 +57,11 @@ def opening(school_name: str, count: int) -> str:
     )
 
 
-STAFF_ONLY = "AI calls are placed from the school-staff device only; questions go to the school by email."
-
-
-def start_call(state: dict, school: dict, allow_dial: bool = True) -> dict:
+def start_call(state: dict, school: dict) -> dict:
     """Dial the demo handset about open inbox questions for this school.
 
     Destination is always DEMO_VOICE_TO. Dial blockers are off while
     calls.yaml has enforce_limits: false (hackathon stage default).
-    allow_dial is False for callers without the staff code (backend/security.py): their
-    questions are queued and emailed, and nothing dials.
     """
     cfg = call_limits()
     items = [i for i in state.get("inbox") or [] if i["school_id"] == school["id"] and i["status"] == "open"]
@@ -91,8 +86,7 @@ def start_call(state: dict, school: dict, allow_dial: bool = True) -> dict:
         call["status"] = "failed"
         call["error"] = "no open questions for this school"
     else:
-        blocked = None if allow_dial else STAFF_ONLY
-        blocked = blocked or why_blocked(state, school, cfg)
+        blocked = why_blocked(state, school, cfg)
         if blocked:
             call["status"] = "blocked"
             call["fallback_reason"] = blocked

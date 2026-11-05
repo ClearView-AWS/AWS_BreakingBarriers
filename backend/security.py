@@ -1,14 +1,13 @@
 """Who may do what on the public API, and how often.
 
-The product has no login, so anyone can search and chat. Three things are not open to anyone:
+The product has no login, so anyone can search, chat, and use "Have AI call" from the browser.
+What a stranger with curl should not be able to do freely:
 
-- Staff actions (answering for a school, opting a school out of calls, replying to the inbox)
-  need the staff code: the `X-Staff-Key` header must match GS_STAFF_KEY. Infra stores the code
-  in Secrets Manager; the presenter enters it once in the browser.
-- AI phone calls dial only for a staff browser. Anyone else's questions still reach the school
-  by email, the same fallback as when voice is off.
+- Staff actions (answering for a school, opting a school out of calls, replying to the inbox,
+  posting as school staff) need the staff code: `X-Staff-Key` must match GS_STAFF_KEY.
+  Infra stores it in Secrets Manager — that path is for forging school-reported facts, not for dialing.
 - Every route that runs a model, places a call or writes state is rate limited per client IP
-  and in total, so a script can't drain the Bedrock / Connect budget.
+  and in total, so a terminal script can't drain the Bedrock / Connect budget or spam dials.
 
 With GS_STAFF_KEY unset (local dev, tests) every caller counts as staff.
 """

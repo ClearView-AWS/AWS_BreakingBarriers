@@ -11,7 +11,7 @@ from gaps.phone import check_value, set_do_not_call
 from pipeline import checklist_for, turn
 from contracts import Criterion
 from search.corpus import load_schools
-from security import guard, is_staff, require_staff
+from security import guard, require_staff
 from store import State
 
 app = FastAPI(title="Guided School Search", version="0.1.0")
@@ -185,7 +185,7 @@ class CallIn(BaseModel):
 
 
 @app.post("/api/calls")
-def post_call(body: CallIn, request: Request) -> dict:
+def post_call(body: CallIn) -> dict:
     """Phone the school about this question and every other open one parents have for it."""
     from catalog import needs
     from gaps.inbox import add_question
@@ -202,8 +202,9 @@ def post_call(body: CallIn, request: Request) -> dict:
             question = needs().get(need_id, {}).get("visit_question") or f"Can you tell us about {need_id}?"
             items.append(add_question(state, school, need_id, question, body.session_id or "anonymous"))
         requeue_stale(state)
-        # Only a staff browser dials; anyone else's questions go by email (backend/security.py).
-        call = start_call(state, school, allow_dial=is_staff(request))
+        # Anyone can dial from the product UI. Terminal abuse is capped by rate limits
+        # (backend/security.py); catalog-only needs keep free text out of the prompt.
+        call = start_call(state, school)
         if call["status"] in {"off", "failed", "blocked"}:
             # No call went out, so the questions still reach the school by email.
             for item in items:

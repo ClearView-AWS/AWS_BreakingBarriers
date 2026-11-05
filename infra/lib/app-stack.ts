@@ -136,10 +136,10 @@ export class AppStack extends cdk.Stack {
         : `https://${props.openSearchEndpoint}`;
     }
 
-    // Staff code for school-staff actions and AI calls (backend/security.py). Generated once
-    // and kept across deploys; read it with the StaffKeySecret output.
+    // Staff code for school-staff writes only (backend/security.py) — not required to dial.
+    // Generated once and kept across deploys; read it with the StaffKeySecret output.
     const staffKey = new secretsmanager.Secret(this, 'StaffKey', {
-      description: 'ClearView school-staff code: X-Staff-Key header for staff actions and AI calls',
+      description: 'ClearView school-staff code: X-Staff-Key for answering as the school',
       generateSecretString: { passwordLength: 24, excludePunctuation: true },
     });
 
