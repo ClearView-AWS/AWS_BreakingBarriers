@@ -139,6 +139,45 @@ def post_reply(question_id: str, body: ReplyIn) -> dict:
         return {"item": item}
 
 
+class CallIn(BaseModel):
+    school_id: str
+    needs: list[str]
+    session_id: str | None = None
+
+
+@app.post("/api/calls")
+def post_call(body: CallIn) -> dict:
+    """Phone the school about this question and every other open one parents have for it."""
+    from catalog import needs
+    from gaps.inbox import add_question
+    from gaps.phone import public, start_call
+    from gaps.ses_mailer import send_school_question
+
+    school = next((s for s in load_schools() if s["id"] == body.school_id), None)
+    if not school:
+        return {"error": "unknown school"}
+    with State() as state:
+        items = []
+        for need_id in body.needs:
+            question = needs().get(need_id, {}).get("visit_question") or f"Can you tell us about {need_id}?"
+            items.append(add_question(state, school, need_id, question, body.session_id or "anonymous"))
+        call = start_call(state, school)
+        if call["status"] in {"off", "failed"}:
+            # No call went out, so the questions still reach the school by email.
+            for item in items:
+                item["email"] = send_school_question(item)
+        return {"call": public(call)}
+
+
+@app.get("/api/calls/{call_id}")
+def get_call(call_id: str) -> dict:
+    from gaps.phone import public, refresh_call
+
+    with State() as state:
+        call = refresh_call(state, call_id)
+        return {"call": public(call)} if call else {"error": "unknown call"}
+
+
 @app.get("/api/schools/{school_id}")
 def get_school(school_id: str) -> dict:
     for school in load_schools():

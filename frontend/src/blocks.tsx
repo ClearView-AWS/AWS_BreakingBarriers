@@ -11,6 +11,7 @@ import { languageName, t, tn } from "./i18n";
 import { MapView, ViewToggle, type ResultsView } from "./Views";
 import { Brief } from "./components/Brief";
 import { QuestionPrompt, type QuestionItem } from "./components/QuestionPrompt";
+import { CallButton } from "./Call";
 
 /** "public" -> "Public" in the UI language; anything else as written. */
 function typeLabel(type: string | null | undefined): string {
@@ -33,6 +34,8 @@ export type Actions = {
   /** List or Map for the results on screen. Starts as List and sticks for the session. */
   resultsView: ResultsView;
   setResultsView: (view: ResultsView) => void;
+  /** The chat session, so a school call is grouped with this parent's questions. */
+  sessionId?: string | null;
 };
 
 export function blockOf(blocks: Block[], type: string) {
@@ -356,6 +359,12 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
           })}
         </div>
       )}
+      <CallButton
+        schoolId={card.id}
+        schoolName={card.name}
+        needs={card.evidence.filter((row) => row.status === "unknown").map((row) => needs.get(row.criterion_id)).filter((need): need is string => !!need)}
+        actions={actions}
+      />
       {evidence && (
         <div className="evidence">
           {card.evidence.map((row) => (

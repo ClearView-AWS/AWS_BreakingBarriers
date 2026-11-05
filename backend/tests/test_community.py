@@ -199,3 +199,53 @@ def test_community_home_lists_active_schools_and_finds_any_by_name(state):
     quiet = next(school for school in schools if school["id"] not in {row["id"] for row in active})
     found = service.schools_index(state, schools, quiet["name"])
     assert quiet["id"] in {row["id"] for row in found}
+
+
+def _guardrail_says(monkeypatch, entities):
+    """Stub ApplyGuardrail so the Bedrock layer runs without AWS."""
+    import boto3
+
+    from community import safety
+
+    class Runtime:
+        def apply_guardrail(self, **_):
+            if not entities:
+                return {"action": "NONE", "assessments": []}
+            return {
+                "action": "GUARDRAIL_INTERVENED",
+                "assessments": [{"sensitiveInformationPolicy": {"piiEntities": entities}}],
+            }
+
+    monkeypatch.setattr(safety, "BEDROCK_ENABLED", True)
+    monkeypatch.setenv("BEDROCK_GUARDRAIL_ID", "test-guardrail")
+    monkeypatch.setattr(boto3, "client", lambda *a, **k: Runtime())
+
+
+def test_guardrail_name_blocks_what_local_rules_miss(monkeypatch):
+    _guardrail_says(monkeypatch, [{"type": "NAME", "match": "Jordan Ellis", "action": "BLOCKED"}])
+    result = check_post("Jordan Ellis wants to start a chess club.")
+    assert not result["ok"]
+    assert result["checked_by"] == ["rules", "bedrock_guardrails"]
+    assert {"type": "name", "text": "Jordan Ellis"} in result["findings"]
+
+
+@pytest.mark.parametrize("place", ["Arlington", "San Jose Blvd", "Mandarin Bridge Middle"])
+def test_guardrail_address_without_house_number_is_not_personal(monkeypatch, place):
+    _guardrail_says(monkeypatch, [{"type": "ADDRESS", "match": place, "action": "BLOCKED"}])
+    result = check_post(f"Is the drive from {place} bad at pickup?")
+    assert result["ok"], result
+    assert "bedrock_guardrails" in result["checked_by"]
+
+
+def test_guardrail_address_after_a_count_is_not_an_address(monkeypatch):
+    _guardrail_says(monkeypatch, [{"type": "ADDRESS", "match": "Mandarin Bridge Middle", "action": "BLOCKED"}])
+    assert check_post("Our 2 kids love Mandarin Bridge Middle.")["ok"]
+
+
+@pytest.mark.parametrize("match", ["1420 oak st", "st"])
+def test_guardrail_address_with_house_number_blocks(monkeypatch, match):
+    # Guardrails sometimes returns only the tail of the address.
+    _guardrail_says(monkeypatch, [{"type": "ADDRESS", "match": match, "action": "BLOCKED"}])
+    result = check_post("we're at 1420 oak st if anyone wants to carpool")
+    assert not result["ok"]
+    assert {"type": "address", "text": "1420 oak st"} in result["findings"]

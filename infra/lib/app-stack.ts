@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import * as bedrock from 'aws-cdk-lib/aws-bedrock';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -75,6 +76,33 @@ export class AppStack extends cdk.Stack {
       TRANSLATE_ENABLED: translateEnabled ? '1' : '0',
       GS_DYNAMODB_TABLE: stateTable.tableName,
     };
+    // Bedrock Guardrails: second check on every community post (backend/community/safety.py).
+    let guardrail: bedrock.CfnGuardrail | undefined;
+    if (bedrockEnabled) {
+      const blocked = 'This post includes personal information. Please rephrase without it.';
+      guardrail = new bedrock.CfnGuardrail(this, 'PostGuardrail', {
+        name: `${cdk.Stack.of(this).stackName}-community-pii`,
+        description: 'Blocks names, emails, phone numbers and addresses in parent community posts',
+        blockedInputMessaging: blocked,
+        blockedOutputsMessaging: blocked,
+        sensitiveInformationPolicyConfig: {
+          piiEntitiesConfig: ['NAME', 'EMAIL', 'PHONE', 'ADDRESS'].map((type) => ({ type, action: 'BLOCK' })),
+        },
+      });
+      const version = new bedrock.CfnGuardrailVersion(this, 'PostGuardrailVersion', {
+        guardrailIdentifier: guardrail.attrGuardrailId,
+      });
+      environment.BEDROCK_GUARDRAIL_ID = guardrail.attrGuardrailId;
+      environment.BEDROCK_GUARDRAIL_VERSION = version.attrVersion;
+    }
+    // School phone calls (backend/gaps/phone.py). On only when the deploy shell sets all four;
+    // VOICE_VERIFIED_TO is the one number calls may reach and never lives in the repo.
+    const voiceKeys = ['VOICE_INSTANCE_ID', 'VOICE_FLOW_ID', 'VOICE_SOURCE', 'VOICE_VERIFIED_TO'];
+    const voiceEnabled = voiceKeys.every((key) => !!process.env[key]);
+    if (voiceEnabled) {
+      environment.VOICE_ENABLED = '1';
+      for (const key of voiceKeys) environment[key] = process.env[key] as string;
+    }
     if (props.openSearchEndpoint) {
       environment.OPENSEARCH_URL = props.openSearchEndpoint.startsWith('http')
         ? props.openSearchEndpoint
@@ -119,12 +147,29 @@ export class AppStack extends cdk.Stack {
     });
 
     stateTable.grantReadWriteData(service.taskDefinition.taskRole);
+    if (voiceEnabled) {
+      const instance = `arn:aws:connect:${this.region}:${this.account}:instance/${process.env.VOICE_INSTANCE_ID}`;
+      service.taskDefinition.addToTaskRolePolicy(
+        new iam.PolicyStatement({
+          actions: ['connect:StartOutboundVoiceContact', 'connect:DescribeContact'],
+          resources: [instance, `${instance}/*`],
+        }),
+      );
+    }
     service.taskDefinition.addToTaskRolePolicy(
       new iam.PolicyStatement({
         actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
         resources: ['*'],
       }),
     );
+    if (guardrail) {
+      service.taskDefinition.addToTaskRolePolicy(
+        new iam.PolicyStatement({
+          actions: ['bedrock:ApplyGuardrail'],
+          resources: [guardrail.attrGuardrailArn],
+        }),
+      );
+    }
     // Amazon Translate (backend/agent/translate.py): each message is read in any language
     // (TranslateText with automatic detection, which calls Comprehend) and the reply and UI
     // strings are translated back (TranslateDocument, TranslateText). No resources to scope to.
