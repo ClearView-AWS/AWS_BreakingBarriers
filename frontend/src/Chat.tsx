@@ -84,12 +84,12 @@ export function Chat({
       </a>
       <div className="chat-scroll" id="chat-main">
         <ol className="chat-log" aria-live="polite" aria-relevant="additions" aria-busy={busy} aria-label="Conversation">
-          <li className="chat-entry chat-agent">
-            <span className="chat-who">{t("chat.guide")}</span>
-            <div className="agent-text">
-              <p>{t("chat.intro")}</p>
-            </div>
-            {!entries.length && (
+          {!entries.length && (
+            <li className="chat-entry chat-agent chat-first-run">
+              <span className="chat-who">{t("chat.guide")}</span>
+              <div className="agent-text">
+                <p>{t("chat.intro")}</p>
+              </div>
               <div className="chat-chips" role="group" aria-label={t("chat.describe")}>
                 {EXAMPLES.map((example) => (
                   <button key={example} type="button" disabled={busy} onClick={() => onSend(example)}>
@@ -97,8 +97,8 @@ export function Chat({
                   </button>
                 ))}
               </div>
-            )}
-          </li>
+            </li>
+          )}
           {entries.map((entry, index) => {
             const ref = index === entries.length - 1 ? last : undefined;
             if (entry.role === "system") {
