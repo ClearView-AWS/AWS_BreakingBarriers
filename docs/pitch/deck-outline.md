@@ -1,5 +1,8 @@
 # 8-slide deck outline
 
+**Live speaking scripts (5 people · 8:00):** [`docs/pitch/speakers/`](./speakers/README.md)
+
+
 Map each slide to hackathon criteria. Speakers: keep each slide ≤20 s except demo (slide 5).
 
 | # | Slide title | One-line content | Criterion focus | Speaker cue |
