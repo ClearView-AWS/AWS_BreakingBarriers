@@ -22,7 +22,7 @@ Total talk time: **3:00**. Leave ~15 s slack for judges' screens to load.
 **Type exactly (or tap the first example chip):**
 
 ```text
-Middle school in Seattle that must have a gifted program. Prefer a small school.
+Middle school in Seattle that must have a gifted program and after-school care. Prefer a small school.
 ```
 
 **Click / do:**
