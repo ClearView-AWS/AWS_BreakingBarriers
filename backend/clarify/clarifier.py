@@ -11,7 +11,17 @@ GRADE_OPTIONS = [
     ("m", "Middle"),
     ("h", "High"),
 ]
-CITY_OPTIONS = ["Jacksonville", "Miami", "Orlando", "Tampa"]
+CITY_OPTIONS = [
+    "Jacksonville",
+    "Miami",
+    "Orlando",
+    "Tampa",
+    "Seattle",
+    "Tacoma",
+    "Spokane",
+    "Bellevue",
+    "Vancouver",
+]
 DEFAULT_CITY = "Jacksonville"
 DEFAULT_GRADE = "m"
 

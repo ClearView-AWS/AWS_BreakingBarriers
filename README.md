@@ -50,6 +50,8 @@ npm run test:screenshots          # writes desktop + 360px light/dark PNGs to do
 
 Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25 sample schools in `Sample Data/` stay unchanged. The generator writes 275 more schools, nearby programs, and one static page per generated school.
 
+Public **Washington OSPI Report Card** schools (~2.3k) load from `data/wa/schools.json` when that file is present (`GS_INCLUDE_WA=0` to turn off). Rebuild from the OSPI CSVs with `python data/wa/import_ospi.py` — see `data/wa/README.md`. Try: *Middle school in Seattle with English learner support.*
+
 ## Decisions
 
 - Hard filters are location, grade, and school type. Every other criterion is scored, so a missing field never drops a school.

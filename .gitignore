@@ -12,6 +12,8 @@ infra/dist/
 infra/cdk.out/
 data/runtime/
 data/index/documents.jsonl
+# OSPI raw downloads are large; commit data/wa/schools.json instead.
+data/wa/Report_Card_*.csv
 *.log
 .DS_Store
 __pycache__/

@@ -11,8 +11,16 @@ REPO_ROOT = BACKEND_DIR.parent
 CONFIG_DIR = BACKEND_DIR / "config"
 SAMPLE_DIR = REPO_ROOT / "Sample Data"
 SYNTHETIC_DIR = REPO_ROOT / "data" / "synthetic"
+WA_DIR = REPO_ROOT / "data" / "wa"
 RUNTIME_DIR = REPO_ROOT / "data" / "runtime"
 INDEX_DIR = REPO_ROOT / "data" / "index"
+# When 1 (default if data/wa/schools.json exists), load public OSPI WA schools into the corpus.
+_INCLUDE_WA_ENV = os.environ.get("GS_INCLUDE_WA", "").strip().lower()
+INCLUDE_WA = (
+    _INCLUDE_WA_ENV in {"1", "true", "yes"}
+    if _INCLUDE_WA_ENV
+    else (WA_DIR / "schools.json").exists()
+)
 
 # Fixed clock so age rules and the eval stay repeatable. Override with GS_TODAY.
 TODAY = date.fromisoformat(os.environ.get("GS_TODAY", "2026-11-03"))
