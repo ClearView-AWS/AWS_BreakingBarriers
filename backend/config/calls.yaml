@@ -1,0 +1,25 @@
+# Limits on AI calls to schools. A call that breaks one of these is not placed;
+# the questions go by email (SES) instead and the API says why.
+
+# At most one placed call per school in this many days.
+min_days_between_calls: 7
+# Questions asked in one call. The rest stay open for email or the next call.
+max_questions_per_call: 3
+# Placed calls across all schools per day.
+global_daily_cap: 20
+
+# Call only during school office hours, in the school's own time zone.
+business_hours:
+  start: "09:00"
+  end: "15:30"
+  days: [mon, tue, wed, thu, fri]
+default_time_zone: America/New_York
+time_zones:
+  FL: America/New_York
+  CA: America/Los_Angeles
+  TX: America/Chicago
+  NY: America/New_York
+
+# Schools that asked not to be called. They get email only.
+# Schools can also opt out through the API; that list lives in state.
+do_not_call: []

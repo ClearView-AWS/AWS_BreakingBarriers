@@ -6,7 +6,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from gaps.inbox import grouped_inbox, reply_to_question
+from gaps.inbox import grouped_inbox, reply_to_question, requeue_stale
+from gaps.phone import check_value, set_do_not_call
 from pipeline import checklist_for, turn
 from contracts import Criterion
 from search.corpus import load_schools
@@ -127,13 +128,14 @@ def _programs():
 @app.get("/api/inbox")
 def get_inbox() -> dict:
     with State() as state:
+        requeue_stale(state)
         return {"items": grouped_inbox(state)}
 
 
 @app.post("/api/inbox/{question_id}/reply")
 def post_reply(question_id: str, body: ReplyIn) -> dict:
     with State() as state:
-        item = reply_to_question(state, question_id, body.text, body.value)
+        item = reply_to_question(state, question_id, body.text, body.value, channel="email")
         if not item:
             return {"error": "unknown question"}
         return {"item": item}
@@ -161,12 +163,13 @@ def post_call(body: CallIn) -> dict:
         for need_id in body.needs:
             question = needs().get(need_id, {}).get("visit_question") or f"Can you tell us about {need_id}?"
             items.append(add_question(state, school, need_id, question, body.session_id or "anonymous"))
+        requeue_stale(state)
         call = start_call(state, school)
-        if call["status"] in {"off", "failed"}:
+        if call["status"] in {"off", "failed", "blocked"}:
             # No call went out, so the questions still reach the school by email.
             for item in items:
                 item["email"] = send_school_question(item)
-        return {"call": public(call)}
+        return {"call": public(call), "fallback_reason": call.get("fallback_reason")}
 
 
 @app.get("/api/calls/{call_id}")
@@ -190,6 +193,64 @@ def get_school(school_id: str) -> dict:
                 "level_codes": school.get("level_codes"),
             }
     return {"error": "unknown school"}
+
+
+class StaffAnswerIn(BaseModel):
+    text: str
+    value: str | None = None
+
+
+class DoNotCallIn(BaseModel):
+    opted_out: bool = True
+
+
+@app.get("/api/schools/{school_id}/questions")
+def school_questions(school_id: str) -> dict:
+    """Open inbox questions for this school. Staff answer them once here or in Community."""
+    school = _school(school_id)
+    if not school:
+        return {"error": "unknown school"}
+    with State() as state:
+        requeue_stale(state)
+        items = [
+            item
+            for item in grouped_inbox(state)
+            if item["school_id"] == school["id"] and item["status"] == "open"
+        ]
+        return {"school_id": school["id"], "items": items, "do_not_call": school["id"] in set(state.get("do_not_call") or [])}
+
+
+@app.post("/api/schools/{school_id}/questions/{question_id}/answer")
+def school_answer(school_id: str, question_id: str, body: StaffAnswerIn) -> dict:
+    """School staff answer a queued question. Same overlay path as a call or email reply."""
+    school = _school(school_id)
+    if not school:
+        return {"error": "unknown school"}
+    with State() as state:
+        item = next(
+            (
+                row
+                for row in state.get("inbox") or []
+                if row["id"] == question_id and row["school_id"] == school["id"] and row["status"] == "open"
+            ),
+            None,
+        )
+        if not item:
+            return {"error": "unknown question"}
+        value = body.value if body.value is not None else check_value(item["need"], body.text)
+        answered = reply_to_question(state, question_id, body.text, value, channel="staff")
+        return {"item": answered}
+
+
+@app.post("/api/schools/{school_id}/do-not-call")
+def school_do_not_call(school_id: str, body: DoNotCallIn) -> dict:
+    """Opt out of AI calls (email only) or opt back in."""
+    school = _school(school_id)
+    if not school:
+        return {"error": "unknown school"}
+    with State() as state:
+        opted = set_do_not_call(state, school["id"], body.opted_out)
+        return {"school_id": school["id"], "do_not_call": school["id"] in set(opted), "list": opted}
 
 
 # ---------- Parent community ----------

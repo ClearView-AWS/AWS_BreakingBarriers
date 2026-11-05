@@ -9,6 +9,7 @@ from catalog import funding_rules, needs
 from contracts import Conflict, EvidenceRecord, Source
 from evidence.reviews import review_status
 from evidence.status import (
+    answer_expired,
     apply_rule,
     as_list,
     better,
@@ -16,6 +17,7 @@ from evidence.status import (
     op_matches,
     parse_clock,
     parse_date,
+    stale_note,
     unwrap,
 )
 from gaps.websites import website_facts
@@ -185,6 +187,7 @@ def evaluate_criterion(
     best_source = None
     best_confidence = None
     best_as_of = None
+    best_overlay = None
     conflict = None
 
     facts = website_facts(school["id"])
@@ -204,6 +207,9 @@ def evaluate_criterion(
         status = apply_rule(rule, value, params)
         confidence, as_of = _signal_meta(school, rule, overlay)
         status = downgrade_for_age(status, confidence, as_of, today)
+        if overlay is not None and status in {"confirmed", "needs_attention"} and answer_expired(need_id, as_of, today):
+            # The school's answer is past the need's max_age_days: it no longer decides the card.
+            status = "partial"
         site = website_by_path.get(path)
         if site and value is not None and str(unwrap(site.get("value"))) != str(unwrap(value)):
             conflict = Conflict(
@@ -233,6 +239,7 @@ def evaluate_criterion(
             best_source = source_type
             best_confidence = confidence
             best_as_of = as_of
+            best_overlay = overlay
         elif best_status is None:
             best_status = status
             best_path = path
@@ -240,6 +247,7 @@ def evaluate_criterion(
             best_source = source_type
             best_confidence = confidence
             best_as_of = as_of
+            best_overlay = overlay
 
     review_ids: list[str] = []
     reviewed = review_status(school, list(spec.get("review_topics") or []), today)
@@ -290,6 +298,10 @@ def evaluate_criterion(
 
     note_path = best_path or (missing[0] if missing else None)
     note = _note(spec.get("label") or need_id, best_status, best_value, note_path, program_note, conflict)
+    reported = best_overlay if best_source == "school_reported" else None
+    stale = bool(reported) and answer_expired(need_id, best_as_of, today)
+    if stale:
+        note = f"{note} {stale_note(best_as_of)}"
     source = None
     if best_path:
         source = Source(
@@ -308,6 +320,8 @@ def evaluate_criterion(
         conflict=conflict,
         review_ids=review_ids,
         missing_paths=[] if best_path else missing,
+        answered_at=(reported or {}).get("answered_at") or (best_as_of.isoformat() if reported and best_as_of else None),
+        stale=stale,
     )
 
 

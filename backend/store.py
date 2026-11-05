@@ -27,7 +27,7 @@ def _path() -> Path:
 
 
 def _empty() -> dict:
-    return {"sessions": {}, "inbox": [], "overlays": {}, "calls": {}}
+    return {"sessions": {}, "inbox": [], "overlays": {}, "calls": {}, "do_not_call": []}
 
 
 def _dynamo_table():
@@ -62,7 +62,7 @@ def _load_dynamo() -> dict:
         session_id = session.get("id") or item.get("sk")
         if session_id:
             state["sessions"][session_id] = session
-    for meta_key, field in (("INBOX", "inbox"), ("OVERLAYS", "overlays"), ("CALLS", "calls")):
+    for meta_key, field in (("INBOX", "inbox"), ("OVERLAYS", "overlays"), ("CALLS", "calls"), ("DO_NOT_CALL", "do_not_call")):
         payload = _decode_item(table.get_item(Key={"pk": "META", "sk": meta_key}).get("Item"))
         if payload is not None:
             state[field] = payload
@@ -94,6 +94,13 @@ def _save_dynamo(state: dict) -> None:
         batch.put_item(
             Item={"pk": "META", "sk": "CALLS", "data_json": json.dumps(state.get("calls") or {})}
         )
+        batch.put_item(
+            Item={
+                "pk": "META",
+                "sk": "DO_NOT_CALL",
+                "data_json": json.dumps(state.get("do_not_call") or []),
+            }
+        )
 
 
 def load_state() -> dict:
@@ -114,6 +121,7 @@ def load_state() -> dict:
     data.setdefault("inbox", [])
     data.setdefault("overlays", {})
     data.setdefault("calls", {})
+    data.setdefault("do_not_call", [])
     return data
 
 

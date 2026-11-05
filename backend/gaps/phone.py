@@ -6,6 +6,8 @@ transcript back, and applies answers only after code checks them.
 
 Calls go only to VOICE_VERIFIED_TO, so a real school cannot be reached by mistake.
 Without VOICE_ENABLED=1 the call is not placed and the question goes by email instead.
+Guardrails in config/calls.yaml (per-school spacing, office hours, question cap, daily
+cap, do-not-call) also block a dial and fall back to email with a reason.
 """
 
 from __future__ import annotations
@@ -14,16 +16,18 @@ import json
 import os
 import re
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, time, timezone
+from zoneinfo import ZoneInfo
 
-from catalog import needs
-from runtime_config import AWS_REGION
+from catalog import call_limits, needs
+from runtime_config import AWS_REGION, TODAY
 
 from gaps.inbox import reply_to_question
 
-TERMINAL = {"completed", "ended", "no_answer", "declined", "failed", "off"}
+TERMINAL = {"completed", "ended", "no_answer", "declined", "failed", "off", "blocked"}
 # Needs whose answer is a clock time. Only these change a card; other answers are kept as replies.
 TIME_NEEDS = {"after_care", "extended_day", "before_care"}
+_WEEKDAYS = {"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6}
 
 
 def enabled() -> bool:
@@ -44,8 +48,11 @@ def opening(school_name: str, count: int) -> str:
 
 
 def start_call(state: dict, school: dict) -> dict:
-    """Call the school about every open inbox question for it."""
+    """Call the school about every open inbox question for it, within calls.yaml limits."""
+    cfg = call_limits()
     items = [i for i in state.get("inbox") or [] if i["school_id"] == school["id"] and i["status"] == "open"]
+    cap = int(cfg.get("max_questions_per_call") or 3)
+    items = items[:cap]
     questions = [{"id": i["need"], "question": i["question"]} for i in items]
     call = {
         "id": f"call-{uuid.uuid4().hex[:10]}",
@@ -64,31 +71,124 @@ def start_call(state: dict, school: dict) -> dict:
     if not questions:
         call["status"] = "failed"
         call["error"] = "no open questions for this school"
-    elif not enabled():
-        call["status"] = "off"
     else:
-        try:
-            import boto3
+        blocked = why_blocked(state, school, cfg)
+        if blocked:
+            call["status"] = "blocked"
+            call["fallback_reason"] = blocked
+            call["error"] = blocked
+        elif not enabled():
+            call["status"] = "off"
+            call["fallback_reason"] = "Voice calling is off; questions go by email."
+        else:
+            try:
+                import boto3
 
-            client = boto3.client("connect", region_name=AWS_REGION)
-            response = client.start_outbound_voice_contact(
-                InstanceId=os.environ["VOICE_INSTANCE_ID"],
-                ContactFlowId=os.environ["VOICE_FLOW_ID"],
-                SourcePhoneNumber=os.environ["VOICE_SOURCE"],
-                DestinationPhoneNumber=os.environ["VOICE_VERIFIED_TO"],
-                Attributes={
-                    "call_id": call["id"],
-                    "school_name": school["name"],
-                    "questions": json.dumps(questions),
-                    "opening": call["opening"],
-                },
-            )
-            call["contact_id"] = response["ContactId"]
-        except Exception as exc:
-            call["status"] = "failed"
-            call["error"] = str(exc)[:300]
+                client = boto3.client("connect", region_name=AWS_REGION)
+                response = client.start_outbound_voice_contact(
+                    InstanceId=os.environ["VOICE_INSTANCE_ID"],
+                    ContactFlowId=os.environ["VOICE_FLOW_ID"],
+                    SourcePhoneNumber=os.environ["VOICE_SOURCE"],
+                    DestinationPhoneNumber=os.environ["VOICE_VERIFIED_TO"],
+                    Attributes={
+                        "call_id": call["id"],
+                        "school_name": school["name"],
+                        "questions": json.dumps(questions),
+                        "opening": call["opening"],
+                    },
+                )
+                call["contact_id"] = response["ContactId"]
+            except Exception as exc:
+                call["status"] = "failed"
+                call["error"] = str(exc)[:300]
+                call["fallback_reason"] = "The call could not be placed; questions go by email."
     state.setdefault("calls", {})[call["id"]] = call
     return call
+
+
+def why_blocked(state: dict, school: dict, cfg: dict | None = None) -> str | None:
+    """Reason a dial must not happen, or None when a call may proceed."""
+    cfg = cfg or call_limits()
+    school_id = school["id"]
+    if school_id in set(cfg.get("do_not_call") or []) or school_id in set(state.get("do_not_call") or []):
+        return "This school asked not to be called; questions go by email."
+    spacing = int(cfg.get("min_days_between_calls") or 7)
+    last = _last_placed(state, school_id)
+    if last is not None and (TODAY - last).days < spacing:
+        return f"Already called this school within the last {spacing} days; questions go by email."
+    if _placed_today(state) >= int(cfg.get("global_daily_cap") or 20):
+        return "Daily call limit reached; questions go by email."
+    hours = cfg.get("business_hours") or {}
+    if not _in_business_hours(school, hours, cfg):
+        start, end = hours.get("start", "09:00"), hours.get("end", "15:30")
+        return f"Outside school office hours ({start}–{end} local); questions go by email."
+    return None
+
+
+def set_do_not_call(state: dict, school_id: str, opted_out: bool = True) -> list[str]:
+    """School opt-out: do-not-call means email only. Returns the current list."""
+    opted = list(state.get("do_not_call") or [])
+    if opted_out and school_id not in opted:
+        opted.append(school_id)
+    if not opted_out:
+        opted = [row for row in opted if row != school_id]
+    state["do_not_call"] = opted
+    return opted
+
+
+def _last_placed(state: dict, school_id: str) -> date | None:
+    best = None
+    for call in (state.get("calls") or {}).values():
+        if call.get("school_id") != school_id or not _was_placed(call):
+            continue
+        when = _call_day(call)
+        if when and (best is None or when > best):
+            best = when
+    return best
+
+
+def _placed_today(state: dict) -> int:
+    return sum(1 for call in (state.get("calls") or {}).values() if _was_placed(call) and _call_day(call) == TODAY)
+
+
+def _was_placed(call: dict) -> bool:
+    # Dialed or finished a real attempt. blocked/off never left the building.
+    return call.get("status") not in {"blocked", "off", "failed"} or bool(call.get("contact_id"))
+
+
+def _call_day(call: dict) -> date | None:
+    raw = call.get("created") or ""
+    try:
+        return datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone(timezone.utc).date()
+    except ValueError:
+        return None
+
+
+def _in_business_hours(school: dict, hours: dict, cfg: dict, now: datetime | None = None) -> bool:
+    tz_name = (cfg.get("time_zones") or {}).get(school.get("state")) or cfg.get("default_time_zone") or "America/New_York"
+    try:
+        tz = ZoneInfo(str(tz_name))
+    except Exception:
+        tz = ZoneInfo("America/New_York")
+    local = now.astimezone(tz) if now else datetime.now(tz)
+    days = {_WEEKDAYS.get(str(d).lower()[:3], -1) for d in (hours.get("days") or [])}
+    if days and local.weekday() not in days:
+        return False
+    start = _parse_clock(hours.get("start") or "09:00")
+    end = _parse_clock(hours.get("end") or "15:30")
+    if start is None or end is None:
+        return True
+    return start <= local.time() <= end
+
+
+def _parse_clock(text: str) -> time | None:
+    match = re.fullmatch(r"(\d{1,2}):(\d{2})", str(text).strip())
+    if not match:
+        return None
+    hour, minute = int(match.group(1)), int(match.group(2))
+    if hour > 23 or minute > 59:
+        return None
+    return time(hour, minute)
 
 
 def refresh_call(state: dict, call_id: str) -> dict | None:
@@ -126,7 +226,7 @@ def _apply(state: dict, call: dict) -> None:
         if not quote or not _heard(quote, call["transcript"]):
             continue  # the model can't cite words nobody said
         value = check_value(need_id, answer.get("value"))
-        reply_to_question(state, item["id"], f'By phone: "{quote}"', value)
+        reply_to_question(state, item["id"], f'By phone: "{quote}"', value, channel="call")
         call["answers"].append(
             {"need": need_id, "label": needs().get(need_id, {}).get("label", need_id), "quote": quote, "value": value}
         )
@@ -196,5 +296,16 @@ def _disconnected(contact_id: str | None) -> bool:
 
 def public(call: dict) -> dict:
     """What the browser sees: never the destination number."""
-    keys = ("id", "school_id", "school_name", "questions", "parent_count", "status", "transcript", "answers", "error")
+    keys = (
+        "id",
+        "school_id",
+        "school_name",
+        "questions",
+        "parent_count",
+        "status",
+        "transcript",
+        "answers",
+        "error",
+        "fallback_reason",
+    )
     return {key: call.get(key) for key in keys}

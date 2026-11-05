@@ -41,7 +41,9 @@ export function EvidenceGrid({ payload }: Props) {
                           <p className="cite">
                             {cell.source
                               ? `${SOURCE_LABEL[cell.source.type] ?? cell.source.type}${
-                                  cell.source.as_of ? ` · ${cell.source.as_of}` : ""
+                                  (cell.answered_at || cell.source.as_of)
+                                    ? ` · as of ${String(cell.answered_at || cell.source.as_of).slice(0, 10)}`
+                                    : ""
                                 }`
                               : ""}
                           </p>
