@@ -1,3 +1,4 @@
+import { staffPost } from "./staff";
 import type { Turn } from "./types";
 
 export async function postTurn(body: Record<string, unknown>): Promise<Turn> {
@@ -23,11 +24,7 @@ export async function fetchInbox() {
 }
 
 export async function replyInbox(questionId: string, body: { text: string; value: string }) {
-  const response = await fetch(`/api/inbox/${questionId}/reply`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  const response = await staffPost(`/api/inbox/${questionId}/reply`, body);
   if (!response.ok) throw new Error(`Reply failed (${response.status})`);
   return response.json();
 }

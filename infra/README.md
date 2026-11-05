@@ -32,6 +32,14 @@ SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
 Outputs include `CloudFrontURL` — that is the parent-facing link (no IP).
 Current demo: https://dvpvz48phigre.cloudfront.net
 
+The API is not open to a raw terminal curl for staff actions or AI calls. `GsAppStack` generates a staff code in Secrets Manager (`StaffKeySecret` output) and injects it as `GS_STAFF_KEY`. Open the demo once as `https://…/?staff=<code>`, or pass `X-Staff-Key` on staff POSTs. The ALB security group only accepts CloudFront, so the LoadBalancerDNS is not a public back door.
+
+```bash
+SECRET=$(aws cloudformation describe-stacks --stack-name GsAppStack \
+  --query "Stacks[0].Outputs[?OutputKey=='StaffKeySecret'].OutputValue" --output text)
+aws secretsmanager get-secret-value --secret-id "$SECRET" --query SecretString --output text
+```
+
 Bedrock is on by default; `BEDROCK=0` deploys the rules engine only. If `GsOpenSearchStack` exists, the script passes its endpoint to the app; `OPENSEARCH_ENDPOINT=none` keeps local search.
 
 With Bedrock on, `GsAppStack` also creates the Bedrock Guardrail for community posts and passes `BEDROCK_GUARDRAIL_ID` / `BEDROCK_GUARDRAIL_VERSION` to the task.

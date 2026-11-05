@@ -129,9 +129,9 @@ There is **no** six-table design in the live stack.
 | Piece | Role |
 |---|---|
 | S3 web bucket | React `frontend/dist`, private, CloudFront OAC |
-| CloudFront | HTTPS; `/*` → S3; `/api/*` → ALB (caching off) |
-| ECR asset + ECS Fargate | One task, 0.5 vCPU / 1 GB, public subnet + public IP (no NAT) |
-| ALB | Internet-facing HTTP, health check on the API |
+| CloudFront | HTTPS; `/*` → S3; `/api/*` → ALB (caching off); forwards `CloudFront-Viewer-Address` for rate limits |
+| ECR asset + ECS Fargate | One task, 0.5 vCPU / 1 GB, public subnet + public IP (no NAT); `GS_STAFF_KEY` from Secrets Manager |
+| ALB | HTTP listener open only to the CloudFront origin-facing prefix list (not `0.0.0.0/0`) |
 
 ### Amazon Translate (+ Comprehend)
 
@@ -169,6 +169,7 @@ Fargate task env (set by `GsAppStack` / deploy script) includes:
 ```bash
 AWS_REGION=us-east-1
 GS_DYNAMODB_TABLE=<RuntimeState table name>
+GS_STAFF_KEY=<from Secrets Manager>   # required for staff writes and AI dials
 BEDROCK_ENABLED=1          # or 0 for rules only
 TRANSLATE_ENABLED=1
 OPENSEARCH_URL=https://…   # omitted → local hybrid search
@@ -222,6 +223,17 @@ Also remove the hand-created `GsGitHubDeploy` role if the sandbox is done (see `
 Deliberately avoided: NAT gateways, multi-AZ OpenSearch, provisioned DynamoDB, Amazon Location.
 
 ---
+
+## API hardening (terminal / curl)
+
+The parent demo URL is public, but a stranger with curl cannot dial the demo phone, answer as school staff, or inject free text into school emails:
+
+- **Staff code** (`GS_STAFF_KEY` from Secrets Manager): required for inbox/school answers, do-not-call, digests, posting as school staff, and placing AI calls. Parents without it can still search and queue questions (email fallback).
+- **Catalog-only needs**: `/api/calls` and community drafts reject unknown need ids, so request text never becomes the phone prompt.
+- **Rate limits + body size** (`backend/security.py`): per-IP and global caps on AI, call, and write routes; 64 KB body cap.
+- **ALB**: security group allows only CloudFront origin-facing IPs, so the LoadBalancerDNS is not a public API.
+
+Presenter unlock: open `CloudFrontURL/?staff=<code>` once (code from the `StaffKeySecret` stack output).
 
 ## Not implemented
 

@@ -13,6 +13,7 @@ import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 
 export interface AppStackProps extends cdk.StackProps {
   /** OpenSearch endpoint hostname without https:// */
@@ -135,12 +136,21 @@ export class AppStack extends cdk.Stack {
         : `https://${props.openSearchEndpoint}`;
     }
 
+    // Staff code for school-staff actions and AI calls (backend/security.py). Generated once
+    // and kept across deploys; read it with the StaffKeySecret output.
+    const staffKey = new secretsmanager.Secret(this, 'StaffKey', {
+      description: 'ClearView school-staff code: X-Staff-Key header for staff actions and AI calls',
+      generateSecretString: { passwordLength: 24, excludePunctuation: true },
+    });
+
     const service = new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'Api', {
       cluster,
       cpu: 512,
       memoryLimitMiB: 1024,
       desiredCount: 1,
       publicLoadBalancer: true,
+      // Only CloudFront may reach the ALB (rule below), so its viewer-address header can be trusted.
+      openListener: false,
       assignPublicIp: true,
       listenerPort: 80,
       circuitBreaker: { rollback: true },
@@ -160,8 +170,17 @@ export class AppStack extends cdk.Stack {
         }),
         containerPort: 8000,
         environment,
+        secrets: { GS_STAFF_KEY: ecs.Secret.fromSecretsManager(staffKey) },
       },
     });
+    const cloudFrontOrigins = ec2.PrefixList.fromLookup(this, 'CloudFrontOriginFacing', {
+      prefixListName: 'com.amazonaws.global.cloudfront.origin-facing',
+    });
+    service.loadBalancer.connections.allowFrom(
+      ec2.Peer.prefixList(cloudFrontOrigins.prefixListId),
+      ec2.Port.tcp(80),
+      'CloudFront origin-facing only',
+    );
 
     service.targetGroup.configureHealthCheck({
       path: '/api/health',
@@ -248,7 +267,8 @@ export class AppStack extends cdk.Stack {
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
           cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER,
+          // Adds CloudFront-Viewer-Address, the client IP the API rate-limits on.
+          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_AND_CLOUDFRONT_2022,
         },
       },
       errorResponses: [
@@ -289,6 +309,10 @@ export class AppStack extends cdk.Stack {
     });
     new cdk.CfnOutput(this, 'LoadBalancerDNS', {
       value: service.loadBalancer.loadBalancerDnsName,
+    });
+    new cdk.CfnOutput(this, 'StaffKeySecret', {
+      value: staffKey.secretName,
+      description: 'aws secretsmanager get-secret-value --secret-id <this> --query SecretString --output text',
     });
     new cdk.CfnOutput(this, 'StateTableName', {
       value: stateTable.tableName,

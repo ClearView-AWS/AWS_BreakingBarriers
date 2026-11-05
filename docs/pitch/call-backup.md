@@ -62,9 +62,11 @@ Switch to the backup **at the first of these**. Do not retry the call on stage.
 The staff-answer endpoint writes through the same overlay path as a call answer. Run it from a terminal you prepared before the pitch:
 
 ```bash
+# Staff code from the GsAppStack StaffKeySecret output (Secrets Manager).
 # Question id comes from GET /api/schools/<beauclerc id>/questions (look up during rehearsal).
 curl -s -X POST "$DEMO_URL/api/schools/$BEAUCLERC_ID/questions/$AFTER_CARE_QID/answer" \
   -H 'Content-Type: application/json' \
+  -H "X-Staff-Key: $STAFF_KEY" \
   -d '{"text": "Yes, after-school care runs until 6 pm every school day."}'
 ```
 
