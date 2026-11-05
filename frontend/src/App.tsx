@@ -6,8 +6,11 @@ import { SavedDeadline, onZonedTap, type Access } from "./GettingIn";
 import { Chat, newTapLine, type Entry, type HistoryEntry } from "./Chat";
 import type { Actions, Picked } from "./blocks";
 import { CommunityHome, CommunityPage, PersonaSwitcher, type CommunityTarget } from "./Community";
+import { readDemoFlag, writeDemoFlag } from "./demoMode";
 import type { ResultsView } from "./Views";
 import { t, useUiLanguage } from "./i18n";
+
+const DEFAULT_PERSONA = "parent_a";
 
 type View = "search" | "saved" | "community";
 type ChatTurn = Turn & { history?: HistoryEntry[] };
@@ -27,6 +30,18 @@ export function App() {
   const [view, setView] = useState<View>("search");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [theme, setTheme] = useState<Theme>(savedTheme);
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [picked, setPicked] = useState<Picked[]>([]);
+  // Results open as a list; once the parent picks Grid or Map, it sticks for the session.
+  const [resultsView, setResultsView] = useState<ResultsView>("list");
+  const [saved, setSaved] = useState<{ id: string; name: string; city?: string }[]>([]);
+  const [checklist, setChecklist] = useState<{ school_name: string; question: string }[]>([]);
+  // Persona switcher is demo chrome only; parents stay as Parent A.
+  const [demoMode, setDemoMode] = useState(readDemoFlag);
+  const [persona, setPersona] = useState(DEFAULT_PERSONA);
+  // null shows the Community home; a target shows that school's page.
+  const [community, setCommunity] = useState<CommunityTarget | null>(null);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -36,17 +51,11 @@ export function App() {
       // Storage can be blocked; the theme still applies for this visit.
     }
   }, [theme]);
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [busy, setBusy] = useState(false);
-  const [picked, setPicked] = useState<Picked[]>([]);
-  // Results open as a list; once the parent picks Grid or Map, it sticks for the session.
-  const [resultsView, setResultsView] = useState<ResultsView>("list");
-  const [saved, setSaved] = useState<{ id: string; name: string; city?: string }[]>([]);
-  const [checklist, setChecklist] = useState<{ school_name: string; question: string }[]>([]);
-  // The persona switcher stands in for logins: Parent A, Parent B or School staff.
-  const [persona, setPersona] = useState("parent_a");
-  // null shows the Community home; a target shows that school's page.
-  const [community, setCommunity] = useState<CommunityTarget | null>(null);
+
+  useEffect(() => {
+    writeDemoFlag(demoMode);
+    if (!demoMode) setPersona(DEFAULT_PERSONA);
+  }, [demoMode]);
   // Set when someone posts in the community, so the results refresh on the way back.
   const communityChanged = useRef(false);
   const history = useRef<HistoryEntry[]>([]);
@@ -133,15 +142,25 @@ export function App() {
           </button>
           <button type="button" aria-pressed={view === "community"} onClick={() => openCommunity(null)}>{t("app.community")}</button>
         </nav>
-        <PersonaSwitcher value={persona} onChange={setPersona} />
-        <button
-          type="button"
-          className="theme-switch"
-          aria-pressed={theme === "dark"}
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-        >
-          {theme === "light" ? "☾ Dark mode" : "☀ Light mode"}
-        </button>
+        <div className="topbar-end">
+          <button
+            type="button"
+            className="demo-switch"
+            aria-pressed={demoMode}
+            onClick={() => setDemoMode((value) => !value)}
+          >
+            {t("app.demo_controls")}
+          </button>
+          {demoMode && <PersonaSwitcher value={persona} onChange={setPersona} />}
+          <button
+            type="button"
+            className="theme-switch"
+            aria-pressed={theme === "dark"}
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+          >
+            {theme === "light" ? "☾ Dark mode" : "☀ Light mode"}
+          </button>
+        </div>
       </header>
       <main id="main-content" className={view === "search" ? "chat-main" : "wrap"} tabIndex={-1}>
         {view === "search" && (

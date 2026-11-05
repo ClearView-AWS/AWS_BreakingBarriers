@@ -22,6 +22,7 @@ export const EN = {
   "app.search": "Search",
   "app.saved": "Saved ({n})",
   "app.community": "Community",
+  "app.demo_controls": "Demo controls",
   "app.saved_title": "Saved schools",
   "app.saved_empty": "Save a school from a result card. The visit list is built from what is still unknown.",
   "app.checklist": "Visit checklist",
@@ -44,8 +45,7 @@ export const EN = {
 
   // Chat.tsx
   "chat.guide": "Guide",
-  "chat.intro":
-    "Tell me about the school you need: the grade, the city, and what matters to your family. I'll show the schools that fit and the evidence for each one, and you can ask me about any of them.",
+  "chat.intro": "Tell me the grade, city, and what matters most. Or pick an example to start.",
   "chat.looking": "Looking…",
   "chat.compare_pair": "Compare {a} and {b}",
   "chat.compare_one": "Pick one more school to compare with {name}.",
