@@ -52,6 +52,18 @@ def health() -> dict:
     return {"ok": True, "schools": len(load_schools())}
 
 
+@app.get("/api/examples")
+def examples() -> dict:
+    """First-run prompt chips + city list from the live corpus (FL + WA, …)."""
+    from clarify.clarifier import city_options, default_city, example_queries
+
+    return {
+        "examples": example_queries(),
+        "cities": city_options(),
+        "default_city": default_city(),
+    }
+
+
 class UiTextIn(BaseModel):
     language: str
     strings: dict[str, str]

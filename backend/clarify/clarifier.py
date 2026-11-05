@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections import Counter
+
 from catalog import needs, unmapped_offers
 from contracts import Criterion
 
@@ -11,19 +13,66 @@ GRADE_OPTIONS = [
     ("m", "Middle"),
     ("h", "High"),
 ]
-CITY_OPTIONS = [
-    "Jacksonville",
-    "Miami",
-    "Orlando",
-    "Tampa",
+# Fallback only when the corpus is empty (tests without data files).
+_FALLBACK_CITIES = ["Seattle", "Tacoma", "Jacksonville", "Miami", "Orlando", "Tampa"]
+# Prefer these when present so chips mix WA + FL instead of whichever metro is largest.
+_PREFERRED_CITIES = [
     "Seattle",
     "Tacoma",
     "Spokane",
     "Bellevue",
     "Vancouver",
+    "Jacksonville",
+    "Miami",
+    "Orlando",
+    "Tampa",
 ]
-DEFAULT_CITY = "Jacksonville"
 DEFAULT_GRADE = "m"
+_STATE_NAMES = {"FL": "Florida", "WA": "Washington", "CA": "California", "TX": "Texas", "NY": "New York"}
+
+
+def city_options(limit: int = 10) -> list[str]:
+    """Cities for the location question — preferred demo metros first, then by school count."""
+    from search.corpus import load_schools
+
+    counts = Counter(
+        str(school.get("city") or "").strip()
+        for school in load_schools()
+        if school.get("city")
+    )
+    if not counts:
+        return list(_FALLBACK_CITIES[:limit])
+    ranked: list[str] = []
+    for city in _PREFERRED_CITIES:
+        if counts.get(city) and city not in ranked:
+            ranked.append(city)
+        if len(ranked) >= limit:
+            return ranked
+    for city, _ in counts.most_common():
+        if city not in ranked:
+            ranked.append(city)
+        if len(ranked) >= limit:
+            break
+    return ranked
+
+
+def default_city() -> str:
+    """City chip selected when the parent skips the location question."""
+    options = city_options(1)
+    return options[0] if options else _FALLBACK_CITIES[0]
+
+
+def states_for_city(city: str) -> list[str]:
+    """State codes that appear for this city name in the corpus."""
+    from search.corpus import load_schools
+
+    return sorted(
+        {
+            str(school.get("state") or "").strip().upper()
+            for school in load_schools()
+            if str(school.get("city") or "") == city and school.get("state")
+        }
+    )
 
 
 def _top_ids(search_fn, criteria: list[Criterion], readings: dict) -> list[str]:
@@ -38,6 +87,45 @@ def _jaccard(left: set[str], right: set[str]) -> float:
     if not union:
         return 1.0
     return len(left & right) / len(union)
+
+
+def _location_ambiguity_question(city: str) -> dict:
+    """Ask which state when a city name appears in more than one (or none yet)."""
+    states = states_for_city(city) or ["FL", "WA"]
+    labels = [_STATE_NAMES.get(code, code) for code in states]
+    options = [
+        {"id": code.lower(), "label": f"{city}, {label}"}
+        for code, label in zip(states, labels)
+    ]
+    options.append({"id": "other", "label": "A different state"})
+    if len(labels) == 1:
+        text = f"Just to confirm — {city} in {labels[0]}?"
+    else:
+        joined = " and ".join(labels)
+        text = f"{city} is in more than one state. We have schools in {joined}. Which did you mean?"
+    return {
+        "id": "q:location_ambiguity",
+        "reason": "ambiguous_location",
+        "text": text,
+        "options": options,
+        "default": states[0].lower(),
+    }
+
+
+def example_queries(limit: int = 3) -> list[str]:
+    """First-run prompt chips: mix the busiest cities in the live corpus."""
+    cities = city_options(6)
+    if not cities:
+        cities = list(_FALLBACK_CITIES)
+    primary = cities[0]
+    secondary = cities[1] if len(cities) > 1 else primary
+    tertiary = cities[2] if len(cities) > 2 else secondary
+    examples = [
+        f"Middle school in {primary} with STEM and after-school care. Money is tight.",
+        f"Elementary school in {secondary} with English learner support",
+        f"High school in {tertiary} with sports",
+    ]
+    return examples[:limit]
 
 
 def choose_question(
@@ -63,6 +151,8 @@ def choose_questions(
     """Return up to `limit` questions in plan order (location → grade → ambiguity → unknown → unmapped)."""
     found: list[dict] = []
     seen = set(asked)
+    cities = city_options()
+    city_default = default_city()
 
     def take(question: dict | None) -> bool:
         if not question or question["id"] in seen:
@@ -79,29 +169,16 @@ def choose_questions(
             "id": "q:location",
             "reason": "missing_location",
             "text": "Which city should I search?",
-            "options": [{"id": city, "label": city} for city in CITY_OPTIONS],
-            "default": DEFAULT_CITY,
+            "options": [{"id": city, "label": city} for city in cities],
+            "default": city_default,
         }
     ):
         return found
 
     if any(c.ambiguities and c.kind == "location" for c in locations) and take(
-        {
-            "id": "q:location_ambiguity",
-            "reason": "ambiguous_location",
-            "text": (
-                f"{locations[0].value} is in more than one state. "
-                "This prototype only has Florida schools. Do you mean the Florida one?"
-            ),
-            "options": [
-                {"id": "florida", "label": f"{locations[0].value}, Florida"},
-                {"id": "other", "label": "A different state"},
-            ],
-            "default": "florida",
-        }
+        _location_ambiguity_question(str(locations[0].value or ""))
     ):
         return found
-
     if not grades and take(
         {
             "id": "q:grade",

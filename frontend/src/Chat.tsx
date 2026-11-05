@@ -3,7 +3,7 @@
 // The backend keeps the history too (POST /api/chat, backend/agent/conversation.py).
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { AgentBlocks, type Actions } from "./blocks";
-import { DEMO_QUERY, type Turn } from "./types";
+import { FALLBACK_EXAMPLES, type Turn } from "./types";
 import { t } from "./i18n";
 import "./chat.css";
 
@@ -20,12 +20,6 @@ export type Entry =
   | { role: "agent"; turn: Turn }
   | { role: "system"; text: string };
 
-const EXAMPLES = [
-  DEMO_QUERY,
-  "Elementary school in Jacksonville with after-school care until 6pm",
-  "High school in Miami with sports",
-];
-
 function prefersReducedMotion() {
   return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 }
@@ -40,10 +34,27 @@ export function Chat({
   onSend: (text: string) => void;
 }) {
   const [text, setText] = useState("");
+  const [examples, setExamples] = useState<string[]>(FALLBACK_EXAMPLES);
   const last = useRef<HTMLLIElement>(null);
   const thinking = useRef<HTMLLIElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const { busy, picked, setPicked, send } = actions;
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/examples")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled || !data?.examples?.length) return;
+        setExamples(data.examples.map(String));
+      })
+      .catch(() => {
+        // Keep FALLBACK_EXAMPLES when the API is down.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // The newest Guide reply with results is the list "#2" and "these" refer to.
   const currentResults = entries.reduce(
@@ -91,7 +102,7 @@ export function Chat({
                 <p>{t("chat.intro")}</p>
               </div>
               <div className="chat-chips" role="group" aria-label={t("chat.describe")}>
-                {EXAMPLES.map((example) => (
+                {examples.map((example) => (
                   <button key={example} type="button" disabled={busy} onClick={() => onSend(example)}>
                     {example}
                   </button>

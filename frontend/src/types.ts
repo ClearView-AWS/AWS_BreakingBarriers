@@ -79,5 +79,12 @@ export type Turn = {
   tap?: string | null;
 };
 
+/** Fallback first-run chips when `/api/examples` is unreachable. */
 export const DEMO_QUERY =
-  "Middle school in Jacksonville with STEM and after-school care. Money is tight.";
+  "Middle school in Seattle with STEM and after-school care. Money is tight.";
+
+export const FALLBACK_EXAMPLES = [
+  DEMO_QUERY,
+  "Elementary school in Tacoma with English learner support",
+  "High school in Jacksonville with sports",
+];
