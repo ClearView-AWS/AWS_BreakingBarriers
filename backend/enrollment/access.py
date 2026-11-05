@@ -18,6 +18,7 @@ import yaml
 from agent.citations import strip_cites, validate_text
 from evidence.status import months_before, parse_date
 from runtime_config import CONFIG_DIR, TODAY
+from school_state import school_state
 
 LABELS = {
     "confirmed": "Open to you",
@@ -48,24 +49,9 @@ def enrollment_rules() -> dict[str, Any]:
     return yaml.safe_load((CONFIG_DIR / "enrollment_rules.yaml").read_text())
 
 
-def _school_state(school: dict) -> str:
-    """Best-effort state code. WA OSPI rows are tagged even when OpenSearch omits `state`."""
-    raw = str(school.get("state") or "").strip().upper()
-    if raw:
-        return raw
-    school_id = str(school.get("id") or "")
-    if school_id.startswith("School wa-") or school_id.startswith("wa-"):
-        return "WA"
-    if isinstance((school.get("osp") or {}).get("wa_report_card"), dict):
-        return "WA"
-    if str(school.get("_source") or "").startswith("wa"):
-        return "WA"
-    return ""
-
-
 def _state_pack(school: dict, config: dict[str, Any]) -> tuple[dict[str, Any], str | None]:
     """Admission rules + checked date for the school's state (WA OSPI vs FL demo)."""
-    state = _school_state(school)
+    state = school_state(school)
     pack = (config.get("by_state") or {}).get(state) or {}
     rules = pack.get("rules") or config["rules"]
     checked = pack.get("checked") or config.get("checked")

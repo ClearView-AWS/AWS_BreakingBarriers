@@ -784,6 +784,9 @@ def _cost(session, criteria, schools, programs, state, message, payload) -> Turn
         names = " and ".join(row["school_name"] for row in estimates[:2]) + (" and others" if len(estimates) > 2 else "")
         verb = "is" if len(estimates) == 1 else "are"
         lead = f"{names} {verb} tuition-free in the data, so no scholarship estimate is needed."
+    elif estimates and not any(row.get("lines") for row in estimates):
+        # A private school outside Florida: no scholarship rules here, so do not lead with eligibility.
+        lead = "No scholarship rules apply to this school in the prototype. Listed tuition only."
     blocks = [
         Block(type="message", payload={"text": lead}),
         Block(type="cost", payload={"schools": estimates}),

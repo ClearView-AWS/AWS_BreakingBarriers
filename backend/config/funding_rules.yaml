@@ -1,10 +1,12 @@
 # Eligibility language only. Award amounts are set by the scholarship funding
 # organization. Every line keeps the official Florida Department of Education link.
-# Descriptions checked against fldoe.org pages as of 2026.
+# Descriptions checked against fldoe.org pages as of 2026. `states` limits a rule
+# to schools in those states, so Florida programs never show on a Washington card.
 
 fes_eo:
   name: Family Empowerment Scholarship for Educational Options
   applies_to: [private]
+  states: [FL]
   wording: You may qualify
   eligibility: >
     Florida's Family Empowerment Scholarship for Educational Options is open to
@@ -16,6 +18,7 @@ fes_eo:
 fes_ua:
   name: Family Empowerment Scholarship for Students with Unique Abilities
   applies_to: [private]
+  states: [FL]
   wording: You may qualify if the student has a disability
   eligibility: >
     This branch is for students with disabilities, as young as 3. Families can
@@ -27,6 +30,7 @@ fes_ua:
 ftc:
   name: Florida Tax Credit Scholarship
   applies_to: [private]
+  states: [FL]
   wording: You may qualify
   eligibility: >
     The Florida Tax Credit Scholarship gives priority to students in households
