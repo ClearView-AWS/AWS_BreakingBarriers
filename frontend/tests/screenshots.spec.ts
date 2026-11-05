@@ -13,7 +13,7 @@ test.describe("pitch screenshots", () => {
 
   async function results(page: import("@playwright/test").Page) {
     await page.goto("/");
-    await page.getByRole("button", { name: /Middle school in Jacksonville/i }).click();
+    await page.getByRole("button", { name: /Middle school in Seattle/i }).click();
     await page.getByText(/quick question|Here’s what I’ll look for|Here are/i).first().waitFor({ timeout: 15_000 });
     const skip = page.getByRole("button", { name: /Just show me results|Looks right/i });
     if (await skip.count()) await skip.first().click();
