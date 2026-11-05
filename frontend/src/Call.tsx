@@ -15,13 +15,14 @@ type Call = {
   school_name: string;
   questions: { id: string; question: string }[];
   parent_count: number;
-  status: "dialing" | "in_call" | "completed" | "ended" | "no_answer" | "declined" | "failed" | "off";
+  status: "dialing" | "in_call" | "completed" | "ended" | "no_answer" | "declined" | "failed" | "off" | "blocked";
   transcript: Line[];
   answers: Answer[];
   error?: string | null;
+  fallback_reason?: string | null;
 };
 
-const DONE = new Set(["completed", "ended", "no_answer", "declined", "failed", "off"]);
+const DONE = new Set(["completed", "ended", "no_answer", "declined", "failed", "off", "blocked"]);
 const POLL_MS = 1500;
 
 export function CallButton({ schoolId, schoolName, needs, actions }: { schoolId: string; schoolName: string; needs: string[]; actions: Actions }) {
@@ -96,6 +97,11 @@ function CallPanel({ initial, actions, onClose }: { initial: Call; actions: Acti
           </button>
         )}
       </header>
+      {(call.status === "blocked" || call.status === "off" || call.status === "failed") && (call.fallback_reason || call.error) && (
+        <p className="meta" role="status">
+          {call.fallback_reason || call.error}
+        </p>
+      )}
       {call.questions.length > 0 && (
         <ul className="call-questions">
           {call.questions.map((question) => (
