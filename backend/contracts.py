@@ -120,6 +120,9 @@ class EvidenceRecord(BaseModel):
     post_ids: list[str] = Field(default_factory=list)
     # Fields that were checked and empty. An "unknown" sentence cites these; they are not a source.
     missing_paths: list[str] = Field(default_factory=list)
+    # When the school itself answered (call, email, staff), and whether that answer is past max_age_days.
+    answered_at: str | None = None
+    stale: bool = False
 
 
 class SchoolResult(BaseModel):

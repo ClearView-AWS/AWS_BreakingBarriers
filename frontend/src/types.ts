@@ -24,6 +24,9 @@ export type Evidence = {
   conflict?: { website_value?: string; profile_value?: string; path?: string } | null;
   review_ids?: string[];
   post_ids?: string[];
+  /** When the school itself answered (call, email, staff). */
+  answered_at?: string | null;
+  stale?: boolean;
 };
 
 export type Card = {

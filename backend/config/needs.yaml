@@ -2,6 +2,8 @@
 # confirmed / partial / fails are operators evaluated in code. Reviews never confirm.
 # `label` is also a search phrase. `display` (optional) is the name on chips and cards
 # when it should read differently; without it, chips and cards show `label`.
+# `max_age_days` (optional, default 365): how long an answer from the school itself
+# (call, email reply, staff answer) counts. After that it reads as Partial and is asked again.
 
 high_performing:
   label: High-performing
@@ -41,6 +43,7 @@ stem:
 
 after_care:
   label: After-school care
+  max_age_days: 180
   default_strength: require
   phrases: [after-school care, after school care, afterschool care, after care, afterschool, cuidado despues de la escuela, cuidado después de la escuela, after-school program, cuidado despues de clases]
   program_fill: true
@@ -66,6 +69,7 @@ after_care:
 
 extended_day:
   label: Extended day
+  max_age_days: 180
   default_strength: prefer
   phrases: [extended day, extended-day, late pickup, long school day]
   evidence:
@@ -395,6 +399,7 @@ uniforms:
 
 before_care:
   label: Before-school care
+  max_age_days: 180
   default_strength: prefer
   phrases: [before school care, before-school care, morning care, early drop]
   evidence:

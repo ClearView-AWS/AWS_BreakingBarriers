@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from runtime_config import FRESH_MONTHS, TODAY
 
@@ -214,3 +214,29 @@ def better(left: str | None, right: str | None) -> str | None:
     if right is None:
         return left
     return left if _RANK[left] >= _RANK[right] else right
+
+
+# ---------- answers from the school itself ----------
+
+# How long a call, email reply, or staff answer counts unless needs.yaml sets max_age_days.
+DEFAULT_MAX_AGE_DAYS = 365
+
+
+def max_age_days(need_id: str | None) -> int:
+    from catalog import needs
+
+    spec = needs().get(need_id or "") or {}
+    return int(spec.get("max_age_days") or DEFAULT_MAX_AGE_DAYS)
+
+
+def answer_expired(need_id: str | None, answered: object, today: date | None = None) -> bool:
+    """True when a school's own answer is older than the need allows. No date counts as expired."""
+    when = parse_date(answered)
+    if when is None:
+        return True
+    return (today or TODAY) - when > timedelta(days=max_age_days(need_id))
+
+
+def stale_note(answered: object) -> str:
+    when = parse_date(answered)
+    return f"Reported {when.isoformat() if when else 'earlier'}, may be out of date."

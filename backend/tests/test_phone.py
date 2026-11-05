@@ -24,6 +24,8 @@ def state() -> dict:
 def voice_off(monkeypatch):
     for key in ("VOICE_ENABLED", "VOICE_INSTANCE_ID", "VOICE_FLOW_ID", "VOICE_SOURCE", "VOICE_VERIFIED_TO", "VOICE_TABLE", "GS_DYNAMODB_TABLE"):
         monkeypatch.delenv(key, raising=False)
+    # Guardrails are covered in test_call_limits; keep these tests on the dial path.
+    monkeypatch.setattr(phone, "why_blocked", lambda *args, **kwargs: None)
 
 
 @pytest.mark.parametrize(

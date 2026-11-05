@@ -15,7 +15,7 @@ from catalog import needs
 from community.service import school_answer_for, support
 from community.tags import label_for
 from contracts import EvidenceRecord, Source
-from evidence.status import parse_date
+from evidence.status import answer_expired, parse_date, stale_note
 from runtime_config import TODAY
 
 
@@ -37,15 +37,22 @@ def apply_community(record: EvidenceRecord, school: dict, criterion, state: dict
             status = "confirmed" if offers else "needs_attention"
             word = "confirmed" if offers else "a miss"
             said = "offers it" if offers else "does not offer it"
+            stale = answer_expired(need, answer.get("as_of"))
+            if stale:
+                # Past the need's max_age_days: the old answer only partly supports it.
+                status, word = "partial", "only partly supported"
             return EvidenceRecord(
                 school_id=school["id"],
                 criterion_id=criterion.id,
                 status=status,
                 value="school answered" if offers else "not offered",
                 source=Source(type="school_reported", path=answer["post_id"], as_of=answer.get("as_of"), confidence="high"),
-                note=f"{label} is {word}: the school answered in its community thread that it {said} [[cite:{answer['post_id']}]].",
+                note=f"{label} is {word}: the school answered in its community thread that it {said} [[cite:{answer['post_id']}]]."
+                + (f" {stale_note(answer.get('as_of'))}" if stale else ""),
                 review_ids=record.review_ids,
                 post_ids=[answer["post_id"]],
+                answered_at=answer.get("as_of"),
+                stale=stale,
             )
 
     found = support(state, school["id"], need)

@@ -38,6 +38,11 @@ def models() -> dict[str, Any]:
     return _load("models.yaml")
 
 
+@lru_cache(maxsize=1)
+def call_limits() -> dict[str, Any]:
+    return _load("calls.yaml")
+
+
 def unmapped_offers() -> list[tuple[str, str]]:
     out = []
     for need_id, spec in needs().items():
