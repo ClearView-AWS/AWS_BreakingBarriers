@@ -415,7 +415,8 @@ main {
 
 .chip {
   border: 1px solid var(--line);
-  background: white;
+  background: var(--paper-solid);
+  color: var(--ink);
   border-radius: 999px;
   padding: 7px 12px;
   font-weight: 600;
@@ -493,7 +494,8 @@ main {
 
 .option {
   border: 1px solid var(--line);
-  background: white;
+  background: var(--paper-solid);
+  color: var(--ink);
   border-radius: 12px;
   padding: 10px 14px;
   font-weight: 650;
@@ -902,7 +904,8 @@ th {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 10px 12px;
-  background: white;
+  background: var(--paper-solid);
+  color: var(--ink);
 }
 
 .reply {
