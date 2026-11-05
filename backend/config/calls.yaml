@@ -1,18 +1,17 @@
-# Limits on AI calls to schools. A call that breaks one of these is not placed;
-# the questions go by email (SES) instead and the API says why.
+# Hackathon / on-stage demo: never refuse a dial. Every outbound call still goes
+# only to DEMO_VOICE_TO (+12065350596) in backend/gaps/phone.py — never a school.
+# Set enforce_limits: true only if you want spacing / hours / caps again later.
+enforce_limits: false
 
-# At most one placed call per school in this many days.
-min_days_between_calls: 7
-# Questions asked in one call. The rest stay open for email or the next call.
-max_questions_per_call: 3
-# Placed calls across all schools per day.
-global_daily_cap: 20
+# Soft cap on how many open questions one call asks (does not block dialing).
+max_questions_per_call: 5
 
-# Call window for the hackathon demo (wider than real office hours so evening
-# demos still dial the verified handset). Times are school-local.
+# Unused while enforce_limits is false; kept for production-shaped defaults.
+min_days_between_calls: 0
+global_daily_cap: 1000
 business_hours:
-  start: "08:00"
-  end: "21:00"
+  start: "00:00"
+  end: "23:59"
   days: [mon, tue, wed, thu, fri, sat, sun]
 default_time_zone: America/Los_Angeles
 time_zones:
@@ -21,7 +20,4 @@ time_zones:
   CA: America/Los_Angeles
   TX: America/Chicago
   NY: America/New_York
-
-# Schools that asked not to be called. They get email only.
-# Schools can also opt out through the API; that list lives in state.
 do_not_call: []

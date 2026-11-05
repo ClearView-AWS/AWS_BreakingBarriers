@@ -24,6 +24,13 @@ def state() -> dict:
 def voice_off(monkeypatch):
     for key in ("VOICE_ENABLED", "VOICE_INSTANCE_ID", "VOICE_FLOW_ID", "VOICE_SOURCE", "VOICE_VERIFIED_TO"):
         monkeypatch.delenv(key, raising=False)
+    # Demo ships with enforce_limits: false; these tests exercise the guardrails.
+    original = phone.call_limits
+
+    def limited():
+        return {**original(), "enforce_limits": True, "min_days_between_calls": 7, "global_daily_cap": 20}
+
+    monkeypatch.setattr(phone, "call_limits", limited)
 
 
 def test_do_not_call_blocks_and_falls_back_to_email(state, monkeypatch):
@@ -56,12 +63,31 @@ def test_recent_call_blocks_another(state, monkeypatch):
 
 def test_max_questions_per_call(state, monkeypatch):
     school = _school()
-    for need in ("after_care", "extended_day", "before_care", "stem"):
+    for need in ("after_care", "extended_day", "before_care", "stem", "sports", "music"):
         add_question(state, school, need, f"About {need}?", "s1")
     monkeypatch.setattr(phone, "why_blocked", lambda *a, **k: None)
+    original = phone.call_limits
+    monkeypatch.setattr(phone, "call_limits", lambda: {**original(), "max_questions_per_call": 3, "enforce_limits": False})
     call = phone.start_call(state, school)
     assert len(call["questions"]) == 3
     assert call["status"] == "off"
+
+
+def test_demo_does_not_block_repeat_or_after_hours(state, monkeypatch):
+    """On-stage default: enforce_limits false → always dial-ready (status off without Connect)."""
+    school = _school()
+    add_question(state, school, "after_care", "What time does after-school care end?", "s1")
+    monkeypatch.setattr(phone, "call_limits", lambda: {"enforce_limits": False, "max_questions_per_call": 5})
+    state["calls"]["prior"] = {
+        "id": "prior",
+        "school_id": school["id"],
+        "status": "completed",
+        "contact_id": "c-1",
+        "created": "2026-11-04T15:00:00+00:00",
+    }
+    call = phone.start_call(state, school)
+    assert call["status"] == "off"
+    assert call.get("fallback_reason") == "Voice calling is off; questions go by email."
 
 
 def test_outside_office_hours(state, monkeypatch):
