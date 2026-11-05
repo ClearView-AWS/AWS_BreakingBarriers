@@ -1,0 +1,13 @@
+{
+  "name": "guided-search-pitch-deck",
+  "private": true,
+  "type": "module",
+  "description": "Regenerates Guided-Search-8min.pptx from build_deck.mjs and speakers/*.md",
+  "scripts": {
+    "build": "node build_deck.mjs"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "pptxgenjs": "^3.12.0"
+  }
+}
