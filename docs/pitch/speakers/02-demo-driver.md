@@ -1,54 +1,64 @@
-# Person B — Demo driver
+# Person B: Demo driver
 
-**Clock:** 1:10–3:25 (~2:15 · ~310 words)  
-**You:** Own the laptop. Speak while you click.  
-**Screen:** Live Guided Search.
+**Clock:** 1:05–3:00 (1:55 · ~165 spoken words + ~35 s of clicks and loads)  
+**You:** You own the laptop. Talk while you click and never leave dead air.  
+**Screen:** Live Guided Search, https://dvpvz48phigre.cloudfront.net
 
 ---
 
-## Do first (silent · ≤5 s)
+## Before you walk on (silent)
 
-1. Hard-refresh if needed.
-2. Hover the **first** example chip.
+1. Hard-refresh once. Check that the example chips are visible.
+2. Put the cursor on the **first** chip.
 
 ---
 
 ## Say + do
 
-**[Click the first chip — or paste if chips lag]**
+**[Click the first chip. If chips are slow, paste this:]**
 
 ```text
 Middle school in Seattle that must have a gifted program and after-school care. Prefer a small school.
 ```
 
-Plain language in. No filter maze.
+A parent types the way they talk. There's no filter maze.
 
-**[If clarifying questions appear]** Answer quickly **or** tap **Just show me results**.
+**[Clarifying question appears → tap "Just show me results", or answer in one tap]**
 
-**[Approve the brief if shown]** Parents can edit must / nice / avoid before we search. That brief is the contract.
+It asks at most three questions, and you can skip them.
 
-**[Results load — keep talking]**
+**[Brief appears → point at must / prefer, then approve]**
 
-Hard filters are only city, grade, and school type. Everything else is scored.
+This is the brief. Gifted and after-care are musts, and small is a preference. The parent can edit it before we search. That brief is the contract.
 
-These Seattle rows are public Washington OSPI Report Card data — about twenty-three hundred schools statewide — not a Florida-only toy.
+**[Results load. Keep talking.]**
 
-Watch the cards: gifted and school size move the match percent. After-school care stays **Unknown** on file — and Unknown scores half a point. We **do not** drop the school.
+These are real Seattle schools from Washington's public OSPI report card data.
 
-*Optional (10 s):* Open **Map**. Pins are on the city — parents can see spread without an address.
+Only city, grade, and school type are hard filters. Everything else gets scored.
 
-*Optional (5 s):* Point at a citation on a Confirmed cell — every fact names its field.
+**[Point at a gifted chip on the top card]**
 
-Rules-first path in eval is about two-hundredths of a second. Bedrock drafts language; **code** decides what is true.
+Gifted is on file, so it shows Confirmed, and the citation names the exact field it came from.
 
-Handing to architecture for the AWS map — then we dial a school.
+**[Point at after-school care on the same card]**
+
+After-school care is Unknown. A normal filter would hide this school. We keep it, Unknown scores half a point, and the parent can see what we don't know yet.
+
+Across our whole eval, missing data dropped zero schools.
+
+*Optional (10 s):* **[Open Map]** The pins show how the matches spread across the city.
+
+On this path, rules answer in about a hundredth of a second. When Bedrock drafts the language, code still decides what's true.
+
+Over to architecture. Then we'll ask the school.
 
 ---
 
+## Leave on screen
+
+Stay on the Seattle results and **don't navigate away**. Person D needs the top card's **📞 Have AI call** button.
+
 ## If search fails
 
-Say: “Network blip — local backup.” Open a pre-loaded tab with results screenshot, keep talking the same lines. Do **not** refresh more than once.
-
-## Hand off
-
-Nod to Person C. Leave results on screen (do not navigate away).
+Say: "Conference Wi-Fi. Here's the same search from this morning." Switch to the pre-loaded backup tab or the screenshot and read the same lines. Refresh **at most once**.

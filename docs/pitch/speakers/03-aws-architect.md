@@ -1,28 +1,36 @@
-# Person C — AWS architect
+# Person C: AWS architect
 
-**Clock:** 3:25–4:25 (~1:00 · ~140 words)  
-**You:** Talk over the **still-visible** results. Optional: flip to a one-slide architecture if the deck is up; otherwise stay on the live UI.  
-**Do not** take the mouse unless B offers it.
+**Clock:** 3:00–4:10 (1:10 · ~160 words)  
+**You:** Stand beside the screen. Don't touch the laptop.  
+**Screen:** Seattle results stay up. Optional: architecture slide (`docs/infra.md` diagram) on a second display.
 
 ---
 
 ## Say (word-for-word)
 
-What you’re looking at is not a single chat API with a pretty skin.
+Everything you just saw runs in one AWS account, deployed as four CDK stacks.
 
-The browser hits CloudFront, then an API on Fargate. Search can use OpenSearch when it’s on; sessions and overlays land in DynamoDB. Bedrock drafts extraction and card prose — behind flags — and the rules engine always has a local fallback so an empty sandbox still runs.
+CloudFront serves the React app from S3, and the API runs on ECS Fargate behind a load balancer. Session state lives in a single DynamoDB table.
 
-Translate and Comprehend follow the parent’s language with no login. Community posts pass Bedrock Guardrails for PII before they publish.
+Bedrock does two jobs. Claude Haiku reads what the parent typed, and Sonnet handles the harder turns. Bedrock Guardrails strip personal information from parent posts. OpenSearch adds hybrid keyword and vector search. Translate and Comprehend let a parent search in their own language.
 
-The piece judges remember is the voice loop: Amazon Connect places the call, Polly speaks, Lex turns speech to text, Lambda asks Bedrock for the next line — and our backend checks every answer before a card flips.
+Every one of those is behind a flag with a local fallback. If Bedrock goes down, the rules engine answers and the page still works.
 
-Model drafts. Code decides.
+We kept the model off the write path on purpose. On thirty holdout queries we never tuned on, Bedrock found ninety-seven percent of what parents asked for. Even so, a model never marks a fact Confirmed. Code does that.
 
-Call lead — show them the phone.
+Next, the part no filter can do. We pick up the phone.
 
 ---
 
 ## Stage notes
 
-- Keep this under a minute. Cut the Translate sentence first if you’re long.
-- Do not deep-dive IAM or CDK unless a judge asks in Q&A.
+- Don't list services faster than you can point at them. If you run long, cut the Translate sentence.
+- Hand to Person D on "pick up the phone". D is already at the laptop.
+
+## Where the numbers come from
+
+| Line | Source |
+| --- | --- |
+| Four CDK stacks, one DynamoDB table | `docs/infra.md` (GsAppStack, GsOpenSearchStack, GsGatewayStack, GsVoiceStack) |
+| Haiku / Sonnet | `backend/config/models.yaml` |
+| 97% holdout recall (96/99), Bedrock on | README → Evaluation → Holdout, Bedrock on |

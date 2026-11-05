@@ -1,34 +1,54 @@
-# Person E — Closer / Feasibility
+# Person E: Front-office voice + Closer
 
-**Clock:** 6:40–7:40 (~1:00 · ~140 words)  
-**You:** Stand for the close. Optional Spanish beat (see spanish-beat.md) — only if Translate is on and you rehearsed it.  
-**Screen:** Leave call result or Seattle cards up. Deck slide “Ask us anything” if you use slides.
+**Clock:** answer the handset during D's beat (~4:30–5:30), then close 6:25–7:40 (1:15 · ~150 words)  
+**You:** Hold the demo phone on speaker, near the mic. After the call, step to center.
 
 ---
 
-## Say (word-for-word)
+## Part 1: Be the school office (on the call)
 
-One successful call is about eleven cents of variable AWS cost for a three-minute reference shape. At thirteen parents sharing that answer, that’s under a cent per family.
+Short, clear, a little slow so Lex catches every word. Wait for the AI to finish each line.
 
-Search stays cheap: rules-first median turn is about two-hundredths of a second.
+| AI says | You say |
+| --- | --- |
+| *Phone rings* | "Front office, this is Dana." |
+| "…Is it okay if I transcribe this call?" | "Yes, that's fine." |
+| Asks about after-school care | "Yes, we have after-school care on campus until six p.m. every school day." |
+| "Anything else?" / thanks | "No, that's all. Have a good day." |
 
-Sixty-eight percent of our need-bearing eval searches hit an Unknown in the top eight. GreatSchools already reaches tens of millions of families. This is how the database fills itself where parents actually care — without hiding schools when a field is blank.
+Say **"six p.m."** exactly. The code reads that time itself, so don't improvise a different number.
 
-No login. Citations on every claim. Responsible by default: AI disclosure, consent on the call, Guardrails on community text.
+If the AI mishears, repeat the same sentence once. Don't change the wording.
+
+---
+
+## Part 2: Close (word-for-word)
+
+That call cost a parent nothing and took about a minute.
+
+Here's what we measured. Sixty-eight percent of need-based searches hit an Unknown. After-care is missing for every Washington school in the state data. And across our eval, missing data dropped zero schools.
+
+At list AWS prices, a three-minute call works out to about eleven cents. Connect, Lex, Polly, Lambda, and Haiku together. One answer then serves every parent who asks after it. So the more parents ask, the less each answer costs.
+
+This isn't a prototype that only works on fake data. It runs on twenty-three hundred real Washington schools, it's deployed on AWS right now, and every service has a fallback.
+
+GreatSchools already has the families and the trust. Guided Search gives them a way to fill the gaps parents care about, one call at a time.
 
 We investigate. You decide.
 
-Happy to take questions.
-
-**[Stop. Hands open. Do not keep talking into Q&A.]**
+Thank you. We'd love your questions.
 
 ---
 
-## Optional Spanish beat (−20 s from English close if used)
-
-Only if rehearsed and Translate is live — see [spanish-beat.md](./spanish-beat.md). Cut the “eleven cents” paragraph if you need the time back.
-
 ## Stage notes
 
-- End on the tagline; smile; silence is fine.
-- First Q&A deflect: Person A hosts; C owns AWS; D owns voice; B owns UI.
+- **Stop talking** after "questions". Don't fill the silence. Q&A answers live in [`../judge-qa.md`](../judge-qa.md).
+- If the clock reads past **7:30** when you start, skip the "This isn't a prototype" paragraph.
+
+## Where the numbers come from
+
+| Line | Source |
+| --- | --- |
+| ~$0.11 / 3-min call | `docs/pitch/cost.md`. AWS list prices as of 2026-11-04 on a modeled call shape, so it's priced, not billed |
+| 68%, 0 dropped | `impact_counts.py`; README → Evaluation |
+| 2,364 WA schools | `data/wa/schools.json` |

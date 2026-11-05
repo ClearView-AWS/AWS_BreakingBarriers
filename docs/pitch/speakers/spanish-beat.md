@@ -29,4 +29,4 @@ Para familias que buscan en español: misma guía, sin cuenta.
 
 ## Timing
 
-Steal 20–30 s from Person E’s English close (drop the unit-cost paragraph if needed). Do **not** add time past 7:40.
+Steal 20–30 s from Person E’s close (drop the "This isn't a prototype" paragraph). Do **not** add time past 7:40.
