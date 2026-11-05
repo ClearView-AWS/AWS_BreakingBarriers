@@ -44,6 +44,7 @@ Placing a call also marks Beauclerc's open questions answered. With no open ques
 
 - [ ] Clock check: pitch starts before 15:30 ET? If not, open with tier B ready and don't click the live button
 - [ ] Browser: one window, fresh tab on the live URL, zoom 125%, bookmarks bar hidden, extensions that inject UI off
+- [ ] Staff code set on the presenter browser: open the live URL once as `/?staff=<code>` (code from the `StaffKeySecret` output; see `infra/README.md`). Without it, **Have AI call** emails the school instead of dialing
 - [ ] `call-backup-call.mp4` open and paused in QuickTime; `call-backup-full.mp4` on the desktop and on USB
 - [ ] `call-backup-after.png` on the desktop
 - [ ] Laptop notifications off; Slack/Messages quit; screen-sharing resolution checked on the venue display
