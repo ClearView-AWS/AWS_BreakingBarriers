@@ -81,7 +81,7 @@ export type Turn = {
 
 /** Fallback first-run chips when `/api/examples` is unreachable. */
 export const DEMO_QUERY =
-  "Middle school in Seattle that must have a gifted program. Prefer a small school.";
+  "Middle school in Seattle that must have a gifted program and after-school care. Prefer a small school.";
 
 export const FALLBACK_EXAMPLES = [
   DEMO_QUERY,

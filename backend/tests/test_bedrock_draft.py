@@ -87,13 +87,17 @@ def test_need_null_becomes_unmapped(bedrock):
 
 def test_lexical_strength_overrides_wrong_draft(bedrock):
     """Must / prefer words in the message beat a wrong Bedrock strength."""
-    msg = "Middle school in Seattle that must have a gifted program. Prefer a small school."
+    msg = (
+        "Middle school in Seattle that must have a gifted program and after-school care. "
+        "Prefer a small school."
+    )
     bedrock(
         _fenced(
             [
                 {"kind": "grade", "value": "m", "text": "Middle school"},
                 {"kind": "location", "value": "Seattle", "text": "Seattle"},
                 {"kind": "need", "need": "gifted", "strength": "prefer", "text": "gifted program"},
+                {"kind": "need", "need": "after_care", "strength": "prefer", "text": "after-school care"},
                 {"kind": "need", "need": "small_school", "strength": "require", "text": "small school"},
             ]
         )
@@ -101,6 +105,7 @@ def test_lexical_strength_overrides_wrong_draft(bedrock):
     criteria, _ = extract(msg, known_cities())
     by_need = {c.need: c for c in criteria if c.need}
     assert by_need["gifted"].strength == "require"
+    assert by_need["after_care"].strength == "require"
     assert by_need["small_school"].strength == "prefer"
 
 

@@ -121,9 +121,9 @@ def example_queries(limit: int = 3) -> list[str]:
     secondary = cities[1] if len(cities) > 1 else primary
     tertiary = cities[2] if len(cities) > 2 else secondary
     # WA Report Card fills gifted / ELL / enrollment; STEM / sports / after-care stay unknown.
-    # These three land in different match bands and the first spreads within the list.
+    # First chip keeps match-% spread AND an Unknown (after-care) so "Have AI call" appears.
     examples = [
-        f"Middle school in {primary} that must have a gifted program. Prefer a small school.",
+        f"Middle school in {primary} that must have a gifted program and after-school care. Prefer a small school.",
         f"Elementary school in {secondary} with English learner support",
         f"High school in {tertiary} that must have sports. Gifted is a plus.",
     ]

@@ -139,13 +139,14 @@ def test_extractor_demo_query():
 
 def test_extractor_wa_variety_query():
     found, _ = extract(
-        "Middle school in Seattle that must have a gifted program. Prefer a small school.",
+        "Middle school in Seattle that must have a gifted program and after-school care. Prefer a small school.",
         known_cities(),
     )
     by_need = {item.need or item.kind: item for item in found}
     assert by_need["grade"].value == "m"
     assert by_need["location"].value == "Seattle"
     assert by_need["gifted"].strength == "require"
+    assert by_need["after_care"].strength == "require"
     assert by_need["small_school"].strength == "prefer"
 
 
