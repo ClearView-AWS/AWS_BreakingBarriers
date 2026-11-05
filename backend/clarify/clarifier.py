@@ -113,17 +113,19 @@ def _location_ambiguity_question(city: str) -> dict:
 
 
 def example_queries(limit: int = 3) -> list[str]:
-    """First-run prompt chips: mix the busiest cities in the live corpus."""
+    """First-run prompt chips: mix the busiest cities and needs that differentiate match %."""
     cities = city_options(6)
     if not cities:
         cities = list(_FALLBACK_CITIES)
     primary = cities[0]
     secondary = cities[1] if len(cities) > 1 else primary
     tertiary = cities[2] if len(cities) > 2 else secondary
+    # WA Report Card fills gifted / ELL / enrollment; STEM / sports / after-care stay unknown.
+    # These three land in different match bands and the first spreads within the list.
     examples = [
-        f"Middle school in {primary} with STEM and after-school care. Money is tight.",
+        f"Middle school in {primary} that must have a gifted program. Prefer a small school.",
         f"Elementary school in {secondary} with English learner support",
-        f"High school in {tertiary} with sports",
+        f"High school in {tertiary} that must have sports. Gifted is a plus.",
     ]
     return examples[:limit]
 

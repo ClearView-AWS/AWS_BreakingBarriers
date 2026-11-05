@@ -112,15 +112,22 @@ def _boolish(value: object) -> bool | None:
     return None
 
 
+def _comparison(op: str) -> tuple[str, str] | None:
+    """Parse '>= 8', '>=:8', '== true', '==:true' into (operator, argument)."""
+    text = (op or "").strip()
+    for token in (">=", "<=", "==", ">", "<"):
+        if text.startswith(token):
+            return token, text[len(token) :].lstrip(" :\t")
+    return None
+
+
 def op_matches(op: str | None, value: object, params: dict | None = None) -> bool:
     if not op:
         return False
     params = params or {}
-    parts = op.split(":", 1)
-    name = parts[0].strip()
-    arg = parts[1].strip() if len(parts) > 1 else ""
-
-    if name in {">=", "<=", ">", "<", "=="}:
+    compared = _comparison(op)
+    if compared:
+        name, arg = compared
         if name == "==" and arg in {"true", "false"}:
             found = _boolish(value)
             return found is not None and found == (arg == "true")
@@ -140,6 +147,10 @@ def op_matches(op: str | None, value: object, params: dict | None = None) -> boo
         if name == "<":
             return number < target
         return number == target
+
+    parts = op.split(":", 1)
+    name = parts[0].strip()
+    arg = parts[1].strip() if len(parts) > 1 else ""
 
     tokens = [t.strip().casefold() for t in arg.split(",") if t.strip()]
     values = [str(v).strip().casefold() for v in as_list(value)]

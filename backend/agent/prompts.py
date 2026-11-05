@@ -29,6 +29,17 @@ If the parent asks for something no need id covers (for example politics), use "
 Use only the codes, cities and need ids listed here. Leave out anything you are unsure of.
 Do not decide which school facts are true. Do not invent schools.
 
+Strength for each need (pick exactly one — this drives the match score):
+- require: must / need / needs / have to / required / can't do without / "must have"
+- prefer: prefer / ideally / nice to have / bonus / "a plus" / soft wants / money-is-tight style cost talk
+- avoid: not / no / without / don't want / avoid
+When there is no strength word, use require for stem and after_care; prefer for everything else.
+Examples:
+- "must have a gifted program" → gifted require
+- "prefer a small school" → small_school prefer
+- "STEM and after-school care" → stem require, after_care require
+- "not a religious school" → non_religious require (avoid-language on religion maps to the non_religious need)
+
 Cities: {", ".join(sorted(cities))}
 
 Need ids:

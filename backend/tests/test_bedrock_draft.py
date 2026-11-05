@@ -85,6 +85,25 @@ def test_need_null_becomes_unmapped(bedrock):
     assert [(c.id, c.need, c.text) for c in criteria] == [("c1", None, "how liberal")]
 
 
+def test_lexical_strength_overrides_wrong_draft(bedrock):
+    """Must / prefer words in the message beat a wrong Bedrock strength."""
+    msg = "Middle school in Seattle that must have a gifted program. Prefer a small school."
+    bedrock(
+        _fenced(
+            [
+                {"kind": "grade", "value": "m", "text": "Middle school"},
+                {"kind": "location", "value": "Seattle", "text": "Seattle"},
+                {"kind": "need", "need": "gifted", "strength": "prefer", "text": "gifted program"},
+                {"kind": "need", "need": "small_school", "strength": "require", "text": "small school"},
+            ]
+        )
+    )
+    criteria, _ = extract(msg, known_cities())
+    by_need = {c.need: c for c in criteria if c.need}
+    assert by_need["gifted"].strength == "require"
+    assert by_need["small_school"].strength == "prefer"
+
+
 def test_reply_without_json_uses_rules(bedrock):
     bedrock("Sorry, I can't help with that.")
     criteria, _ = extract(QUERY, known_cities())

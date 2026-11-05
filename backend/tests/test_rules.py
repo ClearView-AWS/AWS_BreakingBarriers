@@ -137,6 +137,18 @@ def test_extractor_demo_query():
     assert by_need["low_cost"].strength == "prefer"
 
 
+def test_extractor_wa_variety_query():
+    found, _ = extract(
+        "Middle school in Seattle that must have a gifted program. Prefer a small school.",
+        known_cities(),
+    )
+    by_need = {item.need or item.kind: item for item in found}
+    assert by_need["grade"].value == "m"
+    assert by_need["location"].value == "Seattle"
+    assert by_need["gifted"].strength == "require"
+    assert by_need["small_school"].strength == "prefer"
+
+
 def test_negation_and_liberal_and_spanish():
     religious, _ = extract("elementary school in Orlando, not religious", known_cities())
     assert any(item.need == "non_religious" and item.strength == "require" for item in religious)

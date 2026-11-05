@@ -46,8 +46,8 @@ _UNMAPPED = [
     (r"\bpolitic\w*\b", "politics"),
 ]
 _AVOID = ("not", "no", "without", "avoid", "dont", "don't")
-_REQUIRE = ("must", "required", "need", "needs")
-_PREFER = ("prefer", "ideally", "bonus")
+_REQUIRE = ("must", "required", "need", "needs", "gotta")
+_PREFER = ("prefer", "ideally", "bonus", "nice", "plus")
 _UNTIL = re.compile(r"\buntil (\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b")
 _GRADE_CODES = {code for _, code, _ in _GRADE}
 _TYPE_VALUES = {value for _, value, _ in _TYPE}
@@ -101,6 +101,10 @@ def _draft_criterion(item: dict, normalized: str, by_city: dict[str, str]) -> Cr
     strength = item.get("strength")
     if need_id not in needs() or strength not in _STRENGTHS:
         return None
+    # Prefer clear lexical markers over the model when the parent said must/prefer/avoid.
+    lexical = _lexical_strength(normalized, text, need_id)
+    if lexical:
+        strength = lexical
     params = {}
     until = (item.get("params") or {}).get("until")
     if need_id in _TIMED_NEEDS and isinstance(until, str) and _TIME.match(until):
@@ -271,7 +275,11 @@ def _find_city(normalized: str, cities: list[str]) -> str | None:
 def _need_spans(normalized: str) -> list[tuple[int, int, str, str]]:
     spans = []
     for need_id, spec in needs().items():
-        for phrase in spec.get("phrases") or []:
+        phrases = list(spec.get("phrases") or [])
+        label = spec.get("label")
+        if label and label not in phrases:
+            phrases.append(label)
+        for phrase in phrases:
             phrase_n = normalize(phrase)
             if not phrase_n:
                 continue
@@ -287,15 +295,56 @@ def _overlaps(start: int, end: int, consumed: list[tuple[int, int]]) -> bool:
 
 
 def _strength(normalized: str, start: int, end: int, spec: dict) -> str:
+    marked = _strength_from_span(normalized, start, end)
+    if marked:
+        return marked
+    return spec.get("default_strength") or "prefer"
+
+
+# Post-nominal cues only ("gifted is a plus"). A following "prefer …" starts the next need.
+_AFTER_PREFER = ("plus", "bonus", "nice")
+_AFTER_REQUIRE = ("required",)
+
+
+def _strength_from_span(normalized: str, start: int, end: int) -> str | None:
+    """Closest strength cue wins. After-side only allows post-nominal words."""
     before = normalized[max(0, start - 48) : start].split()[-6:]
     after = normalized[end : end + 32].split()[:4]
-    if any(word in before for word in _AVOID):
-        return "avoid"
-    if any(word in before or word in after for word in _REQUIRE):
-        return "require"
-    if any(word in before for word in _PREFER):
-        return "prefer"
-    return spec.get("default_strength") or "prefer"
+    # (distance, after-first so post-nominal beats a same-distance earlier must, rank, strength)
+    candidates: list[tuple[int, int, int, str]] = []
+    rank = {"avoid": 0, "require": 1, "prefer": 2}
+    for index, word in enumerate(reversed(before)):
+        if word in _AVOID:
+            candidates.append((index, 1, rank["avoid"], "avoid"))
+        elif word in _REQUIRE:
+            candidates.append((index, 1, rank["require"], "require"))
+        elif word in _PREFER:
+            candidates.append((index, 1, rank["prefer"], "prefer"))
+    for index, word in enumerate(after):
+        if word in _AFTER_REQUIRE:
+            candidates.append((index, 0, rank["require"], "require"))
+        elif word in _AFTER_PREFER:
+            candidates.append((index, 0, rank["prefer"], "prefer"))
+    if not candidates:
+        return None
+    candidates.sort()
+    return candidates[0][3]
+
+
+def _lexical_strength(normalized: str, phrase: str, need_id: str) -> str | None:
+    """Strength from nearby must/prefer/avoid words, or None if unmarked."""
+    candidates = [phrase, *(needs().get(need_id, {}).get("phrases") or [])]
+    for candidate in candidates:
+        pn = normalize(candidate or "")
+        if not pn:
+            continue
+        start = normalized.find(pn)
+        if start < 0:
+            continue
+        marked = _strength_from_span(normalized, start, start + len(pn))
+        if marked:
+            return marked
+    return None
 
 
 def _until_param(text: str) -> str | None:
