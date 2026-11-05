@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import "./community.css";
 import { t, tn } from "./i18n";
+import { staffPost } from "./staff";
 import { SchoolGallery } from "./components/SchoolGallery";
 
 export type Persona = { id: string; name: string; role: "parent" | "school" };
@@ -41,11 +42,8 @@ type Tag = { need: string; label: string };
 const TIME_NEEDS = new Set(["after_care", "extended_day", "before_care"]);
 
 async function api<T>(path: string, body?: unknown): Promise<T> {
-  const response = await fetch(path, body === undefined ? undefined : {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  // Writes carry the staff code when this browser has one; staff actions ask for it.
+  const response = body === undefined ? await fetch(path) : await staffPost(path, body);
   if (!response.ok) throw new Error(`Request failed (${response.status})`);
   return response.json();
 }

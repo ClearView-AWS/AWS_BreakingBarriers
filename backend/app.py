@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
-from gaps.inbox import grouped_inbox, reply_to_question, requeue_stale
+from gaps.inbox import grouped_inbox, public_item, reply_to_question, requeue_stale
 from gaps.phone import check_value, set_do_not_call
 from pipeline import checklist_for, turn
 from contracts import Criterion
 from search.corpus import load_schools
+from security import guard, is_staff, require_staff
 from store import State
 
 app = FastAPI(title="Guided School Search", version="0.1.0")
@@ -20,14 +21,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# Body-size cap and per-IP / total rate limits (backend/security.py).
+app.middleware("http")(guard)
+
+
+def _known_needs(need_ids: list[str]) -> list[str]:
+    """Need ids from a request must be catalog ids: they become questions for the school."""
+    from catalog import needs
+
+    unknown = [need for need in need_ids if need not in needs()]
+    if unknown:
+        raise HTTPException(status_code=400, detail=f"Unknown need: {unknown[0][:60]}")
+    return need_ids
 
 
 class TurnIn(BaseModel):
-    session_id: str | None = None
-    message: str | None = None
-    action: str | None = None
-    school_ids: list[str] = Field(default_factory=list)
-    criteria: list[dict] | None = None
+    session_id: str | None = Field(default=None, max_length=64)
+    message: str | None = Field(default=None, max_length=2000)
+    action: str | None = Field(default=None, max_length=40)
+    school_ids: list[str] = Field(default_factory=list, max_length=20)
+    criteria: list[dict] | None = Field(default=None, max_length=30)
     answer: dict | None = None
     # Batch answers from the brief questions UI: {"q1": "Must-have", ...}
     answers: dict | None = None
@@ -41,10 +54,20 @@ class TurnIn(BaseModel):
     # area_changed: { "center": [lat, lon], "radius_mi": 5 }
     area: dict | None = None
 
+    @field_validator("criteria")
+    @classmethod
+    def _criteria_shape(cls, rows: list[dict] | None) -> list[dict] | None:
+        """An edited brief must still be valid criteria, with short text."""
+        for row in rows or []:
+            Criterion(**row)
+            if len(str(row.get("text") or "")) > 300:
+                raise ValueError("criterion text is too long")
+        return rows
+
 
 class ReplyIn(BaseModel):
-    text: str
-    value: str | None = None
+    text: str = Field(max_length=2000)
+    value: str | None = Field(default=None, max_length=200)
 
 
 @app.get("/api/health")
@@ -65,8 +88,8 @@ def examples() -> dict:
 
 
 class UiTextIn(BaseModel):
-    language: str
-    strings: dict[str, str]
+    language: str = Field(max_length=20)
+    strings: dict[str, str] = Field(max_length=600)
 
 
 @app.post("/api/ui-text")
@@ -141,32 +164,35 @@ def _programs():
 def get_inbox() -> dict:
     with State() as state:
         requeue_stale(state)
-        return {"items": grouped_inbox(state)}
+        return {"items": [public_item(item) for item in grouped_inbox(state)]}
 
 
 @app.post("/api/inbox/{question_id}/reply")
-def post_reply(question_id: str, body: ReplyIn) -> dict:
+def post_reply(question_id: str, body: ReplyIn, request: Request) -> dict:
+    """The school's emailed answer. Staff only: it becomes school-reported evidence."""
+    require_staff(request)
     with State() as state:
         item = reply_to_question(state, question_id, body.text, body.value, channel="email")
         if not item:
             return {"error": "unknown question"}
-        return {"item": item}
+        return {"item": public_item(item)}
 
 
 class CallIn(BaseModel):
-    school_id: str
-    needs: list[str]
-    session_id: str | None = None
+    school_id: str = Field(max_length=64)
+    needs: list[str] = Field(max_length=10)
+    session_id: str | None = Field(default=None, max_length=64)
 
 
 @app.post("/api/calls")
-def post_call(body: CallIn) -> dict:
+def post_call(body: CallIn, request: Request) -> dict:
     """Phone the school about this question and every other open one parents have for it."""
     from catalog import needs
     from gaps.inbox import add_question
     from gaps.phone import public, start_call
     from gaps.ses_mailer import send_school_question
 
+    _known_needs(body.needs)
     school = next((s for s in load_schools() if s["id"] == body.school_id), None)
     if not school:
         return {"error": "unknown school"}
@@ -176,7 +202,8 @@ def post_call(body: CallIn) -> dict:
             question = needs().get(need_id, {}).get("visit_question") or f"Can you tell us about {need_id}?"
             items.append(add_question(state, school, need_id, question, body.session_id or "anonymous"))
         requeue_stale(state)
-        call = start_call(state, school)
+        # Only a staff browser dials; anyone else's questions go by email (backend/security.py).
+        call = start_call(state, school, allow_dial=is_staff(request))
         if call["status"] in {"off", "failed", "blocked"}:
             # No call went out, so the questions still reach the school by email.
             for item in items:
@@ -208,8 +235,8 @@ def get_school(school_id: str) -> dict:
 
 
 class StaffAnswerIn(BaseModel):
-    text: str
-    value: str | None = None
+    text: str = Field(max_length=2000)
+    value: str | None = Field(default=None, max_length=200)
 
 
 class DoNotCallIn(BaseModel):
@@ -225,7 +252,7 @@ def school_questions(school_id: str) -> dict:
     with State() as state:
         requeue_stale(state)
         items = [
-            item
+            public_item(item)
             for item in grouped_inbox(state)
             if item["school_id"] == school["id"] and item["status"] == "open"
         ]
@@ -233,8 +260,9 @@ def school_questions(school_id: str) -> dict:
 
 
 @app.post("/api/schools/{school_id}/questions/{question_id}/answer")
-def school_answer(school_id: str, question_id: str, body: StaffAnswerIn) -> dict:
+def school_answer(school_id: str, question_id: str, body: StaffAnswerIn, request: Request) -> dict:
     """School staff answer a queued question. Same overlay path as a call or email reply."""
+    require_staff(request)
     school = _school(school_id)
     if not school:
         return {"error": "unknown school"}
@@ -251,12 +279,13 @@ def school_answer(school_id: str, question_id: str, body: StaffAnswerIn) -> dict
             return {"error": "unknown question"}
         value = body.value if body.value is not None else check_value(item["need"], body.text)
         answered = reply_to_question(state, question_id, body.text, value, channel="staff")
-        return {"item": answered}
+        return {"item": public_item(answered) if answered else None}
 
 
 @app.post("/api/schools/{school_id}/do-not-call")
-def school_do_not_call(school_id: str, body: DoNotCallIn) -> dict:
-    """Opt out of AI calls (email only) or opt back in."""
+def school_do_not_call(school_id: str, body: DoNotCallIn, request: Request) -> dict:
+    """Opt out of AI calls (email only) or opt back in. Staff only."""
+    require_staff(request)
     school = _school(school_id)
     if not school:
         return {"error": "unknown school"}
@@ -272,32 +301,38 @@ from community.tags import suggest_tags  # noqa: E402
 
 
 class PostIn(BaseModel):
-    school_id: str
-    persona: str = "parent_a"
-    kind: str = "question"
-    text: str
-    needs: list[str] = Field(default_factory=list)
-    origin: str = "community"
-    session_id: str | None = None
+    school_id: str = Field(max_length=64)
+    persona: str = Field(default="parent_a", max_length=40)
+    kind: str = Field(default="question", max_length=20)
+    text: str = Field(max_length=4000)
+    needs: list[str] = Field(default_factory=list, max_length=10)
+    origin: str = Field(default="community", max_length=40)
+    session_id: str | None = Field(default=None, max_length=64)
 
 
 class CommunityReplyIn(BaseModel):
-    persona: str = "parent_a"
-    text: str
+    persona: str = Field(default="parent_a", max_length=40)
+    text: str = Field(max_length=4000)
     answer: dict | None = None
 
 
 class VoteIn(BaseModel):
-    persona: str = "parent_a"
+    persona: str = Field(default="parent_a", max_length=40)
 
 
 class TextIn(BaseModel):
-    text: str
+    text: str = Field(max_length=4000)
 
 
 class DraftIn(BaseModel):
-    school_id: str
-    need: str
+    school_id: str = Field(max_length=64)
+    need: str = Field(max_length=64)
+
+
+def _require_staff_persona(persona_id: str, request: Request) -> None:
+    """Posting as school staff earns the Verified badge and can set facts: staff only."""
+    if community.persona(persona_id)["role"] == "school":
+        require_staff(request)
 
 
 def _school(school_id: str) -> dict | None:
@@ -335,13 +370,14 @@ def community_school(school_id: str, sort: str = "top", need: str | None = None,
 
 
 class QuestionAnswerIn(BaseModel):
-    text: str
-    value: str | None = None
+    text: str = Field(max_length=2000)
+    value: str | None = Field(default=None, max_length=200)
     offers: bool | None = None
 
 
 @app.post("/api/community/schools/{school_id}/questions/{question_id}/answer")
-def community_answer_question(school_id: str, question_id: str, body: QuestionAnswerIn) -> dict:
+def community_answer_question(school_id: str, question_id: str, body: QuestionAnswerIn, request: Request) -> dict:
+    require_staff(request)
     school = _school(school_id)
     if not school:
         return {"ok": False, "safety": {"ok": False, "findings": [], "message": "Unknown school."}}
@@ -358,7 +394,9 @@ def community_thread(thread_id: str, persona: str | None = None) -> dict:
 
 
 @app.post("/api/community/posts")
-def community_post(body: PostIn) -> dict:
+def community_post(body: PostIn, request: Request) -> dict:
+    _require_staff_persona(body.persona, request)
+    _known_needs(body.needs)
     school = _school(body.school_id)
     if not school:
         return {"ok": False, "safety": {"ok": False, "findings": [], "message": "Unknown school."}}
@@ -376,7 +414,8 @@ def community_post(body: PostIn) -> dict:
 
 
 @app.post("/api/community/threads/{thread_id}/replies")
-def community_reply(thread_id: str, body: CommunityReplyIn) -> dict:
+def community_reply(thread_id: str, body: CommunityReplyIn, request: Request) -> dict:
+    _require_staff_persona(body.persona, request)
     with State() as state:
         return community.reply(state, thread_id, body.persona, body.text, body.answer)
 
@@ -391,8 +430,8 @@ import faq  # noqa: E402
 
 
 class FaqIn(BaseModel):
-    persona: str = "parent_a"
-    text: str = ""
+    persona: str = Field(default="parent_a", max_length=40)
+    text: str = Field(default="", max_length=1000)
 
 
 @app.get("/api/faq")
@@ -430,6 +469,7 @@ def community_tags(body: TextIn) -> dict:
 
 @app.post("/api/community/draft")
 def community_draft(body: DraftIn) -> dict:
+    _known_needs([body.need])
     school = _school(body.school_id)
     if not school:
         return {"error": "unknown school"}
@@ -437,7 +477,9 @@ def community_draft(body: DraftIn) -> dict:
 
 
 @app.post("/api/community/schools/{school_id}/digest")
-def community_digest(school_id: str) -> dict:
+def community_digest(school_id: str, request: Request) -> dict:
+    """Sends the school its summary email. Staff only."""
+    require_staff(request)
     school = _school(school_id)
     if not school:
         return {"error": "unknown school"}
@@ -452,7 +494,7 @@ from contracts import Criterion as _Criterion  # noqa: E402
 
 
 class AssistIn(BaseModel):
-    session_id: str | None = None
+    session_id: str | None = Field(default=None, max_length=64)
     text: str = Field(default="", max_length=2000)
     question: str = Field(default="", max_length=1000)
     school_id: str | None = None

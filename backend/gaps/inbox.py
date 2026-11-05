@@ -13,6 +13,12 @@ def _now() -> str:
 
 
 def add_question(state: dict, school: dict, need_id: str, question: str, session_id: str) -> dict:
+    """Queue a question for the school. Only catalog needs: the question text reaches the
+    phone agent's prompt and the school's email, so free text from a request never does."""
+    from catalog import needs
+
+    if need_id not in needs():
+        raise ValueError(f"unknown need: {need_id!r}")
     inbox = state.setdefault("inbox", [])
     for item in inbox:
         if item["school_id"] == school["id"] and item["need"] == need_id and item["status"] == "open":
@@ -35,6 +41,11 @@ def add_question(state: dict, school: dict, need_id: str, question: str, session
     }
     inbox.append(item)
     return item
+
+
+def public_item(item: dict) -> dict:
+    """An inbox item as the browser sees it: no parent session ids."""
+    return {key: value for key, value in item.items() if key != "session_ids"}
 
 
 def grouped_inbox(state: dict) -> list[dict]:

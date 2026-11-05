@@ -94,8 +94,14 @@ fi
 echo
 URL="$(aws cloudformation describe-stacks --stack-name GsAppStack --region "$CDK_DEFAULT_REGION" \
   --query "Stacks[0].Outputs[?OutputKey=='CloudFrontURL'].OutputValue" --output text 2>/dev/null || true)"
+SECRET="$(aws cloudformation describe-stacks --stack-name GsAppStack --region "$CDK_DEFAULT_REGION" \
+  --query "Stacks[0].Outputs[?OutputKey=='StaffKeySecret'].OutputValue" --output text 2>/dev/null || true)"
 echo "Done. Open the CloudFrontURL in a browser."
 if [[ -n "${URL}" && "${URL}" != "None" ]]; then
   echo "CloudFrontURL=${URL}"
+fi
+if [[ -n "${SECRET}" && "${SECRET}" != "None" ]]; then
+  echo "Staff code (for ?staff=… or X-Staff-Key):"
+  echo "  aws secretsmanager get-secret-value --secret-id ${SECRET} --query SecretString --output text"
 fi
 echo "That URL replaces yesterday's IP address."

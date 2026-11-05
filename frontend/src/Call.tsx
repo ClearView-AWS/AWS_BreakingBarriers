@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Actions } from "./blocks";
 import { t, tn } from "./i18n";
 import { ReadAloud } from "./components/ReadAloud";
+import { staffHeaders } from "./staff";
 import "./call.css";
 
 type Line = { who: "agent" | "school"; text: string; at?: string };
@@ -33,9 +34,10 @@ export function CallButton({ schoolId, schoolName, needs, actions }: { schoolId:
   async function start() {
     setStarting(true);
     try {
+      // Without the staff code the backend emails the school instead of dialing.
       const response = await fetch("/api/calls", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...staffHeaders() },
         body: JSON.stringify({ school_id: schoolId, needs, session_id: actions.sessionId ?? null }),
       });
       const data = await response.json();

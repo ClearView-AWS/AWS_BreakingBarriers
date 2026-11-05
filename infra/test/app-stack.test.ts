@@ -104,3 +104,32 @@ test('SES on sets env and scopes SendEmail to the verified identities', () => {
 test('SES on without addresses fails at synth', () => {
   expect(() => synth({ sesEnabled: true })).toThrow(/SES_SOURCE and SES_VERIFIED_TO/);
 });
+
+test('the ALB only accepts CloudFront, never 0.0.0.0/0', () => {
+  const groups = template.findResources('AWS::EC2::SecurityGroup');
+  const lb = Object.values(groups).find((group: any) => /LB/.test(group.Properties.GroupDescription));
+  expect(lb).toBeDefined();
+  for (const rule of (lb as any).Properties.SecurityGroupIngress ?? []) {
+    expect(rule.CidrIp).toBeUndefined();
+  }
+  template.hasResourceProperties('AWS::EC2::SecurityGroupIngress', {
+    SourcePrefixListId: Match.anyValue(),
+    FromPort: 80,
+  });
+});
+
+test('the API gets the staff code from Secrets Manager and CloudFront forwards the viewer address', () => {
+  template.resourceCountIs('AWS::SecretsManager::Secret', 1);
+  template.hasResourceProperties('AWS::ECS::TaskDefinition', {
+    ContainerDefinitions: Match.arrayWith([
+      Match.objectLike({ Secrets: Match.arrayWith([Match.objectLike({ Name: 'GS_STAFF_KEY' })]) }),
+    ]),
+  });
+  template.hasResourceProperties('AWS::CloudFront::Distribution', {
+    DistributionConfig: Match.objectLike({
+      CacheBehaviors: Match.arrayWith([
+        Match.objectLike({ PathPattern: '/api/*', OriginRequestPolicyId: '33f36d7e-f396-46d9-90e0-52428a34d9dc' }),
+      ]),
+    }),
+  });
+});

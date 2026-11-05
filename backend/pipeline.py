@@ -671,7 +671,7 @@ def _grid(cards: list[dict], criteria: list[Criterion]) -> dict:
 
 def _ask_unknowns(session, cards, state) -> None:
     need_id = session.get("pending_ask_need")
-    if not need_id:
+    if not need_id or need_id not in needs():
         return
     by_id = _by_id(load_schools())
     for card in cards:
@@ -684,7 +684,9 @@ def _ask_unknowns(session, cards, state) -> None:
             school = by_id.get(card["id"])
             if not school:
                 continue
-            question = needs().get(need_id, {}).get("visit_question") or f"Can you confirm {criterion.get('text')}?"
+            # Catalog text only: the parent's own words never go into a call or school email.
+            spec = needs()[need_id]
+            question = spec.get("visit_question") or f"Can you tell us about {(spec.get('label') or need_id).lower()}?"
             item = add_question(state, school, need_id, question, session["id"])
             item["email"] = send_school_question(item)
             record_ask(state, school["id"], need_id, session["id"], "agent")
@@ -861,7 +863,7 @@ def _ask(session, criteria, schools, programs, state, payload, engine: Engine) -
     school_id = (payload.get("school_ids") or [None])[0]
     need_id = payload.get("need")
     school = _by_id(schools).get(school_id)
-    if not school or not need_id:
+    if not school or not need_id or need_id not in needs():
         blocks = [Block(type="message", payload={"text": "I need a school and a question to send."})]
         return TurnResponse(session_id=session["id"], route="save", criteria=criteria, blocks=blocks)
     question = needs().get(need_id, {}).get("visit_question") or f"Can you tell us about {need_id}?"
