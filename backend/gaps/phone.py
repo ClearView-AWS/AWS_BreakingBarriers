@@ -4,10 +4,11 @@ Amazon Connect places the call; backend/voice/lex_turn.py runs the conversation 
 the transcript to the state table under pk=CALLS. This module starts the call, reads the
 transcript back, and applies answers only after code checks them.
 
-Calls go only to VOICE_VERIFIED_TO, so a real school cannot be reached by mistake.
-Without VOICE_ENABLED=1 the call is not placed and the question goes by email instead.
-Guardrails in config/calls.yaml (per-school spacing, office hours, question cap, daily
-cap, do-not-call) also block a dial and fall back to email with a reason.
+Hackathon demo: every outbound call goes to DEMO_VOICE_TO (+1 206-535-0596). School
+profile phone numbers are never dialed. Without VOICE_ENABLED=1 the call is not placed
+and the question goes by email instead. Guardrails in config/calls.yaml (per-school
+spacing, office hours, question cap, daily cap, do-not-call) also block a dial and fall
+back to email with a reason.
 """
 
 from __future__ import annotations
@@ -29,9 +30,18 @@ TERMINAL = {"completed", "ended", "no_answer", "declined", "failed", "off", "blo
 TIME_NEEDS = {"after_care", "extended_day", "before_care"}
 _WEEKDAYS = {"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6}
 
+# Only number the demo may dial. Never read a school office line from the corpus.
+DEMO_VOICE_TO = "+12065350596"
+
+
+def destination_number() -> str:
+    """E.164 handset for every demo call. Ignores school phones and env overrides."""
+    return DEMO_VOICE_TO
+
 
 def enabled() -> bool:
-    keys = ("VOICE_INSTANCE_ID", "VOICE_FLOW_ID", "VOICE_SOURCE", "VOICE_VERIFIED_TO")
+    # Destination is fixed in code; Connect still needs instance, flow, and caller ID.
+    keys = ("VOICE_INSTANCE_ID", "VOICE_FLOW_ID", "VOICE_SOURCE")
     return os.environ.get("VOICE_ENABLED", "").lower() in {"1", "true", "yes"} and all(os.environ.get(k) for k in keys)
 
 
@@ -85,11 +95,13 @@ def start_call(state: dict, school: dict) -> dict:
                 import boto3
 
                 client = boto3.client("connect", region_name=AWS_REGION)
+                dest = destination_number()
+                call["destination"] = dest
                 response = client.start_outbound_voice_contact(
                     InstanceId=os.environ["VOICE_INSTANCE_ID"],
                     ContactFlowId=os.environ["VOICE_FLOW_ID"],
                     SourcePhoneNumber=os.environ["VOICE_SOURCE"],
-                    DestinationPhoneNumber=os.environ["VOICE_VERIFIED_TO"],
+                    DestinationPhoneNumber=dest,
                     Attributes={
                         "call_id": call["id"],
                         "school_name": school["name"],

@@ -119,13 +119,15 @@ export class AppStack extends cdk.Stack {
       environment.BEDROCK_GUARDRAIL_ID = guardrail.attrGuardrailId;
       environment.BEDROCK_GUARDRAIL_VERSION = version.attrVersion;
     }
-    // School phone calls (backend/gaps/phone.py). On only when the deploy shell sets all four;
-    // VOICE_VERIFIED_TO is the one number calls may reach and never lives in the repo.
-    const voiceKeys = ['VOICE_INSTANCE_ID', 'VOICE_FLOW_ID', 'VOICE_SOURCE', 'VOICE_VERIFIED_TO'];
+    // School phone calls (backend/gaps/phone.py). Needs Connect instance/flow/caller ID.
+    // Destination is hardcoded in phone.py to the demo handset (+12065350596); school
+    // profile numbers are never dialed. VOICE_VERIFIED_TO is set for operators/logs only.
+    const voiceKeys = ['VOICE_INSTANCE_ID', 'VOICE_FLOW_ID', 'VOICE_SOURCE'];
     const voiceEnabled = voiceKeys.every((key) => !!process.env[key]);
     if (voiceEnabled) {
       environment.VOICE_ENABLED = '1';
       for (const key of voiceKeys) environment[key] = process.env[key] as string;
+      environment.VOICE_VERIFIED_TO = '+12065350596';
     }
     if (props.openSearchEndpoint) {
       environment.OPENSEARCH_URL = props.openSearchEndpoint.startsWith('http')

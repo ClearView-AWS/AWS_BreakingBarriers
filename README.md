@@ -118,6 +118,8 @@ The script lists the tools and lets the Bedrock agent (`backend/agent/gateway.py
 
 ### School phone call (Connect + Lex + Lambda)
 
+Every outbound demo call dials **`+1 206-535-0596` only** (`DEMO_VOICE_TO` in `backend/gaps/phone.py`). School profile numbers are never used. Set `VOICE_ENABLED=1` plus `VOICE_INSTANCE_ID`, `VOICE_FLOW_ID`, and `VOICE_SOURCE` on the API; without those the button falls back to email.
+
 `GsVoiceStack` defines the voice-turn Lambda (`backend/voice/lex_turn.py`), Lex V2 bot/alias, Connect contact flow, Lex association, and CloudWatch log groups. Pass the existing Connect instance id and the app's RuntimeState table:
 
 ```bash

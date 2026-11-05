@@ -44,6 +44,12 @@ def test_parse_time(text, evening, expected):
     assert phone.parse_time(text, evening=evening) == expected
 
 
+def test_demo_destination_is_fixed_handset():
+    # School corpus phones must never be dialed; only the demo handset.
+    assert phone.destination_number() == "+12065350596"
+    assert phone.DEMO_VOICE_TO == "+12065350596"
+
+
 def test_one_call_asks_every_open_question_for_the_school(state):
     school = _school(TIDEWATER)
     add_question(state, school, "after_care", "What time does after-school care end?", "s1")
@@ -52,9 +58,10 @@ def test_one_call_asks_every_open_question_for_the_school(state):
     assert [q["id"] for q in call["questions"]] == ["after_care", "extended_day"]
     assert call["parent_count"] == 2
     assert "automated AI assistant" in call["opening"] and "transcribe" in call["opening"]
-    # Without VOICE_ENABLED and a verified number nothing is dialed.
+    # Without VOICE_ENABLED nothing is dialed.
     assert call["status"] == "off"
-    assert "VOICE_VERIFIED_TO" not in str(phone.public(call))
+    assert "12065350596" not in str(phone.public(call))
+    assert "destination" not in phone.public(call)
 
 
 def _finished_call(state, answers, transcript, consent=True):

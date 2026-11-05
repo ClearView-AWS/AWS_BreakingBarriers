@@ -4,10 +4,11 @@
 # Optional secret:
 #   OPENSEARCH_ENDPOINT — existing domain hostname (no https://). Without it the
 #   app keeps the local in-memory search engine.
-#   VOICE_INSTANCE_ID, VOICE_FLOW_ID, VOICE_SOURCE, VOICE_VERIFIED_TO — Amazon Connect
-#   ids from GsVoiceStack (or the legacy scripts/setup_voice.py) and the one number
-#   school calls may reach. Without all four the "Have AI call" button emails the
-#   school instead.
+#   VOICE_INSTANCE_ID, VOICE_FLOW_ID, VOICE_SOURCE — Amazon Connect ids from
+#   GsVoiceStack (or scripts/setup_voice.py). Outbound always dials the demo
+#   handset +12065350596 (hardcoded in backend/gaps/phone.py), never a school
+#   office. Without the three Connect vars the button emails instead.
+#   VOICE_VERIFIED_TO secret is optional/legacy; the app ignores it for dialing.
 # Optional repo variables (off by default; default demo deploy is unchanged):
 #   DEPLOY_GATEWAY=1 — also deploy GsGatewayStack (AgentCore MCP tools)
 #   DEPLOY_VOICE=1 — also deploy GsVoiceStack (Connect flow, Lex, voice Lambda).
