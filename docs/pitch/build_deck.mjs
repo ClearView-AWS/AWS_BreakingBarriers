@@ -2,7 +2,7 @@
 //
 //   cd docs/pitch && npm install && npm run build
 //
-// Slides follow the speaker run order in speakers/README.md. Speaker notes are pulled from
+// Slides follow the speaker run order and approved numbers in speakers/README.md. Speaker notes are pulled from
 // the "## Say" section of each speakers/0N-*.md file, so edit the script there and rebuild;
 // if a speaker file is missing, the slide keeps a short fallback note instead.
 // Numbers on slides come from impact.md and cost.md — change them there first.
@@ -40,14 +40,15 @@ const HEX = THEME.colors;
 
 // ---------- speaker notes from speakers/*.md ----------
 
-function sayText(file) {
+// The word-for-word section runs from its heading to the next "---" rule or "## " heading.
+function sayText(file, heading = /^## Say\b.*$/m) {
   const p = path.join(SPEAKERS, file);
   if (!fs.existsSync(p)) return null;
   const md = fs.readFileSync(p, "utf8");
-  const start = md.search(/^## Say\b.*$/m);
-  if (start < 0) return null;
+  const start = md.search(heading);
+  if (start < 0) throw new Error(`${file}: no section matching ${heading}; update build_deck.mjs to the new script layout`);
   const body = md.slice(md.indexOf("\n", start) + 1);
-  const end = body.search(/^(---\s*$|## (?!Say\b))/m);
+  const end = body.search(/^(---\s*$|## )/m);
   return (end < 0 ? body : body.slice(0, end))
     .replace(/```\w*\n?/g, "")
     .replace(/\*\*|`/g, "")
@@ -57,15 +58,16 @@ function sayText(file) {
     .trim();
 }
 
-// Split one speaker's script across consecutive slides at the first line of each later part.
-function splitSay(file, ...cuts) {
-  const text = sayText(file);
+// Split one speaker's script across consecutive slides at the first words of each later part.
+// A cut that no longer appears fails the build, so the slides can't drift from the script.
+function splitSay(file, heading, ...cuts) {
+  const text = sayText(file, heading);
   if (!text) return null;
   const parts = [];
   let rest = text;
   for (const cut of cuts) {
     const i = rest.indexOf(cut);
-    if (i < 0) { parts.push(null); continue; }
+    if (i < 0) throw new Error(`${file}: split cue "${cut}" not found; update the cue in build_deck.mjs`);
     parts.push(rest.slice(0, i).trim());
     rest = rest.slice(i);
   }
@@ -96,7 +98,7 @@ pres.defineSlideMaster({
   objects: [
     { text: { text: LIVE_URL, options: { x: M, y: 6.75, w: 6, h: 0.35, margin: 0, fontSize: 12, color: C.accent6, isTextBox: true } } },
     { placeholder: { options: { name: "kicker", type: "body", x: M, y: 1.35, w: 7.2, h: 0.45, margin: 0, fontSize: 16, bold: true, color: C.accent1, charSpacing: 2 }, text: "" } },
-    { placeholder: { options: { name: "title", type: "title", x: M, y: 1.9, w: 7.2, h: 2.0, margin: 0, fontSize: 54, bold: true, color: C.background1, valign: "top" }, text: "" } },
+    { placeholder: { options: { name: "title", type: "title", x: M, y: 1.9, w: 7.2, h: 2.0, margin: 0, fontSize: 54, bold: true, color: C.background1, align: "left", valign: "top" }, text: "" } },
     { placeholder: { options: { name: "body", type: "body", x: M, y: 4.1, w: 6.6, h: 1.5, margin: 0, fontSize: 20, color: C.accent6, valign: "top" }, text: "" } },
   ],
 });
@@ -106,7 +108,7 @@ pres.defineSlideMaster({
   background: { color: C.background1 },
   objects: [
     { text: { text: "Guided Search · We investigate. You decide.", options: { x: M, y: 6.95, w: 8, h: 0.3, margin: 0, fontSize: 10, color: C.accent5, isTextBox: true } } },
-    { placeholder: { options: { name: "title", type: "title", x: M, y: 0.45, w: W - 2 * M, h: 0.9, margin: 0, fontSize: 36, bold: true, color: C.text1, valign: "middle" }, text: "" } },
+    { placeholder: { options: { name: "title", type: "title", x: M, y: 0.45, w: W - 2 * M, h: 0.9, margin: 0, fontSize: 36, bold: true, color: C.text1, align: "left", valign: "middle" }, text: "" } },
   ],
   slideNumber: { x: W - M - 0.6, y: 6.95, w: 0.6, h: 0.3, fontSize: 10, color: C.accent5, align: "right" },
 });
@@ -144,8 +146,8 @@ function source(slide, str) {
   text(slide, str, { x: M, y: 6.5, w: W - 2 * M, h: 0.3, fontSize: 10, color: C.accent5 });
 }
 
-const A = splitSay("01-host-impact.md", "GreatSchools already reaches");
-const E = splitSay("05-closer.md", "No login.", "We investigate. You decide.");
+const A = splitSay("01-host-impact.md", undefined, "We measured it.");
+const E = splitSay("05-closer.md", /^## Part 2: Close.*$/m, "GreatSchools already has");
 
 // 1 — Host: hook
 pres.addSection({ title: "A · Host / Impact" });
@@ -172,7 +174,7 @@ pres.addSection({ title: "A · Host / Impact" });
     fontSize: 14, bold: true, color: C.background1, fill: { color: C.accent4 }, isTextBox: true,
   });
   notes(s, {
-    who: "Person A — Host / Impact", clock: "0:00–0:30", advance: "after “…a second job.”",
+    who: "Person A — Host / Impact", clock: "0:00–0:35", advance: "on “We measured it.”",
     say: A?.[0], fallback: "Script: speakers/01-host-impact.md",
   });
 }
@@ -182,27 +184,29 @@ pres.addSection({ title: "A · Host / Impact" });
   const s = pres.addSlide({ masterName: "Content", sectionTitle: "A · Host / Impact" });
   s.addText("The gap is the product", { placeholder: "title" });
   const hero = [
-    ["68%", "of need-bearing searches show at least one Unknown in the top 8 results", "23 / 34 eval searches"],
-    ["25 / 25", "GreatSchools sample schools have no after-school care on file", "real GreatSchools sample"],
+    ["68%", "of searches with a real need show at least one Unknown in the top 8", "23 / 34 eval searches"],
+    ["25 / 25", "GreatSchools sample schools have no after-school care on file", "GreatSchools sample"],
+    ["2,364", "Washington schools in state report-card data — none with after-school care", "WA OSPI · real data"],
   ];
+  const cw = (W - 2 * M - 2 * 0.3) / 3, cy = 1.6, ch = 3.85;
   hero.forEach(([big, label, sub], i) => {
-    const x = M + i * 4.15, y = 1.75, w = 3.85, h = 4.4;
-    card(s, x, y, w, h, `stat ${big}`);
-    text(s, big, { x: x + 0.35, y: y + 0.4, w: w - 0.7, h: 1.3, fontSize: 66, bold: true, fontFace: THEME.headFontFace, color: C.text2 });
-    text(s, label, { x: x + 0.35, y: y + 1.85, w: w - 0.7, h: 1.4, fontSize: 18 });
-    pill(s, x + 0.35, y + h - 0.85, "Unknown");
-    text(s, sub, { x: x + 1.95, y: y + h - 0.85, w: w - 2.3, h: 0.36, fontSize: 12, color: C.accent5, valign: "middle" });
+    const x = M + i * (cw + 0.3);
+    card(s, x, cy, cw, ch, `stat ${big}`);
+    text(s, big, { x: x + 0.35, y: cy + 0.3, w: cw - 0.7, h: 1.15, fontSize: 60, bold: true, fontFace: THEME.headFontFace, color: C.text2 });
+    text(s, label, { x: x + 0.35, y: cy + 1.55, w: cw - 0.7, h: 1.2, fontSize: 18 });
+    pill(s, x + 0.35, cy + ch - 0.75, "Unknown");
+    text(s, sub, { x: x + 1.95, y: cy + ch - 0.75, w: cw - 2.3, h: 0.36, fontSize: 12, color: C.accent5, valign: "middle" });
   });
-  const scaleX = M + 2 * 4.15 + 0.15;
-  text(s, "At GreatSchools scale", { x: scaleX, y: 1.8, w: 3.7, h: 0.4, fontSize: 18, bold: true, color: C.text2 });
-  [["150k+", "school profiles"], ["~40M", "families reached each year"]].forEach(([big, label], i) => {
-    const y = 2.4 + i * 1.75;
-    text(s, big, { x: scaleX, y, w: 3.7, h: 0.9, fontSize: 48, bold: true, fontFace: THEME.headFontFace, color: C.accent4 });
-    text(s, label, { x: scaleX, y: y + 0.9, w: 3.7, h: 0.4, fontSize: 16 });
-  });
-  source(s, "Sources: docs/pitch/impact.md (eval/queries.jsonl via impact_counts.py; GreatSchools About page)");
+  text(s, [
+    { text: "At GreatSchools scale:  ", options: { bold: true, color: C.text2 } },
+    { text: "150k+", options: { bold: true, color: C.accent4, fontFace: THEME.headFontFace, fontSize: 28 } },
+    { text: " school profiles   ·   " },
+    { text: "~40M", options: { bold: true, color: C.accent4, fontFace: THEME.headFontFace, fontSize: 28 } },
+    { text: " families a year" },
+  ], { x: M, y: 5.7, w: W - 2 * M, h: 0.6, fontSize: 20, valign: "middle" });
+  source(s, "Sources: docs/pitch/impact_counts.py on eval/queries.jsonl and Sample Data/ · data/wa/schools.json (OSPI) · GreatSchools About page");
   notes(s, {
-    who: "Person A — Host / Impact", clock: "0:30–1:10", advance: "hand to Person B on “Over to our driver.” (switch screen to live demo)",
+    who: "Person A — Host / Impact", clock: "0:35–1:05", advance: "on “Here’s the live demo.” switch the screen to the live site and hand to Person B",
     say: A?.[1], fallback: "Script: speakers/01-host-impact.md",
   });
 }
@@ -218,9 +222,9 @@ pres.addSection({ title: "B · Demo driver" });
     x: M + 0.3, y: 2.25, w: 5.8, h: 1.05, fontSize: 18, color: C.background1, valign: "middle",
   });
   const steps = [
-    ["1", "Brief", "Parents edit must / nice / avoid before we search"],
+    ["1", "The brief is the contract", "Musts and preferences the parent can edit before we search"],
     ["2", "Hard filters", "Only city, grade and school type"],
-    ["3", "Scored, not dropped", "Every other need moves the match %"],
+    ["3", "Scored, not dropped", "Every other need moves the match %, with a citation"],
   ];
   steps.forEach(([n, head, body], i) => {
     const y = 3.85 + i * 0.85;
@@ -241,12 +245,14 @@ pres.addSection({ title: "B · Demo driver" });
     s.addShape(pres.ShapeType.rect, { objectName: `bar ${status}`, x: barX, y: y + 0.06, w: barW * v, h: 0.24, fill: { color: STATUS[status].fill }, line: { type: "none" } });
     text(s, v.toFixed(1), { x: barX + barW * v + 0.12, y, w: 0.6, h: 0.36, fontSize: 16, bold: true, valign: "middle" });
   });
-  text(s, "Unknown after-school care keeps the school on screen at half credit — it is never filtered out.", {
-    x: x + 0.35, y: 4.95, w: w - 0.7, h: 0.9, fontSize: 16,
-  });
-  source(s, "Seattle rows: public WA OSPI Report Card data (~2,300 schools) · rules-first search median ≈ 0.02 s · scores from backend/evidence/scorer.py");
+  text(s, [
+    { text: "Unknown keeps the school on screen at half credit. Across our eval, missing data dropped " },
+    { text: "0 schools", options: { bold: true } },
+    { text: "." },
+  ], { x: x + 0.35, y: 4.95, w: w - 0.7, h: 0.9, fontSize: 16 });
+  source(s, "Seattle rows: public WA OSPI Report Card data · rules-path median first turn ≈ 0.01 s (README → Evaluation) · scores from backend/evidence/scorer.py");
   notes(s, {
-    who: "Person B — Demo driver", clock: "1:10–3:25", advance: "backup only — stay on the live UI; show this slide if the demo site is down",
+    who: "Person B — Demo driver", clock: "1:05–3:00", advance: "backup only — stay on the live UI; show this slide if the demo site is down",
     say: sayText("02-demo-driver.md"), fallback: "Script: speakers/02-demo-driver.md",
   });
 }
@@ -265,16 +271,16 @@ pres.addSection({ title: "C · AWS architect" });
   const lane = (label, y) => text(s, label, { x: M, y: y - 0.45, w: 6, h: 0.35, fontSize: 12, bold: true, color: C.accent5, charSpacing: 2 });
 
   // Search lane
-  lane("SEARCH", 2.15);
+  lane("SEARCH · FOUR CDK STACKS, ONE ACCOUNT", 2.15);
   const sx = [M, 3.05, 5.5], sw = 2.05;
   node("Browser", "no login", sx[0], 2.15, sw);
-  node("CloudFront", "", sx[1], 2.15, sw);
-  node("Fargate API", "rules engine", sx[2], 2.15, sw, C.text2, C.background1);
+  node("CloudFront", "React app on S3", sx[1], 2.15, sw);
+  node("ECS Fargate", "API · rules engine", sx[2], 2.15, sw, C.text2, C.background1);
   arrow(s, sx[0] + sw + 0.05, 2.62, 0.3);
   arrow(s, sx[1] + sw + 0.05, 2.62, 0.3);
   // Services the API calls
-  const svc = [["OpenSearch", "when enabled"], ["DynamoDB", "sessions · overlays"], ["Bedrock", "drafts · behind flags"]];
-  svc.forEach(([l, sub], i) => node(l, sub, 8.15 + i * 1.55 - 0.0, 2.15, 1.45));
+  const svc = [["DynamoDB", "one table"], ["OpenSearch", "hybrid search"], ["Bedrock", "Haiku · Sonnet"]];
+  svc.forEach(([l, sub], i) => node(l, sub, 8.15 + i * 1.55, 2.15, 1.45));
   arrow(s, sx[2] + sw + 0.05, 2.62, 0.5);
 
   // Voice lane
@@ -288,100 +294,128 @@ pres.addSection({ title: "C · AWS architect" });
   });
   node("Code check", "then card flips", M + 5 * (vw + vg), 4.3, W - M - (M + 5 * (vw + vg)), C.accent2, C.background1);
 
-  text(s, "Also on the path: Translate + Comprehend follow the parent’s language · Bedrock Guardrails screen community posts for PII · local rules fallback keeps an empty sandbox running", {
-    x: M, y: 5.6, w: W - 2 * M, h: 0.7, fontSize: 14, color: C.text1,
-  });
-  source(s, "Architecture: docs/how-it-works.md · infra/lib/app-stack.ts");
+  text(s, [
+    { text: "97% holdout recall", options: { bold: true, color: C.text2 } },
+    { text: " with Bedrock on (96 / 99, never tuned) — still, a model never marks a fact Confirmed. Every service sits behind a flag with a local fallback; Guardrails strip PII from parent posts; Translate + Comprehend follow the parent’s language." },
+  ], { x: M, y: 5.6, w: W - 2 * M, h: 0.75, fontSize: 14 });
+  source(s, "docs/infra.md (GsAppStack, GsOpenSearchStack, GsGatewayStack, GsVoiceStack) · backend/config/models.yaml · README → Evaluation");
   notes(s, {
-    who: "Person C — AWS architect", clock: "3:25–4:25", advance: "optional — flip here only if the deck is up; otherwise talk over the live results",
+    who: "Person C — AWS architect", clock: "3:00–4:10", advance: "optional — flip here only if the deck is up; otherwise talk over the live results",
     say: sayText("03-aws-architect.md"), fallback: "Script: speakers/03-aws-architect.md",
   });
 }
 
-// 5 — Call lead
+// 5 — Call lead (Person E answers the handset as the front office)
 pres.addSection({ title: "D · Call lead" });
 {
   const s = pres.addSlide({ masterName: "Content", sectionTitle: "D · Call lead" });
-  s.addText("One call answers every parent who asked", { placeholder: "title" });
+  s.addText("We call the school so the parent doesn’t", { placeholder: "title" });
 
-  // 13 parents → 1 call (Beauclerc after-care seed)
-  card(s, M, 1.7, 5.6, 4.55, "shared question");
-  text(s, "13", { x: M + 0.35, y: 1.9, w: 1.9, h: 1.1, fontSize: 72, bold: true, fontFace: THEME.headFontFace, color: C.text2 });
-  text(s, "parents asked Beauclerc STEM Middle about after-school care this month", { x: M + 2.2, y: 2.05, w: 3.1, h: 0.95, fontSize: 16 });
-  for (let i = 0; i < 13; i++) {
-    const col = i % 5, row = Math.floor(i / 5);
-    s.addShape(pres.ShapeType.ellipse, { objectName: `parent ${i + 1}`, x: M + 0.45 + col * 0.5, y: 3.45 + row * 0.5, w: 0.34, h: 0.34, fill: { color: C.accent1 }, line: { type: "none" } });
-  }
-  arrow(s, M + 3.05, 3.95, 0.7, C.text2);
-  s.addText("1 AI call", { shape: pres.ShapeType.ellipse, x: M + 3.9, y: 3.35, w: 1.25, h: 1.25, margin: 0, align: "center", valign: "middle", fontSize: 16, bold: true, color: C.background1, fill: { color: C.accent4 }, isTextBox: true });
-  text(s, "Without Guided Search: 13 office calls during work hours. With it: one call, ≈2.6 parent-hours back.", { x: M + 0.35, y: 5.1, w: 4.9, h: 0.9, fontSize: 14, color: C.accent5 });
+  // Before → after on the top Seattle card
+  card(s, M, 1.7, 5.6, 4.55, "the card");
+  text(s, "TOP SEATTLE CARD", { x: M + 0.35, y: 1.95, w: 4.9, h: 0.3, fontSize: 12, bold: true, color: C.accent5, charSpacing: 2 });
+  text(s, "After-school care", { x: M + 0.35, y: 2.45, w: 2.4, h: 0.36, valign: "middle", bold: true, fontSize: 18 });
+  pill(s, M + 3.8, 2.45, "Unknown");
+  s.addText("Have AI call · 1 question not on file", {
+    objectName: "call button", shape: pres.ShapeType.roundRect, rectRadius: 0.12,
+    x: M + 0.35, y: 3.1, w: 4.9, h: 0.6, margin: 0, align: "center", valign: "middle",
+    fontSize: 14, bold: true, color: C.background1, fill: { color: C.accent4 }, isTextBox: true,
+  });
+  s.addShape(pres.ShapeType.line, { x: M + 2.8, y: 3.8, w: 0, h: 0.45, line: { color: C.text2, width: 2, endArrowType: "triangle" } });
+  text(s, "What the school said", { x: M + 0.35, y: 4.35, w: 3.2, h: 0.36, valign: "middle", bold: true, fontSize: 18 });
+  pill(s, M + 3.8, 4.35, "Confirmed");
+  text(s, "“Yes, we have after-school care on campus until six\u00A0p.m. every school day.”", {
+    x: M + 0.35, y: 4.85, w: 4.9, h: 0.8, fontSize: 16, italic: true, color: C.text2,
+  });
+  text(s, "Every parent who asks next gets it without a single extra call.", { x: M + 0.35, y: 5.7, w: 4.9, h: 0.4, fontSize: 14, color: C.accent5 });
 
   // Call timeline
   const x = 6.75, w = W - M - x;
   const steps = [
-    ["Discloses AI, asks consent", "Florida all-party consent before any question; a no means stop and email instead"],
-    ["Asks every queued question", "Connect · Polly · Lex · Lambda · Bedrock Haiku"],
-    ["Code checks the answer", "A fluent wrong answer cannot become a Confirmed fact"],
+    ["Says it’s an AI, asks consent", "Washington and Florida both require every party’s consent to transcribe"],
+    ["Asks the queued question", "Connect places the call · Polly speaks · Lex hears · Lambda asks Bedrock Haiku"],
+    ["Code checks before the card changes", "The quote must be in the transcript; code parses “six p.m.”"],
   ];
   steps.forEach(([head, body], i) => {
-    const y = 1.75 + i * 1.05;
+    const y = 1.75 + i * 1.35;
     s.addText(String(i + 1), { shape: pres.ShapeType.ellipse, x, y, w: 0.55, h: 0.55, margin: 0, align: "center", valign: "middle", fontSize: 18, bold: true, color: C.background1, fill: { color: C.accent3 }, isTextBox: true });
     text(s, head, { x: x + 0.8, y: y - 0.02, w: w - 0.8, h: 0.34, fontSize: 18, bold: true });
-    text(s, body, { x: x + 0.8, y: y + 0.34, w: w - 0.8, h: 0.55, fontSize: 14, color: C.accent5 });
+    text(s, body, { x: x + 0.8, y: y + 0.36, w: w - 0.8, h: 0.6, fontSize: 14, color: C.accent5 });
   });
-  text(s, "After-school care", { x, y: 5.1, w: 2.2, h: 0.36, valign: "middle", bold: true });
-  pill(s, x + 2.25, 5.1, "Unknown");
-  arrow(s, x + 3.8, 5.28, 0.45, C.text2);
-  pill(s, x + 4.35, 5.1, "Confirmed");
-  text(s, "with the school’s own quote — shared with every parent who asked", { x, y: 5.6, w, h: 0.4, fontSize: 14, color: C.accent5 });
-  source(s, "Demand: data/synthetic/community_seed.json · parent-hours: docs/pitch/impact.md (12 min/call assumption) · demo dials +1 206-535-0596 only");
+  text(s, "Backup: Jacksonville · Beauclerc STEM Middle — in our seeded demo data, 13 parents asked this same question. One call answers all of them.", {
+    x, y: 5.6, w, h: 0.65, fontSize: 14, color: C.text1,
+  });
+  source(s, "backend/gaps/phone.py (the demo rings our own handset, never a real school) · seeded demand: data/synthetic/community_seed.json");
   notes(s, {
-    who: "Person D — Call lead", clock: "4:25–6:40", advance: "backup only — if the live call fails, show this slide while reading the backup line",
+    who: "Person D — Call lead (Person E answers the handset; lines in 05-closer.md Part 1)", clock: "4:10–6:25",
+    advance: "backup only — if the live call fails, show this slide while reading the backup line",
     say: sayText("04-call-lead.md"), fallback: "Script: speakers/04-call-lead.md",
   });
 }
 
-// 6 — Closer: unit economics
+// 6 — Closer: what we measured, what it costs
 pres.addSection({ title: "E · Closer" });
 {
   const s = pres.addSlide({ masterName: "Content", sectionTitle: "E · Closer" });
-  s.addText("Under a cent per family", { placeholder: "title" });
+  s.addText("Each answer gets cheaper as parents ask", { placeholder: "title" });
   const stats = [
-    ["≈ $0.11", "variable AWS cost of one 3-minute AI school call"],
-    ["$0.008", "per parent when 13 share the answer"],
-    ["0.02 s", "median rules-first search turn"],
+    ["≈ $0.11", "a 3-minute AI school call at AWS list price"],
+    ["0", "schools dropped for missing data in our eval"],
+    ["2,364", "real Washington schools, deployed on AWS today"],
   ];
   stats.forEach(([big, label], i) => {
     const y = 1.7 + i * 1.5;
-    text(s, big, { x: M, y, w: 4.4, h: 0.85, fontSize: 48, bold: true, fontFace: THEME.headFontFace, color: i === 1 ? C.accent4 : C.text2 });
-    text(s, label, { x: M, y: y + 0.85, w: 4.4, h: 0.4, fontSize: 16 });
+    text(s, big, { x: M, y, w: 4.6, h: 0.85, fontSize: 48, bold: true, fontFace: THEME.headFontFace, color: i === 0 ? C.accent4 : C.text2 });
+    text(s, label, { x: M, y: y + 0.85, w: 4.6, h: 0.4, fontSize: 16 });
   });
   s.addChart(pres.ChartType.bar, [{ name: "Cost per parent (USD)", labels: ["1 parent", "5 parents", "13 parents"], values: [0.11, 0.022, 0.008] }], {
     objectName: "cost per parent chart",
     x: 5.6, y: 1.6, w: W - M - 5.6, h: 4.7, barDir: "col",
     chartColors: [HEX.accent3, HEX.accent3, HEX.accent4],
-    showTitle: true, title: "Cost per parent served by one call (USD)", titleFontSize: 16, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
+    showTitle: true, title: "One call’s cost, split across the parents it answers (USD)", titleFontSize: 16, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
     showValue: true, dataLabelPosition: "outEnd", dataLabelFormatCode: "$0.000", dataLabelFontSize: 14, dataLabelColor: HEX.dk1, dataLabelFontFace: "+mn-lt",
     catAxisLabelColor: HEX.accent5, catAxisLabelFontSize: 14, catAxisLabelFontFace: "+mn-lt",
     valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
     showLegend: false, barGapWidthPct: 60,
   });
-  source(s, "docs/pitch/cost.md — AWS public pricing as of 2026-11-04; call shape (3 min, 6 turns, 800 chars) is an assumption");
+  source(s, "docs/pitch/cost.md — priced, not billed: AWS list prices as of 2026-11-04 on a modeled 3-min call (Connect, Lex, Polly, Lambda, Haiku)");
   notes(s, {
-    who: "Person E — Closer / Feasibility", clock: "6:40–7:05", advance: "after “…without hiding schools when a field is blank.”",
+    who: "Person E — Closer", clock: "6:25–7:25", advance: "after “…every service has a fallback.”",
     say: E?.[0], fallback: "Script: speakers/05-closer.md",
   });
 }
 
-// 7 — Closer: responsible by default
+// 7 — Closer: tagline + Q&A
 {
-  const s = pres.addSlide({ masterName: "Content", sectionTitle: "E · Closer" });
+  const s = pres.addSlide({ masterName: "Dark", sectionTitle: "E · Closer" });
+  s.addText("ASK US ANYTHING", { placeholder: "kicker" });
+  s.addText("We investigate.\nYou decide.", { placeholder: "title" });
+  s.addText(`Try it live: ${LIVE_URL}`, { placeholder: "body" });
+  const owners = [["Host · Impact", "A"], ["UI · demo", "B"], ["AWS · architecture", "C"], ["Voice · calls", "D"], ["Cost · feasibility", "E"]];
+  const x = 8.35, w = 4.4;
+  text(s, "Q&A — who takes what", { x, y: 1.35, w, h: 0.45, fontSize: 16, bold: true, color: C.accent1, charSpacing: 2 });
+  owners.forEach(([topic, who], i) => {
+    const y = 1.95 + i * 0.85;
+    card(s, x, y, w, 0.68, topic, C.background1);
+    s.addText(who, { shape: pres.ShapeType.ellipse, x: x + 0.2, y: y + 0.11, w: 0.46, h: 0.46, margin: 0, align: "center", valign: "middle", fontSize: 16, bold: true, color: C.background1, fill: { color: C.text2 }, isTextBox: true });
+    text(s, topic, { x: x + 0.9, y: y + 0.11, w: w - 1.15, h: 0.46, fontSize: 18, bold: true, valign: "middle" });
+  });
+  notes(s, {
+    who: "Person E — Closer", clock: "7:25–7:40, then Q&A to 8:00", advance: "stop talking after “questions”; Person A hosts Q&A (docs/pitch/judge-qa.md)",
+    say: E?.[1], fallback: "Script: speakers/05-closer.md",
+  });
+}
+
+// 8 — Appendix for Q&A: responsible AI
+pres.addSection({ title: "Appendix · Q&A" });
+{
+  const s = pres.addSlide({ masterName: "Content", sectionTitle: "Appendix · Q&A" });
   s.addText("Responsible by default", { placeholder: "title" });
   const items = [
     ["AI disclosure", "Every call opens by saying it is an automated AI assistant"],
-    ["Consent first", "Fla. § 934.03 all-party consent — if declined, we stop"],
+    ["Consent first", "Every party consents to transcription — if declined, we stop"],
     ["Code decides", "Model output is a draft until the rules engine checks it"],
-    ["PII guardrails", "Bedrock Guardrails + local rules on community posts"],
+    ["PII guardrails", "Bedrock Guardrails + local rules on parent posts"],
     ["No login", "Parents search without an account"],
     ["Citations", "Every Confirmed fact names its source field"],
   ];
@@ -396,29 +430,8 @@ pres.addSection({ title: "E · Closer" });
   });
   source(s, "docs/pitch/responsible-ai.md (not legal advice) · backend/gaps/phone.py · backend/community/safety.py");
   notes(s, {
-    who: "Person E — Closer / Feasibility", clock: "7:05–7:20", advance: "after “…Guardrails on community text.”",
-    say: E?.[1], fallback: "Script: speakers/05-closer.md",
-  });
-}
-
-// 8 — Closer: tagline + Q&A
-{
-  const s = pres.addSlide({ masterName: "Dark", sectionTitle: "E · Closer" });
-  s.addText("ASK US ANYTHING", { placeholder: "kicker" });
-  s.addText("We investigate.\nYou decide.", { placeholder: "title" });
-  s.addText(`Try it live: ${LIVE_URL}`, { placeholder: "body" });
-  const owners = [["Host · Impact", "A"], ["UI · demo", "B"], ["AWS · architecture", "C"], ["Voice · calls", "D"]];
-  const x = 8.35, w = 4.4;
-  text(s, "Q&A — who takes what", { x, y: 1.35, w, h: 0.45, fontSize: 16, bold: true, color: C.accent1, charSpacing: 2 });
-  owners.forEach(([topic, who], i) => {
-    const y = 2.0 + i * 0.95;
-    card(s, x, y, w, 0.75, topic, C.background1);
-    s.addText(who, { shape: pres.ShapeType.ellipse, x: x + 0.2, y: y + 0.13, w: 0.5, h: 0.5, margin: 0, align: "center", valign: "middle", fontSize: 16, bold: true, color: C.background1, fill: { color: C.text2 }, isTextBox: true });
-    text(s, topic, { x: x + 0.95, y: y + 0.13, w: w - 1.2, h: 0.5, fontSize: 18, bold: true, valign: "middle" });
-  });
-  notes(s, {
-    who: "Person E — Closer / Feasibility", clock: "7:20–7:40, then Q&A to 8:00", advance: "stop talking; Person A hosts Q&A (docs/pitch/judge-qa.md)",
-    say: E?.[2], fallback: "Script: speakers/05-closer.md",
+    who: "Q&A backup — not part of the 8-minute run", clock: "after 7:40",
+    say: "Show only if a judge asks about safety, consent or privacy. Answers: docs/pitch/judge-qa.md and docs/pitch/responsible-ai.md.",
   });
 }
 
