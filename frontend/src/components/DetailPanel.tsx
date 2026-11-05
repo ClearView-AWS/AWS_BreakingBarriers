@@ -1,5 +1,7 @@
-import { EvidenceGrid } from "./EvidenceGrid";
+import { useEffect, useRef } from "react";
+import { t } from "../i18n";
 import type { Card, Turn } from "../types";
+import { EvidenceGrid } from "./EvidenceGrid";
 
 type Props = {
   turn: Turn;
@@ -7,12 +9,49 @@ type Props = {
 };
 
 export function DetailPanel({ turn, onClose }: Props) {
+  const panel = useRef<HTMLDivElement>(null);
+  const closeBtn = useRef<HTMLButtonElement>(null);
+  const previous = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    previous.current = document.activeElement as HTMLElement | null;
+    closeBtn.current?.focus();
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !panel.current) return;
+      const focusable = panel.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      previous.current?.focus?.();
+    };
+  }, [onClose]);
+
   return (
-    <aside className="drawer" role="dialog" aria-modal="true" aria-label="Details">
-      <div className="drawer-scrim" onClick={onClose} />
-      <div className="drawer-panel">
-        <button type="button" className="drawer-close" onClick={onClose}>
-          Close
+    <aside className="drawer" role="dialog" aria-modal="true" aria-label={t("a11y.close_details").replace("Close ", "")}>
+      <div className="drawer-scrim" onClick={onClose} aria-hidden="true" />
+      <div className="drawer-panel" ref={panel}>
+        <button type="button" className="drawer-close" ref={closeBtn} onClick={onClose}>
+          {t("a11y.close_details")}
         </button>
         {turn.blocks.map((block, index) => {
           if (block.type === "why_not") {

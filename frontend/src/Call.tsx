@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Actions } from "./blocks";
 import { t, tn } from "./i18n";
+import { ReadAloud } from "./components/ReadAloud";
 import "./call.css";
 
 type Line = { who: "agent" | "school"; text: string; at?: string };
@@ -105,7 +106,7 @@ function CallPanel({ initial, actions, onClose }: { initial: Call; actions: Acti
         </ul>
       )}
       {call.transcript.length > 0 && (
-        <div className="call-transcript">
+        <div className="call-transcript" aria-live="polite" aria-relevant="additions">
           {call.transcript.map((line, index) => (
             <div key={index} className={`call-line ${line.who}`}>
               <span>{line.who === "agent" ? t("call.ai") : t("call.school")}</span>
@@ -114,6 +115,7 @@ function CallPanel({ initial, actions, onClose }: { initial: Call; actions: Acti
           ))}
           {live && <div className="call-line agent typing" aria-hidden><span>{t("call.ai")}</span><p>…</p></div>}
           <div ref={bottom} />
+          <ReadAloud text={call.transcript.map((line) => `${line.who === "agent" ? t("call.ai") : t("call.school")}: ${line.text}`).join(". ")} />
         </div>
       )}
       {done && call.status !== "off" && call.status !== "failed" && (

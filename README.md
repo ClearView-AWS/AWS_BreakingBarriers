@@ -36,6 +36,18 @@ SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
 .venv/bin/python eval/run_eval.py
 ```
 
+### Frontend accessibility checks
+
+```bash
+cd frontend
+npm install
+npx playwright install chromium   # once
+npm run test:a11y                 # axe against mocked API fixtures; fails on serious/critical
+npm run test:screenshots          # writes desktop + 360px light/dark PNGs to docs/screenshots/
+```
+
+`test:a11y` builds the Vite app, serves it on port 4173, and loads the main chat, results (360px), map, saved, and community views with `frontend/tests/fixtures/` instead of a live backend.
+
 Regenerate the synthetic corpus with `python data/synthetic/generate.py`. The 25 sample schools in `Sample Data/` stay unchanged. The generator writes 275 more schools, nearby programs, and one static page per generated school.
 
 ## Decisions

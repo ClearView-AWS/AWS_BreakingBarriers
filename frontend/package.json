@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:a11y": "playwright test tests/a11y.spec.ts",
+    "test:screenshots": "playwright test tests/screenshots.spec.ts"
   },
   "dependencies": {
     "leaflet": "1.9.4",
@@ -14,10 +16,13 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
     "@types/leaflet": "1.9.20",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "playwright": "^1.64.1",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
   }

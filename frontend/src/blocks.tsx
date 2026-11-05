@@ -12,6 +12,8 @@ import { MapView, ViewToggle, type ResultsView } from "./Views";
 import { Brief } from "./components/Brief";
 import { QuestionPrompt, type QuestionItem } from "./components/QuestionPrompt";
 import { CallButton } from "./Call";
+import { ReadAloud } from "./components/ReadAloud";
+import { StatusBadge } from "./components/StatusBadge";
 
 /** "public" -> "Public" in the UI language; anything else as written. */
 function typeLabel(type: string | null | undefined): string {
@@ -96,6 +98,7 @@ function AgentBlock({
         <div className="agent-text">
           {text && <p>{text}</p>}
           {prompt && <p className="agent-prompt">{prompt}</p>}
+          {(text || prompt) && <ReadAloud text={[text, prompt].filter(Boolean).join(". ")} lang={turn.language} />}
         </div>
       );
     }
@@ -329,8 +332,14 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
       <header>
         <div>
           <h3>
-            {number != null && <span className="card-number">#{number}</span>}
-            <button onClick={() => send({ action: "school_detail", school_ids: [card.id] })}>{card.name}</button>
+            {number != null && <span className="card-number" aria-hidden="true">#{number}</span>}
+            <button
+              type="button"
+              aria-label={t("a11y.open_school", { name: card.name })}
+              onClick={() => send({ action: "school_detail", school_ids: [card.id] })}
+            >
+              {card.name}
+            </button>
           </h3>
           <div className="meta">
             {[card.city, typeLabel(card.entity_type), levels, card.distance_miles != null ? t("blocks.miles", { n: card.distance_miles }) : ""].filter(Boolean).join(" · ")}
@@ -347,14 +356,26 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
       {!evidence && (
         <div className="pills" aria-label={t("blocks.at_a_glance")}>
           {card.evidence.map((row) => {
-            const label = `${STATUS_MARK[row.status] ?? ""} ${labels.get(row.criterion_id) ?? row.criterion_id}`;
+            const criterion = labels.get(row.criterion_id) ?? row.criterion_id;
+            const status = statusLabel(row.status);
+            const mark = STATUS_MARK[row.status] ?? "";
             const onAsk = ask(row);
             return onAsk ? (
-              <button key={row.criterion_id} data-criterion-id={row.criterion_id} className={`pill ${row.status}`} disabled={busy} title={t("blocks.not_on_file_ask")} onClick={onAsk}>
-                {label} · {t("blocks.ask_short")}
+              <button
+                key={row.criterion_id}
+                type="button"
+                data-criterion-id={row.criterion_id}
+                className={`pill ${row.status}`}
+                disabled={busy}
+                title={t("blocks.not_on_file_ask")}
+                onClick={onAsk}
+              >
+                <span className="status-mark" aria-hidden="true">{mark}</span> {status}: {criterion} · {t("blocks.ask_short")}
               </button>
             ) : (
-              <span key={row.criterion_id} data-criterion-id={row.criterion_id} className={`pill ${row.status}`} title={statusLabel(row.status)}>{label}</span>
+              <span key={row.criterion_id} data-criterion-id={row.criterion_id} className={`pill ${row.status}`} title={status}>
+                <span className="status-mark" aria-hidden="true">{mark}</span> {status}: {criterion}
+              </span>
             );
           })}
         </div>
@@ -451,7 +472,7 @@ function EvidenceRow({ row, label, onAsk, onAskParents }: { row: Evidence; label
   return (
     <div className="ev" data-criterion-id={row.criterion_id}>
       <div>
-        <span className={`pill ${row.status}`}>{statusLabel(row.status)}</span>
+        <StatusBadge status={row.status} />
         <div>{label}</div>
       </div>
       <div>
@@ -625,7 +646,7 @@ function Comparison({ schools, criteria }: { schools: Card[]; criteria: Criterio
                   <th scope="row">{row.label}</th>
                   {row.cells.map((cell, index) => (
                     <td key={index}>
-                      {cell.status && <span className={`pill ${cell.status}`}>{STATUS_MARK[cell.status]}</span>} {cell.text}
+                      {cell.status && <StatusBadge status={cell.status} />} {cell.text}
                       {cell.source && <div className="source">{cell.source}</div>}
                     </td>
                   ))}

@@ -7,7 +7,8 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./views.css";
 import type { Actions } from "./blocks";
-import { nameOf, statusLabel } from "./labels";
+import { nameOf } from "./labels";
+import { StatusBadge } from "./components/StatusBadge";
 import { t, tn, uiLanguage } from "./i18n";
 import type { Card, Criterion, ProgramPin } from "./types";
 
@@ -205,7 +206,7 @@ export function MapView(props: {
         ? `<span class="pin hollow" style="border-color:${pinColor(row.card)}">${label}</span>`
         : `<span class="pin" style="background:${pinColor(row.card)}">${label}</span>`;
       const marker = L.marker(point, {
-        icon: L.divIcon({ className: "pin-wrap", html, iconSize: [30, 30], iconAnchor: [15, 15] }),
+        icon: L.divIcon({ className: "pin-wrap", html, iconSize: [44, 44], iconAnchor: [22, 22] }),
         title: `${row.rank ? `${row.rank}. ` : ""}${t("views.pin_title", { name: row.card.name, pct: Math.round(row.card.match * 100) })}${row.hollow ? `, ${t("views.pin_missed")}` : ""}`,
         alt: row.card.name,
         riseOnHover: true,
@@ -350,7 +351,7 @@ export function MapView(props: {
           <ul className="pin-evidence">
             {chosen.card.evidence.map((row) => (
               <li key={row.criterion_id}>
-                <span className={`pill ${row.status}`}>{statusLabel(row.status)}</span>{" "}
+                <StatusBadge status={row.status} />{" "}
                 {labels.get(row.criterion_id) ?? row.criterion_id}
               </li>
             ))}

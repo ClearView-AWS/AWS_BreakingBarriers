@@ -29,6 +29,19 @@ export const EN = {
   "app.all_schools": "All schools",
   "app.error_status": "Something went wrong ({status}). Try again.",
   "app.error": "Something went wrong. Try again.",
+  "a11y.skip_main": "Skip to main content",
+  "a11y.skip_composer": "Skip to message box",
+  "a11y.read_aloud": "Read aloud",
+  "a11y.stop_reading": "Stop reading",
+  "a11y.evidence_grid": "Evidence grid",
+  "a11y.evidence_grid_help": "Every cell cites where the answer came from.",
+  "a11y.school_col": "School",
+  "a11y.no_cell": "No evidence on file",
+  "a11y.saved_help": "Keep the ones worth a closer look. Visit questions come from facts still unknown.",
+  "a11y.thinking": "Looking for schools",
+  "a11y.close_details": "Close details",
+  "a11y.open_school": "Open details for {name}",
+
   // Chat.tsx
   "chat.guide": "Guide",
   "chat.intro":

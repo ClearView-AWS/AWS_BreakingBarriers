@@ -1,5 +1,7 @@
-import { SOURCE_LABEL, STATUS_LABEL } from "../labels";
+import { SOURCE_LABEL } from "../labels";
+import { t } from "../i18n";
 import type { Evidence } from "../types";
+import { StatusBadge } from "./StatusBadge";
 
 type Props = {
   payload: Record<string, unknown>;
@@ -12,18 +14,21 @@ export function EvidenceGrid({ payload }: Props) {
   if (!schools.length) return null;
 
   return (
-    <section className="grid-panel">
+    <section className="grid-panel" aria-labelledby="evidence-grid-title">
       <div className="section-head">
-        <h2>Evidence grid</h2>
-        <p>Every cell cites where the answer came from.</p>
+        <h2 id="evidence-grid-title">{t("a11y.evidence_grid")}</h2>
+        <p>{t("a11y.evidence_grid_help")}</p>
       </div>
-      <div className="table-scroll">
+      <div className="table-scroll" tabIndex={0} role="region" aria-label={t("a11y.evidence_grid")}>
         <table>
+          <caption className="sr-only">{t("a11y.evidence_grid")}</caption>
           <thead>
             <tr>
-              <th>School</th>
+              <th scope="col">{t("a11y.school_col")}</th>
               {criteria.map((column) => (
-                <th key={column.id}>{column.text}</th>
+                <th key={column.id} scope="col">
+                  {column.text}
+                </th>
               ))}
             </tr>
           </thead>
@@ -37,7 +42,7 @@ export function EvidenceGrid({ payload }: Props) {
                     <td key={column.id} data-criterion-id={column.id}>
                       {cell ? (
                         <>
-                          <span className={`pill ${cell.status}`}>{STATUS_LABEL[cell.status]}</span>
+                          <StatusBadge status={cell.status} />
                           <p className="cite">
                             {cell.source
                               ? `${SOURCE_LABEL[cell.source.type] ?? cell.source.type}${
@@ -47,7 +52,7 @@ export function EvidenceGrid({ payload }: Props) {
                           </p>
                         </>
                       ) : (
-                        "—"
+                        <span aria-label={t("a11y.no_cell")}>—</span>
                       )}
                     </td>
                   );

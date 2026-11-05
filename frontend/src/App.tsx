@@ -108,6 +108,9 @@ export function App() {
 
   return (
     <div className={view === "search" ? "app chat-mode" : "app"}>
+      <a className="skip-link" href="#main-content">
+        {t("a11y.skip_main")}
+      </a>
       <header className="topbar">
         <a className="brand" href="/" title={t("app.tagline")} onClick={(event) => event.preventDefault()}>
           <span className="brand-mark" aria-hidden="true" />
@@ -135,29 +138,29 @@ export function App() {
           type="button"
           className="theme-switch"
           aria-pressed={theme === "dark"}
-          aria-label="Dark mode"
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
         >
           {theme === "light" ? "☾ Dark mode" : "☀ Light mode"}
         </button>
       </header>
-      <main className={view === "search" ? "chat-main" : "wrap"}>
+      <main id="main-content" className={view === "search" ? "chat-main" : "wrap"} tabIndex={-1}>
         {view === "search" && (
           <Chat entries={entries} actions={actions} onSend={(text) => void send({ message: text })} />
         )}
         {view === "saved" && (
-          <section>
-            <h2 className="section-title">{t("app.saved_title")}</h2>
-            {saved.length === 0 && <p>{t("app.saved_empty")}</p>}
-            <ul className="checklist">
+          <section aria-labelledby="saved-title">
+            <h1 id="saved-title" className="section-title">{t("app.saved_title")}</h1>
+            <p className="sr-only">{t("a11y.saved_help")}</p>
+            {saved.length === 0 && <p role="status">{t("app.saved_empty")}</p>}
+            <ul className="checklist" aria-label={t("app.saved_title")}>
               {saved.map((school) => (
                 <li key={school.id}><strong>{school.name}</strong> · {school.city}<SavedDeadline access={(school as { access?: Access }).access} /></li>
               ))}
             </ul>
             {checklist.length > 0 && (
               <>
-                <h2 className="section-title">{t("app.checklist")}</h2>
-                <ul className="checklist">
+                <h2 className="section-title" id="checklist-title">{t("app.checklist")}</h2>
+                <ul className="checklist" aria-labelledby="checklist-title">
                   {checklist.map((item, index) => (
                     <li key={index}><strong>{item.school_name}.</strong> {item.question}</li>
                   ))}
