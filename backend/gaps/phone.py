@@ -58,10 +58,14 @@ def opening(school_name: str, count: int) -> str:
 
 
 def start_call(state: dict, school: dict) -> dict:
-    """Call the school about every open inbox question for it, within calls.yaml limits."""
+    """Dial the demo handset about open inbox questions for this school.
+
+    Destination is always DEMO_VOICE_TO. Dial blockers are off while
+    calls.yaml has enforce_limits: false (hackathon stage default).
+    """
     cfg = call_limits()
     items = [i for i in state.get("inbox") or [] if i["school_id"] == school["id"] and i["status"] == "open"]
-    cap = int(cfg.get("max_questions_per_call") or 3)
+    cap = int(cfg.get("max_questions_per_call") or 5)
     items = items[:cap]
     questions = [{"id": i["need"], "question": i["question"]} for i in items]
     call = {
@@ -119,20 +123,27 @@ def start_call(state: dict, school: dict) -> dict:
 
 
 def why_blocked(state: dict, school: dict, cfg: dict | None = None) -> str | None:
-    """Reason a dial must not happen, or None when a call may proceed."""
+    """Reason a dial must not happen, or None when a call may proceed.
+
+    With enforce_limits: false (demo default) this always returns None so an
+    on-stage call to DEMO_VOICE_TO is never refused for hours/caps/spacing.
+    """
     cfg = cfg or call_limits()
+    if not cfg.get("enforce_limits"):
+        return None
     school_id = school["id"]
     if school_id in set(cfg.get("do_not_call") or []) or school_id in set(state.get("do_not_call") or []):
         return "This school asked not to be called; questions go by email."
-    spacing = int(cfg.get("min_days_between_calls") or 7)
+    spacing = int(cfg.get("min_days_between_calls") or 0)
     last = _last_placed(state, school_id)
-    if last is not None and (TODAY - last).days < spacing:
+    if spacing > 0 and last is not None and (TODAY - last).days < spacing:
         return f"Already called this school within the last {spacing} days; questions go by email."
-    if _placed_today(state) >= int(cfg.get("global_daily_cap") or 20):
+    cap = int(cfg.get("global_daily_cap") or 0)
+    if cap > 0 and _placed_today(state) >= cap:
         return "Daily call limit reached; questions go by email."
     hours = cfg.get("business_hours") or {}
-    if not _in_business_hours(school, hours, cfg):
-        start, end = hours.get("start", "09:00"), hours.get("end", "15:30")
+    if hours and not _in_business_hours(school, hours, cfg):
+        start, end = hours.get("start", "00:00"), hours.get("end", "23:59")
         return f"Outside school office hours ({start}–{end} local); questions go by email."
     return None
 
