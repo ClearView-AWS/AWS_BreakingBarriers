@@ -10,6 +10,19 @@ CITY_CENTROIDS = {
     "orlando": (28.5383, -81.3792),
     "tampa": (27.9506, -82.4572),
     "tallahassee": (30.4383, -84.2807),
+    # Washington (OSPI public corpus) — city centroids for distance scoring only.
+    "seattle": (47.6062, -122.3321),
+    "tacoma": (47.2529, -122.4443),
+    "spokane": (47.6588, -117.4260),
+    "bellevue": (47.6101, -122.2015),
+    "vancouver": (45.6387, -122.6615),
+    "kent": (47.3809, -122.2348),
+    "redmond": (47.6740, -122.1215),
+    "everett": (47.9789, -122.2021),
+    "federal way": (47.3223, -122.3126),
+    "yakima": (46.6021, -120.5059),
+    "olympia": (47.0379, -122.9007),
+    "bellingham": (48.7519, -122.4787),
 }
 
 

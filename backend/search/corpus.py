@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from functools import lru_cache
 
-from runtime_config import SAMPLE_DIR, SYNTHETIC_DIR
+from runtime_config import INCLUDE_WA, SAMPLE_DIR, SYNTHETIC_DIR, WA_DIR
 from search.geo import attach_coordinates, parse_latlon
 
 
@@ -20,6 +20,9 @@ def _read_json(path) -> list:
 def load_schools() -> list[dict]:
     schools = _read_json(SAMPLE_DIR / "schools_sample.json")
     schools += _read_json(SYNTHETIC_DIR / "schools.json")
+    # Public OSPI Washington Report Card schools (optional; see data/wa/).
+    if INCLUDE_WA:
+        schools += _read_json(WA_DIR / "schools.json")
     for school in schools:
         attach_coordinates(school)
         school.setdefault("city_untokenized", str(school.get("city") or "").casefold().replace(" ", ""))
@@ -47,4 +50,5 @@ def clear_corpus_cache() -> None:
 def known_cities() -> list[str]:
     cities = {school.get("city") for school in load_schools() if school.get("city")}
     cities.update({"Jacksonville", "Miami", "Orlando", "Tampa", "Tallahassee", "St. Petersburg"})
+    cities.update({"Seattle", "Tacoma", "Spokane", "Bellevue", "Vancouver", "Kent", "Redmond", "Everett"})
     return sorted(cities, key=len, reverse=True)
