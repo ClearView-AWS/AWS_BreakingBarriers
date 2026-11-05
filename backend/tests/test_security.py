@@ -65,25 +65,14 @@ def test_edited_brief_must_be_valid_criteria(client):
     assert client.post("/api/turn", json={"criteria": [{"text": "no id"}]}).status_code == 422
 
 
-# ---------- calls dial only for staff ----------
+# ---------- calls dial for anyone; rate limits stop terminal spam ----------
 
 
-def test_call_without_staff_code_queues_email_and_never_dials(client, monkeypatch):
-    monkeypatch.setattr(phone, "enabled", lambda: True)
-
-    def no_dial(*args, **kwargs):
-        raise AssertionError("dialed without the staff code")
-
-    monkeypatch.setattr("boto3.client", no_dial)
+def test_call_dials_without_a_staff_code(client):
+    # Voice is off in tests, so the dial path ends at "off" rather than Connect.
     data = client.post("/api/calls", json={"school_id": SCHOOL, "needs": ["after_care"]}).json()
-    assert data["call"]["status"] == "blocked"
-    assert data["fallback_reason"] == phone.STAFF_ONLY
-
-
-def test_staff_call_goes_to_the_dial_path(client):
-    # Voice is off in tests, so the staff path ends at "off" rather than "blocked".
-    data = client.post("/api/calls", json={"school_id": SCHOOL, "needs": ["after_care"]}, headers=STAFF).json()
     assert data["call"]["status"] == "off"
+    assert data.get("fallback_reason") != getattr(phone, "STAFF_ONLY", None)
 
 
 # ---------- staff-only writes ----------

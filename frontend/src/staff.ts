@@ -1,5 +1,5 @@
-// The staff code unlocks school-staff actions and AI calls (backend/security.py). It lives
-// only in this browser: open the site once with ?staff=CODE, or enter it when asked.
+// The staff code unlocks school-staff writes (answer as school, do-not-call, digests).
+// Phone calls do not need it. Lives only in this browser: ?staff=CODE, or enter when asked.
 const KEY = "clearview.staffKey";
 
 export function captureStaffCode(): void {

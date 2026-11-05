@@ -32,7 +32,7 @@ SKIP_OPENSEARCH=1 ./scripts/deploy-demo.sh
 Outputs include `CloudFrontURL` — that is the parent-facing link (no IP).
 Current demo: https://dvpvz48phigre.cloudfront.net
 
-The API is not open to a raw terminal curl for staff actions or AI calls. `GsAppStack` generates a staff code in Secrets Manager (`StaffKeySecret` output) and injects it as `GS_STAFF_KEY`. Open the demo once as `https://…/?staff=<code>`, or pass `X-Staff-Key` on staff POSTs. The ALB security group only accepts CloudFront, so the LoadBalancerDNS is not a public back door.
+**Have AI call** works from the browser with no special unlock. What a terminal curl cannot do freely: forge school answers (needs `X-Staff-Key` / `GS_STAFF_KEY` from Secrets Manager `StaffKeySecret`), spam dials or Bedrock (rate limits), or hit the ALB directly (CloudFront-only security group).
 
 ```bash
 SECRET=$(aws cloudformation describe-stacks --stack-name GsAppStack \

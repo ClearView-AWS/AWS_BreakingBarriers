@@ -101,7 +101,7 @@ if [[ -n "${URL}" && "${URL}" != "None" ]]; then
   echo "CloudFrontURL=${URL}"
 fi
 if [[ -n "${SECRET}" && "${SECRET}" != "None" ]]; then
-  echo "Staff code (for ?staff=… or X-Staff-Key):"
+  echo "Staff code (only for answering as the school — not needed to dial):"
   echo "  aws secretsmanager get-secret-value --secret-id ${SECRET} --query SecretString --output text"
 fi
 echo "That URL replaces yesterday's IP address."
