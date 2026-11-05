@@ -57,6 +57,27 @@ rules:
 # District pages for each demo metro. locator_url opens the district's official
 # "find my zoned school" tool; null means none was found, so the card hides that button.
 districts:
+  Seattle:
+    name: Seattle Public Schools
+    locator_url: https://www.seattleschools.org/departments/enrollment-services/assignment/
+    choice_url: https://www.seattleschools.org/departments/enrollment-services/
+    window: >
+      Seattle Public Schools posts annual open-enrollment and school-choice
+      windows on the Enrollment Services site. Check the current school year
+      calendar for dates; this demo does not promise seats or odds.
+    window_url: https://www.seattleschools.org/departments/enrollment-services/
+  Tacoma:
+    name: Tacoma Public Schools
+    locator_url: https://www.tacomaschools.org/
+    choice_url: null
+    window: null
+    window_url: null
+  Spokane:
+    name: Spokane Public Schools
+    locator_url: https://www.spokaneschools.org/
+    choice_url: null
+    window: null
+    window_url: null
   Jacksonville:
     name: Duval County Public Schools
     locator_url: https://dcps.duvalschools.org/locator

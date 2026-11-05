@@ -39,9 +39,9 @@ export async function mockApi(page: Page) {
           examples: [
             "Middle school in Seattle with STEM and after-school care. Money is tight.",
             "Elementary school in Tacoma with English learner support",
-            "High school in Jacksonville with sports",
+            "High school in Spokane with sports",
           ],
-          cities: ["Seattle", "Tacoma", "Spokane", "Jacksonville", "Miami"],
+          cities: ["Seattle", "Tacoma", "Spokane", "Bellevue", "Jacksonville", "Miami"],
           default_city: "Seattle",
         },
       });

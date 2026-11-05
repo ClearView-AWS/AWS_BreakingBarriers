@@ -5,7 +5,7 @@ A guided school-search agent for an empty AWS sandbox. The parent writes in plai
 **Live demo:** [https://dvpvz48phigre.cloudfront.net](https://dvpvz48phigre.cloudfront.net)  
 (CloudFront + Fargate, deployed from `main` on every merge. Bedrock, OpenSearch, DynamoDB and Translate are on.)
 
-This build also runs locally. Bedrock, OpenSearch, SES, and DynamoDB stay behind flags. The demo city is Jacksonville. The clock the age rules use is 2026-11-03 (`GS_TODAY`).
+This build also runs locally. Bedrock, OpenSearch, SES, and DynamoDB stay behind flags. Demo cities follow the loaded corpus (Seattle and other WA metros when `data/wa/schools.json` is present, plus Florida sample/synthetic). The clock the age rules use is 2026-11-03 (`GS_TODAY`).
 
 ## How to run
 
@@ -21,9 +21,9 @@ cd backend && ../.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 800
 cd frontend && npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-> Middle school in Jacksonville with STEM and after-school care. Money is tight.
+> Middle school in Seattle with STEM and after-school care. Money is tight.
 
-Then: answer or skip the brief questions, approve the brief, ask a school from the inbox, ask why Mariner Elementary is missing, compare a private school (the cost panel links the official Florida pages and does not subtract an award), save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
+Then: answer or skip the brief questions, approve the brief, try a Florida follow-up (*Middle school in Jacksonville with after-school care*) if you want the synthetic gap-fill / call demo, save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
 
 Merging to `main` redeploys the hosted demo through GitHub Actions. To redeploy by hand (Bedrock on, and the existing OpenSearch domain picked up automatically):
 
@@ -111,7 +111,7 @@ The Connect instance and its phone number are imported by id (context `voiceInst
 
 ```bash
 cd infra && npx cdk deploy GsGatewayStack -c enableOpenSearch=false
-cd .. && AWS_REGION=us-east-1 .venv/bin/python scripts/gateway_demo.py "Which Jacksonville middle schools have after-school care?"
+cd .. && AWS_REGION=us-east-1 .venv/bin/python scripts/gateway_demo.py "Which Seattle middle schools have English learner support?"
 ```
 
 The script lists the tools and lets the Bedrock agent (`backend/agent/gateway.py`) call them through the gateway. It prints each call. If your credentials come from `aws login`, run `pip install "botocore[crt]"` first.
