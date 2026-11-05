@@ -3,6 +3,7 @@
 // the match and never changes it, so it is drawn apart from the evidence rows.
 import "./getting-in.css";
 import { formatDate, t } from "./i18n";
+import { STATUS_MARK } from "./labels";
 
 export type Access = {
   status: "confirmed" | "partial" | "needs_attention" | "unknown";
@@ -87,7 +88,7 @@ export function GettingInLine({ schoolId, access }: { schoolId: string; access?:
     <div className="getting-in">
       <div className="gi-head">
         <span className="gi-title">{t("gi.title")}</span>
-        <span className={`pill ${access.status}`}>{access.label}</span>
+        <span className={`pill ${access.status}`}><span className="status-mark" aria-hidden="true">{STATUS_MARK[access.status]}</span> {access.label}</span>
       </div>
       <div>
         <div className="gi-line">{lineFor(access)}</div>
@@ -119,7 +120,7 @@ export function GettingInDetail({ access }: { access?: Access | null }) {
     <section className="gi-detail-panel">
       <h3>{t("gi.title")}</h3>
       <p>
-        <span className={`pill ${access.status}`}>{access.label}</span> <strong>{lineFor(access)}</strong>
+        <span className={`pill ${access.status}`}><span className="status-mark" aria-hidden="true">{STATUS_MARK[access.status]}</span> {access.label}</span> <strong>{lineFor(access)}</strong>
       </p>
       {/* access.text already includes the applicant numbers, so they aren't repeated here. */}
       {access.text && <p>{access.text}</p>}
@@ -151,7 +152,7 @@ export function SavedDeadline({ access }: { access?: Access | null }) {
   if (!access) return null;
   return (
     <span className="gi-saved">
-      <span className={`pill ${access.status}`}>{access.label}</span> {lineFor(access)}
+      <span className={`pill ${access.status}`}><span className="status-mark" aria-hidden="true">{STATUS_MARK[access.status]}</span> {access.label}</span> {lineFor(access)}
     </span>
   );
 }

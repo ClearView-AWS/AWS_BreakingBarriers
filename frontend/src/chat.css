@@ -173,11 +173,25 @@ button.pill { border: 0; cursor: pointer; font: inherit; font-size: 13px; font-w
   .topbar { grid-template-columns: auto 1fr; gap: 8px; padding: 10px 16px; }
   .topbar .nav { grid-column: 1 / -1; grid-row: 2; justify-content: center; }
   .topbar .brand-text em { display: none; }
-  .chat-mode .nav button { padding: 6px 10px; font-size: 14px; }
-  .chat-log { padding-top: 16px; }
+  .chat-mode .nav button { padding: 6px 10px; font-size: 14px; min-height: 44px; }
+  .chat-log { width: min(880px, calc(100% - 16px)); padding-top: 16px; }
   .chat-parent { max-width: 90%; }
   .card.compact header { flex-direction: row; }
   .card.compact .score { text-align: right; }
-  .composer { padding: 8px 16px 12px; }
-  .chat-input input { font-size: 16px; }
+  .composer { padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .chat-input input { font-size: 16px; min-height: 44px; }
+  .chat-input .primary { min-height: 44px; min-width: 44px; padding: 0 16px; }
+  .chat-chips button { min-height: 44px; }
+  .card.compact .row-actions button,
+  .card.compact .reasons button { min-height: 44px; padding: 10px 12px; }
+  .results-views .view-tabs button { min-height: 44px; min-width: 44px; padding: 8px 14px; }
+}
+
+@media (max-width: 360px) {
+  .topbar { padding: 8px 10px; }
+  .brand-text strong { font-size: 1rem; }
+  .chat-log { width: calc(100% - 12px); gap: 14px; }
+  .card.compact { padding: 12px; }
+  .card.compact h3 { font-size: 18px; flex-wrap: wrap; }
+  .persona select { max-width: 110px; }
 }

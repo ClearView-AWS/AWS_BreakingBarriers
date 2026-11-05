@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { GettingInLine, type Access } from "../GettingIn";
-import { LEVEL, SOURCE_LABEL, STATUS_LABEL } from "../labels";
+import { LEVEL, SOURCE_LABEL } from "../labels";
 import type { Card, Criterion, Evidence } from "../types";
+import { StatusBadge } from "./StatusBadge";
 
 type Props = {
   card: Card;
@@ -115,7 +116,7 @@ function EvidenceItem({ row, label, onAsk }: { row: Evidence; label: string; onA
   return (
     <li className={`ev status-${row.status}`} data-criterion-id={row.criterion_id}>
       <div className="ev-status">
-        <span className={`pill ${row.status}`}>{STATUS_LABEL[row.status] ?? row.status}</span>
+        <StatusBadge status={row.status} />
         <strong>{label}</strong>
       </div>
       <div className="ev-body">

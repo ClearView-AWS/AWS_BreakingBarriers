@@ -26,6 +26,10 @@ const EXAMPLES = [
   "High school in Miami with sports",
 ];
 
+function prefersReducedMotion() {
+  return typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function Chat({
   entries,
   actions,
@@ -38,6 +42,7 @@ export function Chat({
   const [text, setText] = useState("");
   const last = useRef<HTMLLIElement>(null);
   const thinking = useRef<HTMLLIElement>(null);
+  const input = useRef<HTMLInputElement>(null);
   const { busy, picked, setPicked, send } = actions;
 
   // The newest Guide reply with results is the list "#2" and "these" refer to.
@@ -55,10 +60,13 @@ export function Chat({
   useEffect(() => {
     // A reply can be tall (cards), so show its top. A parent line or error just needs to be in view.
     const entry = entries[entries.length - 1];
-    last.current?.scrollIntoView({ block: entry?.role === "agent" ? "start" : "end", behavior: "smooth" });
+    const behavior: ScrollBehavior = prefersReducedMotion() ? "auto" : "smooth";
+    last.current?.scrollIntoView({ block: entry?.role === "agent" ? "start" : "end", behavior });
   }, [entries.length]);
   useEffect(() => {
-    if (busy) thinking.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+    if (busy) {
+      thinking.current?.scrollIntoView({ block: "end", behavior: prefersReducedMotion() ? "auto" : "smooth" });
+    }
   }, [busy]);
 
   function submit(event: FormEvent) {
@@ -71,15 +79,18 @@ export function Chat({
 
   return (
     <div className="chat-view">
-      <div className="chat-scroll">
-        <ol className="chat-log" aria-live="polite" aria-label="Conversation">
+      <a className="skip-link" href="#chat-composer">
+        {t("a11y.skip_composer")}
+      </a>
+      <div className="chat-scroll" id="chat-main">
+        <ol className="chat-log" aria-live="polite" aria-relevant="additions" aria-busy={busy} aria-label="Conversation">
           <li className="chat-entry chat-agent">
             <span className="chat-who">{t("chat.guide")}</span>
             <div className="agent-text">
               <p>{t("chat.intro")}</p>
             </div>
             {!entries.length && (
-              <div className="chat-chips">
+              <div className="chat-chips" role="group" aria-label={t("chat.describe")}>
                 {EXAMPLES.map((example) => (
                   <button key={example} type="button" disabled={busy} onClick={() => onSend(example)}>
                     {example}
@@ -92,7 +103,7 @@ export function Chat({
             const ref = index === entries.length - 1 ? last : undefined;
             if (entry.role === "system") {
               return (
-                <li key={index} ref={ref} className="chat-entry chat-system">
+                <li key={index} ref={ref} className="chat-entry chat-system" role="alert">
                   <span className="error">{entry.text}</span>
                 </li>
               );
@@ -118,16 +129,16 @@ export function Chat({
             );
           })}
           {busy && (
-            <li ref={thinking} className="chat-entry chat-agent chat-thinking">
+            <li ref={thinking} className="chat-entry chat-agent chat-thinking" aria-label={t("a11y.thinking")}>
               <span className="chat-who">{t("chat.guide")}</span>
               <span className="chat-text">{t("chat.looking")}</span>
             </li>
           )}
         </ol>
       </div>
-      <div className="composer">
+      <div className="composer" id="chat-composer">
         {picked.length > 0 && (
-          <div className="compare-tray">
+          <div className="compare-tray" role="status">
             {picked.length === 2 ? (
               <button
                 type="button"
@@ -147,13 +158,19 @@ export function Chat({
           </div>
         )}
         <form className="chat-input" onSubmit={submit}>
+          <label className="sr-only" htmlFor="chat-message">
+            {entries.length ? t("chat.ask_label") : t("chat.describe")}
+          </label>
           <input
+            id="chat-message"
+            ref={input}
             aria-label={entries.length ? t("chat.ask_label") : t("chat.describe")}
             placeholder={entries.length ? t("chat.ask_placeholder") : t("chat.describe")}
             value={text}
             onChange={(event) => setText(event.target.value)}
+            autoComplete="off"
           />
-          <button className="primary" disabled={busy || !text.trim()}>
+          <button type="submit" className="primary" disabled={busy || !text.trim()}>
             {busy ? "…" : t("chat.send")}
           </button>
         </form>
