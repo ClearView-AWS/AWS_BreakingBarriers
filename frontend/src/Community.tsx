@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import "./community.css";
 import { t, tn } from "./i18n";
+import { SchoolGallery } from "./components/SchoolGallery";
 
 export type Persona = { id: string; name: string; role: "parent" | "school" };
 
@@ -133,6 +134,7 @@ export function CommunityPage(props: {
           <p className="meta">{t("community.intro")}</p>
         </div>
       </header>
+      {school && <SchoolGallery schoolName={school.name} />}
       {error && <p className="error">{error}</p>}
 
       <div className="demand" aria-label={t("community.asked_label")}>

@@ -2,23 +2,29 @@
    the fallbacks keep it readable if a theme renames them. */
 .getting-in {
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 8px 12px;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 10px 14px;
   align-items: start;
-  margin: 4px 0 12px;
-  padding: 10px 0 2px;
-  border-top: 1px solid var(--line, var(--line-solid));
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line, var(--line-solid));
+  border-left: 3px solid var(--teal, var(--leaf));
+  border-radius: 10px;
+  background: var(--unknown-bg, var(--paper-solid));
 }
 .gi-head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
-.gi-title { font-size: 13px; font-weight: 640; color: var(--muted, var(--muted)); }
-.gi-line { font-weight: 600; }
+.gi-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted, var(--muted)); }
+.gi-line { font-weight: 650; line-height: 1.4; }
 .gi-detail { margin-top: 2px; }
-.gi-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 8px; }
+.gi-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 8px; }
 .gi-actions a { color: var(--teal, var(--leaf)); font-size: 14px; }
+.getting-in.gi-needs_attention { border-left-color: var(--attention); }
+.getting-in.gi-partial { border-left-color: var(--partial); }
+.getting-in.gi-confirmed { border-left-color: var(--confirmed); }
 .gi-detail-panel { margin: 14px 0; padding-top: 10px; border-top: 1px solid var(--line, var(--line-solid)); }
 .gi-detail-panel h3 { margin: 0 0 8px; }
 .gi-saved { display: block; margin-top: 4px; }
 
 @media (max-width: 720px) {
-  .getting-in { grid-template-columns: 1fr; }
+  .getting-in { grid-template-columns: 1fr; gap: 8px; }
 }

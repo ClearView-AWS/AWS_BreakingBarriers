@@ -1,0 +1,81 @@
+.school-gallery {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.school-gallery-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.school-gallery-heading h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.school-gallery-heading span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.school-gallery-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: repeat(2, minmax(112px, 1fr));
+  gap: 8px;
+  min-height: 270px;
+}
+
+.school-gallery-scene {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #d7e8e2;
+}
+
+.school-gallery-campus {
+  grid-row: span 2;
+}
+
+.school-gallery-scene svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.school-gallery-scene span {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #233b34;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.school-gallery-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 520px) {
+  .school-gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 190px 120px;
+    min-height: 0;
+  }
+
+  .school-gallery-campus {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+}

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { t } from "../i18n";
+import { SchoolGallery } from "./SchoolGallery";
 import type { Card, Turn } from "../types";
 import { EvidenceGrid } from "./EvidenceGrid";
 
@@ -128,6 +129,7 @@ export function DetailPanel({ turn, onClose }: Props) {
                 <p className="meta">
                   {String(school.street ?? "")} {String(school.city ?? "")} {String(school.state ?? "")}
                 </p>
+                <SchoolGallery schoolName={String(school.name)} />
                 <p>
                   {String(school.entity_type)} · summary rating{" "}
                   {school.summary_rating == null ? "unknown" : String(school.summary_rating)}

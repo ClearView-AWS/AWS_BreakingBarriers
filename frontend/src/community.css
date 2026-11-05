@@ -2,7 +2,8 @@
 /* ---------- Parent community ---------- */
 .persona { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; }
 .persona select { border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; background: var(--card); color: var(--ink); }
-.community-line { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 10px; font-size: 14px; }
+.community-line { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; }
+.community-line-content { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
 .community-line .texty { padding: 4px 10px; font-size: 14px; color: var(--teal-dark); }
 .ask-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .ask-row button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 10px; font-size: 14px; }

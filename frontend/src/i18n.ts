@@ -46,6 +46,16 @@ export const EN = {
   // Chat.tsx
   "chat.guide": "Guide",
   "chat.intro": "Tell me the grade, city, and what matters most. Or pick an example to start.",
+  "chat.hero_title": "Find the best schools for your family",
+  "chat.hero_intro":
+    "Tell us the grade, city, and what matters most to your family. We will find schools that fit, with the evidence to back it up.",
+  "chat.try": "Try",
+  "chat.start_with": "Start with",
+  "chat.find_schools": "Find schools",
+  "chat.starter_after_school": "After-school care",
+  "chat.starter_stem": "STEM or arts",
+  "chat.starter_low_cost": "Low cost",
+  "chat.starter_close": "Close to home",
   "chat.looking": "Looking…",
   "chat.compare_pair": "Compare {a} and {b}",
   "chat.compare_one": "Pick one more school to compare with {name}.",
@@ -53,6 +63,8 @@ export const EN = {
   "chat.ask_label": "Ask about these schools or change your search",
   "chat.ask_placeholder": "Ask about these schools, like “does #2 have a bus?”, or change your search",
   "chat.describe": "Describe the school you need",
+  "chat.composer_prompt": "What kind of school are you looking for?",
+  "chat.composer_followup": "Ask a follow-up or adjust your search",
   "chat.send": "Send",
   // blocks.tsx
   "blocks.read_from": "Read from {language} · translated with Amazon Translate",
@@ -93,6 +105,7 @@ export const EN = {
   "blocks.hide_evidence": "Hide evidence",
   "blocks.show_evidence": "Show evidence",
   "blocks.save": "Save",
+  "blocks.more_options": "More options",
   "blocks.selected": "Selected",
   "blocks.compare": "Compare",
   "blocks.cost_after": "Cost after scholarships",
@@ -313,6 +326,13 @@ export const EN = {
   "community.active": "Active this month",
   "community.no_match": "No school by that name.",
   "community.no_posts": "No posts yet. Open a school from your results to start one.",
+  "school_gallery.aria": "Illustrative campus views for {school}",
+  "school_gallery.title": "Campus preview",
+  "school_gallery.illustrative": "Illustrative views",
+  "school_gallery.campus": "Campus",
+  "school_gallery.learning": "Learning space",
+  "school_gallery.outdoors": "Outdoor area",
+  "school_gallery.note": "Illustrations only — verified photos of this school aren't available in this demo.",
 } as const;
 
 export type UiKey = keyof typeof EN;

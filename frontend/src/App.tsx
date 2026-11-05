@@ -116,7 +116,7 @@ export function App() {
   }
 
   return (
-    <div className={view === "search" ? "app chat-mode" : "app"}>
+    <div className={view === "search" ? `app chat-mode${entries.length ? "" : " chat-mode--landing"}` : "app"}>
       <a className="skip-link" href="#main-content">
         {t("a11y.skip_main")}
       </a>

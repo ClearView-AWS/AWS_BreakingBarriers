@@ -352,34 +352,40 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
       </header>
       {card.summary && <p className="summary">{card.summary}</p>}
       <GettingInLine schoolId={card.id} access={(card as Card & { access?: Access }).access} />
-      {openCommunity && <CommunityLine card={card} onCommunity={openCommunity} />}
       {!evidence && (
-        <div className="pills" aria-label={t("blocks.at_a_glance")}>
-          {card.evidence.map((row) => {
-            const criterion = labels.get(row.criterion_id) ?? row.criterion_id;
-            const status = statusLabel(row.status);
-            const mark = STATUS_MARK[row.status] ?? "";
-            const onAsk = ask(row);
-            return onAsk ? (
-              <button
-                key={row.criterion_id}
-                type="button"
-                data-criterion-id={row.criterion_id}
-                className={`pill ${row.status}`}
-                disabled={busy}
-                title={t("blocks.not_on_file_ask")}
-                onClick={onAsk}
-              >
-                <span className="status-mark" aria-hidden="true">{mark}</span> {status}: {criterion} · {t("blocks.ask_short")}
-              </button>
-            ) : (
-              <span key={row.criterion_id} data-criterion-id={row.criterion_id} className={`pill ${row.status}`} title={status}>
-                <span className="status-mark" aria-hidden="true">{mark}</span> {status}: {criterion}
-              </span>
-            );
-          })}
-        </div>
+        card.evidence.length > 0 && (
+          <section className="card-section" aria-label={t("blocks.at_a_glance")}>
+            <h4 className="card-section-title">{t("blocks.at_a_glance")}</h4>
+            <div className="pills">
+              {card.evidence.map((row) => {
+                const criterion = labels.get(row.criterion_id) ?? row.criterion_id;
+                const status = statusLabel(row.status);
+                const onAsk = ask(row);
+                return onAsk ? (
+                  <button
+                    key={row.criterion_id}
+                    type="button"
+                    data-criterion-id={row.criterion_id}
+                    className={`pill ${row.status}`}
+                    disabled={busy}
+                    title={t("blocks.not_on_file_ask")}
+                    onClick={onAsk}
+                  >
+                    <span className="status-mark" aria-hidden="true">{STATUS_MARK[row.status] ?? ""}</span>{" "}
+                    {status}: {criterion} · {t("blocks.ask_short")}
+                  </button>
+                ) : (
+                  <span key={row.criterion_id} data-criterion-id={row.criterion_id} className={`pill ${row.status}`} title={status}>
+                    <span className="status-mark" aria-hidden="true">{STATUS_MARK[row.status] ?? ""}</span>{" "}
+                    {status}: {criterion}
+                  </span>
+                );
+              })}
+            </div>
+          </section>
+        )
       )}
+      {openCommunity && <CommunityLine card={card} onCommunity={openCommunity} />}
       <CallButton
         schoolId={card.id}
         schoolName={card.name}
@@ -387,22 +393,25 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
         actions={actions}
       />
       {evidence && (
-        <div className="evidence">
-          {card.evidence.map((row) => (
-            <EvidenceRow
-              key={row.criterion_id}
-              row={row}
-              label={labels.get(row.criterion_id) ?? row.criterion_id}
-              onAsk={ask(row)}
-              onAskParents={askParents(row)}
-            />
-          ))}
-        </div>
+        <section className="card-section card-evidence">
+          <h4 className="card-section-title">{t("blocks.at_a_glance")}</h4>
+          <div className="evidence">
+            {card.evidence.map((row) => (
+              <EvidenceRow
+                key={row.criterion_id}
+                row={row}
+                label={labels.get(row.criterion_id) ?? row.criterion_id}
+                onAsk={ask(row)}
+                onAskParents={askParents(row)}
+              />
+            ))}
+          </div>
+        </section>
       )}
-      <div className="row-actions">
-        <button aria-expanded={evidence} onClick={() => setEvidence((value) => !value)}>{evidence ? t("blocks.hide_evidence") : t("blocks.show_evidence")}</button>
+      <div className="card-actions">
         <button disabled={busy} onClick={() => send({ action: "save", school_ids: [card.id] })}>{t("blocks.save")}</button>
         <button
+          className="secondary"
           aria-pressed={selected}
           onClick={() =>
             setPicked(selected ? picked.filter((item) => item.id !== card.id) : [...picked, { id: card.id, name: card.name }].slice(-2))
@@ -410,38 +419,46 @@ function SchoolCard({ card, number, criteria, actions }: { card: Card; number?: 
         >
           {selected ? t("blocks.selected") : t("blocks.compare")}
         </button>
-        {card.entity_type === "private" && (
-          <button disabled={busy} onClick={() => send({ action: "cost", school_ids: [card.id] })}>{t("blocks.cost_after")}</button>
-        )}
-        {openCommunity && (
-          <button onClick={() => openCommunity({ schoolId: card.id, from: "results" })}>
-            {t("blocks.community")}{card.community?.threads ? ` (${card.community.threads})` : ""}
-          </button>
-        )}
-        <button disabled={busy} aria-label={t("blocks.thumbs_up")} onClick={() => send({ action: "feedback", feedback: { school_id: card.id, vote: "up" } })}>👍</button>
-        <button aria-label={t("blocks.thumbs_down")} aria-expanded={reasons} onClick={() => setReasons((value) => !value)}>👎</button>
-      </div>
-      {reasons && (
-        <div className="reasons">
-          {[
-            "too_far",
-            "too_expensive",
-            "missing_program",
-            "wrong_grade",
-          ].map((id) => (
-            <button
-              key={id}
-              disabled={busy}
-              onClick={() => {
-                send({ action: "feedback", feedback: { school_id: card.id, vote: "down", reason: id } });
-                setReasons(false);
-              }}
-            >
-              {t(`reason.${id}`)}
+        <details className="card-more">
+          <summary>{t("blocks.more_options")}</summary>
+          <div className="card-more-actions">
+            <button type="button" aria-expanded={evidence} onClick={() => setEvidence((value) => !value)}>
+              {evidence ? t("blocks.hide_evidence") : t("blocks.show_evidence")}
             </button>
-          ))}
-        </div>
-      )}
+            {card.entity_type === "private" && (
+              <button disabled={busy} onClick={() => send({ action: "cost", school_ids: [card.id] })}>{t("blocks.cost_after")}</button>
+            )}
+            {openCommunity && (
+              <button onClick={() => openCommunity({ schoolId: card.id, from: "results" })}>
+                {t("blocks.community")}{card.community?.threads ? ` (${card.community.threads})` : ""}
+              </button>
+            )}
+            <button disabled={busy} aria-label={t("blocks.thumbs_up")} onClick={() => send({ action: "feedback", feedback: { school_id: card.id, vote: "up" } })}>👍</button>
+            <button aria-label={t("blocks.thumbs_down")} aria-expanded={reasons} onClick={() => setReasons((value) => !value)}>👎</button>
+          </div>
+          {reasons && (
+            <div className="reasons">
+              {[
+                "too_far",
+                "too_expensive",
+                "missing_program",
+                "wrong_grade",
+              ].map((id) => (
+                <button
+                  key={id}
+                  disabled={busy}
+                  onClick={() => {
+                    send({ action: "feedback", feedback: { school_id: card.id, vote: "down", reason: id } });
+                    setReasons(false);
+                  }}
+                >
+                  {t(`reason.${id}`)}
+                </button>
+              ))}
+            </div>
+          )}
+        </details>
+      </div>
     </article>
   );
 }
@@ -452,18 +469,21 @@ function CommunityLine({ card, onCommunity }: { card: Card; onCommunity: (target
   if (!info || (!info.discussed.length && !info.demand.length)) return null;
   const topDemand = info.demand[0];
   return (
-    <div className="community-line">
-      {info.discussed.map((row) => (
-        <button key={row.need} className="texty" onClick={() => onCommunity({ schoolId: card.id, filterNeed: row.need, from: "results" })}>
-          {tn("blocks.discussed", row.parents, { topic: row.label.toLowerCase() })}
-        </button>
-      ))}
-      {topDemand && (
-        <span className="meta">
-          {tn("blocks.asked", topDemand.count, { topic: topDemand.label.toLowerCase() })}
-        </span>
-      )}
-    </div>
+    <section className="community-line" aria-label={t("blocks.community")}>
+      <h4 className="card-section-title">{t("blocks.community")}</h4>
+      <div className="community-line-content">
+        {info.discussed.map((row) => (
+          <button key={row.need} className="texty" onClick={() => onCommunity({ schoolId: card.id, filterNeed: row.need, from: "results" })}>
+            {tn("blocks.discussed", row.parents, { topic: row.label.toLowerCase() })}
+          </button>
+        ))}
+        {topDemand && (
+          <span className="meta">
+            {tn("blocks.asked", topDemand.count, { topic: topDemand.label.toLowerCase() })}
+          </span>
+        )}
+      </div>
+    </section>
   );
 }
 

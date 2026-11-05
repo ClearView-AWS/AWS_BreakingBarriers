@@ -39,6 +39,12 @@ export function Chat({
   const thinking = useRef<HTMLLIElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const { busy, picked, setPicked, send } = actions;
+  const starters = [
+    t("chat.starter_after_school"),
+    t("chat.starter_stem"),
+    t("chat.starter_low_cost"),
+    t("chat.starter_close"),
+  ];
 
   useEffect(() => {
     let cancelled = false;
@@ -88,8 +94,34 @@ export function Chat({
     onSend(message);
   }
 
+  function renderInput(landing: boolean) {
+    return (
+      <form className={`chat-input${landing ? " hero-input" : ""}`} id="chat-composer" onSubmit={submit}>
+        <label className="sr-only" htmlFor="chat-message">
+          {entries.length ? t("chat.ask_label") : t("chat.describe")}
+        </label>
+        <input
+          id="chat-message"
+          ref={input}
+          aria-label={entries.length ? t("chat.ask_label") : t("chat.describe")}
+          placeholder={
+            entries.length
+              ? t("chat.ask_placeholder")
+              : `${t("chat.try")}: ${examples[0]}`
+          }
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          autoComplete="off"
+        />
+        <button type="submit" className="primary" disabled={busy || !text.trim()}>
+          {busy ? "…" : t(landing ? "chat.find_schools" : "chat.send")}
+        </button>
+      </form>
+    );
+  }
+
   return (
-    <div className="chat-view">
+    <div className={`chat-view${entries.length ? "" : " chat-view--empty"}`}>
       <a className="skip-link" href="#chat-composer">
         {t("a11y.skip_composer")}
       </a>
@@ -97,17 +129,29 @@ export function Chat({
         <ol className="chat-log" aria-live="polite" aria-relevant="additions" aria-busy={busy} aria-label="Conversation">
           {!entries.length && (
             <li className="chat-entry chat-agent chat-first-run">
-              <span className="chat-who">{t("chat.guide")}</span>
-              <div className="agent-text">
-                <p>{t("chat.intro")}</p>
-              </div>
-              <div className="chat-chips" role="group" aria-label={t("chat.describe")}>
-                {examples.map((example) => (
-                  <button key={example} type="button" disabled={busy} onClick={() => onSend(example)}>
-                    {example}
-                  </button>
-                ))}
-              </div>
+              <section className="search-hero" aria-labelledby="search-hero-title">
+                <h1 id="search-hero-title">{t("chat.hero_title")}</h1>
+                <p>{t("chat.hero_intro")}</p>
+                {renderInput(true)}
+                <div className="hero-start">
+                  <span>{t("chat.start_with")}</span>
+                  <div className="chat-chips" role="group" aria-label={t("chat.start_with")}>
+                    {starters.map((starter) => (
+                      <button
+                        key={starter}
+                        type="button"
+                        disabled={busy}
+                        onClick={() => {
+                          setText(starter);
+                          input.current?.focus();
+                        }}
+                      >
+                        {starter}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </section>
             </li>
           )}
           {entries.map((entry, index) => {
@@ -147,7 +191,7 @@ export function Chat({
           )}
         </ol>
       </div>
-      <div className="composer" id="chat-composer">
+      <div className="composer">
         {picked.length > 0 && (
           <div className="compare-tray" role="status">
             {picked.length === 2 ? (
@@ -168,23 +212,14 @@ export function Chat({
             <button type="button" className="texty" onClick={() => setPicked([])}>{t("chat.clear")}</button>
           </div>
         )}
-        <form className="chat-input" onSubmit={submit}>
-          <label className="sr-only" htmlFor="chat-message">
-            {entries.length ? t("chat.ask_label") : t("chat.describe")}
-          </label>
-          <input
-            id="chat-message"
-            ref={input}
-            aria-label={entries.length ? t("chat.ask_label") : t("chat.describe")}
-            placeholder={entries.length ? t("chat.ask_placeholder") : t("chat.describe")}
-            value={text}
-            onChange={(event) => setText(event.target.value)}
-            autoComplete="off"
-          />
-          <button type="submit" className="primary" disabled={busy || !text.trim()}>
-            {busy ? "…" : t("chat.send")}
-          </button>
-        </form>
+        {entries.length > 0 && (
+          <div className="composer-field">
+            <label className="composer-label" htmlFor="chat-message">
+              {t("chat.composer_followup")}
+            </label>
+            {renderInput(false)}
+          </div>
+        )}
       </div>
     </div>
   );
