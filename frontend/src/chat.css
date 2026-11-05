@@ -290,7 +290,8 @@ body:has(.chat-mode--landing)::before {
   flex: 1 0 auto;
 }
 .chat-view--empty .chat-log {
-  width: min(936px, calc(100% - 80px));
+  /* Same width as the search box, so the landing column sits on the page centre. */
+  width: min(726px, calc(100% - 80px));
   padding: clamp(40px, 7vh, 72px) 0;
   gap: 0;
 }
@@ -298,7 +299,7 @@ body:has(.chat-mode--landing)::before {
   display: block;
 }
 .search-hero {
-  max-width: 936px;
+  max-width: 726px;
 }
 .search-hero h1 {
   margin: 0;
