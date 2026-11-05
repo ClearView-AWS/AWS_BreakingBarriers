@@ -554,7 +554,7 @@ small_school:
 ell_support:
   label: English learner support
   default_strength: prefer
-  phrases: [english learners, ell, esol, english language learners]
+  phrases: [english learner support, english learners, ell, esol, english language learners]
   evidence:
     - field: ell
       source: state_data

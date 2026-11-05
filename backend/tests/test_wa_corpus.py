@@ -27,6 +27,11 @@ def test_city_prompts_follow_corpus():
     examples = example_queries()
     assert examples
     assert any("Seattle" in line or "Tacoma" in line or "Spokane" in line for line in examples)
+    joined = " ".join(examples).casefold()
+    assert "gifted" in joined
+    assert "english learner" in joined or "ell" in joined
+    assert "sports" in joined
+    assert "stem and after-school" not in joined
 
 
 def test_seattle_middle_search():

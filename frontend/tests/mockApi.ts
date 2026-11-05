@@ -37,7 +37,7 @@ export async function mockApi(page: Page) {
       return route.fulfill({
         json: {
           examples: [
-            "Middle school in Seattle with STEM and after-school care. Money is tight.",
+            "Middle school in Seattle that must have a gifted program. Prefer a small school.",
             "Elementary school in Tacoma with English learner support",
             "High school in Spokane with sports",
           ],

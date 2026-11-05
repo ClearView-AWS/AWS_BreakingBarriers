@@ -22,7 +22,7 @@ Total talk time: **3:00**. Leave ~15 s slack for judges' screens to load.
 **Type exactly (or tap the first example chip):**
 
 ```text
-Middle school in Seattle with STEM and after-school care. Money is tight.
+Middle school in Seattle that must have a gifted program. Prefer a small school.
 ```
 
 **Click / do:**
@@ -35,7 +35,7 @@ Middle school in Seattle with STEM and after-school care. Money is tight.
 **Judges notice:**
 
 - Brief they can edit; city chips include Seattle / Tacoma / Spokane, not Florida-only.
-- Cards with Confirmed / Partial / **Unknown** and citations (ELL often filled from OSPI; after-care usually Unknown).
+- Cards with Confirmed / Partial / **Unknown** and citations — gifted / enrollment vary so match % spreads; ELL chip is near 100%; sports chip sits mid-band.
 - Optional second beat: same flow for Jacksonville to show the synthetic gap-fill / AI-call demo.
 - Median rules-engine turn in eval is **0.02 s** (mention; don't wait for a stopwatch).
 

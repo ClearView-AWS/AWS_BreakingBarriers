@@ -21,7 +21,7 @@ cd backend && ../.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 800
 cd frontend && npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-> Middle school in Seattle with STEM and after-school care. Money is tight.
+> Middle school in Seattle that must have a gifted program. Prefer a small school.
 
 Then: answer or skip the brief questions, approve the brief, try a Florida follow-up (*Middle school in Jacksonville with after-school care*) if you want the synthetic gap-fill / call demo, save a school with an unknown fact, ask "How liberal are these schools?", and mark a result "Too far".
 
