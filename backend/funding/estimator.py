@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from catalog import funding_rules
+from catalog import funding_rules_for
 from evidence.engine import get_path
 from evidence.status import unwrap
+from school_state import school_state
 
 
 def estimate_cost(school: dict) -> dict:
     entity = school.get("entity_type")
-    rules = funding_rules()
+    rules = funding_rules_for(school_state(school))
     if entity in {"public", "charter"}:
         return {
             "school_id": school["id"],
@@ -40,6 +41,19 @@ def estimate_cost(school: dict) -> dict:
                 "cite": rule["cite_path"],
             }
         )
+    if not lines:
+        return {
+            "school_id": school["id"],
+            "school_name": school["name"],
+            "entity_type": entity,
+            "tuition": tuition,
+            "net": None,
+            "disclaimer": (
+                "This prototype has no scholarship rules for this school's state. "
+                "Ask the school about its own financial aid."
+            ),
+            "lines": [],
+        }
     return {
         "school_id": school["id"],
         "school_name": school["name"],

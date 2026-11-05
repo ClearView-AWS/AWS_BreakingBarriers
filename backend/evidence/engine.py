@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Any
 
-from catalog import funding_rules, needs
+from catalog import funding_rules_for, needs
 from contracts import Conflict, EvidenceRecord, Source
 from evidence.reviews import review_status
 from evidence.status import (
@@ -22,6 +22,7 @@ from evidence.status import (
 )
 from gaps.websites import website_facts
 from runtime_config import TODAY
+from school_state import school_state
 from search.geo import miles_between
 
 RELIGIOUS_WORDS = (
@@ -382,11 +383,29 @@ def _low_cost(school: dict, criterion, today: date) -> EvidenceRecord:
         )
     if entity == "private":
         tuition = unwrap(get_path(school, "osp.tuition"))
-        rule = funding_rules()["fes_eo"]
+        rule = funding_rules_for(school_state(school)).get("fes_eo")
         if tuition:
             tuition_text = f"listed tuition is ${tuition} [[cite:osp.tuition]]"
         else:
             tuition_text = "tuition is not listed on the profile"
+        if rule is None:
+            # No scholarship rule for this state (Washington has none here), so cite tuition alone.
+            if not tuition:
+                return EvidenceRecord(
+                    school_id=school["id"],
+                    criterion_id=criterion.id,
+                    status="unknown",
+                    note=_cite("osp.tuition", f"{label} is unknown because tuition is not listed on the profile."),
+                    missing_paths=["osp.tuition"],
+                )
+            return EvidenceRecord(
+                school_id=school["id"],
+                criterion_id=criterion.id,
+                status="partial",
+                value=tuition,
+                source=Source(type="school_reported", path="osp.tuition", as_of=_as_of(school, today), confidence="medium"),
+                note=f"{label} is only partly supported; {tuition_text}; ask the school about its own financial aid.",
+            )
         note = (
             f"{label} is only partly supported; {tuition_text}; "
             f"you may qualify for the {rule['name']}; "

@@ -28,6 +28,15 @@ def funding_rules() -> dict[str, dict[str, Any]]:
     return _load("funding_rules.yaml")
 
 
+def funding_rules_for(state: str) -> dict[str, dict[str, Any]]:
+    """Scholarship rules that apply in one state. A rule with no `states` list applies everywhere."""
+    return {
+        rule_id: rule
+        for rule_id, rule in funding_rules().items()
+        if not rule.get("states") or state in rule["states"]
+    }
+
+
 @lru_cache(maxsize=1)
 def glossary() -> dict[str, dict[str, Any]]:
     return _load("glossary.yaml")

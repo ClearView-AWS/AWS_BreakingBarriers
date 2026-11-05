@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import re
 
-from catalog import funding_rules, glossary
+from catalog import funding_rules, funding_rules_for, glossary
 from contracts import EvidenceRecord
 from evidence.engine import get_path
+from school_state import school_state
 
 # A path can hold brackets ("reviews_full[1]"), so a citation ends at the last "]]" in a run of "]".
 _CITE = re.compile(r"\[\[cite:(.+?)\]\](?!\])")
@@ -39,7 +40,8 @@ def allowed_citations(records: list[EvidenceRecord], school: dict | None = None)
         allowed.update(record.missing_paths)
         if record.conflict:
             allowed.add(record.conflict.path)
-    for rule in funding_rules().values():
+    rules = funding_rules() if school is None else funding_rules_for(school_state(school))
+    for rule in rules.values():
         allowed.add(rule["cite_path"])
     for entry in glossary().values():
         allowed.add(entry["cite_path"])
