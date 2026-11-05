@@ -33,6 +33,19 @@ export async function mockApi(page: Page) {
     if (path === "/api/health") {
       return route.fulfill({ json: { ok: true } });
     }
+    if (path === "/api/examples") {
+      return route.fulfill({
+        json: {
+          examples: [
+            "Middle school in Seattle with STEM and after-school care. Money is tight.",
+            "Elementary school in Tacoma with English learner support",
+            "High school in Jacksonville with sports",
+          ],
+          cities: ["Seattle", "Tacoma", "Spokane", "Jacksonville", "Miami"],
+          default_city: "Seattle",
+        },
+      });
+    }
     if (path === "/api/faq" || path.startsWith("/api/faq")) {
       return route.fulfill({ json: faq });
     }

@@ -32,7 +32,7 @@ test.describe("accessibility", () => {
   test("results + evidence + map toggle at 360px", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 740 });
     await page.goto("/");
-    await page.getByRole("button", { name: /Middle school in Jacksonville/i }).click();
+    await page.getByRole("button", { name: /Middle school in Seattle/i }).click();
     await expect(page.getByText(/quick question|Here’s what I’ll look for|Here are/i).first()).toBeVisible({
       timeout: 15_000,
     });
